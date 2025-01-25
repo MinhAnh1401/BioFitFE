@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -128,14 +131,15 @@ fun NextButtonInfoScreen(onClick: () -> Unit) {
             onClick = onClick,
             modifier = Modifier.size(48.dp),
             enabled = true,
-        ) {
-            Icon(
-                modifier = Modifier.size(48.dp),
-                painter = painterResource(id = R.drawable.btn_next),
-                contentDescription = "Next Button",
-                tint = MaterialTheme.colorScheme.background
-            )
-        }
+            content = {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    painter = painterResource(id = R.drawable.btn_next),
+                    contentDescription = "Next Button",
+                    tint = MaterialTheme.colorScheme.background
+                )
+            }
+        )
     }
 }
 
@@ -153,14 +157,15 @@ fun TopBarInfoScreen(
             onClick = onBackClick,
             modifier = Modifier.size(48.dp),
             enabled = true,
-        ) {
-            Icon(
-                modifier = Modifier.size(26.dp),
-                painter = painterResource(id = R.drawable.btn_back),
-                contentDescription = "Back Button",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
+            content = {
+                Icon(
+                    modifier = Modifier.size(26.dp),
+                    painter = painterResource(id = R.drawable.btn_back),
+                    contentDescription = "Back Button",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        )
         Spacer(modifier = Modifier.width(16.dp))
         ProgressIndicatorTopBarInfoScreen(stepColors)
         Spacer(modifier = Modifier.width(32.dp))
@@ -208,19 +213,30 @@ fun InfoUserNameContent() {
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
+                modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
+                    Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                } else {
+                    Modifier.fillMaxWidth()
+                },
+                textStyle = MaterialTheme.typography.bodySmall,
                 label = {
                     Text(
                         text = stringResource(R.string.full_name),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
-                modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                    Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
                 singleLine = true,
-                shape = RoundedCornerShape(30.dp),
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large,
             )
         }
     }

@@ -40,4 +40,7 @@
     <string name="cm">cm</string>
     <string name="weight">Cân nặng</string>
     <string name="kg">kg</string>
+    <string name="what_is_your_weight_goal">Mục tiêu cân nặng của bạn là bao ?</string>
+    <string name="description_target">Điều này quan trọng cho việc tạo ra một kế hoạch giúp bạn đạt được mục tiêu của mình!</string>
+    <string name="target_weight">Mục tiêu cân nặng</string>
 </resources>

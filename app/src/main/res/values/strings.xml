@@ -40,4 +40,7 @@
     <string name="cm">cm</string>
     <string name="weight">Weight</string>
     <string name="kg">kg</string>
+    <string name="what_is_your_weight_goal">What is your weight goal?</string>
+    <string name="description_target">This is important for creating a plan that helps you achieve your goals!</string>
+    <string name="target_weight">Target weight</string>
 </resources>

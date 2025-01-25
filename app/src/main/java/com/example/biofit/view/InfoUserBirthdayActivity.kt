@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -127,62 +127,89 @@ fun InfoUserBirthdayContent() {
                 OutlinedTextField(
                     value = day,
                     onValueChange = { day = it },
+                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
+                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                    } else {
+                        Modifier.fillMaxWidth()
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
                     label = {
                         Text(
                             text = stringResource(R.string.day),
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
+                    isError = false,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardActions = KeyboardActions(
+                        onDone = { /*TODO*/ },
+                        onGo = { /*TODO*/ },
+                        onNext = { /*TODO*/ },
+                        onPrevious = { /*TODO*/ },
+                        onSearch = { /*TODO*/ },
+                        onSend = { /*TODO*/ }
                     ),
-                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-                    } else {
-                        Modifier.fillMaxWidth()
-                    },
                     singleLine = true,
-                    shape = RoundedCornerShape(30.dp)
+                    maxLines = 1,
+                    shape = MaterialTheme.shapes.large
                 )
                 OutlinedTextField(
                     value = month,
                     onValueChange = { month = it },
+                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
+                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                    } else {
+                        Modifier.fillMaxWidth()
+                    }.padding(top = 8.dp),
+                    textStyle = MaterialTheme.typography.bodySmall,
                     label = {
                         Text(
                             text = stringResource(R.string.month),
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
+                    isError = false,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardActions = KeyboardActions(
+                        onDone = { /*TODO*/ },
+                        onGo = { /*TODO*/ },
+                        onNext = { /*TODO*/ },
+                        onPrevious = { /*TODO*/ },
+                        onSearch = { /*TODO*/ },
+                        onSend = { /*TODO*/ }
                     ),
+                    singleLine = true,
+                    maxLines = 1,
+                    shape = MaterialTheme.shapes.large
+                )
+                OutlinedTextField(
+                    value = year,
+                    onValueChange = { year = it },
                     modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
                         Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
                     } else {
                         Modifier.fillMaxWidth()
                     }.padding(top = 8.dp),
-                    singleLine = true,
-                    shape = RoundedCornerShape(30.dp)
-                )
-                OutlinedTextField(
-                    value = year,
-                    onValueChange = { year = it },
+                    textStyle = MaterialTheme.typography.bodySmall,
                     label = {
                         Text(
                             text = stringResource(R.string.year),
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
+                    isError = false,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardActions = KeyboardActions(
+                        onDone = { /*TODO*/ },
+                        onGo = { /*TODO*/ },
+                        onNext = { /*TODO*/ },
+                        onPrevious = { /*TODO*/ },
+                        onSearch = { /*TODO*/ },
+                        onSend = { /*TODO*/ }
                     ),
-                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-                    } else {
-                        Modifier.fillMaxWidth()
-                    }.padding(top = 8.dp),
                     singleLine = true,
-                    shape = RoundedCornerShape(30.dp)
+                    maxLines = 1,
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }

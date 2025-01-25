@@ -41,13 +41,13 @@ import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 
-class InfoUserHeightAndWeightActivity : ComponentActivity() {
+class InfoUserTargetActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             BioFitTheme {
-                InfoUserHeightAndWeightScreen()
+                InfoUserTargetScreen()
             }
         }
     }
@@ -59,8 +59,11 @@ class InfoUserHeightAndWeightActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserHeightAndWeightScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun InfoUserTargetScreen() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
         Box {
             BackgroundInfoScreen()
             NextButtonInfoScreen(onClick = { /* TODO */ })
@@ -79,23 +82,21 @@ fun InfoUserHeightAndWeightScreen() {
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
+                        MaterialTheme.colorScheme.primary
                     )
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                InfoUserHeightAndWeightContent()
+                InfoUserTargetContent()
             }
         }
     }
 }
 
 @Composable
-fun InfoUserHeightAndWeightContent() {
-    var height by remember { mutableStateOf("") }
-    var weight by remember { mutableStateOf("") }
+fun InfoUserTargetContent() {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(WindowInsets.ime.asPaddingValues()),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,7 +104,7 @@ fun InfoUserHeightAndWeightContent() {
     ) {
         item {
             Text(
-                text = stringResource(R.string.what_is_your_height_and_weight),
+                text = stringResource(R.string.what_is_your_weight_goal),
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.padding(vertical = 32.dp),
                 color = MaterialTheme.colorScheme.primary,
@@ -113,7 +114,7 @@ fun InfoUserHeightAndWeightContent() {
 
         item {
             Text(
-                text = stringResource(R.string.description_height_and_weight),
+                text = stringResource(R.string.description_target),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 32.dp),
                 color = MaterialTheme.colorScheme.onBackground,
@@ -122,29 +123,40 @@ fun InfoUserHeightAndWeightContent() {
         }
 
         item {
+            var targetWeight by remember { mutableStateOf("") }
             OutlinedTextField(
-                value = height,
-                onValueChange = { height = it },
+                value = targetWeight, // giá trị hiện tại của trường nhập liệu
+                onValueChange = {
+                    targetWeight = it
+                }, // xử lý thay đổi giá trị và cập nhật trạng thái tương ứng
                 modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
                     Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
                 } else {
                     Modifier.fillMaxWidth()
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
+                }, // kích thước và vị trí của trường nhập liệu
+                // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
+                // readOnly = false, // trạng thái chỉ đọc của trường nhập liệu (mặc định false)
+                textStyle = MaterialTheme.typography.bodySmall, // kiểu chữ và kích thước của văn bản trong trường nhập liệu
                 label = {
                     Text(
-                        stringResource(R.string.height),
+                        text = stringResource(R.string.target_weight),
                         style = MaterialTheme.typography.bodySmall
                     )
-                },
+                }, // nhãn cho trường nhập liệu
+                // placeholder = null, // văn bản gợi ý bên trong trường nhập liệu (mặc định null)
+                // leadingIcon = null, // biểu tượng trước văn bản (mặc định null)
+                // trailingIcon = null, // biểu tượng sau văn bản (mặc định null)
+                // prefix = null, // tiền tố văn bản (mặc định null)
                 suffix = {
                     Text(
-                        stringResource(R.string.cm),
+                        text = stringResource(R.string.kg),
                         style = MaterialTheme.typography.bodySmall
                     )
-                },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                }, // hậu tố văn bản
+                // supportingText = null, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
+                isError = false, // trạng thái lỗi
+                // visualTransformation = VisualTransformation.None, // biến đổi hiển thị của văn bản (mặc định VisualTransformation.None)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), // kiểu bàn phím
                 keyboardActions = KeyboardActions(
                     onDone = { /*TODO*/ },
                     onGo = { /*TODO*/ },
@@ -152,48 +164,12 @@ fun InfoUserHeightAndWeightContent() {
                     onPrevious = { /*TODO*/ },
                     onSearch = { /*TODO*/ },
                     onSend = { /*TODO*/ }
-                ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.large
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                value = weight,
-                onValueChange = { weight = it },
-                modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                    Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                }.padding(top = 8.dp),
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
-                    Text(
-                        stringResource(R.string.weight),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                suffix = {
-                    Text(
-                        stringResource(R.string.kg),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
-                ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.large
+                ), // hành động khi nhấn phím
+                singleLine = true, // chỉ cho phép nhập một dòng văn bản
+                maxLines = 1, // số lượng dòng tối đa cho văn bản
+                // minLines = 1, // số lượng dòng tối thiểu cho văn bản (mặc định 1)
+                shape = MaterialTheme.shapes.large, // hình dạng của trường nhập liệu
+                // colors = {} // màu sắc của trường nhập liệu
             )
         }
     }
@@ -206,9 +182,9 @@ fun InfoUserHeightAndWeightContent() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun InfoUserHeightAndWeightScreenPreviewInLargePhone() {
+private fun InfoUserTargetScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -220,9 +196,9 @@ private fun InfoUserHeightAndWeightScreenPreviewInLargePhone() {
     locale = "vi"
 )
 @Composable
-private fun InfoUserHeightAndWeightScreenDarkModePreviewInSmallPhone() {
+private fun InfoUserTargetScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -234,8 +210,8 @@ private fun InfoUserHeightAndWeightScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun InfoUserHeightAndWeightScreenPreviewInTablet() {
+private fun InfoUserTargetScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserTargetScreen()
     }
 }

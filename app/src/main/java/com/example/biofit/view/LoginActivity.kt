@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
@@ -20,7 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -146,6 +145,12 @@ fun LoginForm(modifier: Modifier) {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
+            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
+                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+            } else {
+                Modifier.fillMaxWidth()
+            },
+            textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
                     stringResource(R.string.email),
@@ -159,30 +164,34 @@ fun LoginForm(modifier: Modifier) {
                     color = MaterialTheme.colorScheme.outline
                 )
             },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            },
+            isError = false,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardActions = KeyboardActions(
+                onDone = { /*TODO*/ },
+                onGo = { /*TODO*/ },
+                onNext = { /*TODO*/ },
+                onPrevious = { /*TODO*/ },
+                onSearch = { /*TODO*/ },
+                onSend = { /*TODO*/ }
+            ),
             singleLine = true,
-            shape = RoundedCornerShape(30.dp)
+            maxLines = 1,
+            shape = MaterialTheme.shapes.large
         )
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
+            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
+                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+            } else {
+                Modifier.fillMaxWidth()
+            }.padding(top = 8.dp),
+            textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
                     stringResource(R.string.password),
                     style = MaterialTheme.typography.bodySmall
-                )
-            },
-            placeholder = {
-                Text(
-                    stringResource(R.string.min_8_chars_upper_lower_numbers),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
                 )
             },
             trailingIcon = {
@@ -192,16 +201,30 @@ fun LoginForm(modifier: Modifier) {
                     modifier = Modifier.padding(end = 8.dp)
                 )
             },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+            supportingText = {
+                Text(
+                    stringResource(R.string.min_8_chars_upper_lower_numbers),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            },
+            isError = false,
+            visualTransformation = if (passwordVisible) {
+                VisualTransformation.None
             } else {
-                Modifier.fillMaxWidth()
-            }.padding(top = 8.dp),
+                PasswordVisualTransformation()
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None
-            else PasswordVisualTransformation(),
+            keyboardActions = KeyboardActions(
+                onDone = { /*TODO*/ },
+                onGo = { /*TODO*/ },
+                onNext = { /*TODO*/ },
+                onPrevious = { /*TODO*/ },
+                onSearch = { /*TODO*/ },
+                onSend = { /*TODO*/ }
+            ),
             singleLine = true,
-            shape = RoundedCornerShape(30.dp)
+            maxLines = 1,
+            shape = MaterialTheme.shapes.large
         )
 
         Row(
@@ -211,28 +234,27 @@ fun LoginForm(modifier: Modifier) {
         ) {
             TextButton(
                 onClick = { /* TODO */ },
-            ) {
-                Text(
-                    text = stringResource(R.string.forgot_password),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+                content = {
+                    Text(
+                        text = stringResource(R.string.forgot_password),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            )
         }
 
         Button(
             onClick = { /* TODO */ },
             modifier = Modifier.padding(vertical = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.sign_in_uppercase),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
+            shape = MaterialTheme.shapes.large,
+            content = {
+                Text(
+                    text = stringResource(R.string.sign_in_uppercase),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        )
 
         SignUpPrompt()
         SocialLoginButtons()
@@ -246,36 +268,43 @@ fun SignUpPrompt() {
             text = stringResource(R.string.don_t_have_an_account),
             style = MaterialTheme.typography.bodySmall
         )
-        TextButton(onClick = { /* TODO */ }) {
-            Text(
-                text = stringResource(R.string.create_account),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+        TextButton(
+            onClick = { /* TODO */ },
+            content = {
+                Text(
+                    text = stringResource(R.string.create_account),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        )
     }
 }
 
 @Composable
 fun SocialLoginButtons() {
+    // nút đăng nhập bằng Google
     Button(
+        onClick = { /* TODO */ },
         modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
             Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
         } else {
             Modifier.fillMaxWidth()
         },
-        onClick = { /* TODO */ },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        SocialLoginContent(
-            iconId = R.drawable.ic_google,
-            text = stringResource(R.string.sign_in_with_google)
-        )
-    }
+        ),
+        content = {
+            SocialLoginContent(
+                iconId = R.drawable.ic_google,
+                text = stringResource(R.string.sign_in_with_google)
+            )
+        }
+    )
 
+    // nút đăng nhập bằng Facebook
     Button(
+        onClick = { /* TODO */ },
         modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
             Modifier
                 .width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
@@ -283,17 +312,16 @@ fun SocialLoginButtons() {
         } else {
             Modifier.fillMaxWidth()
         },
-        onClick = { /* TODO */ },
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    ) {
-        SocialLoginContent(
-            iconId = R.drawable.ic_facebook,
-            text = stringResource(R.string.sign_in_with_facebook)
-        )
-    }
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        content = {
+            SocialLoginContent(
+                iconId = R.drawable.ic_facebook,
+                text = stringResource(R.string.sign_in_with_facebook)
+            )
+        }
+    )
 }
 
 @Composable
@@ -308,7 +336,7 @@ fun SocialLoginContent(iconId: Int, text: String) {
             tint = Color.Unspecified
         )
         Text(
-            text,
+            text = text,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -328,27 +356,33 @@ fun TermsAndPrivacy() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(onClick = { /* TODO */ }) {
-                Text(
-                    text = stringResource(R.string.term_of_use),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            TextButton(
+                onClick = { /* TODO */ },
+                content = {
+                    Text(
+                        text = stringResource(R.string.term_of_use),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
 
             Text(
                 text = stringResource(R.string.and),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.background
             )
 
-            TextButton(onClick = { /* TODO */ }) {
-                Text(
-                    text = stringResource(R.string.privacy_policy),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            TextButton(
+                onClick = { /* TODO */ },
+                content = {
+                    Text(
+                        text = stringResource(R.string.privacy_policy),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
         }
     }
 }

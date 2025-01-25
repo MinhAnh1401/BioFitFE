@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -145,28 +144,30 @@ fun GenderOption(
         options.forEach { option ->
             Button(
                 onClick = { onOptionSelected(option) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedOption == option)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = if (selectedOption == option)
-                        MaterialTheme.colorScheme.onPrimary
-                    else
-                        MaterialTheme.colorScheme.onSurface
-                ),
-                shape = RoundedCornerShape(24.dp),
                 modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
                     Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
                 } else {
                     Modifier.fillMaxWidth()
                 },
-            ) {
-                Text(
-                    text = option,
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (selectedOption == option) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    contentColor = if (selectedOption == option) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
+                ),
+                content = {
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            )
         }
     }
 }
