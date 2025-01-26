@@ -58,77 +58,89 @@ class InfoUserGenderActivity : ComponentActivity() {
 
 @Composable
 fun InfoUserGenderScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Box {
-            BackgroundInfoScreen()
-            NextButtonInfoScreen(onClick = { /* TODO */ })
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(WindowInsets.safeDrawing.asPaddingValues())
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TopBarInfoScreen(
-                    onBackClick = { /* TODO */ },
-                    stepColors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        content = {
+            Box(
+                content = {
+                    BackgroundInfoScreen()
+                    NextButtonInfoScreen(onClick = { /* TODO */ })
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(WindowInsets.safeDrawing.asPaddingValues())
+                            .padding(16.dp)
+                            .align(Alignment.TopCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        content = {
+                            TopBarInfoScreen(
+                                onBackClick = { /* TODO */ },
+                                stepColors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary,
+                                    MaterialTheme.colorScheme.secondary,
+                                    MaterialTheme.colorScheme.secondary
+                                ),
+                                screenWidth = screenWidth
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            InfoUserGenderContent()
+                        }
                     )
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                InfoUserGenderContent()
-            }
+                }
+            )
         }
-    }
+    )
 }
 
 @Composable
 fun InfoUserGenderContent() {
     var selectedGender by remember { mutableStateOf<String?>(null) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .padding(WindowInsets.ime.asPaddingValues()),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        item {
-            Text(
-                text = stringResource(R.string.what_is_your_gender),
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier.padding(vertical = 32.dp),
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-        }
+        content = {
+            item {
+                Text(
+                    text = stringResource(R.string.what_is_your_gender),
+                    modifier = Modifier.padding(vertical = 32.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.displaySmall
+                )
+            }
 
-        item {
-            Text(
-                text = stringResource(R.string.description_gender),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 32.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-        }
+            item {
+                Text(
+                    text = stringResource(R.string.description_gender),
+                    modifier = Modifier.padding(bottom = 32.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
-        item {
-            GenderOption(
-                options = listOf(
-                    stringResource(R.string.male),
-                    stringResource(R.string.female)
-                ),
-                selectedOption = selectedGender,
-                onOptionSelected = { selectedGender = it }
-            )
+            item {
+                GenderOption(
+                    options = listOf(
+                        stringResource(R.string.male),
+                        stringResource(R.string.female)
+                    ),
+                    selectedOption = selectedGender,
+                    onOptionSelected = { selectedGender = it }
+                )
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -139,37 +151,38 @@ fun GenderOption(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        options.forEach { option ->
-            Button(
-                onClick = { onOptionSelected(option) },
-                modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                    Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedOption == option) {
-                        MaterialTheme.colorScheme.primary
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = {
+            options.forEach { option ->
+                Button(
+                    onClick = { onOptionSelected(option) },
+                    modifier = if (LocalConfiguration.current.screenWidthDp > 600) {
+                        Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.6f)
                     } else {
-                        MaterialTheme.colorScheme.surfaceVariant
+                        Modifier.fillMaxWidth()
                     },
-                    contentColor = if (selectedOption == option) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (selectedOption == option) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        },
+                        contentColor = if (selectedOption == option) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                    ),
+                    content = {
+                        Text(
+                            text = option,
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
-                ),
-                content = {
-                    Text(
-                        text = option,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-            )
+                )
+            }
         }
-    }
+    )
 }
 
 @Preview(

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,107 +52,152 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StartScreen() {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box {
-            BackgroundImage()
-            Content()
-        }
-    }
+        modifier = Modifier.fillMaxSize(), // tuỳ chỉnh kích thước của Surface
+        // shape = , // tuỳ chỉnh hình dạng của Surface
+        color = MaterialTheme.colorScheme.background, // tuỳ chỉnh màu nền của Surface
+        // contentColor = , // tuỳ chỉnh màu của nội dung bên trong Surface
+        // tonalElevation = , // tuỳ chỉnh độ nổi của Surface
+        // shadowElevation = , // tuỳ chỉnh độ getJSONShadow của Surface
+        // border = , // tuỳ chỉnh viền của Surface
+        content = {
+            Box(
+                // modifier = , // tuỳ chỉnh kích thước và vị trí của Box
+                // contentAlignment = , // tuỳ chỉnh vị trí của nội dung bên trong Box
+                // propagateMinConstraints = , // tuỳ chỉnh xem Box có kế thừa các ràng buộc min hay không
+                content = {
+                    BackgroundImage()
+                    StartScreenContent(screenWidth )
+                } // nội dung bên trong Box
+            )
+        } // nội dung bên trong Surface
+    )
 }
 
 @Composable
 fun BackgroundImage() {
     Image(
-        painter = painterResource(id = R.drawable.bg_start_screen),
-        contentDescription = "Start Screen Background",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
+        painter = painterResource(id = R.drawable.bg_start_screen), // nguồn ảnh
+        contentDescription = "Start screen background", // mô tả nội dung của ảnh
+        modifier = Modifier.fillMaxSize(), // tuỳ chỉnh kích thước của hình ảnh
+        // alignment = , // tuỳ chỉnh vị trí của hình ảnh trong Box
+        contentScale = ContentScale.FillBounds,
+        // alpha = , // tuỳ chỉnh độ mờ của hình ảnh
+        // colorFilter = , // tuỳ chỉnh màu sắc của hình ảnh
     )
 }
 
 @Composable
-fun Content() {
+fun StartScreenContent(screenWidth: Int) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.safeDrawing.asPaddingValues())
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        AppTitleAndDescription()
-        WelcomeSection()
-        ActionButtons()
-    }
+            .padding(horizontal = 16.dp), // tuỳ chỉnh kích thước và vị trí của Column
+        verticalArrangement = Arrangement.SpaceBetween, // sắp xếp các phần tử theo chiều dọc
+        horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
+        content = {
+            AppTitleAndDescription()
+            WelcomeSection(screenWidth)
+            ActionButtons()
+        } // nội dung bên trong Column
+    )
 }
 
 @Composable
 fun AppTitleAndDescription() {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row {
-            Text(
-                text = "BIO",
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.primary
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = {
+            Row(
+                // modifier = , // tuỳ chỉnh kích thước và vị trí của Row
+                // horizontalArrangement = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều ngang
+                // verticalAlignment = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều dọc
+                content = {
+                    Text(
+                        text = "BIO",
+                        // modifier = , // tuỳ chỉnh kích thước và vị trí của Text
+                        color = MaterialTheme.colorScheme.primary,
+                        // fontSize = , // tuỳ chỉnh kích thước chữ
+                        // fontStyle = , // tuỳ chỉnh font chữ
+                        // fontWeight = , // tuỳ chỉnh độ đậm của chữ
+                        // fontFamily = , // tuỳ chỉnh font chữ
+                        // letterSpacing = , // tuỳ chỉnh khoảng cách chữ
+                        // textDecoration = , // tuỳ chỉnh kiểu chữ
+                        // textAlign = , // tuỳ chỉnh căn giữa chữ
+                        // lineHeight = , // tuỳ chỉnh chiều cao chữ
+                        // overflow = , // tuỳ chỉnh cách xử lý khi chữ vượt quá giới hạn
+                        // softWrap = , // tuỳ chỉnh cách xử lý khi chữ vượt quá giới hạn
+                        // maxLines = , // tuỳ chỉnh số lượng dòng tối đa
+                        // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
+                        // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
+                        style = MaterialTheme.typography.displaySmall, // tuỳ chỉnh kiểu chữ
+                    )
+                    Text(
+                        text = "FIT",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.displaySmall,
+                    )
+                } // nội dung bên trong Row
             )
             Text(
-                text = "FIT",
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.onPrimary
+                text = stringResource(R.string.description),
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
-        Text(
-            text = stringResource(R.string.description),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
+    )
 }
 
 @Composable
-fun WelcomeSection() {
+fun WelcomeSection(screenWidth: Int) {
     Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.welcome_to_biofit),
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = stringResource(R.string.start_title_1),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-        Text(
-            text = stringResource(R.string.start_title_2),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = if (screenWidth > 600) {
+            Alignment.CenterHorizontally
+        } else {
+            Alignment.Start
+        },
+        content = {
+            Text(
+                text = stringResource(R.string.welcome_to_biofit),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.displaySmall,
+            )
+            Text(
+                text = stringResource(R.string.start_title_1),
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(R.string.start_title_2),
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    )
 }
 
 @Composable
 fun ActionButtons() {
     Column(
         modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        GetStartedButton()
-        SignInAndSignUpButtons()
-    }
+        content = {
+            GetStartedButton()
+            SignInAndSignUpButtons()
+        }
+    )
 }
 
 @Composable
 fun GetStartedButton() {
+    // GET STARTED button
     Button(
         onClick = { /* TODO */ }, // xử lý sự kiện khi nút được nhấn
         // modifier = Modifier, // tuỳ chỉnh kích thước và vị trí của nút
@@ -185,30 +231,33 @@ fun GetStartedButton() {
 
 @Composable
 fun SignInAndSignUpButtons() {
-    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        TextButton(
-            onClick = { /* TODO */ },
-            shape = MaterialTheme.shapes.large,
-            content = {
-                Text(
-                    text = stringResource(R.string.sign_in),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        ) // có các tham số tương tự như Button
-        TextButton(
-            onClick = { /* TODO */ },
-            shape = MaterialTheme.shapes.large,
-            content = {
-                Text(
-                    text = stringResource(R.string.sign_up),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        )
-    }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        content = {
+            TextButton(
+                onClick = { /* TODO */ },
+                shape = MaterialTheme.shapes.large,
+                content = {
+                    Text(
+                        text = stringResource(R.string.sign_in),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            ) // có các tham số tương tự như Button
+            TextButton(
+                onClick = { /* TODO */ },
+                shape = MaterialTheme.shapes.large,
+                content = {
+                    Text(
+                        text = stringResource(R.string.sign_up),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            )
+        }
+    )
 }
 
 @Preview(

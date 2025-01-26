@@ -69,55 +69,72 @@ class LoginActivity : ComponentActivity() {
 
 @Composable
 fun LoginScreen() {
+    val screenWidth = LocalConfiguration.current.screenWidthDp // lấy chiều rộng màn hình thiết bị
+
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box {
-            SignInAndSignUpBackground()
-            LoginContent()
+        color = MaterialTheme.colorScheme.background,
+        content = {
+            Box(
+                content = {
+                    SignInAndSignUpBackground()
+                    LoginContent(screenWidth)
+                }
+            )
         }
-    }
+    )
 }
 
 @Composable
 fun SignInAndSignUpBackground() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.bg_sign_in_up_top_screen),
-            contentDescription = "Login Screen Background Top",
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            contentScale = ContentScale.FillBounds
-        )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        content = {
+            Image(
+                painter = painterResource(id = R.drawable.bg_sign_in_up_top_screen),
+                contentDescription = "Login Screen Background Top",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter),
+                contentScale = ContentScale.FillBounds
+            )
 
-        Image(
-            painter = painterResource(id = R.drawable.bg_sign_in_up_bot_screen),
-            contentDescription = "Login Screen Background Bottom",
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            contentScale = ContentScale.FillBounds
-        )
-    }
+            Image(
+                painter = painterResource(id = R.drawable.bg_sign_in_up_bot_screen),
+                contentDescription = "Login Screen Background Bottom",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                contentScale = ContentScale.FillBounds
+            )
+        }
+    )
 }
 
 @Composable
-fun LoginContent() {
+fun LoginContent(screenWidth: Int) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(WindowInsets.ime.asPaddingValues()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        item {
-            Logo()
-            LoginForm(modifier = Modifier.padding(top = 16.dp))
+            .padding(WindowInsets.ime.asPaddingValues()), // tuỳ chỉnh kích thước và vị trí của LazyColumn
+        // state = , // tuỳ chỉnh trạng thái của LazyColumn
+        // contentPadding = , // tuỳ chỉnh padding bên trong LazyColumn
+        // reverseLayout = , // tuỳ chỉnh layout ngược lại
+        verticalArrangement = Arrangement.Center, // sắp xếp các phần tử theo chiều dọc
+        horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
+        // flingBehavior = , // tuỳ chỉnh hành vi cuộn
+        // userScrollEnabled = , // tuỳ chỉnh xem có cho phép cuộn hay không
+        content = {
+            item {
+                Logo()
+                LoginForm(
+                    modifier = Modifier.padding(top = 16.dp),
+                    screenWidth = screenWidth
+                )
+            }
         }
-    }
+    )
     TermsAndPrivacy()
 }
 
@@ -133,161 +150,169 @@ fun Logo() {
 }
 
 @Composable
-fun LoginForm(modifier: Modifier) {
+fun LoginForm(modifier: Modifier, screenWidth: Int) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var passwordVisible by remember { mutableStateOf(false) }
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = {
+            var email by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var passwordVisible by remember { mutableStateOf(false) }
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            },
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    stringResource(R.string.email),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            placeholder = {
-                Text(
-                    stringResource(R.string.biofit_example_com),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            },
-            isError = false,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
-            ),
-            singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.large
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            }.padding(top = 8.dp),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    stringResource(R.string.password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            trailingIcon = {
-                Checkbox(
-                    checked = passwordVisible,
-                    onCheckedChange = { passwordVisible = it },
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-            },
-            supportingText = {
-                Text(
-                    stringResource(R.string.min_8_chars_upper_lower_numbers),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            isError = false,
-            visualTransformation = if (passwordVisible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
-            ),
-            singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.large
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = if (LocalConfiguration.current.screenWidthDp > 500)
-                Arrangement.Center else Arrangement.Start
-        ) {
-            TextButton(
-                onClick = { /* TODO */ },
-                content = {
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                modifier = if (screenWidth > 600) {
+                    Modifier.width(screenWidth.dp * 0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                },
+                textStyle = MaterialTheme.typography.bodySmall,
+                label = {
                     Text(
-                        text = stringResource(R.string.forgot_password),
+                        stringResource(R.string.email),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                placeholder = {
+                    Text(
+                        stringResource(R.string.biofit_example_com),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                },
+                isError = false,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
+                singleLine = true,
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large
+            )
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                modifier = if (screenWidth > 600) {
+                    Modifier.width(screenWidth.dp * 0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                }.padding(top = 8.dp),
+                textStyle = MaterialTheme.typography.bodySmall,
+                label = {
+                    Text(
+                        stringResource(R.string.password),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                trailingIcon = {
+                    Checkbox(
+                        checked = passwordVisible,
+                        onCheckedChange = { passwordVisible = it },
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                },
+                supportingText = {
+                    Text(
+                        stringResource(R.string.min_8_chars_upper_lower_numbers),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                isError = false,
+                visualTransformation = if (passwordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
+                singleLine = true,
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = if (screenWidth > 600) {
+                    Arrangement.Center
+                } else {
+                    Arrangement.Start
+                },
+                content = {
+                    TextButton(
+                        onClick = { /* TODO */ },
+                        content = {
+                            Text(
+                                text = stringResource(R.string.forgot_password),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     )
                 }
             )
+
+            Button(
+                onClick = { /* TODO */ },
+                modifier = Modifier.padding(vertical = 16.dp),
+                shape = MaterialTheme.shapes.large,
+                content = {
+                    Text(
+                        text = stringResource(R.string.sign_in_uppercase),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            )
+
+            SignUpPrompt()
+            SocialLoginButtons(screenWidth)
         }
-
-        Button(
-            onClick = { /* TODO */ },
-            modifier = Modifier.padding(vertical = 16.dp),
-            shape = MaterialTheme.shapes.large,
-            content = {
-                Text(
-                    text = stringResource(R.string.sign_in_uppercase),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-        )
-
-        SignUpPrompt()
-        SocialLoginButtons()
-    }
+    )
 }
 
 @Composable
 fun SignUpPrompt() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(R.string.don_t_have_an_account),
-            style = MaterialTheme.typography.bodySmall
-        )
-        TextButton(
-            onClick = { /* TODO */ },
-            content = {
-                Text(
-                    text = stringResource(R.string.create_account),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        )
-    }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        content = {
+            Text(
+                text = stringResource(R.string.don_t_have_an_account),
+                style = MaterialTheme.typography.bodySmall
+            )
+            TextButton(
+                onClick = { /* TODO */ },
+                content = {
+                    Text(
+                        text = stringResource(R.string.create_account),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            )
+        }
+    )
 }
 
 @Composable
-fun SocialLoginButtons() {
-    // nút đăng nhập bằng Google
+fun SocialLoginButtons(screenWidth: Int) {
+    // Sign in with Google button
     Button(
         onClick = { /* TODO */ },
-        modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-            Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+        modifier = if (screenWidth > 500) {
+            Modifier.width(screenWidth.dp * 0.6f)
         } else {
             Modifier.fillMaxWidth()
         },
@@ -302,12 +327,12 @@ fun SocialLoginButtons() {
         }
     )
 
-    // nút đăng nhập bằng Facebook
+    // Sign in with Facebook button
     Button(
         onClick = { /* TODO */ },
-        modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
+        modifier = if (screenWidth > 500) {
             Modifier
-                .width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                .width(screenWidth.dp * 0.6f)
                 .padding(top = 8.dp)
         } else {
             Modifier.fillMaxWidth()
@@ -327,64 +352,68 @@ fun SocialLoginButtons() {
 @Composable
 fun SocialLoginContent(iconId: Int, text: String) {
     Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(
-            painter = painterResource(id = iconId),
-            contentDescription = null,
-            tint = Color.Unspecified
-        )
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+        content = {
+            Icon(
+                painter = painterResource(id = iconId), // tuỳ chỉnh nguồn ảnh
+                contentDescription = null, // tuỳ chỉnh mô tả nội dung của ảnh
+                // modifier = , // tuỳ chỉnh kích thước và vị trí của Icon
+                tint = Color.Unspecified // tuỳ chỉnh màu sắc của Icon
+            )
+            Text(
+                text = text,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+    )
 }
 
 @Composable
 fun TermsAndPrivacy() {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            TextButton(
-                onClick = { /* TODO */ },
+        verticalArrangement = Arrangement.Bottom,
+        content = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
                 content = {
-                    Text(
-                        text = stringResource(R.string.term_of_use),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onBackground
+                    TextButton(
+                        onClick = { /* TODO */ },
+                        content = {
+                            Text(
+                                text = stringResource(R.string.term_of_use),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     )
-                }
-            )
 
-            Text(
-                text = stringResource(R.string.and),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.background
-            )
-
-            TextButton(
-                onClick = { /* TODO */ },
-                content = {
                     Text(
-                        text = stringResource(R.string.privacy_policy),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onBackground
+                        text = stringResource(R.string.and),
+                        color = MaterialTheme.colorScheme.background,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+
+                    TextButton(
+                        onClick = { /* TODO */ },
+                        content = {
+                            Text(
+                                text = stringResource(R.string.privacy_policy),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     )
                 }
             )
         }
-    }
+    )
 }
 
 @Preview(

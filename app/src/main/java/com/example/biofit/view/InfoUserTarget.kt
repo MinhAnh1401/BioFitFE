@@ -60,119 +60,128 @@ class InfoUserTargetActivity : ComponentActivity() {
 
 @Composable
 fun InfoUserTargetScreen() {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box {
-            BackgroundInfoScreen()
-            NextButtonInfoScreen(onClick = { /* TODO */ })
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(WindowInsets.safeDrawing.asPaddingValues())
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TopBarInfoScreen(
-                    onBackClick = { /* TODO */ },
-                    stepColors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.background,
+        content = {
+            Box(
+                content = {
+                    BackgroundInfoScreen()
+                    NextButtonInfoScreen(onClick = { /* TODO */ })
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(WindowInsets.safeDrawing.asPaddingValues())
+                            .padding(16.dp)
+                            .align(Alignment.TopCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        content = {
+                            TopBarInfoScreen(
+                                onBackClick = { /* TODO */ },
+                                stepColors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary
+                                ),
+                                screenWidth = screenWidth
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            InfoUserTargetContent(screenWidth)
+                        }
                     )
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                InfoUserTargetContent()
-            }
+                }
+            )
         }
-    }
+    )
 }
 
 @Composable
-fun InfoUserTargetContent() {
+fun InfoUserTargetContent(screenWidth: Int) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(WindowInsets.ime.asPaddingValues()),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        item {
-            Text(
-                text = stringResource(R.string.what_is_your_weight_goal),
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier.padding(vertical = 32.dp),
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-        }
+        content = {
+            item {
+                Text(
+                    text = stringResource(R.string.what_is_your_weight_goal),
+                    modifier = Modifier.padding(vertical = 32.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.displaySmall
+                )
+            }
 
-        item {
-            Text(
-                text = stringResource(R.string.description_target),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 32.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-        }
+            item {
+                Text(
+                    text = stringResource(R.string.description_target),
+                    modifier = Modifier.padding(bottom = 32.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
-        item {
-            var targetWeight by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = targetWeight, // giá trị hiện tại của trường nhập liệu
-                onValueChange = {
-                    targetWeight = it
-                }, // xử lý thay đổi giá trị và cập nhật trạng thái tương ứng
-                modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                    Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                }, // kích thước và vị trí của trường nhập liệu
-                // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
-                // readOnly = false, // trạng thái chỉ đọc của trường nhập liệu (mặc định false)
-                textStyle = MaterialTheme.typography.bodySmall, // kiểu chữ và kích thước của văn bản trong trường nhập liệu
-                label = {
-                    Text(
-                        text = stringResource(R.string.target_weight),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }, // nhãn cho trường nhập liệu
-                // placeholder = null, // văn bản gợi ý bên trong trường nhập liệu (mặc định null)
-                // leadingIcon = null, // biểu tượng trước văn bản (mặc định null)
-                // trailingIcon = null, // biểu tượng sau văn bản (mặc định null)
-                // prefix = null, // tiền tố văn bản (mặc định null)
-                suffix = {
-                    Text(
-                        text = stringResource(R.string.kg),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }, // hậu tố văn bản
-                // supportingText = null, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
-                isError = false, // trạng thái lỗi
-                // visualTransformation = VisualTransformation.None, // biến đổi hiển thị của văn bản (mặc định VisualTransformation.None)
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), // kiểu bàn phím
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
-                ), // hành động khi nhấn phím
-                singleLine = true, // chỉ cho phép nhập một dòng văn bản
-                maxLines = 1, // số lượng dòng tối đa cho văn bản
-                // minLines = 1, // số lượng dòng tối thiểu cho văn bản (mặc định 1)
-                shape = MaterialTheme.shapes.large, // hình dạng của trường nhập liệu
-                // colors = {} // màu sắc của trường nhập liệu
-            )
+            item {
+                var targetWeight by remember { mutableStateOf("") }
+
+                OutlinedTextField(
+                    value = targetWeight, // giá trị hiện tại của trường nhập liệu
+                    onValueChange = {
+                        targetWeight = it
+                    }, // xử lý thay đổi giá trị và cập nhật trạng thái tương ứng
+                    modifier = if (screenWidth > 600) {
+                        Modifier.width(screenWidth.dp * 0.6f)
+                    } else {
+                        Modifier.fillMaxWidth()
+                    }, // kích thước và vị trí của trường nhập liệu
+                    // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
+                    // readOnly = false, // trạng thái chỉ đọc của trường nhập liệu (mặc định false)
+                    textStyle = MaterialTheme.typography.bodySmall, // kiểu chữ và kích thước của văn bản trong trường nhập liệu
+                    label = {
+                        Text(
+                            text = stringResource(R.string.target_weight),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }, // nhãn cho trường nhập liệu
+                    // placeholder = null, // văn bản gợi ý bên trong trường nhập liệu (mặc định null)
+                    // leadingIcon = null, // biểu tượng trước văn bản (mặc định null)
+                    // trailingIcon = null, // biểu tượng sau văn bản (mặc định null)
+                    // prefix = null, // tiền tố văn bản (mặc định null)
+                    suffix = {
+                        Text(
+                            text = stringResource(R.string.kg),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }, // hậu tố văn bản
+                    // supportingText = null, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
+                    isError = false, // trạng thái lỗi
+                    // visualTransformation = VisualTransformation.None, // biến đổi hiển thị của văn bản (mặc định VisualTransformation.None)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), // kiểu bàn phím
+                    keyboardActions = KeyboardActions(
+                        onDone = { /*TODO*/ },
+                        onGo = { /*TODO*/ },
+                        onNext = { /*TODO*/ },
+                        onPrevious = { /*TODO*/ },
+                        onSearch = { /*TODO*/ },
+                        onSend = { /*TODO*/ }
+                    ), // hành động khi nhấn phím
+                    singleLine = true, // chỉ cho phép nhập một dòng văn bản
+                    maxLines = 1, // số lượng dòng tối đa cho văn bản
+                    // minLines = 1, // số lượng dòng tối thiểu cho văn bản (mặc định 1)
+                    shape = MaterialTheme.shapes.large, // hình dạng của trường nhập liệu
+                    // colors = {} // màu sắc của trường nhập liệu
+                )
+            }
         }
-    }
+    )
 }
 
 @Preview(

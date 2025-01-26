@@ -60,225 +60,239 @@ class RegisterActivity : ComponentActivity() {
 
 @Composable
 fun RegisterScreen() {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box {
-            SignInAndSignUpBackground()
-            RegisterContent()
+        color = MaterialTheme.colorScheme.background,
+        content = {
+            Box(
+                content = {
+                    SignInAndSignUpBackground()
+                    RegisterContent(screenWidth)
+                }
+            )
         }
-    }
+    )
 }
 
 @Composable
-fun RegisterContent() {
+fun RegisterContent(screenWidth: Int) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .padding(WindowInsets.ime.asPaddingValues()),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        item {
-            Logo()
-            RegisterForm(modifier = Modifier.padding(top = 16.dp))
+        content = {
+            item {
+                Logo()
+                RegisterForm(
+                    modifier = Modifier.padding(top = 16.dp),
+                    screenWidth = screenWidth
+                )
+            }
         }
-    }
+    )
+
     TermsAndPrivacy()
 }
 
 @Composable
-fun RegisterForm(modifier: Modifier = Modifier) {
+fun RegisterForm(
+    modifier: Modifier = Modifier,
+    screenWidth: Int
+) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        var username by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var passwordVisible by remember { mutableStateOf(false) }
-        var confirmPassword by remember { mutableStateOf("") }
-        var confirmPasswordVisible by remember { mutableStateOf(false) }
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = {
+            var username by remember { mutableStateOf("") }
+            var email by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var passwordVisible by remember { mutableStateOf(false) }
+            var confirmPassword by remember { mutableStateOf("") }
+            var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            },
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    stringResource(R.string.full_name),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            isError = false,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
-            ),
-            singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.large
-        )
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                modifier = if (screenWidth > 500) {
+                    Modifier.width(screenWidth.dp * 0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                },
+                textStyle = MaterialTheme.typography.bodySmall,
+                label = {
+                    Text(
+                        stringResource(R.string.full_name),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                isError = false,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
+                singleLine = true,
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large
+            )
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            }.padding(top = 8.dp),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    stringResource(R.string.email),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            placeholder = {
-                Text(
-                    stringResource(R.string.biofit_example_com),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            },
-            isError = false,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
-            ),
-            singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.large
-        )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                modifier = if (screenWidth > 500) {
+                    Modifier.width(screenWidth.dp * 0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                }.padding(top = 8.dp),
+                textStyle = MaterialTheme.typography.bodySmall,
+                label = {
+                    Text(
+                        stringResource(R.string.email),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                placeholder = {
+                    Text(
+                        stringResource(R.string.biofit_example_com),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                },
+                isError = false,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
+                singleLine = true,
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large
+            )
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            }.padding(top = 8.dp),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    stringResource(R.string.password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            trailingIcon = {
-                Checkbox(
-                    checked = passwordVisible,
-                    onCheckedChange = { passwordVisible = it },
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-            },
-            supportingText = {
-                Text(
-                    stringResource(R.string.min_8_chars_upper_lower_numbers),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            isError = false,
-            visualTransformation = if (passwordVisible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
-            ),
-            singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.large
-        )
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                modifier = if (screenWidth > 500) {
+                    Modifier.width(screenWidth.dp * 0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                }.padding(top = 8.dp),
+                textStyle = MaterialTheme.typography.bodySmall,
+                label = {
+                    Text(
+                        stringResource(R.string.password),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                trailingIcon = {
+                    Checkbox(
+                        checked = passwordVisible,
+                        onCheckedChange = { passwordVisible = it },
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                },
+                supportingText = {
+                    Text(
+                        stringResource(R.string.min_8_chars_upper_lower_numbers),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                isError = false,
+                visualTransformation = if (passwordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
+                singleLine = true,
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large
+            )
 
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
-            } else {
-                Modifier.fillMaxWidth()
-            }.padding(top = 8.dp),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    stringResource(R.string.confirm_password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            trailingIcon = {
-                Checkbox(
-                    checked = confirmPasswordVisible,
-                    onCheckedChange = { confirmPasswordVisible = it },
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-            },
-            supportingText = {
-                Text(
-                    stringResource(R.string.re_enter_password),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            },
-            isError = false,
-            visualTransformation = if (confirmPasswordVisible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
-            ),
-            singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.large
-        )
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                modifier = if (screenWidth > 500) {
+                    Modifier.width(screenWidth.dp * 0.6f)
+                } else {
+                    Modifier.fillMaxWidth()
+                }.padding(top = 8.dp),
+                textStyle = MaterialTheme.typography.bodySmall,
+                label = {
+                    Text(
+                        stringResource(R.string.confirm_password),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                trailingIcon = {
+                    Checkbox(
+                        checked = confirmPasswordVisible,
+                        onCheckedChange = { confirmPasswordVisible = it },
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                },
+                supportingText = {
+                    Text(
+                        stringResource(R.string.re_enter_password),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                },
+                isError = false,
+                visualTransformation = if (confirmPasswordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(
+                    onDone = { /*TODO*/ },
+                    onGo = { /*TODO*/ },
+                    onNext = { /*TODO*/ },
+                    onPrevious = { /*TODO*/ },
+                    onSearch = { /*TODO*/ },
+                    onSend = { /*TODO*/ }
+                ),
+                singleLine = true,
+                maxLines = 1,
+                shape = MaterialTheme.shapes.large
+            )
 
-        Button(
-            onClick = { /* TODO */ },
-            modifier = Modifier.padding(vertical = 16.dp),
-            shape = MaterialTheme.shapes.large,
-            content = {
-                Text(
-                    text = stringResource(R.string.sign_up_uppercase),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-        )
+            Button(
+                onClick = { /* TODO */ },
+                modifier = Modifier.padding(vertical = 16.dp),
+                shape = MaterialTheme.shapes.large,
+                content = {
+                    Text(
+                        text = stringResource(R.string.sign_up_uppercase),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            )
 
-        SocialLoginButtons()
-    }
+            SocialLoginButtons(screenWidth)
+        }
+    )
 }
 
 @Preview(

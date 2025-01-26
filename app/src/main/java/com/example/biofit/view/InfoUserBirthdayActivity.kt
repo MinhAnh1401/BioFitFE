@@ -60,75 +60,85 @@ class InfoUserBirthdayActivity : ComponentActivity() {
 
 @Composable
 fun InfoUserBirthdayScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Box {
-            BackgroundInfoScreen()
-            NextButtonInfoScreen(onClick = { /* TODO */ })
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(WindowInsets.safeDrawing.asPaddingValues())
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TopBarInfoScreen(
-                    onBackClick = { /* TODO */ },
-                    stepColors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        content = {
+            Box(
+                content = {
+                    BackgroundInfoScreen()
+                    NextButtonInfoScreen(onClick = { /* TODO */ })
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(WindowInsets.safeDrawing.asPaddingValues())
+                            .padding(16.dp)
+                            .align(Alignment.TopCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        content = {
+                            TopBarInfoScreen(
+                                onBackClick = { /* TODO */ },
+                                stepColors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary,
+                                    MaterialTheme.colorScheme.secondary
+                                ),
+                                screenWidth = screenWidth
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            InfoUserBirthdayContent(screenWidth)
+                        }
                     )
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                InfoUserBirthdayContent()
-            }
+                }
+            )
         }
-    }
+    )
 }
 
 @Composable
-fun InfoUserBirthdayContent() {
+fun InfoUserBirthdayContent(screenWidth: Int) {
     var day by remember { mutableStateOf("") }
     var month by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .padding(WindowInsets.ime.asPaddingValues()),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        item {
-            Text(
-                text = stringResource(id = R.string.what_is_your_date_of_birth),
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier.padding(vertical = 32.dp),
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-        }
+        content = {
+            item {
+                Text(
+                    text = stringResource(id = R.string.what_is_your_date_of_birth),
+                    modifier = Modifier.padding(vertical = 32.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.displaySmall
+                )
+            }
 
-        item {
-            Text(
-                text = stringResource(R.string.description_date_of_birth),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 32.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-        }
+            item {
+                Text(
+                    text = stringResource(R.string.description_date_of_birth),
+                    modifier = Modifier.padding(bottom = 32.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
-        item {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            item {
                 OutlinedTextField(
                     value = day,
                     onValueChange = { day = it },
-                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                    modifier = if (screenWidth > 600) {
+                        Modifier.width(screenWidth.dp * 0.6f)
                     } else {
                         Modifier.fillMaxWidth()
                     },
@@ -153,11 +163,12 @@ fun InfoUserBirthdayContent() {
                     maxLines = 1,
                     shape = MaterialTheme.shapes.large
                 )
+
                 OutlinedTextField(
                     value = month,
                     onValueChange = { month = it },
-                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                    modifier = if (screenWidth > 600) {
+                        Modifier.width(screenWidth.dp * 0.6f)
                     } else {
                         Modifier.fillMaxWidth()
                     }.padding(top = 8.dp),
@@ -182,11 +193,12 @@ fun InfoUserBirthdayContent() {
                     maxLines = 1,
                     shape = MaterialTheme.shapes.large
                 )
+
                 OutlinedTextField(
                     value = year,
                     onValueChange = { year = it },
-                    modifier = if (LocalConfiguration.current.screenWidthDp > 500) {
-                        Modifier.width((LocalConfiguration.current.screenWidthDp * 0.6f).dp)
+                    modifier = if (screenWidth > 600) {
+                        Modifier.width(screenWidth.dp * 0.6f)
                     } else {
                         Modifier.fillMaxWidth()
                     }.padding(top = 8.dp),
@@ -213,7 +225,7 @@ fun InfoUserBirthdayContent() {
                 )
             }
         }
-    }
+    )
 }
 
 @Preview(
