@@ -63,21 +63,21 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp,
         lineHeight = 48.sp,
-        letterSpacing = -0.25.sp
+        letterSpacing = (-0.25).sp
     ),
     displayMedium = TextStyle(
         fontFamily = SFProDisplay,
         fontWeight = FontWeight.Bold,
         fontSize = 36.sp,
         lineHeight = 44.sp,
-        letterSpacing = -0.15.sp
+        letterSpacing = (-0.15).sp
     ),
     displaySmall = TextStyle(
         fontFamily = SFProDisplay,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 40.sp,
-        letterSpacing = -0.1.sp
+        letterSpacing = (-0.1).sp
     ),
 
     // Headline Text Styles

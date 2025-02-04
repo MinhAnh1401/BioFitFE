@@ -5,28 +5,28 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="InfoUserBirthdayScreenPreviewInLargePhone">
+      <SelectionState runConfigName="SettingPortraitScreenPreviewInLargePhone">
         <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="InfoUserBirthdayScreenDarkModePreviewInSmallPhone">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="InfoUserHeightAndWeightScreenPreviewInTablet">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="StartScreenPreviewInLargePhone">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="InfoUserNameScreenPreviewInLargePhone">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-26T05:42:04.402713Z">
+        <DropdownSelection timestamp="2025-02-04T15:07:59.684449Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/nguyenminhdang/.android/avd/Pixel_Tablet_API_35.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/nguyenminhdang/.android/avd/Pixel_9_Pro_XL_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="InfoUserNamePortraitScreenPreviewInLargePhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="InfoUserHeightAndWeightLandscapeScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="SettingPortraitScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ProfilePortraitScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

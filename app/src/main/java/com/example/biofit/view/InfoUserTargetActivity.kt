@@ -5,27 +5,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -38,10 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -51,13 +41,13 @@ import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 
-class InfoUserNameActivity : ComponentActivity() {
+class InfoUserTargetActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             BioFitTheme {
-                InfoUserNameScreen()
+                InfoUserTargetScreen()
             }
         }
     }
@@ -69,7 +59,7 @@ class InfoUserNameActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserNameScreen() {
+fun InfoUserTargetScreen() {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
@@ -103,16 +93,16 @@ fun InfoUserNameScreen() {
                     onBackClick = { /* TODO */ },
                     stepColors = listOf(
                         MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary
                     ),
                     screenWidth,
                     screenHeight,
                     standardPadding
                 )
-                InfoUserNameContent(
+                InfoUserTargetContent(
                     standardPadding,
                     modifier
                 )
@@ -122,140 +112,19 @@ fun InfoUserNameScreen() {
 }
 
 @Composable
-fun BackgroundInfoScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.bg_info_screen),
-            contentDescription = "Information Screen Background",
-            modifier = Modifier.fillMaxWidth(),
-            contentScale = ContentScale.FillBounds
-        )
-    }
-}
-
-@Composable
-fun NextButtonInfoScreen(
-    onClick: () -> Unit,
-    standardPadding: Dp
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(standardPadding * 2),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.End,
-    ) {
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier.size(standardPadding * 4),
-            enabled = true,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.btn_next),
-                contentDescription = "Next Button",
-                modifier = Modifier.size(standardPadding * 4),
-                tint = MaterialTheme.colorScheme.background
-            )
-        }
-    }
-}
-
-@Composable
-fun TopBarInfoScreen(
-    onBackClick: () -> Unit,
-    stepColors: List<androidx.compose.ui.graphics.Color>,
-    screenWidth: Int,
-    screenHeight: Int,
-    standardPadding: Dp
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        BackButton(onBackClick)
-        Spacer(modifier = Modifier.width(standardPadding))
-        ProgressIndicatorTopBarInfoScreen(
-            stepColors,
-            screenWidth,
-            screenHeight,
-            standardPadding
-        )
-    }
-}
-
-@Composable
-fun BackButton(onBackClick: () -> Unit = {}) {
-    IconButton(
-        onClick = onBackClick,
-        modifier = Modifier.size(26.dp),
-        enabled = true,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.btn_back),
-            contentDescription = "Back Button",
-            modifier = Modifier.size(26.dp),
-            tint = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-@Composable
-fun ProgressIndicatorTopBarInfoScreen(
-    stepColors: List<androidx.compose.ui.graphics.Color>,
-    screenWidth: Int,
-    screenHeight: Int,
-    standardPadding: Dp
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = standardPadding * 2),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        stepColors.forEach { color ->
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(
-                        ratio = 1f / (
-                                standardPadding.value /
-                                        if (screenWidth > screenHeight || screenWidth > 450) {
-                                            250
-                                        } else {
-                                            100
-                                        }
-                                )
-                    )
-                    .clip(MaterialTheme.shapes.large)
-                    .background(color = color)
-            )
-            Spacer(modifier = Modifier.width(standardPadding))
-        }
-    }
-}
-
-@Composable
-fun InfoUserNameContent(
+fun InfoUserTargetContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    var username by rememberSaveable { mutableStateOf("") }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
             Text(
-                text = stringResource(R.string.what_is_your_name),
-                modifier = Modifier.padding(
-                    top = standardPadding * 3,
-                    bottom = standardPadding
-                ),
+                text = stringResource(R.string.what_is_your_weight_goal),
+                modifier = Modifier.padding(top = standardPadding * 3),
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.displaySmall
@@ -263,18 +132,47 @@ fun InfoUserNameContent(
         }
 
         item {
+            Text(
+                text = stringResource(R.string.description_target),
+                modifier = Modifier.padding(bottom = standardPadding),
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        item {
+            var targetWeight by rememberSaveable { mutableStateOf("") }
+
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                modifier = modifier,
-                textStyle = MaterialTheme.typography.bodySmall,
+                value = targetWeight, // giá trị hiện tại của trường nhập liệu
+                onValueChange = {
+                    targetWeight = it
+                }, // xử lý thay đổi giá trị và cập nhật trạng thái tương ứng
+                modifier = modifier, // kích thước và vị trí của trường nhập liệu
+                // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
+                // readOnly = false, // trạng thái chỉ đọc của trường nhập liệu (mặc định false)
+                textStyle = MaterialTheme.typography.bodySmall, // kiểu chữ và kích thước của văn bản trong trường nhập liệu
                 label = {
                     Text(
-                        text = stringResource(R.string.full_name),
+                        text = stringResource(R.string.target_weight),
                         style = MaterialTheme.typography.bodySmall
                     )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                }, // nhãn cho trường nhập liệu
+                // placeholder = null, // văn bản gợi ý bên trong trường nhập liệu (mặc định null)
+                // leadingIcon = null, // biểu tượng trước văn bản (mặc định null)
+                // trailingIcon = null, // biểu tượng sau văn bản (mặc định null)
+                // prefix = null, // tiền tố văn bản (mặc định null)
+                suffix = {
+                    Text(
+                        text = stringResource(R.string.kg),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }, // hậu tố văn bản
+                // supportingText = null, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
+                isError = false, // trạng thái lỗi
+                // visualTransformation = VisualTransformation.None, // biến đổi hiển thị của văn bản (mặc định VisualTransformation.None)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), // kiểu bàn phím
                 keyboardActions = KeyboardActions(
                     onDone = { /*TODO*/ },
                     onGo = { /*TODO*/ },
@@ -282,14 +180,15 @@ fun InfoUserNameContent(
                     onPrevious = { /*TODO*/ },
                     onSearch = { /*TODO*/ },
                     onSend = { /*TODO*/ }
-                ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.large,
+                ), // hành động khi nhấn phím
+                singleLine = true, // chỉ cho phép nhập một dòng văn bản
+                maxLines = 1, // số lượng dòng tối đa cho văn bản
+                // minLines = 1, // số lượng dòng tối thiểu cho văn bản (mặc định 1)
+                shape = MaterialTheme.shapes.large, // hình dạng của trường nhập liệu
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                ) // màu sắc của trường nhập liệu
             )
         }
 
@@ -311,9 +210,9 @@ fun InfoUserNameContent(
     locale = "vi"
 )
 @Composable
-private fun InfoUserNamePortraitScreenDarkModePreviewInSmallPhone() {
+private fun InfoUserTargetPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -324,9 +223,9 @@ private fun InfoUserNamePortraitScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun InfoUserNamePortraitScreenPreviewInLargePhone() {
+private fun InfoUserTargetPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -338,9 +237,9 @@ private fun InfoUserNamePortraitScreenPreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun InfoUserNamePortraitScreenPreviewInTablet() {
+private fun InfoUserTargetPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -352,9 +251,9 @@ private fun InfoUserNamePortraitScreenPreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun InfoUserNameLandscapeScreenDarkModePreviewInSmallPhone() {
+private fun InfoUserTargetLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -365,9 +264,9 @@ private fun InfoUserNameLandscapeScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun InfoUserNameLandscapeScreenPreviewInLargePhone() {
+private fun InfoUserTargetLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserTargetScreen()
     }
 }
 
@@ -379,8 +278,8 @@ private fun InfoUserNameLandscapeScreenPreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun InfoUserNameLandscapeScreenPreviewInTablet() {
+private fun InfoUserTargetLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserTargetScreen()
     }
 }
