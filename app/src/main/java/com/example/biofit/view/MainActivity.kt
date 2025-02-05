@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Button
@@ -106,19 +108,9 @@ fun StartScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                if (screenWidth > screenHeight) {
-                    PaddingValues(
-                        top = standardPadding,
-                        start = standardPadding,
-                        end = standardPadding,
-                    )
-                } else {
-                    PaddingValues(
-                        top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                        start = standardPadding,
-                        end = standardPadding,
-                    )
-                }
+                top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                start = standardPadding,
+                end = standardPadding,
             ), // tuỳ chỉnh kích thước và vị trí của Column
         verticalArrangement = Arrangement.SpaceBetween, // sắp xếp các phần tử theo chiều dọc
         horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
@@ -221,6 +213,7 @@ fun ActionButtons(standardPadding: Dp) {
             onCLick = { TODO() }
         )
         SignInAndSignUpButtons(standardPadding)
+        Spacer(modifier = Modifier.height(standardPadding))
     }
 }
 
