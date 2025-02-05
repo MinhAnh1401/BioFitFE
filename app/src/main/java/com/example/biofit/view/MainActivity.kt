@@ -85,6 +85,11 @@ fun StartScreen() {
 }
 
 @Composable
+fun ABC(modifier: Modifier = Modifier) {
+    
+}
+
+@Composable
 fun StartScreenBackgroundImage() {
     Image(
         painter = painterResource(id = R.drawable.bg_start_screen), // nguồn ảnh
