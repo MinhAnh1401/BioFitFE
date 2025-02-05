@@ -87,6 +87,7 @@ fun ProfileScreen() {
             ) {
                 Column(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(
                             top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
                             start = standardPadding,
@@ -94,7 +95,6 @@ fun ProfileScreen() {
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TopBarProfileScreen()
                     ProfileContent(
                         standardPadding,
                         modifier
@@ -118,27 +118,6 @@ fun ProfileScreen() {
 }
 
 @Composable
-fun TopBarProfileScreen() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.End
-        ) {
-            IconButton(
-                onClick = { TODO() } // Xử lý sự kiện cho nút icon Setting
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(R.string.setting),
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun ProfileContent(
     standardPadding: Dp,
     modifier: Modifier
@@ -146,6 +125,10 @@ fun ProfileContent(
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        item {
+            Spacer(modifier = Modifier.padding(standardPadding))
+        }
+
         item {
             Row(
                 modifier = modifier,
@@ -196,7 +179,7 @@ fun ProfileContent(
                     onClick = { TODO() },
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.profile),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
