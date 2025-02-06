@@ -195,7 +195,8 @@ fun InfoUserTargetContent(
         item {
             Spacer(
                 modifier = Modifier.padding(
-                    bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding()
+                    bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding() * 2
+                            + standardPadding
                 )
             )
         }
