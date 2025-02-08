@@ -112,4 +112,8 @@
     <string name="latest_weight">Latest weight</string>
     <string name="update">Update</string>
     <string name="gam">g</string>
+    <string name="calorie_statistics">Calorie statistics</string>
+    <string name="update_weight">Update weight</string>
+    <string name="current_weight">Current weight</string>
+    <string name="weighing_day">Weighing day</string>
 </resources>

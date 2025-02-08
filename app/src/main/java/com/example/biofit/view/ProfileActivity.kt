@@ -582,7 +582,7 @@ private fun ProfilePortraitScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun Profile() {
+private fun ProfilePortraitScreenPreviewInLargePhone() {
     BioFitTheme {
         ProfileScreen()
     }

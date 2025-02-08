@@ -112,4 +112,8 @@
     <string name="latest_weight">Cân nặng gần đây</string>
     <string name="update">Cập nhật</string>
     <string name="gam">g</string>
+    <string name="calorie_statistics">Thống kê lượng calo</string>
+    <string name="update_weight">Cập nhật cân nặng</string>
+    <string name="current_weight">Cân nặng hiện tại</string>
+    <string name="weighing_day">Ngày đo cân nặng</string>
 </resources>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -107,7 +108,21 @@ fun SettingScreen() {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSettingScreen()
+            TopBarSetting(
+                onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
+                R.string.setting,
+                textButton = {
+                    TextButton(
+                        onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn nút Save
+                    ) {
+                        Text(
+                            text = stringResource(R.string.save),
+                            color = MaterialTheme.colorScheme.inverseSurface,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
+            )
             SettingContent(
                 screenWidth,
                 screenHeight,
@@ -119,41 +134,42 @@ fun SettingScreen() {
 }
 
 @Composable
-fun TopBarSettingScreen() {
+fun TopBarSetting(
+    onBackClick: () -> Unit,
+    @StringRes title: Int,
+    iconButton: (@Composable () -> Unit)? = null,
+    textButton: (@Composable () -> Unit)? = null
+) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.5f),
             horizontalAlignment = Alignment.Start
         ) {
-            BackButton(
-                onBackClick = { TODO() } // Xử lý sự kiện cho nút Back
-            )
+            BackButton(onBackClick = onBackClick)
         }
         Column(
-            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.setting),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.End
-        ) {
-            TextButton(
-                onClick = { TODO() }, // Xử lý sự kiện cho nút Save
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.save),
-                    color = MaterialTheme.colorScheme.inverseSurface,
-                    style = MaterialTheme.typography.labelLarge
+                    text = stringResource(title),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium
                 )
+
+                iconButton?.invoke()
             }
+        }
+        Column(
+            modifier = Modifier.weight(0.5f),
+            horizontalAlignment = Alignment.End
+        ) {
+            textButton?.invoke()
         }
     }
 }
@@ -321,7 +337,6 @@ fun SettingContent(
                             )
                         }
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(
                         onDone = { TODO() },
                         onGo = { TODO() },
