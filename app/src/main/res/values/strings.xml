@@ -31,9 +31,7 @@
     <string name="female">Female</string>
     <string name="what_is_your_date_of_birth">What is your date of birth?</string>
     <string name="description_date_of_birth">We need your date of birth for accurate daily calculations!</string>
-    <string name="day">Day</string>
-    <string name="month">Month</string>
-    <string name="year">Year</string>
+    <string name="date_of_birth">Date of birth</string>
     <string name="what_is_your_height_and_weight">What is your height and weight?</string>
     <string name="description_height_and_weight">We need your height and weight to calculate your ideal calories and macro!</string>
     <string name="height">Height</string>
@@ -51,7 +49,6 @@
     <string name="gender">Gender</string>
     <string name="ok">OK</string>
     <string name="select_gender">Select gender</string>
-    <string name="date_of_birth">Date of birth</string>
     <string name="select_date_of_birth">Select date of birth</string>
     <string name="cancel">Cancel</string>
     <string name="calorie_intake_target">Calorie intake target</string>
@@ -95,7 +92,7 @@
     <string name="edit">Edit</string>
     <string name="protein">Protein</string>
     <string name="powdered_sugar">Powdered sugar</string>
-    <string name="fat">Fat</string>
+    <string name="fat">Fats</string>
     <string name="salt">Salt</string>
     <string name="fiber">Fiber</string>
     <string name="exceeded_calories">Exceeded calories</string>
@@ -116,4 +113,21 @@
     <string name="update_weight">Update weight</string>
     <string name="current_weight">Current weight</string>
     <string name="weighing_day">Weighing day</string>
+    <string name="day">Day</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="daily_calorie_count">Daily calorie count</string>
+    <string name="food_calories_intake">Food calories intake</string>
+    <string name="exercise_calories">Exercise calories</string>
+    <string name="net_calories">Net calories</string>
+    <string name="target_calories">Target calories</string>
+    <string name="carbohydrate">Carbohydrates</string>
+    <string name="daily_marco_count">Daily marco count</string>
+    <string name="average_consumption">Average consumption</string>
+    <string name="target_calories_for_the_week">Target Calories for the Week</string>
+    <string name="target_calories_day">Target Calories / Day</string>
+    <string name="actual_calories_for_the_week">Actual Calories for the Week</string>
+    <string name="actual_calories_day">Actual Calories / Day</string>
+    <string name="average_calorie_count">Average calorie count</string>
+    <string name="average_macro_count">Average macro count</string>
 </resources>

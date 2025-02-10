@@ -111,7 +111,8 @@ fun SettingScreen() {
             TopBarSetting(
                 onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
                 R.string.setting,
-                textButton = {
+                null,
+                rightButton = {
                     TextButton(
                         onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn nút Save
                     ) {
@@ -121,7 +122,8 @@ fun SettingScreen() {
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
-                }
+                },
+                standardPadding
             )
             SettingContent(
                 screenWidth,
@@ -137,8 +139,9 @@ fun SettingScreen() {
 fun TopBarSetting(
     onBackClick: () -> Unit,
     @StringRes title: Int,
-    iconButton: (@Composable () -> Unit)? = null,
-    textButton: (@Composable () -> Unit)? = null
+    middleButton: (@Composable () -> Unit)? = null,
+    rightButton: (@Composable () -> Unit)? = null,
+    standardPadding: Dp
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -148,7 +151,10 @@ fun TopBarSetting(
             modifier = Modifier.weight(0.5f),
             horizontalAlignment = Alignment.Start
         ) {
-            BackButton(onBackClick = onBackClick)
+            BackButton(
+                onBackClick,
+                standardPadding
+            )
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -162,14 +168,14 @@ fun TopBarSetting(
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                iconButton?.invoke()
+                middleButton?.invoke()
             }
         }
         Column(
             modifier = Modifier.weight(0.5f),
             horizontalAlignment = Alignment.End
         ) {
-            textButton?.invoke()
+            rightButton?.invoke()
         }
     }
 }

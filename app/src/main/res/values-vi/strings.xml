@@ -31,9 +31,7 @@
     <string name="female">Nữ</string>
     <string name="what_is_your_date_of_birth">Ngày sinh của bạn là ngày nào?</string>
     <string name="description_date_of_birth">Chúng tôi cần ngày sinh của bạn để tính toán chính xác hàng ngày!</string>
-    <string name="day">Ngày sinh</string>
-    <string name="month">Tháng sinh</string>
-    <string name="year">Năm sinh</string>
+    <string name="date_of_birth">Ngày sinh</string>
     <string name="what_is_your_height_and_weight">Chiều cao và cân nặng của bạn là bao nhiêu?</string>
     <string name="description_height_and_weight">Chúng tôi cần chiều cao và cân nặng của bạn để tính toán lượng calo và macro lý tưởng cho bạn!</string>
     <string name="height">Chiều cao</string>
@@ -51,7 +49,6 @@
     <string name="gender">Giới tính</string>
     <string name="ok">Đồng ý</string>
     <string name="select_gender">Chọn giới tính</string>
-    <string name="date_of_birth">Ngày sinh</string>
     <string name="select_date_of_birth">Chọn ngày sinh</string>
     <string name="cancel">Huỷ</string>
     <string name="calorie_intake_target">Mục tiêu lượng calo</string>
@@ -116,4 +113,21 @@
     <string name="update_weight">Cập nhật cân nặng</string>
     <string name="current_weight">Cân nặng hiện tại</string>
     <string name="weighing_day">Ngày đo cân nặng</string>
+    <string name="day">Ngày</string>
+    <string name="month">Tháng</string>
+    <string name="year">Năm</string>
+    <string name="daily_calorie_count">Lượng calo hàng ngày</string>
+    <string name="food_calories_intake">Lượng calo từ thực phẩm</string>
+    <string name="exercise_calories">Lượng calo khi tập thể dục</string>
+    <string name="net_calories">Lượng calo thực tế</string>
+    <string name="target_calories">Lượng calo mục tiêu</string>
+    <string name="carbohydrate">Tinh bột</string>
+    <string name="daily_marco_count">Lượng macro hàng ngày</string>
+    <string name="average_consumption">Lượng tiêu thụ trung bình</string>
+    <string name="target_calories_for_the_week">Lượng calo mục tiêu trong tuần</string>
+    <string name="target_calories_day">Lượng calo mục tiêu / ngày</string>
+    <string name="actual_calories_for_the_week">Lượng calo thực tế trong tuần</string>
+    <string name="actual_calories_day">Lượng calo thực tế / ngày</string>
+    <string name="average_calorie_count">Lượng calo trung bình</string>
+    <string name="average_macro_count">Lượng macro trung bình</string>
 </resources>

@@ -153,7 +153,7 @@ fun InfoUserBirthdayContent(
                 textStyle = MaterialTheme.typography.bodySmall,
                 label = {
                     Text(
-                        text = stringResource(R.string.day),
+                        text = stringResource(R.string.date_of_birth),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },

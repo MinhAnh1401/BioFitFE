@@ -101,6 +101,9 @@ fun UpdateWeightScreen() {
                     TopBarSetting(
                         onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
                         R.string.update_weight,
+                        null,
+                        null,
+                        standardPadding
                     )
 
                     Row(

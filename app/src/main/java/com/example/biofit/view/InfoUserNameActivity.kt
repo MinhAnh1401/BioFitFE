@@ -176,7 +176,10 @@ fun TopBarInfoScreen(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        BackButton(onBackClick)
+        BackButton(
+            onBackClick,
+            standardPadding
+        )
         Spacer(modifier = Modifier.width(standardPadding))
         ProgressIndicatorTopBarInfoScreen(
             stepColors,
@@ -188,17 +191,19 @@ fun TopBarInfoScreen(
 }
 
 @Composable
-fun BackButton(onBackClick: () -> Unit = {}) {
+fun BackButton(
+    onBackClick: () -> Unit = {},
+    standardPadding: Dp
+) {
     IconButton(
         onClick = onBackClick,
-        modifier = Modifier.size(26.dp),
+        modifier = Modifier.size(standardPadding * 2),
         enabled = true,
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = R.drawable.btn_back),
             contentDescription = "Back Button",
-            modifier = Modifier.size(26.dp),
-            tint = MaterialTheme.colorScheme.onBackground
+            modifier = Modifier.size(standardPadding * 2),
         )
     }
 }

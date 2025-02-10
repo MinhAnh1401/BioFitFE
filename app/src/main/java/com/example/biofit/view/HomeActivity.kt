@@ -76,6 +76,7 @@ import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import kotlin.random.Random
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -240,13 +241,17 @@ fun HomeScreenContent(
     }
 }
 
+fun getTargetCalories(): Float {
+    return 1000f // Thay đổi thành lượng calo mục tiêu
+}
+
 @Composable
 fun OverviewAndSearchBar(
     standardPadding: Dp,
     modifier: Modifier
 ) {
     val loadedCalories = 430 // Thay đổi thành lượng calo đã nạp
-    val targetCalories = 1000 // Thay đổi thành lượng calo mục tiêu
+    val targetCalories = getTargetCalories()
     val nutrients = listOf(
         Triple(R.string.protein, 400, 1000), // Thay đổi thành protein
         Triple(R.string.powdered_sugar, 1700, 1000), // Thay đổi thành đường
@@ -327,7 +332,7 @@ fun OverviewAndSearchBar(
                         )
 
                         Text(
-                            text = stringResource(R.string.loaded) + " $loadedCalories" +
+                            text = stringResource(R.string.loaded) + " $loadedCalories " +
                                     stringResource(R.string.cal),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodySmall
@@ -345,7 +350,7 @@ fun OverviewAndSearchBar(
                         )
 
                         Text(
-                            text = stringResource(R.string.target) + " $targetCalories" +
+                            text = stringResource(R.string.target) + " $targetCalories " +
                                     stringResource(R.string.cal),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodySmall
@@ -484,10 +489,7 @@ fun RemainingCaloriesChart(
             color = circleColor.copy(alpha = 0.3f),
             center = center,
             radius = radius,
-            style = Stroke(
-                width = standardPadding.value * 5f,
-                cap = StrokeCap.Round
-            )
+            style = Stroke(width = radius / 1.7f)
         )
 
         drawArc(
@@ -498,7 +500,7 @@ fun RemainingCaloriesChart(
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
             style = Stroke(
-                width = standardPadding.value * 5f,
+                width = radius / 2f,
                 cap = StrokeCap.Round
             )
         )
@@ -514,7 +516,7 @@ fun RemainingCaloriesChart(
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
                 style = Stroke(
-                    width = standardPadding.value * 5f,
+                    width = radius / 2f,
                     cap = StrokeCap.Round
                 )
             )
@@ -530,7 +532,7 @@ fun RemainingCaloriesChart(
                 center.x,
                 center.y + standardPadding.value,
                 android.graphics.Paint().apply {
-                    textSize = standardPadding.value * 8
+                    textSize = radius / 2
                     color = if (exceeded) {
                         exceededColor.toArgb()
                     } else {
@@ -549,7 +551,7 @@ fun RemainingCaloriesChart(
                 center.x,
                 center.y + standardPadding.value * 3.5f,
                 android.graphics.Paint().apply {
-                    textSize = 28f
+                    textSize = radius / 7
                     color = if (exceeded) {
                         exceededColor.toArgb()
                     } else {
@@ -586,7 +588,10 @@ fun NutritionChart(
             color = circleColor.copy(alpha = 0.3f),
             center = center,
             radius = radius,
-            style = Stroke(width = standardPadding.value * 3f, cap = StrokeCap.Round)
+            style = Stroke(
+                width = radius / 1.7f,
+                cap = StrokeCap.Round
+            )
         )
 
         drawArc(
@@ -596,7 +601,10 @@ fun NutritionChart(
             useCenter = false,
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
-            style = Stroke(width = standardPadding.value * 3f, cap = StrokeCap.Round)
+            style = Stroke(
+                width = radius / 2f,
+                cap = StrokeCap.Round
+            )
         )
 
         if (exceeded) {
@@ -609,7 +617,10 @@ fun NutritionChart(
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
-                style = Stroke(width = standardPadding.value * 3f, cap = StrokeCap.Round)
+                style = Stroke(
+                    width = radius / 2f,
+                    cap = StrokeCap.Round
+                )
             )
         }
     }
@@ -783,6 +794,10 @@ fun DailyCard(
     }
 }
 
+fun getBurnedCalories(): Float {
+    return Random.nextInt(100, 300).toFloat() // Thay đổi thành lượng calo tiêu thụ
+}
+
 @Composable
 fun DailyGoals(
     standardPadding: Dp,
@@ -790,8 +805,8 @@ fun DailyGoals(
 ) {
     val loadedWater = 1.4 // Thay đổi thành lượng nước đã nạp
     val targetWater = 2 // Thay đổi thành lượng nước mục tiêu
-    val burnCalories = 130 // Thay đổi thành lượng calo tiêu thụ
-    val targetBurnCalories = 200 // Thay đổi thành lượng calo tiêu thụ mục tiêu
+    val burnedCalories = getBurnedCalories()
+    val targetBurnCalories = 200f
 
     val latestWeight = 70.5f // Thay đổi thành cân nặng mới nhất
     val currentDate = 7 // Thay đổi thành ngày hiện tại
@@ -949,7 +964,7 @@ fun DailyGoals(
                     }
 
                     ExerciseChart(
-                        burnCalories.toFloat(),
+                        burnedCalories.toFloat(),
                         targetBurnCalories.toFloat(),
                         MaterialTheme.colorScheme.secondaryContainer,
                         if (isSystemInDarkTheme()) {
@@ -1077,10 +1092,7 @@ fun WaterChart(
             color = circleColor.copy(alpha = 0.3f),
             center = center,
             radius = radius,
-            style = Stroke(
-                width = standardPadding.value * 5f,
-                cap = StrokeCap.Round
-            )
+            style = Stroke(width = radius / 1.7f)
         )
 
         drawArc(
@@ -1091,7 +1103,7 @@ fun WaterChart(
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
             style = Stroke(
-                width = standardPadding.value * 5f,
+                width = radius / 2f,
                 cap = StrokeCap.Round
             )
         )
@@ -1110,7 +1122,10 @@ fun WaterChart(
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
-                style = Stroke(width = standardPadding.value * 5.5f)
+                style = Stroke(
+                    width = radius / 2f,
+                    cap = StrokeCap.Round
+                )
             )
         }
 
@@ -1120,7 +1135,7 @@ fun WaterChart(
                 center.x,
                 center.y + standardPadding.value,
                 android.graphics.Paint().apply {
-                    textSize = 60f
+                    textSize = radius / 2
                     color = if (exceeded) {
                         exceededColor.toArgb()
                     } else {
@@ -1135,7 +1150,7 @@ fun WaterChart(
                 center.x,
                 center.y + standardPadding.value * 3.5f,
                 android.graphics.Paint().apply {
-                    textSize = 28f
+                    textSize = radius / 7
                     color = if (exceeded) {
                         progressColor.toArgb()
                     } else {
@@ -1179,7 +1194,7 @@ fun ExerciseChart(
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
             style = Stroke(
-                width = standardPadding.value * 5f,
+                width = radius / 1.7f,
                 cap = StrokeCap.Round
             )
         )
@@ -1192,7 +1207,7 @@ fun ExerciseChart(
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
             style = Stroke(
-                width = standardPadding.value * 5f,
+                width = radius / 2f,
                 cap = StrokeCap.Round
             )
         )
@@ -1203,18 +1218,18 @@ fun ExerciseChart(
                 center.x,
                 center.y + standardPadding.value,
                 android.graphics.Paint().apply {
-                    textSize = 60f
+                    textSize = radius / 2
                     color = if (exceeded) exceededColor.toArgb() else progressColor.toArgb()
                     textAlign = android.graphics.Paint.Align.CENTER
                 }
             )
 
             drawText(
-                "%.1f cal".format(targetValue),
+                "%.1fcal".format(targetValue),
                 center.x,
                 center.y + standardPadding.value * 3.5f,
                 android.graphics.Paint().apply {
-                    textSize = 28f
+                    textSize = radius / 7
                     color = if (exceeded) progressColor.toArgb() else circleColor.toArgb()
                     textAlign = android.graphics.Paint.Align.CENTER
                 }
