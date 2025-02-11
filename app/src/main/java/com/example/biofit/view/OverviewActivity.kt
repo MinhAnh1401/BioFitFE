@@ -558,7 +558,7 @@ fun OverviewDayContent(
                                 )
 
                                 Text(
-                                    text = "$title ($value g / $targetValue g)",
+                                    text = "$title (${value}g / ${targetValue}g)",
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelSmall
                                 )

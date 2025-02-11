@@ -130,4 +130,18 @@
     <string name="actual_calories_day">Actual Calories / Day</string>
     <string name="average_calorie_count">Average calorie count</string>
     <string name="average_macro_count">Average macro count</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="nutritional_composition">Nutritional composition</string>
+    <string name="menu_for">Menu for</string>
+    <string name="unknown">Unknown</string>
+    <string name="add_food">Add food</string>
+    <string name="nutritional_value">Nutritional value</string>
+    <string name="serving_size">Serving size</string>
+    <string name="mass">Mass</string>
+    <string name="calories">Calories</string>
+    <string name="cholesterol">Cholesterol</string>
+    <string name="sodium">Sodium</string>
+    <string name="caffeine">Caffeine</string>
 </resources>

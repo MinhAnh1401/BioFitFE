@@ -101,7 +101,7 @@
     <string name="morning">Buổi sáng</string>
     <string name="afternoon">Buổi trưa</string>
     <string name="evening">Buổi tối</string>
-    <string name="snack">Thức ăn vặt</string>
+    <string name="snack">Bữa ăn nhẹ</string>
     <string name="daily_goals">Mục tiêu hàng ngày</string>
     <string name="drinking_water">Nước uống</string>
     <string name="exercise">Bài tập</string>
@@ -130,4 +130,18 @@
     <string name="actual_calories_day">Lượng calo thực tế / ngày</string>
     <string name="average_calorie_count">Lượng calo trung bình</string>
     <string name="average_macro_count">Lượng macro trung bình</string>
+    <string name="breakfast">Bữa sáng</string>
+    <string name="lunch">Bữa trưa</string>
+    <string name="dinner">Bữa tối</string>
+    <string name="nutritional_composition">Thành phần dinh dưỡng</string>
+    <string name="menu_for">Thực đơn của</string>
+    <string name="unknown">Không rõ</string>
+    <string name="add_food">Thêm thức ăn</string>
+    <string name="nutritional_value">Giá trị dinh dưỡng</string>
+    <string name="serving_size">Khẩu phần</string>
+    <string name="mass">Khối lượng</string>
+    <string name="calories">Calo</string>
+    <string name="cholesterol">Cholesterol</string>
+    <string name="sodium">Natri</string>
+    <string name="caffeine">Caffeine</string>
 </resources>

@@ -873,6 +873,7 @@ fun DailyGoals(
                     }
 
                     WaterChart(
+                        sizeChart = standardPadding * 10,
                         loadedWater.toFloat(),
                         targetWater.toFloat(),
                         MaterialTheme.colorScheme.secondaryContainer,
@@ -886,6 +887,7 @@ fun DailyGoals(
                         } else {
                             Color(0xFF0000AF)
                         },
+                        "L",
                         standardPadding
                     )
 
@@ -1067,15 +1069,17 @@ fun DailyGoals(
 
 @Composable
 fun WaterChart(
+    sizeChart: Dp,
     loadedValue: Float,
     targetValue: Float,
     circleColor: Color,
     progressColor: Color,
     exceededColor: Color,
+    unit: String,
     standardPadding: Dp
 ) {
     Canvas(
-        modifier = Modifier.size(standardPadding * 10)
+        modifier = Modifier.size(sizeChart)
     ) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2 - 20f
@@ -1146,7 +1150,7 @@ fun WaterChart(
             )
 
             drawText(
-                "%.1fL".format(targetValue),
+                "%.1f$unit".format(targetValue),
                 center.x,
                 center.y + standardPadding.value * 3.5f,
                 android.graphics.Paint().apply {

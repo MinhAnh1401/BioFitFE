@@ -138,7 +138,7 @@ fun SettingScreen() {
 @Composable
 fun TopBarSetting(
     onBackClick: () -> Unit,
-    @StringRes title: Int,
+    @StringRes title: Int? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
     standardPadding: Dp
@@ -162,11 +162,13 @@ fun TopBarSetting(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(title),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                title?.let {
+                    Text(
+                        text = stringResource(title),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
 
                 middleButton?.invoke()
             }
