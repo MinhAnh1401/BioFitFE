@@ -147,4 +147,19 @@
     <string name="recently">Recently</string>
     <string name="create">Create</string>
     <string name="week">Week</string>
+    <string name="create_new_food">Create new food</string>
+    <string name="des_create_new_food">Create your own new products and use them in your nutrition and health tracking</string>
+    <string name="create_new">Create new</string>
+    <string name="upload_new_photo">Upload new photo</string>
+    <string name="food_name">Food name</string>
+    <string name="enter_food_name">Enter food name</string>
+    <string name="unit_of_measure">Unit of measure</string>
+    <string name="gram">gram</string>
+    <string name="milligram">milligram</string>
+    <string name="select_unit_of_measure">Select unit of measure</string>
+    <string name="nutrition_information">Nutrition information</string>
+    <string name="save_food">Save food</string>
+    <string name="slice">slice</string>
+    <string name="steak">steak</string>
+    <string name="enter_serving_size">Enter serving size</string>
 </resources>

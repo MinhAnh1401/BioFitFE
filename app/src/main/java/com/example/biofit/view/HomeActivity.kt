@@ -194,13 +194,14 @@ fun HomeScreenContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
+    ) {
         item {
             HeaderBar(modifier)
         }
 
         item {
-            Spacer(modifier = Modifier.height(standardPadding))
             OverviewAndSearchBar(
                 standardPadding,
                 modifier
@@ -208,7 +209,6 @@ fun HomeScreenContent(
         }
 
         item {
-            Spacer(modifier = Modifier.height(standardPadding))
             DailyMenu(
                 standardPadding,
                 modifier
@@ -216,7 +216,6 @@ fun HomeScreenContent(
         }
 
         item {
-            Spacer(modifier = Modifier.height(standardPadding))
             DailyGoals(
                 standardPadding,
                 modifier

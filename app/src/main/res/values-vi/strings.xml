@@ -147,4 +147,19 @@
     <string name="recently">Gần đây</string>
     <string name="create">Tạo mới</string>
     <string name="week">Tuần</string>
+    <string name="create_new_food">Tạo thức ăn mới</string>
+    <string name="des_create_new_food">Tạo sản phẩm mới của riêng bạn và sử dụng chúng trong việc theo dõi dinh dưỡng và sức khỏe của bạn</string>
+    <string name="create_new">Tạo mới</string>
+    <string name="upload_new_photo">Tải lên ảnh mới</string>
+    <string name="food_name">Tên thức ăn</string>
+    <string name="enter_food_name">Nhập tên thức ăn</string>
+    <string name="unit_of_measure">Đơn vị đo lường</string>
+    <string name="gram">gam</string>
+    <string name="milligram">mi-li-gam</string>
+    <string name="select_unit_of_measure">Chọn đơn vị đo lường</string>
+    <string name="nutrition_information">Thông tin dinh dưỡng</string>
+    <string name="save_food">Lưu thức ăn</string>
+    <string name="slice">Lát</string>
+    <string name="steak">Miếng</string>
+    <string name="enter_serving_size">Nhập khẩu phần ăn</string>
 </resources>

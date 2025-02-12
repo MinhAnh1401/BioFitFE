@@ -42,6 +42,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -184,8 +185,9 @@ fun SettingContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
+    ) {
         item {
             Column(
                 modifier = Modifier
@@ -209,11 +211,11 @@ fun SettingContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = standardPadding),
+                    .padding(standardPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var userName by rememberSaveable { mutableStateOf(value = "User name") } // Thay tên người dùng từ database vào User name
-                var gender by rememberSaveable { mutableStateOf(value = "Gender") } // Thay giới tính từ database vào Gender
+                var gender by rememberSaveable { mutableIntStateOf(R.string.gender) } // Thay giới tính từ database vào Gender
                 var showGenderDialog by rememberSaveable { mutableStateOf(false) }
                 var dateOfBirth by rememberSaveable { mutableStateOf("dd / mm / yyyy") } // Thay ngày sinh từ database vào dd / mm / yyyy
                 var height by rememberSaveable { mutableStateOf("hhh") } // Thay chiều cao từ database vào hhh
@@ -229,7 +231,7 @@ fun SettingContent(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
-                    leadingIcon = {
+                    prefix = {
                         Text(
                             text = stringResource(R.string.name),
                             style = MaterialTheme.typography.bodySmall,
@@ -256,8 +258,8 @@ fun SettingContent(
                 )
 
                 TextField(
-                    value = gender,
-                    onValueChange = { gender = it },
+                    value = stringResource(gender),
+                    onValueChange = { gender = it.toInt() },
                     modifier = modifier,
                     readOnly = true,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
@@ -265,7 +267,7 @@ fun SettingContent(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
-                    leadingIcon = {
+                    prefix = {
                         Text(
                             text = stringResource(R.string.gender),
                             style = MaterialTheme.typography.bodySmall,
@@ -301,13 +303,18 @@ fun SettingContent(
                 )
 
                 if (showGenderDialog) {
-                    GenderDialog(
-                        selectedGender = gender,
-                        onGenderSelected = { selectedGender ->
+                    Dialog(
+                        selectedOption = gender,
+                        onOptionSelected = { selectedGender ->
                             gender = selectedGender
                             showGenderDialog = false
                         },
                         onDismissRequest = { showGenderDialog = false },
+                        title = R.string.select_gender,
+                        listOptions = listOf(
+                            R.string.male,
+                            R.string.female
+                        ),
                         standardPadding = standardPadding
                     )
                 }
@@ -322,7 +329,7 @@ fun SettingContent(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
-                    leadingIcon = {
+                    prefix = {
                         Text(
                             text = stringResource(R.string.date_of_birth),
                             style = MaterialTheme.typography.bodySmall,
@@ -367,7 +374,7 @@ fun SettingContent(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
-                    leadingIcon = {
+                    prefix = {
                         Text(
                             text = stringResource(R.string.height),
                             style = MaterialTheme.typography.bodySmall,
@@ -409,7 +416,7 @@ fun SettingContent(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
-                    leadingIcon = {
+                    prefix = {
                         Text(
                             text = stringResource(R.string.weight),
                             style = MaterialTheme.typography.bodySmall,
@@ -451,7 +458,7 @@ fun SettingContent(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
-                    leadingIcon = {
+                    prefix = {
                         Text(
                             text = stringResource(R.string.email),
                             style = MaterialTheme.typography.bodySmall,
@@ -482,8 +489,7 @@ fun SettingContent(
         item {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = standardPadding),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Card(
@@ -694,8 +700,7 @@ fun SettingContent(
         item {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = standardPadding),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Card(
@@ -832,14 +837,14 @@ fun SettingContent(
 }
 
 @Composable
-fun GenderDialog(
-    selectedGender: String,
-    onGenderSelected: (String) -> Unit,
+fun Dialog(
+    selectedOption: Int,
+    onOptionSelected: (Int) -> Unit,
     onDismissRequest: () -> Unit,
+    title: Int,
+    listOptions: List<Int>,
     standardPadding: Dp
 ) {
-    val genderOptions = listOf(stringResource(R.string.male), stringResource(R.string.female))
-
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -848,22 +853,22 @@ fun GenderDialog(
             }
         },
         title = {
-            Text(text = stringResource(R.string.select_gender))
+            Text(text = stringResource(title))
         },
         text = {
             Column {
-                genderOptions.forEach { option ->
+                listOptions.forEach { option ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                onGenderSelected(option)
+                                onOptionSelected(option)
                             }
                             .padding(vertical = standardPadding),
                     ) {
                         Text(
-                            text = option,
-                            color = if (option == selectedGender) {
+                            text = stringResource(option),
+                            color = if (option == selectedOption) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 MaterialTheme.colorScheme.onBackground

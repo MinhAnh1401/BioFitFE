@@ -102,9 +102,7 @@ data class FoodInfo(
     val protein: Triple<Int, Int, Float>,
     val carbohydrate: Triple<Int, Int, Float>,
     val fat: Triple<Int, Int, Float>,
-    val cholesterol: Float? = null,
     val sodium: Float? = null,
-    val caffeine: Float? = null,
 )
 
 //Dữ liệu giả
@@ -117,7 +115,6 @@ val food1 = FoodInfo(
     protein = Triple(R.drawable.ic_protein, R.string.protein, 12f),
     carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 36f),
     fat = Triple(R.drawable.ic_fat, R.string.fat, 10f),
-    cholesterol = 18f,
     sodium = 640f
 )
 
@@ -223,7 +220,8 @@ fun FoodNutritionalComposition(
                         )
 
                         Text(
-                            text = "(${value.toBigDecimal().setScale(1, RoundingMode.HALF_UP)}g)",
+                            text = "(${value.toBigDecimal().setScale(1, RoundingMode.HALF_UP)} " +
+                                    "${stringResource(R.string.gam)})",
                             modifier = Modifier.weight(1f),
                             color = MaterialTheme.colorScheme.outline,
                             textAlign = TextAlign.End,
@@ -282,11 +280,9 @@ fun FoodNutritionalValue(
         Pair(stringResource(R.string.mass), "${food1.mass} g"),
         Pair(stringResource(R.string.calories), "${food1.calories} kcal"),
         Pair(stringResource(food1.fat.second), "${food1.fat.third} g"),
-        Pair(stringResource(R.string.cholesterol), "${food1.cholesterol.takeIf { it != null } ?: 0} mg"),
         Pair(stringResource(R.string.sodium), "${food1.sodium.takeIf { it != null } ?: 0} mg"),
         Pair(stringResource(food1.carbohydrate.second), "${food1.carbohydrate.third} g"),
-        Pair(stringResource(food1.protein.second), "${food1.protein.third} g"),
-        Pair(stringResource(R.string.caffeine), "${food1.caffeine.takeIf { it != null } ?: 0} mg")
+        Pair(stringResource(food1.protein.second), "${food1.protein.third} g")
     )
 
     Column(

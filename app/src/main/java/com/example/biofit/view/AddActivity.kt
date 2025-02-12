@@ -34,11 +34,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -94,7 +95,7 @@ fun AddScreen() {
     val modifier = getStandardPadding().second
 
     val selectedOption = getSelectedOption()
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     val options = listOf(
         R.string.morning,
@@ -127,9 +128,11 @@ fun AddScreen() {
                         IconButton(
                             onClick = { expanded = true }
                         ) {
-                            Image(
+                            Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = null
+                                contentDescription = null,
+                                modifier = Modifier.size(standardPadding * 3),
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
 
@@ -149,7 +152,17 @@ fun AddScreen() {
                         }
                     }
                 },
-                rightButton = null,
+                rightButton = {
+                    IconButton(
+                        onClick = { TODO() }
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_plus),
+                            contentDescription = "Add button",
+                            modifier = Modifier.size(standardPadding * 2)
+                        )
+                    }
+                },
                 standardPadding = standardPadding
             )
 
@@ -235,39 +248,164 @@ fun AddContent(
         )
     }
 
-    val foodList = listOf(
-        food1,
-        food2,
-        food3
-    )
+    val foodListCreateMorning = listOf<FoodInfo>()
+    val foodListCreateAfternoon = listOf(food1, food2)
+    val foodListCreateEvening = listOf(food1)
+    val foodListCreateSnack = listOf(food3)
+
+    val foodListRecent = when (selectedOption) {
+        R.string.morning -> foodListMorning
+        R.string.afternoon -> foodListAfternoon
+        R.string.evening -> foodListEvening
+        else -> foodListSnack
+    }
+
+    val foodListCreate = when (selectedOption) {
+        R.string.morning -> foodListCreateMorning
+        R.string.afternoon -> foodListCreateAfternoon
+        R.string.evening -> foodListCreateEvening
+        else -> foodListCreateSnack
+    }
 
     LazyColumn(
         modifier = Modifier.padding(top = standardPadding * 2),
         verticalArrangement = Arrangement.spacedBy(standardPadding)
     ) {
         item {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(standardPadding)
+            when (selectedToggle) {
+                R.string.recently ->
+                    when (foodListRecent.isNotEmpty()) {
+                        true ->
+                            Column(
+                                modifier = modifier,
+                                verticalArrangement = Arrangement.spacedBy(standardPadding)
+                            ) {
+                                foodListRecent.forEachIndexed { index, _ ->
+                                    FoodItem2(
+                                        foodImg = foodListRecent[index].foodImage,
+                                        foodName = foodListRecent[index].foodName,
+                                        servingSize = Pair(
+                                            foodListRecent[index].servingSize.first,
+                                            foodListRecent[index].servingSize.second
+                                        ),
+                                        mass = foodListRecent[index].mass,
+                                        calories = foodListRecent[index].calories,
+                                        macros = listOf(
+                                            Pair(
+                                                foodListRecent[index].protein.first,
+                                                foodListRecent[index].protein.third
+                                            ),
+                                            Pair(
+                                                foodListRecent[index].carbohydrate.first,
+                                                foodListRecent[index].carbohydrate.third
+                                            ),
+                                            Pair(
+                                                foodListRecent[index].fat.first,
+                                                foodListRecent[index].fat.third
+                                            )
+                                        ),
+                                        standardPadding = standardPadding
+                                    )
+                                }
+                            }
+
+                        else -> EmptyAddScreen(
+                            standardPadding = standardPadding,
+                            modifier = modifier
+                        )
+                    }
+
+                else ->
+                    when (foodListCreate.isNotEmpty()) {
+                        true ->
+                            Column(
+                                modifier = modifier,
+                                verticalArrangement = Arrangement.spacedBy(standardPadding)
+                            ) {
+                                foodListCreate.forEachIndexed { index, _ ->
+                                    FoodItem2(
+                                        foodImg = foodListCreate[index].foodImage,
+                                        foodName = foodListCreate[index].foodName,
+                                        servingSize = Pair(
+                                            foodListCreate[index].servingSize.first,
+                                            foodListCreate[index].servingSize.second
+                                        ),
+                                        mass = foodListCreate[index].mass,
+                                        calories = foodListCreate[index].calories,
+                                        macros = listOf(
+                                            Pair(
+                                                foodListCreate[index].protein.first,
+                                                foodListCreate[index].protein.third
+                                            ),
+                                            Pair(
+                                                foodListCreate[index].carbohydrate.first,
+                                                foodListCreate[index].carbohydrate.third
+                                            ),
+                                            Pair(
+                                                foodListCreate[index].fat.first,
+                                                foodListCreate[index].fat.third
+                                            )
+                                        ),
+                                        standardPadding = standardPadding
+                                    )
+                                }
+                            }
+
+                        else -> EmptyAddScreen(
+                            standardPadding = standardPadding,
+                            modifier = modifier
+                        )
+
+                    }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptyAddScreen(
+    standardPadding: Dp,
+    modifier: Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.create_new_food),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            Text(
+                text = stringResource(R.string.des_create_new_food),
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.outline,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            TextButton(
+                onClick = { TODO() },
             ) {
-                foodList.forEachIndexed { index, _ ->
-                    FoodItem2(
-                        foodImg = foodList[index].foodImage,
-                        foodName = foodList[index].foodName,
-                        servingSize = Pair(
-                            foodList[index].servingSize.first,
-                            foodList[index].servingSize.second
-                        ),
-                        mass = foodList[index].mass,
-                        calories = foodList[index].calories,
-                        macros = listOf(
-                            Pair(foodList[index].protein.first, foodList[index].protein.third),
-                            Pair(
-                                foodList[index].carbohydrate.first,
-                                foodList[index].carbohydrate.third
-                            ),
-                            Pair(foodList[index].fat.first, foodList[index].fat.third)
-                        ),
-                        standardPadding = standardPadding
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus),
+                        contentDescription = "Add button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+
+                    Text(
+                        text = stringResource(R.string.create_new),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
@@ -284,7 +422,6 @@ val food2 = FoodInfo(
     protein = Triple(R.drawable.ic_protein, R.string.protein, 34f),
     carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 40f),
     fat = Triple(R.drawable.ic_fat, R.string.fat, 27f),
-    cholesterol = 122f,
     sodium = 791f
 )
 
@@ -297,7 +434,6 @@ val food3 = FoodInfo(
     protein = Triple(R.drawable.ic_protein, R.string.protein, 58f),
     carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 0f),
     fat = Triple(R.drawable.ic_fat, R.string.fat, 41f),
-    cholesterol = 214f,
     sodium = 115f
 )
 
