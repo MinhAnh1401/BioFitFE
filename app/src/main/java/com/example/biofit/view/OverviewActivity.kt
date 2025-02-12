@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -54,7 +53,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -94,14 +92,8 @@ class OverviewActivity : ComponentActivity() {
 
 @Composable
 fun OverviewScreen() {
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
-    val modifier = if (screenWidth > screenHeight) {
-        Modifier.width(((screenWidth + screenHeight) / 2).dp)
-    } else {
-        Modifier.fillMaxWidth()
-    }
+    val standardPadding = getStandardPadding().first
+    val modifier = getStandardPadding().second
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -143,7 +135,7 @@ fun DayMonthToggleButton(
 ) {
     val options = listOf(
         R.string.day,
-        R.string.month
+        R.string.week
     )
 
     Row(

@@ -144,4 +144,7 @@
     <string name="cholesterol">Cholesterol</string>
     <string name="sodium">Natri</string>
     <string name="caffeine">Caffeine</string>
+    <string name="recently">Gần đây</string>
+    <string name="create">Tạo mới</string>
+    <string name="week">Tuần</string>
 </resources>

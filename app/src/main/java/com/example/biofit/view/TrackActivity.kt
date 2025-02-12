@@ -74,14 +74,8 @@ class TrackActivity : ComponentActivity() {
 
 @Composable
 fun TrackScreen() {
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
-    val modifier = if (screenWidth > screenHeight) {
-        Modifier.width(((screenWidth + screenHeight) / 2).dp)
-    } else {
-        Modifier.fillMaxWidth()
-    }
+    val standardPadding = getStandardPadding().first
+    val modifier = getStandardPadding().second
 
     val selectedOption = getSelectedOption()
     var expanded by remember { mutableStateOf(false) }
@@ -215,48 +209,6 @@ fun TrackContent(
     }
 }
 
-data class SessionMacro(
-    val icon: Painter,
-    val title: String,
-    val value: Float,
-    val targetValue: Float
-)
-
-@Composable
-fun getSessionMacroTable(
-    foodInfo: List<Triple<Pair<Int, String>, Float, List<Pair<Int, Float>>>>,
-    selectedOption: Int
-): List<SessionMacro> {
-    // Tạo map để lưu tổng macro
-    val macroTotals = mutableMapOf(
-        R.drawable.ic_protein to 0f,
-        R.drawable.ic_carbohydrate to 0f,
-        R.drawable.ic_fat to 0f
-    )
-
-    // Cộng dồn macro từ danh sách thực phẩm
-    foodInfo.forEach { (_, _, macros) ->
-        macros.forEach { (macroType, value) ->
-            macroTotals[macroType] = (macroTotals[macroType] ?: 0f) + value
-        }
-    }
-
-    val proteinTarget = (getTargetCal(selectedOption) * 0.30f) / 4f
-    val carbohydrateTarget = (getTargetCal(selectedOption) * 0.50f) / 4f
-    val fatTarget = (getTargetCal(selectedOption) * 0.20f) / 9f
-
-    // Chuyển đổi map thành danh sách SessionMacro
-    return macroTotals.map { (icon, value) ->
-        val target = when (icon) {
-            R.drawable.ic_protein -> proteinTarget
-            R.drawable.ic_carbohydrate -> carbohydrateTarget
-            R.drawable.ic_fat -> fatTarget
-            else -> 0f
-        }
-        SessionMacro(painterResource(icon), stringResource(getMacroTitle(icon)), value, target)
-    }
-}
-
 // Hàm lấy mục tiêu calo trên từng buổi (1 ngày của người bình thường khoảng 2000 - 2500cal)
 fun getTargetCal(selectedOption: Int): Float {
     return when (selectedOption) {
@@ -267,45 +219,54 @@ fun getTargetCal(selectedOption: Int): Float {
     }
 }
 
-// Hàm trả về tiêu đề của từng macro
-fun getMacroTitle(icon: Int): Int {
-    return when (icon) {
-        R.drawable.ic_protein -> R.string.protein
-        R.drawable.ic_carbohydrate -> R.string.carbohydrate
-        R.drawable.ic_fat -> R.string.fat
-        else -> R.string.unknown
-    }
-}
-
 @Composable
 fun NutritionalComposition(
     selectedOption: Int,
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    val targetCal = getTargetCal(selectedOption)
+    val morningMacroTable = listOf(
+        Triple(food1.protein.first, food1.protein.second, foodListMorning.sumOf { it.protein.third }),
+        Triple(food1.carbohydrate.first, food1.carbohydrate.second, foodListMorning.sumOf { it.carbohydrate.third }),
+        Triple(food1.fat.first, food1.fat.second, foodListMorning.sumOf { it.fat.third })
+    )
 
-    val foodInfo = getFoodInfo(selectedOption) // Lấy danh sách thức ăn từ hàm dưới
+    val afternoonMacroTable = listOf(
+        Triple(food2.protein.first, food2.protein.second, foodListAfternoon.sumOf { it.protein.third }),
+        Triple(food2.carbohydrate.first, food2.carbohydrate.second, foodListAfternoon.sumOf { it.carbohydrate.third }),
+        Triple(food2.fat.first, food2.fat.second, foodListAfternoon.sumOf { it.fat.third })
+    )
 
-    // Tính tổng macro nutrients
-    var totalProtein = 0f
-    var totalCarbs = 0f
-    var totalFat = 0f
+    val eveningMacroTable = listOf(
+        Triple(food3.protein.first, food3.protein.second, foodListEvening.sumOf { it.protein.third }),
+        Triple(food3.carbohydrate.first, food3.carbohydrate.second, foodListEvening.sumOf { it.carbohydrate.third }),
+        Triple(food3.fat.first, food3.fat.second, foodListEvening.sumOf { it.fat.third })
+    )
 
-    foodInfo.forEach { (_, _, macros) ->
-        macros.forEach { (icon, value) ->
-            when (icon) {
-                R.drawable.ic_protein -> totalProtein += value
-                R.drawable.ic_carbohydrate -> totalCarbs += value
-                R.drawable.ic_fat -> totalFat += value
-            }
-        }
+    val snackMacroTable = listOf(
+        Triple(food1.protein.first, food1.protein.second, foodListSnack.sumOf { it.protein.third }),
+        Triple(food1.carbohydrate.first, food1.carbohydrate.second, foodListSnack.sumOf { it.carbohydrate.third }),
+        Triple(food1.fat.first, food1.fat.second, foodListSnack.sumOf { it.fat.third })
+    )
+
+    val sessionMacroTable = when (selectedOption) {
+        R.string.morning -> morningMacroTable
+        R.string.afternoon -> afternoonMacroTable
+        R.string.evening -> eveningMacroTable
+        else -> snackMacroTable
     }
 
-    // Tính tổng calo theo công thức chuẩn
-    val loadedCal = (totalProtein * 4) + (totalCarbs * 4) + (totalFat * 9)
+    val morningCal = foodListMorning.sumOf { it.calories }
+    val afternoonCal = foodListAfternoon.sumOf { it.calories }
+    val eveningCal = foodListEvening.sumOf { it.calories }
+    val snackCal = foodListSnack.sumOf { it.calories }
 
-    val sessionMacroTable = getSessionMacroTable(foodInfo, selectedOption)
+    val loadedCal = when (selectedOption) {
+        R.string.morning -> morningCal
+        R.string.afternoon -> afternoonCal
+        R.string.evening -> eveningCal
+        else -> snackCal
+    }
 
     Column(
         modifier = modifier,
@@ -325,14 +286,11 @@ fun NutritionalComposition(
                 modifier = Modifier.weight(0.3f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                WaterChart(
-                    sizeChart = standardPadding * 7,
-                    loadedValue = loadedCal,
-                    targetValue = targetCal,
-                    circleColor = MaterialTheme.colorScheme.outline,
-                    progressColor = MaterialTheme.colorScheme.primary,
-                    exceededColor = Color(0xFF960000),
-                    stringResource(R.string.cal),
+                FoodCalorieChart(
+                    sizeChart = 7f,
+                    value = loadedCal,
+                    chartColor = MaterialTheme.colorScheme.primary,
+                    textColor = MaterialTheme.colorScheme.outline,
                     standardPadding = standardPadding
                 )
             }
@@ -341,25 +299,24 @@ fun NutritionalComposition(
                 modifier = Modifier.weight(0.7f),
                 verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
             ) {
-                sessionMacroTable.forEach { (icon, title, value, targetValue) ->
+                sessionMacroTable.forEach { (icon, title, value) ->
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(standardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
-                            painter = icon,
-                            contentDescription = title
+                            painter = painterResource(icon),
+                            contentDescription = stringResource(title)
                         )
 
                         Text(
-                            text = title,
+                            text = stringResource(title),
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.bodySmall
                         )
 
                         Text(
-                            text = "(${value.toBigDecimal().setScale(2, RoundingMode.HALF_UP)}g / " +
-                                    "${targetValue.toBigDecimal().setScale(2, RoundingMode.HALF_UP)}g)",
+                            text = "(${value.toBigDecimal().setScale(1, RoundingMode.HALF_UP)} g)",
                             modifier = Modifier.weight(1f),
                             color = MaterialTheme.colorScheme.outline,
                             textAlign = TextAlign.End,
@@ -372,102 +329,18 @@ fun NutritionalComposition(
     }
 }
 
-fun getFoodInfo(selectedOption: Int): List<Triple<Pair<Int, String>, Float, List<Pair<Int, Float>>>> {
-    return when (selectedOption) {
-        R.string.morning -> listOf(
-            Triple(
-                Pair(R.drawable.img_food_default, "Breakfast 1"),
-                1.5f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 15f),
-                    Pair(R.drawable.ic_carbohydrate, 25f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            ),
-            Triple(
-                Pair(R.drawable.img_food_default, "Breakfast 2"),
-                2f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 15f),
-                    Pair(R.drawable.ic_carbohydrate, 25f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            ),
-            Triple(
-                Pair(R.drawable.img_food_default, "Breakfast 3"),
-                2f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 15f),
-                    Pair(R.drawable.ic_carbohydrate, 25f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            )
-        )
-
-        R.string.afternoon -> listOf(
-            Triple(
-                Pair(R.drawable.img_food_default, "Lunch 1"),
-                1.5f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 25f),
-                    Pair(R.drawable.ic_carbohydrate, 45f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            ),
-            Triple(
-                Pair(R.drawable.img_food_default, "Lunch 2"),
-                1f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 25f),
-                    Pair(R.drawable.ic_carbohydrate, 45f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            )
-        )
-
-        R.string.evening -> listOf(
-            Triple(
-                Pair(R.drawable.img_food_default, "Dinner 1"),
-                1f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 25f),
-                    Pair(R.drawable.ic_carbohydrate, 45f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            ),
-            Triple(
-                Pair(R.drawable.img_food_default, "Dinner 2"),
-                1f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 25f),
-                    Pair(R.drawable.ic_carbohydrate, 45f),
-                    Pair(R.drawable.ic_fat, 5f)
-                )
-            )
-        )
-
-        else -> listOf( // Snack
-            Triple(
-                Pair(R.drawable.img_food_default, "Snack 1"),
-                1f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 5f),
-                    Pair(R.drawable.ic_carbohydrate, 15f),
-                    Pair(R.drawable.ic_fat, 0f)
-                )
-            ),
-            Triple(
-                Pair(R.drawable.img_food_default, "Snack 2"),
-                0.5f,
-                listOf(
-                    Pair(R.drawable.ic_protein, 5f),
-                    Pair(R.drawable.ic_carbohydrate, 15f),
-                    Pair(R.drawable.ic_fat, 0f)
-                )
-            )
-        )
-    }
-}
+val foodListMorning = listOf(
+    food1, food2
+)
+val foodListAfternoon = listOf(
+    food2, food3
+)
+val foodListEvening = listOf(
+    food3, food1
+)
+val foodListSnack = listOf(
+    food1
+)
 
 @Composable
 fun MenuForSession(
@@ -482,8 +355,6 @@ fun MenuForSession(
         else -> R.string.snack
     }
 
-    val foodInfo = getFoodInfo(selectedOption)
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
@@ -494,95 +365,123 @@ fun MenuForSession(
             style = MaterialTheme.typography.titleSmall
         )
 
-        foodInfo.forEach { (selectedOption, servingSize, macros) ->
-            FoodItem(
-                selectedOption = selectedOption,
-                servingSize = servingSize,
-                macros = macros,
-                standardPadding = standardPadding
-            )
-        }
-    }
-}
-
-@Composable
-fun FoodItem(
-    selectedOption: Pair<Int, String>,
-    servingSize: Float,
-    macros: List<Pair<Int, Float>>,
-    standardPadding: Dp
-) {
-    val totalGrams = macros.sumOf { it.second }
-
-    val totalCalories = macros.sumOf { (icon, value) ->
-        when (icon) {
-            R.drawable.ic_protein -> value * 4
-            R.drawable.ic_carbohydrate -> value * 4
-            R.drawable.ic_fat -> value * 9
-            else -> 0f
-        }
-    }
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(standardPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(selectedOption.first),
-            contentDescription = "Food image",
-            modifier = Modifier
-                .size(standardPadding * 5)
-                .clip(MaterialTheme.shapes.large)
-        )
-
         Column(
-            modifier = Modifier.weight(1f)
+            verticalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
-            Text(
-                text = selectedOption.second,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            Text(
-                text = "$servingSize servings, " +
-                        "${totalGrams.toBigDecimal().setScale(2, RoundingMode.HALF_UP)}g, " +
-                        "${totalCalories.toBigDecimal().setScale(2, RoundingMode.HALF_UP)}cal",
-                color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.labelSmall
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
-            ) {
-                macros.forEach { (icon, value) ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(icon),
-                            contentDescription = "Macro icon"
-                        )
-                        Text(
-                            text = "${value.toBigDecimal().setScale(2, RoundingMode.HALF_UP)}g",
-                            color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.labelSmall
+            when (selectedOption) {
+                R.string.morning ->
+                    foodListMorning.forEachIndexed { index, _ ->
+                        FoodItem2(
+                            foodImg = foodListMorning[index].foodImage,
+                            foodName = foodListMorning[index].foodName,
+                            servingSize = Pair(
+                                foodListMorning[index].servingSize.first,
+                                foodListMorning[index].servingSize.second
+                            ),
+                            mass = foodListMorning[index].mass,
+                            calories = foodListMorning[index].calories,
+                            macros = listOf(
+                                Pair(
+                                    foodListMorning[index].protein.first,
+                                    foodListMorning[index].protein.third
+                                ),
+                                Pair(
+                                    foodListMorning[index].carbohydrate.first,
+                                    foodListMorning[index].carbohydrate.third
+                                ),
+                                Pair(
+                                    foodListMorning[index].fat.first,
+                                    foodListMorning[index].fat.third
+                                )
+                            ),
+                            standardPadding = standardPadding
                         )
                     }
-                }
-            }
-        }
 
-        IconButton(
-            onClick = { TODO() }
-        ) {
-            Image(
-                painter = painterResource(R.drawable.btn_back),
-                contentDescription = "Extend button",
-                modifier = Modifier.rotate(180f)
-            )
+                R.string.afternoon ->
+                    foodListAfternoon.forEachIndexed { index, _ ->
+                        FoodItem2(
+                            foodImg = foodListAfternoon[index].foodImage,
+                            foodName = foodListAfternoon[index].foodName,
+                            servingSize = Pair(
+                                foodListAfternoon[index].servingSize.first,
+                                foodListAfternoon[index].servingSize.second
+                            ),
+                            mass = foodListAfternoon[index].mass,
+                            calories = foodListAfternoon[index].calories,
+                            macros = listOf(
+                                Pair(
+                                    foodListAfternoon[index].protein.first,
+                                    foodListAfternoon[index].protein.third
+                                ),
+                                Pair(
+                                    foodListAfternoon[index].carbohydrate.first,
+                                    foodListAfternoon[index].carbohydrate.third
+                                ),
+                                Pair(
+                                    foodListAfternoon[index].fat.first,
+                                    foodListAfternoon[index].fat.third
+                                )
+                            ),
+                            standardPadding = standardPadding
+                        )
+                    }
+
+                R.string.evening ->
+                    foodListEvening.forEachIndexed { index, _ ->
+                        FoodItem2(
+                            foodImg = foodListEvening[index].foodImage,
+                            foodName = foodListEvening[index].foodName,
+                            servingSize = Pair(
+                                foodListEvening[index].servingSize.first,
+                                foodListEvening[index].servingSize.second
+                            ),
+                            mass = foodListEvening[index].mass,
+                            calories = foodListEvening[index].calories,
+                            macros = listOf(
+                                Pair(
+                                    foodListEvening[index].protein.first,
+                                    foodListEvening[index].protein.third
+                                ),
+                                Pair(
+                                    foodListEvening[index].carbohydrate.first,
+                                    foodListEvening[index].carbohydrate.third
+                                ),
+                                Pair(
+                                    foodListEvening[index].fat.first,
+                                    foodListEvening[index].fat.third
+                                )
+                            ),
+                            standardPadding = standardPadding
+                        )
+                    }
+
+                else ->
+                    foodListSnack.forEachIndexed { index, _ ->
+                        FoodItem2(
+                            foodImg = foodListSnack[index].foodImage,
+                            foodName = foodListSnack[index].foodName,
+                            servingSize = Pair(
+                                foodListSnack[index].servingSize.first,
+                                foodListSnack[index].servingSize.second
+                            ),
+                            mass = foodListSnack[index].mass,
+                            calories = foodListSnack[index].calories,
+                            macros = listOf(
+                                Pair(
+                                    foodListSnack[index].protein.first,
+                                    foodListSnack[index].protein.third
+                                ),
+                                Pair(
+                                    foodListSnack[index].carbohydrate.first,
+                                    foodListSnack[index].carbohydrate.third
+                                ),
+                                Pair(foodListSnack[index].fat.first, foodListSnack[index].fat.third)
+                            ),
+                            standardPadding = standardPadding
+                        )
+                    }
+            }
         }
     }
 }

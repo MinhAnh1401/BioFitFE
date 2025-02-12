@@ -32,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -58,7 +57,7 @@ class MainActivity : ComponentActivity() {
 fun StartScreen() {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
+    val standardPadding = getStandardPadding().first
 
     Surface(
         modifier = Modifier.fillMaxSize(), // tuỳ chỉnh kích thước của Surface

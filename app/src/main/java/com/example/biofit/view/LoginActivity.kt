@@ -76,12 +76,8 @@ class LoginActivity : ComponentActivity() {
 fun LoginScreen() {
     val screenWidth = LocalConfiguration.current.screenWidthDp // lấy chiều rộng màn hình thiết bị
     val screenHeight = LocalConfiguration.current.screenHeightDp // lấy chiều cao màn hình thiết bị
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f // tính toán padding chuẩn cho các phần tử
-    val modifier = if (screenWidth > screenHeight) {
-        Modifier.width(((screenWidth + screenHeight) / 2).dp)
-    } else {
-        Modifier.fillMaxWidth()
-    } // xác định modifier cho các phần tử trong LazyColumn
+    val standardPadding = getStandardPadding().first
+    val modifier = getStandardPadding().second
 
     Surface(
         modifier = Modifier.fillMaxSize(),

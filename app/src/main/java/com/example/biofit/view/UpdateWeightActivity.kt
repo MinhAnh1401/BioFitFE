@@ -40,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,14 +70,8 @@ class UpdateWeightActivity : ComponentActivity() {
 
 @Composable
 fun UpdateWeightScreen() {
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
-    val modifier = if (screenWidth > screenHeight) {
-        Modifier.width(((screenWidth + screenHeight) / 2).dp)
-    } else {
-        Modifier.fillMaxWidth()
-    }
+    val standardPadding = getStandardPadding().first
+    val modifier = getStandardPadding().second
 
     Surface(
         modifier = Modifier.fillMaxSize(),

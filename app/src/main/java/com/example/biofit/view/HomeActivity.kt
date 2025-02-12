@@ -55,7 +55,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,14 +96,8 @@ class HomeActivity : ComponentActivity() {
 
 @Composable
 fun HomeScreen() {
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
-    val modifier = if (screenWidth > screenHeight) {
-        Modifier.width(((screenWidth + screenHeight) / 2).dp)
-    } else {
-        Modifier.fillMaxWidth()
-    }
+    val standardPadding = getStandardPadding().first
+    val modifier = getStandardPadding().second
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -306,7 +299,7 @@ fun OverviewAndSearchBar(
                 ) {
                     RemainingCaloriesChart(
                         loadedCalories.toFloat(),
-                        targetCalories.toFloat(),
+                        targetCalories,
                         MaterialTheme.colorScheme.secondaryContainer,
                         MaterialTheme.colorScheme.onSecondary,
                         Color(0xFF960000),
@@ -966,8 +959,8 @@ fun DailyGoals(
                     }
 
                     ExerciseChart(
-                        burnedCalories.toFloat(),
-                        targetBurnCalories.toFloat(),
+                        burnedCalories,
+                        targetBurnCalories,
                         MaterialTheme.colorScheme.secondaryContainer,
                         if (isSystemInDarkTheme()) {
                             Color(0xFF8C3200)
