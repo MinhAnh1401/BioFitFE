@@ -162,4 +162,21 @@
     <string name="slice">slice</string>
     <string name="steak">steak</string>
     <string name="enter_serving_size">Enter serving size</string>
+    <string name="exercise_name">Exercise name</string>
+    <string name="amateur">Amateur</string>
+    <string name="level">Level</string>
+    <string name="select_level">Select level</string>
+    <string name="professional">Professional</string>
+    <string name="time">Time</string>
+    <string name="minutes">minutes</string>
+    <string name="calories_consumed">Calories consumed</string>
+    <string name="new_exercise">New exercise</string>
+    <string name="min">min</string>
+    <string name="calories_distribution">Calories distribution</string>
+    <string name="daily_calorie_intake">Daily calorie intake</string>
+    <string name="percentage">%</string>
+    <string name="set_a_goal_for_your_meal">Set a goal for your meal</string>
+    <string name="macronutrient_balance">Macronutrient balance</string>
+    <string name="total_calories_distributed">Total calories distributed</string>
+    <string name="the_rate_will_always_be_100">The rate will always be 100%</string>
 </resources>

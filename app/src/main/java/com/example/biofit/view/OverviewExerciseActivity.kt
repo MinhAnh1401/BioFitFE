@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,28 +18,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 
-class NotificationActivity : ComponentActivity() {
+class OverviewExerciseActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             BioFitTheme {
-                NotificationScreen()
+                OverviewExerciseScreen()
             }
         }
     }
@@ -52,7 +57,7 @@ class NotificationActivity : ComponentActivity() {
 }
 
 @Composable
-fun NotificationScreen() {
+fun OverviewExerciseScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -65,21 +70,23 @@ fun NotificationScreen() {
                 .fillMaxWidth()
                 .padding(
                     top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                    start = standardPadding,
+                    end = standardPadding,
                 ),
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBarSetting(
-                onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
-                title = R.string.notification,
+                onBackClick = { TODO() },
+                title = R.string.exercise,
                 middleButton = null,
                 rightButton = {
                     IconButton(
-                        onClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn tick
+                        onClick = { TODO() }
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.ic_tick),
-                            contentDescription = "Tick Button",
+                            painter = painterResource(R.drawable.ic_plus),
+                            contentDescription = "Add button",
                             modifier = Modifier.size(standardPadding * 2)
                         )
                     }
@@ -87,55 +94,44 @@ fun NotificationScreen() {
                 standardPadding = standardPadding
             )
 
-            NotificationContent(
-                standardPadding,
-                modifier
+            OverviewExerciseContent(
+                standardPadding = standardPadding,
+                modifier = modifier
             )
         }
     }
 }
 
 @Composable
-fun NotificationContent(
+fun OverviewExerciseContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    val notifications = listOf(
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 1",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 2",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 3",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 4",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 5",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 6",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 7",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 8",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 9",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry 10"
-    ) // Danh sách thông báo
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
-    if (notifications.isEmpty()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "You have no notifications",
-                color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.titleSmall,
-            )
-        }
-    } else{
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(standardPadding)
+    ) {
+        WeekNavigationBar(
+            selectedDate = selectedDate,
+            onDateChange = { newDate -> selectedDate = newDate },
+            standardPadding
+        )
+
         LazyColumn {
             item {
                 Column(
-                    modifier = modifier,
-                    verticalArrangement = Arrangement.spacedBy(standardPadding / 10)
+                    modifier = Modifier.padding(top = standardPadding),
+                    verticalArrangement = Arrangement.spacedBy(standardPadding)
                 ) {
-                    notifications.forEach { notification ->
-                        NotificationItem(
-                            notification,
-                            standardPadding
+                    listOverviewExercise.forEach { (exerciseName, time, calories) ->
+                        OverExerciseItem(
+                            exerciseName = exerciseName,
+                            time = time,
+                            calories = calories,
+                            standardPadding = standardPadding
+
                         )
                     }
                 }
@@ -154,52 +150,63 @@ fun NotificationContent(
 }
 
 @Composable
-fun NotificationItem(
-    notification: String,
+fun OverExerciseItem(
+    exerciseName: String,
+    time: Int,
+    calories: Float,
     standardPadding: Dp
 ) {
-    val currentDateTime = LocalDateTime.now()
-    // Thay thành điều kiện khác nếu cần thiết
-    val icon = if (currentDateTime.hour < 12){
-        R.drawable.ic_morning
-    } else if (currentDateTime.hour < 18){
-        R.drawable.ic_afternoon
-    } else {
-        R.drawable.ic_evening
-    }
-
-    Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)), // nếu đã đọc thì sẽ có màu nền này
+    Card(
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier.padding(standardPadding),
-            horizontalArrangement = Arrangement.spacedBy(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(icon),
-                contentDescription = "Notification Icon"
-            )
-
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(standardPadding)
             ) {
                 Text(
-                    text = notification,
+                    text = exerciseName,
                     color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleSmall
                 )
 
                 Text(
-                    text = currentDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "$time ${stringResource(R.string.min)}, " +
+                            "$calories ${stringResource(R.string.cal)}",
+                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            IconButton(
+                onClick = { TODO() }
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.btn_back),
+                    contentDescription = "Extend button",
+                    modifier = Modifier.rotate(180f)
                 )
             }
         }
     }
 }
+
+val listOverviewExercise = listOf(
+    Triple("Jumping Jacks", 10, 100f),
+    Triple("Push-ups", 15, 150f),
+    Triple("Squats", 12, 120f),
+    Triple("Lunges", 10, 90f),
+    Triple("Burpees", 8, 140f),
+    Triple("Plank", 5, 50f),
+    Triple("Mountain Climbers", 7, 110f),
+    Triple("High Knees", 6, 95f),
+    Triple("Jump Rope", 10, 130f),
+    Triple("Bicycle Crunches", 12, 105f)
+)
+
 
 @Preview(
     device = "id:pixel",
@@ -211,7 +218,7 @@ fun NotificationItem(
 @Composable
 private fun DarkModePreviewInSmallPhone() {
     BioFitTheme {
-        NotificationScreen()
+        OverviewExerciseScreen()
     }
 }
 
@@ -224,7 +231,7 @@ private fun DarkModePreviewInSmallPhone() {
 @Composable
 private fun PreviewInLargePhone() {
     BioFitTheme {
-        NotificationScreen()
+        OverviewExerciseScreen()
     }
 }
 
@@ -238,7 +245,7 @@ private fun PreviewInLargePhone() {
 @Composable
 private fun PreviewInTablet() {
     BioFitTheme {
-        NotificationScreen()
+        OverviewExerciseScreen()
     }
 }
 
@@ -252,7 +259,7 @@ private fun PreviewInTablet() {
 @Composable
 private fun LandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        NotificationScreen()
+        OverviewExerciseScreen()
     }
 }
 
@@ -265,7 +272,7 @@ private fun LandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun LandscapePreviewInLargePhone() {
     BioFitTheme {
-        NotificationScreen()
+        OverviewExerciseScreen()
     }
 }
 
@@ -279,6 +286,6 @@ private fun LandscapePreviewInLargePhone() {
 @Composable
 private fun LandscapePreviewInTablet() {
     BioFitTheme {
-        NotificationScreen()
+        OverviewExerciseScreen()
     }
 }

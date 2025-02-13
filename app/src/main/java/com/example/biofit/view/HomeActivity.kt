@@ -946,12 +946,12 @@ fun DailyGoals(
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_exercise),
-                            contentDescription = stringResource(R.string.exercise),
+                            contentDescription = stringResource(R.string.activity),
                             modifier = Modifier.size(standardPadding * 1.5f)
                         )
 
                         Text(
-                            text = stringResource(R.string.exercise),
+                            text = stringResource(R.string.activity),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -987,7 +987,7 @@ fun DailyGoals(
                             modifier = Modifier.padding(horizontal = standardPadding * 2)
                         ) {
                             Text(
-                                text = stringResource(R.string.activity),
+                                text = stringResource(R.string.exercise),
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 style = MaterialTheme.typography.bodySmall
                             )

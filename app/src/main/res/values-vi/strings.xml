@@ -162,4 +162,21 @@
     <string name="slice">Lát</string>
     <string name="steak">Miếng</string>
     <string name="enter_serving_size">Nhập khẩu phần ăn</string>
+    <string name="exercise_name">Tên bài tập</string>
+    <string name="amateur">Nghiệp dư</string>
+    <string name="level">Mức độ</string>
+    <string name="select_level">Chọn mức độ</string>
+    <string name="professional">Chuyên nghiệp</string>
+    <string name="time">Thời gian</string>
+    <string name="minutes">phút</string>
+    <string name="calories_consumed">Lượng calo tiêu thụ</string>
+    <string name="new_exercise">Bài tập mới</string>
+    <string name="min">phút</string>
+    <string name="calories_distribution">Phân phối calo</string>
+    <string name="daily_calorie_intake">Daily calorie intake</string>
+    <string name="percentage">%</string>
+    <string name="set_a_goal_for_your_meal">Đặt mục tiêu cho bữa ăn của bạn</string>
+    <string name="macronutrient_balance">Cân bằng dinh dưỡng đa lượng</string>
+    <string name="total_calories_distributed">Tổng lượng calo phân phối</string>
+    <string name="the_rate_will_always_be_100">Tỷ lệ luôn bằng 100%</string>
 </resources>

@@ -106,8 +106,8 @@ fun SettingScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
-                R.string.setting,
-                null,
+                title = R.string.setting,
+                middleButton = null,
                 rightButton = {
                     TextButton(
                         onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn nút Save
@@ -119,7 +119,7 @@ fun SettingScreen() {
                         )
                     }
                 },
-                standardPadding
+                standardPadding = standardPadding
             )
             SettingContent(
                 screenWidth,
