@@ -322,7 +322,7 @@ fun CAUExerciseContent(
     locale = "vi"
 )
 @Composable
-private fun DarkModePreviewInSmallPhone() {
+private fun CAUExerciseScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         CAUExerciseScreen()
     }
@@ -335,7 +335,7 @@ private fun DarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
-private fun PreviewInLargePhone() {
+private fun CAUExerciseScreenPreviewInLargePhone() {
     BioFitTheme {
         CAUExerciseScreen()
     }
@@ -349,7 +349,7 @@ private fun PreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PreviewInTablet() {
+private fun CAUExerciseScreenPreviewInTablet() {
     BioFitTheme {
         CAUExerciseScreen()
     }
@@ -363,7 +363,7 @@ private fun PreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun LandscapeDarkModePreviewInSmallPhone() {
+private fun CAUExerciseScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         CAUExerciseScreen()
     }
@@ -376,7 +376,7 @@ private fun LandscapeDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInLargePhone() {
+private fun CAUExerciseScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         CAUExerciseScreen()
     }
@@ -390,7 +390,7 @@ private fun LandscapePreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInTablet() {
+private fun CAUExerciseScreenLandscapePreviewInTablet() {
     BioFitTheme {
         CAUExerciseScreen()
     }

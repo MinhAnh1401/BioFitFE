@@ -40,13 +40,13 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 
-class CaloriesDistributionActivity : ComponentActivity() {
+class CaloriesTargetActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             BioFitTheme {
-                CalorieDistributionScreen()
+                CaloriesTargetScreen()
             }
         }
     }
@@ -58,7 +58,7 @@ class CaloriesDistributionActivity : ComponentActivity() {
 }
 
 @Composable
-fun CalorieDistributionScreen() {
+fun CaloriesTargetScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -79,7 +79,7 @@ fun CalorieDistributionScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.calories_distribution,
+                title = R.string.calories_target,
                 middleButton = null,
                 rightButton = {
                     TextButton(
@@ -95,7 +95,7 @@ fun CalorieDistributionScreen() {
                 standardPadding = standardPadding
             )
 
-            CalorieDistributionContent(
+            CaloriesTargetContent(
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -104,26 +104,11 @@ fun CalorieDistributionScreen() {
 }
 
 @Composable
-fun CalorieDistributionContent(
+fun CaloriesTargetContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    var dailyCalorieIntake by rememberSaveable { mutableStateOf(value = "") }
-    val percentageCalBreakfast = rememberSaveable { mutableStateOf("") }
-    val calBreakfast = rememberSaveable { mutableStateOf("0") }
-    val percentageCalLunch = rememberSaveable { mutableStateOf("") }
-    val calLunch = rememberSaveable { mutableStateOf("0") }
-    val percentageCalDinner = rememberSaveable { mutableStateOf("") }
-    val calDinner = rememberSaveable { mutableStateOf("0") }
-    val percentageCalSnack = rememberSaveable { mutableStateOf("") }
-    val calSnack = rememberSaveable { mutableStateOf("0") }
-
-    val listMacronutrientBalanceTextFields = listOf(
-        Triple(percentageCalBreakfast, R.string.breakfast, calBreakfast),
-        Triple(percentageCalLunch, R.string.lunch, calLunch),
-        Triple(percentageCalDinner, R.string.dinner, calDinner),
-        Triple(percentageCalSnack, R.string.snack, calSnack)
-    )
+    var calorieIntake by rememberSaveable { mutableStateOf("") }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
@@ -133,14 +118,14 @@ fun CalorieDistributionContent(
                 modifier = modifier
             ) {
                 Text(
-                    text = stringResource(R.string.set_a_goal_for_your_meal),
+                    text = stringResource(R.string.daily_calorie_intake),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleSmall
                 )
 
                 TextField(
-                    value = dailyCalorieIntake,
-                    onValueChange = { dailyCalorieIntake = it },
+                    value = calorieIntake,
+                    onValueChange = { calorieIntake = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onBackground,
@@ -148,12 +133,12 @@ fun CalorieDistributionContent(
                     ),
                     prefix = {
                         Text(
-                            text = stringResource(R.string.daily_calorie_intake),
+                            text = stringResource(R.string.calorie_intake),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.outline
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     keyboardActions = KeyboardActions(
                         onDone = { TODO() },
                         onGo = { TODO() },
@@ -175,6 +160,15 @@ fun CalorieDistributionContent(
         }
 
         item {
+            val percentageProtein = rememberSaveable { mutableStateOf("") }
+            val percentageCarbs = rememberSaveable { mutableStateOf("") }
+            val percentageFat = rememberSaveable { mutableStateOf("") }
+            val listMacronutrientBalanceTextFields = listOf(
+                Pair(percentageProtein, R.string.protein),
+                Pair(percentageCarbs, R.string.carbohydrate),
+                Pair(percentageFat, R.string.fat)
+            )
+
             Column(
                 modifier = modifier
             ) {
@@ -184,10 +178,10 @@ fun CalorieDistributionContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                listMacronutrientBalanceTextFields.forEach { (percentageCal, title, calories) ->
+                listMacronutrientBalanceTextFields.forEach { (percentage, title) ->
                     TextField(
-                        value = percentageCal.value,
-                        onValueChange = { percentageCal.value = it },
+                        value = percentage.value,
+                        onValueChange = { percentage.value = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
                             color = MaterialTheme.colorScheme.onBackground,
@@ -195,7 +189,7 @@ fun CalorieDistributionContent(
                         ),
                         prefix = {
                             Text(
-                                text = "${stringResource(title)} ${calories.value}${stringResource(R.string.cal)}",
+                                text = stringResource(title),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.outline
                             )
@@ -235,7 +229,7 @@ fun CalorieDistributionContent(
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
-                    text = stringResource(R.string.total_calories_distributed),
+                    text = stringResource(R.string.total_macro_percentage),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -244,7 +238,7 @@ fun CalorieDistributionContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.the_rate_will_always_be_100),
+                        text = stringResource(R.string.macro_ratio_will_always_be_100),
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.outline,
                         style = MaterialTheme.typography.bodySmall
@@ -278,9 +272,9 @@ fun CalorieDistributionContent(
     locale = "vi"
 )
 @Composable
-private fun CalorieDistributionScreenDarkModePreviewInSmallPhone() {
+private fun CaloriesTargetScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        CalorieDistributionScreen()
+        CaloriesTargetScreen()
     }
 }
 
@@ -291,9 +285,9 @@ private fun CalorieDistributionScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
-private fun CalorieDistributionScreenPreviewInLargePhone() {
+private fun CaloriesTargetScreenPreviewInLargePhone() {
     BioFitTheme {
-        CalorieDistributionScreen()
+        CaloriesTargetScreen()
     }
 }
 
@@ -305,9 +299,9 @@ private fun CalorieDistributionScreenPreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun CalorieDistributionScreenPreviewInTablet() {
+private fun CaloriesTargetScreenPreviewInTablet() {
     BioFitTheme {
-        CalorieDistributionScreen()
+        CaloriesTargetScreen()
     }
 }
 
@@ -319,9 +313,9 @@ private fun CalorieDistributionScreenPreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun CalorieDistributionScreenLandscapeDarkModePreviewInSmallPhone() {
+private fun CaloriesTargetScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        CalorieDistributionScreen()
+        CaloriesTargetScreen()
     }
 }
 
@@ -332,9 +326,9 @@ private fun CalorieDistributionScreenLandscapeDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun CalorieDistributionScreenLandscapePreviewInLargePhone() {
+private fun CaloriesTargetScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        CalorieDistributionScreen()
+        CaloriesTargetScreen()
     }
 }
 
@@ -346,8 +340,8 @@ private fun CalorieDistributionScreenLandscapePreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun CalorieDistributionScreenLandscapePreviewInTablet() {
+private fun CaloriesTargetScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        CalorieDistributionScreen()
+        CaloriesTargetScreen()
     }
 }

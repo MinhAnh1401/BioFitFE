@@ -216,7 +216,7 @@ val listOverviewExercise = listOf(
     locale = "vi"
 )
 @Composable
-private fun DarkModePreviewInSmallPhone() {
+private fun OverviewExerciseScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         OverviewExerciseScreen()
     }
@@ -229,7 +229,7 @@ private fun DarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
-private fun PreviewInLargePhone() {
+private fun OverviewExerciseScreenPreviewInLargePhone() {
     BioFitTheme {
         OverviewExerciseScreen()
     }
@@ -243,7 +243,7 @@ private fun PreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PreviewInTablet() {
+private fun OverviewExerciseScreenPreviewInTablet() {
     BioFitTheme {
         OverviewExerciseScreen()
     }
@@ -257,7 +257,7 @@ private fun PreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun LandscapeDarkModePreviewInSmallPhone() {
+private fun OverviewExerciseScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         OverviewExerciseScreen()
     }
@@ -270,7 +270,7 @@ private fun LandscapeDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInLargePhone() {
+private fun OverviewExerciseScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         OverviewExerciseScreen()
     }
@@ -284,7 +284,7 @@ private fun LandscapePreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInTablet() {
+private fun OverviewExerciseScreenLandscapePreviewInTablet() {
     BioFitTheme {
         OverviewExerciseScreen()
     }

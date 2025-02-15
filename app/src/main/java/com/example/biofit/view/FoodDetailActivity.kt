@@ -333,7 +333,7 @@ fun FoodNutritionalValue(
     locale = "vi"
 )
 @Composable
-private fun DarkModePreviewInSmallPhone() {
+private fun FoodDetailScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         FoodDetailScreen()
     }
@@ -346,7 +346,7 @@ private fun DarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
-private fun PreviewInLargePhone() {
+private fun FoodDetailScreenPreviewInLargePhone() {
     BioFitTheme {
         FoodDetailScreen()
     }
@@ -360,7 +360,7 @@ private fun PreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PreviewInTablet() {
+private fun FoodDetailScreenPreviewInTablet() {
     BioFitTheme {
         FoodDetailScreen()
     }
@@ -374,7 +374,7 @@ private fun PreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun LandscapeDarkModePreviewInSmallPhone() {
+private fun FoodDetailScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         FoodDetailScreen()
     }
@@ -387,7 +387,7 @@ private fun LandscapeDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInLargePhone() {
+private fun FoodDetailScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         FoodDetailScreen()
     }
@@ -401,7 +401,7 @@ private fun LandscapePreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInTablet() {
+private fun FoodDetailScreenLandscapePreviewInTablet() {
     BioFitTheme {
         FoodDetailScreen()
     }

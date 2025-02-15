@@ -283,7 +283,7 @@ fun UpdateWeightContent(
     locale = "vi"
 )
 @Composable
-private fun PortraitScreenDarkModePreviewInSmallPhone() {
+private fun UpdateWeightScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         UpdateWeightScreen()
     }
@@ -296,7 +296,7 @@ private fun PortraitScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PortraitScreenPreviewInLargePhone() {
+private fun UpdateWeightScreenPreviewInLargePhone() {
     BioFitTheme {
         UpdateWeightScreen()
     }
@@ -310,7 +310,7 @@ private fun PortraitScreenPreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PortraitScreenPreviewInTablet() {
+private fun UpdateWeightScreenPreviewInTablet() {
     BioFitTheme {
         UpdateWeightScreen()
     }
@@ -324,7 +324,7 @@ private fun PortraitScreenPreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun LandscapeScreenDarkModePreviewInSmallPhone() {
+private fun UpdateWeightScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         UpdateWeightScreen()
     }
@@ -337,7 +337,7 @@ private fun LandscapeScreenDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapeScreenPreviewInLargePhone() {
+private fun UpdateWeightScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         UpdateWeightScreen()
     }
@@ -351,7 +351,7 @@ private fun LandscapeScreenPreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapeScreenPreviewInTablet() {
+private fun UpdateWeightScreenLandscapePreviewInTablet() {
     BioFitTheme {
         UpdateWeightScreen()
     }

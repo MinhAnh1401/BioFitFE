@@ -479,7 +479,7 @@ fun MenuForSession(
     locale = "vi"
 )
 @Composable
-private fun DarkModePreviewInSmallPhone() {
+private fun TrackScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         TrackScreen()
     }
@@ -492,7 +492,7 @@ private fun DarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
-private fun PreviewInLargePhone() {
+private fun TrackScreenPreviewInLargePhone() {
     BioFitTheme {
         TrackScreen()
     }
@@ -506,7 +506,7 @@ private fun PreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PreviewInTablet() {
+private fun TrackScreenPreviewInTablet() {
     BioFitTheme {
         TrackScreen()
     }
@@ -520,7 +520,7 @@ private fun PreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun LandscapeDarkModePreviewInSmallPhone() {
+private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         TrackScreen()
     }
@@ -533,7 +533,7 @@ private fun LandscapeDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInLargePhone() {
+private fun TrackScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         TrackScreen()
     }
@@ -547,7 +547,7 @@ private fun LandscapePreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInTablet() {
+private fun TrackScreenLandscapePreviewInTablet() {
     BioFitTheme {
         TrackScreen()
     }

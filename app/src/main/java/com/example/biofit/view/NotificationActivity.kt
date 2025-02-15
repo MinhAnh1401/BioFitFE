@@ -209,7 +209,7 @@ fun NotificationItem(
     locale = "vi"
 )
 @Composable
-private fun DarkModePreviewInSmallPhone() {
+private fun NotificationScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         NotificationScreen()
     }
@@ -222,7 +222,7 @@ private fun DarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
 )
 @Composable
-private fun PreviewInLargePhone() {
+private fun NotificationScreenPreviewInLargePhone() {
     BioFitTheme {
         NotificationScreen()
     }
@@ -236,7 +236,7 @@ private fun PreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun PreviewInTablet() {
+private fun NotificationScreenPreviewInTablet() {
     BioFitTheme {
         NotificationScreen()
     }
@@ -250,7 +250,7 @@ private fun PreviewInTablet() {
     locale = "vi"
 )
 @Composable
-private fun LandscapeDarkModePreviewInSmallPhone() {
+private fun NotificationScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         NotificationScreen()
     }
@@ -263,7 +263,7 @@ private fun LandscapeDarkModePreviewInSmallPhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInLargePhone() {
+private fun NotificationScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         NotificationScreen()
     }
@@ -277,7 +277,7 @@ private fun LandscapePreviewInLargePhone() {
     uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun LandscapePreviewInTablet() {
+private fun NotificationScreenLandscapePreviewInTablet() {
     BioFitTheme {
         NotificationScreen()
     }
