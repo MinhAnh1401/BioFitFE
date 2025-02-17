@@ -3,13 +3,13 @@ package com.example.biofit.view
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +25,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -38,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -128,16 +132,12 @@ fun OverviewScreen() {
 }
 
 @Composable
-fun DayMonthToggleButton(
+fun ToggleButton(
+    options: List<Int>,
     selectedOption: Int,
     onOptionSelected: (Int) -> Unit,
     standardPadding: Dp
 ) {
-    val options = listOf(
-        R.string.day,
-        R.string.week
-    )
-
     Row(
         modifier = Modifier
             .clip(shape = MaterialTheme.shapes.extraLarge)
@@ -190,7 +190,11 @@ fun OverviewContent(
             Column(
                 modifier = modifier
             ) {
-                DayMonthToggleButton(
+                ToggleButton(
+                    options = listOf(
+                        R.string.day,
+                        R.string.week
+                    ),
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it },
                     standardPadding = standardPadding
@@ -346,12 +350,11 @@ fun OverviewDayContent(
         modifier = modifier.padding(top = standardPadding),
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
-        WeekdaySelector(
-            standardPadding,
-            modifier
-        ) { selectedDate ->
-            Log.d("Selected Date", selectedDate.toString()) // Xử lý sự kiện khi ngày được chọn
-        }
+        CalendarSelector(
+            onDaySelected = { },
+            standardPadding = standardPadding,
+            modifier = modifier
+        )
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -602,25 +605,32 @@ fun OverviewDayContent(
 }
 
 @Composable
-fun WeekdaySelector(
+fun CalendarSelector(
+    onDaySelected: (LocalDate) -> Unit,
     standardPadding: Dp,
-    modifier: Modifier,
-    onDaySelected: (LocalDate) -> Unit
+    modifier: Modifier = Modifier
 ) {
     val today = LocalDate.now()
-    val weekDays = (0..6).map { today.minusDays(it.toLong()) }.reversed()
+    val startOfMonth = today.withDayOfMonth(1)
+    val monthDays = (0 until today.lengthOfMonth()).map { startOfMonth.plusDays(it.toLong()) }
 
     var selectedDate by rememberSaveable { mutableStateOf(today) }
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(Unit) {
+        listState.scrollToItem(monthDays.indexOf(today))
+    }
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.SpaceEvenly
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            state = listState,
+            horizontalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
-            weekDays.forEach { date ->
+            items(monthDays) { date ->
                 val isSelected = date == selectedDate
                 Column(
                     modifier = Modifier
@@ -630,6 +640,17 @@ fun WeekdaySelector(
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 MaterialTheme.colorScheme.surfaceContainerHighest
+                            }
+                        )
+                        .then(
+                            if (date == today) {
+                                Modifier.border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = MaterialTheme.shapes.large
+                                )
+                            } else {
+                                Modifier
                             }
                         )
                         .clickable {

@@ -247,7 +247,7 @@ fun CAUExerciseContent(
             },
             suffix = {
                 Text(
-                    text = stringResource(R.string.minutes),
+                    text = stringResource(R.string.min),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )

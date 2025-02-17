@@ -115,14 +115,22 @@ fun TargetContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    var goal by rememberSaveable { mutableIntStateOf(R.string.gain_weight) }
+    var goal by rememberSaveable { mutableIntStateOf(R.string.muscle_gain) }
     var showGoalDialog by rememberSaveable { mutableStateOf(false) }
     var protein by rememberSaveable { mutableStateOf("") }
     var carb by rememberSaveable { mutableStateOf("") }
-    var weeklyGoal by rememberSaveable { mutableIntStateOf(R.string.gain_weight) }
+    var weeklyGoal by rememberSaveable {
+        mutableIntStateOf(
+            if (goal == R.string.muscle_gain) {
+                R.string.gain_025_kg_week
+            } else {
+                R.string.lose_025_kg_week
+            }
+        )
+    }
     var showWeeklyGoalDialog by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(goal) {
-        weeklyGoal = if (goal == R.string.gain_weight) {
+        weeklyGoal = if (goal == R.string.muscle_gain) {
             R.string.gain_025_kg_week
         } else {
             R.string.lose_025_kg_week
@@ -209,8 +217,8 @@ fun TargetContent(
                         onDismissRequest = { showGoalDialog = false },
                         title = R.string.select_goal,
                         listOptions = listOf(
-                            R.string.gain_weight,
-                            R.string.lose_weight
+                            R.string.weight_loss,
+                            R.string.muscle_gain
                         ),
                         standardPadding = standardPadding
                     )
@@ -351,7 +359,7 @@ fun TargetContent(
                         },
                         onDismissRequest = { showWeeklyGoalDialog = false },
                         title = R.string.select_weekly_goal,
-                        listOptions = if (goal == R.string.gain_weight) {
+                        listOptions = if (goal == R.string.muscle_gain) {
                             listOf(
                                 R.string.gain_025_kg_week,
                                 R.string.gain_05_kg_week,
@@ -422,7 +430,7 @@ fun TargetContent(
                             showIntensityOfExerciseDialog = false
                         },
                         onDismissRequest = { showIntensityOfExerciseDialog = false },
-                        title = R.string.select_intensity_of_exercise,
+                        title = R.string.select_intensity,
                         listOptions = listOf(
                             R.string.sedentary,
                             R.string.gentle,

@@ -241,8 +241,12 @@ fun AddContent(
     Column(
         modifier = modifier
     ) {
-        Toggle(
-            selectedToggle = selectedToggle,
+        ToggleButton(
+            options = listOf(
+                R.string.create,
+                R.string.recently
+            ),
+            selectedOption = selectedToggle,
             onOptionSelected = { selectedToggle = it },
             standardPadding = standardPadding
         )
@@ -436,57 +440,6 @@ val food3 = FoodInfo(
     fat = Triple(R.drawable.ic_fat, R.string.fat, 41f),
     sodium = 115f
 )
-
-@Composable
-fun Toggle(
-    selectedToggle: Int,
-    onOptionSelected: (Int) -> Unit,
-    standardPadding: Dp
-) {
-    val options = listOf(
-        R.string.recently,
-        R.string.create
-    )
-
-    Row(
-        modifier = Modifier
-            .clip(shape = MaterialTheme.shapes.extraLarge)
-            .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-            .padding(standardPadding / 4),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        options.forEach { option ->
-            val isSelected = option == selectedToggle
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(shape = MaterialTheme.shapes.extraLarge)
-                    .background(
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Transparent
-                        }
-                    )
-                    .clickable { onOptionSelected(option) }
-                    .padding(vertical = standardPadding / 2),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(id = option),
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.outline
-                    },
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun FoodItem2(
