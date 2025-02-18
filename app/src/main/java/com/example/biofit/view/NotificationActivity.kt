@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
@@ -71,7 +72,7 @@ fun NotificationScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
-                title = R.string.notification,
+                title = stringResource(R.string.notification),
                 middleButton = null,
                 rightButton = {
                     IconButton(

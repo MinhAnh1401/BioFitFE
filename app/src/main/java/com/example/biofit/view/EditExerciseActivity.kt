@@ -82,7 +82,7 @@ fun EditExerciseScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.edit_exercise,
+                title = stringResource(R.string.edit_exercise),
                 middleButton = null,
                 rightButton = {
                     TextButton(

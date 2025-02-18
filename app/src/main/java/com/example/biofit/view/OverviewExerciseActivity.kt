@@ -78,7 +78,7 @@ fun OverviewExerciseScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.exercise,
+                title = stringResource(R.string.exercise),
                 middleButton = null,
                 rightButton = {
                     IconButton(

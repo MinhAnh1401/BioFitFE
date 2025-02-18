@@ -86,7 +86,7 @@ fun TargetScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.target,
+                title = stringResource(R.string.target),
                 middleButton = null,
                 rightButton = {
                     TextButton(

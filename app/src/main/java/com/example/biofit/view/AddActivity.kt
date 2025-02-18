@@ -6,8 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +47,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -122,7 +119,7 @@ fun AddScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = selectedOption.value,
+                title = stringResource(selectedOption.value),
                 middleButton = {
                     Box {
                         IconButton(
@@ -285,7 +282,7 @@ fun AddContent(
                                 verticalArrangement = Arrangement.spacedBy(standardPadding)
                             ) {
                                 foodListRecent.forEachIndexed { index, _ ->
-                                    FoodItem2(
+                                    FoodItem(
                                         foodImg = foodListRecent[index].foodImage,
                                         foodName = foodListRecent[index].foodName,
                                         servingSize = Pair(
@@ -327,7 +324,7 @@ fun AddContent(
                                 verticalArrangement = Arrangement.spacedBy(standardPadding)
                             ) {
                                 foodListCreate.forEachIndexed { index, _ ->
-                                    FoodItem2(
+                                    FoodItem(
                                         foodImg = foodListCreate[index].foodImage,
                                         foodName = foodListCreate[index].foodName,
                                         servingSize = Pair(
@@ -442,7 +439,7 @@ val food3 = FoodInfo(
 )
 
 @Composable
-fun FoodItem2(
+fun FoodItem(
     foodImg: Int,
     foodName: String,
     servingSize: Pair<Float, String>,
@@ -474,9 +471,15 @@ fun FoodItem2(
             )
 
             Text(
-                text = "${servingSize.first} ${servingSize.second}, " +
-                        "${mass.toBigDecimal().setScale(1, RoundingMode.HALF_UP)} g, " +
-                        "${calories.toBigDecimal().setScale(1, RoundingMode.HALF_UP)} kcal",
+                text = "${servingSize.first}${servingSize.second}, " +
+                        "${mass.toBigDecimal().setScale(
+                            1,
+                            RoundingMode.HALF_UP
+                        )}${stringResource(R.string.gam)}, " +
+                        "${calories.toBigDecimal().setScale(
+                            1,
+                            RoundingMode.HALF_UP
+                        )}${stringResource(R.string.kcal)}",
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.labelSmall
             )
@@ -494,7 +497,10 @@ fun FoodItem2(
                             contentDescription = "Macro icon"
                         )
                         Text(
-                            text = "${value.toBigDecimal().setScale(1, RoundingMode.HALF_UP)} g",
+                            text = "${value.toBigDecimal().setScale(
+                                1,
+                                RoundingMode.HALF_UP
+                            )}${stringResource(R.string.gam)}",
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.labelSmall
                         )

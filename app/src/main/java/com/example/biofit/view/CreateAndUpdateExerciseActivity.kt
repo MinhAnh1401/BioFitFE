@@ -89,7 +89,7 @@ fun CAUExerciseScreen() {
                 title = /*if (/*nếu người dùng nhấn dấu + bên ExerciseActivity*/) {
                     R.string.new_exercise
                 } else {*/
-                    R.string.exercise,
+                    stringResource(R.string.exercise),
                 //},
                 middleButton = null,
                 rightButton = {

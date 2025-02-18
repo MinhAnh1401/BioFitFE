@@ -88,7 +88,7 @@ fun CreateFoodScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.create_new_food,
+                title = stringResource(R.string.create_new_food),
                 middleButton = null,
                 rightButton = null,
                 standardPadding = standardPadding

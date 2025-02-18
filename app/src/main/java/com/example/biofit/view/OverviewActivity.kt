@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -115,7 +116,7 @@ fun OverviewScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
-                title =  R.string.calorie_statistics,
+                title = stringResource(R.string.calorie_statistics),
                 middleButton = null,
                 rightButton = null,
                 standardPadding = standardPadding
@@ -169,7 +170,9 @@ fun ToggleButton(
                     } else {
                         MaterialTheme.colorScheme.outline
                     },
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
         }

@@ -100,7 +100,7 @@ fun TrackScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = selectedOption.value,
+                title = stringResource(selectedOption.value),
                 middleButton = {
                     Box {
                         IconButton(
@@ -356,7 +356,7 @@ fun MenuForSession(
             when (selectedOption) {
                 R.string.morning ->
                     foodListMorning.forEachIndexed { index, _ ->
-                        FoodItem2(
+                        FoodItem(
                             foodImg = foodListMorning[index].foodImage,
                             foodName = foodListMorning[index].foodName,
                             servingSize = Pair(
@@ -385,7 +385,7 @@ fun MenuForSession(
 
                 R.string.afternoon ->
                     foodListAfternoon.forEachIndexed { index, _ ->
-                        FoodItem2(
+                        FoodItem(
                             foodImg = foodListAfternoon[index].foodImage,
                             foodName = foodListAfternoon[index].foodName,
                             servingSize = Pair(
@@ -414,7 +414,7 @@ fun MenuForSession(
 
                 R.string.evening ->
                     foodListEvening.forEachIndexed { index, _ ->
-                        FoodItem2(
+                        FoodItem(
                             foodImg = foodListEvening[index].foodImage,
                             foodName = foodListEvening[index].foodName,
                             servingSize = Pair(
@@ -443,7 +443,7 @@ fun MenuForSession(
 
                 else ->
                     foodListSnack.forEachIndexed { index, _ ->
-                        FoodItem2(
+                        FoodItem(
                             foodImg = foodListSnack[index].foodImage,
                             foodName = foodListSnack[index].foodName,
                             servingSize = Pair(

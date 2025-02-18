@@ -106,7 +106,7 @@ fun SettingScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Back
-                title = R.string.setting,
+                title = stringResource(R.string.setting),
                 middleButton = null,
                 rightButton = {
                     TextButton(
@@ -134,7 +134,7 @@ fun SettingScreen() {
 @Composable
 fun TopBarSetting(
     onBackClick: () -> Unit,
-    @StringRes title: Int? = null,
+    title: String? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
     standardPadding: Dp
@@ -160,7 +160,7 @@ fun TopBarSetting(
             ) {
                 title?.let {
                     Text(
-                        text = stringResource(title),
+                        text = title,
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.titleMedium
                     )

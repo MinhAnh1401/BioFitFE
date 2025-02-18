@@ -241,4 +241,18 @@
     <string name="enter_number_of_days">Enter number of days</string>
     <string name="workout">Workout</string>
     <string name="select_exercise">Select exercise</string>
+    <string name="calorie">Calorie</string>
+    <string name="consume">Consume</string>
+    <string name="burn">Burn</string>
+    <string name="eat">Eat</string>
+    <string name="meals_list">Meals list</string>
+    <string name="meals_detail">Meals detail</string>
+    <string name="detail">Detail</string>
+    <string name="bio_ai">Bio AI</string>
+    <string name="resume">Resume</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+    <string name="congratulations_you_have_completed">Congratulations you have completed!</string>
+    <string name="effect">Effect</string>
+    <string name="guide">Guide</string>
 </resources>

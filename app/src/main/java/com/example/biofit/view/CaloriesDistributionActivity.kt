@@ -79,7 +79,7 @@ fun CalorieDistributionScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.calories_distribution,
+                title = stringResource(R.string.calories_distribution),
                 middleButton = null,
                 rightButton = {
                     TextButton(

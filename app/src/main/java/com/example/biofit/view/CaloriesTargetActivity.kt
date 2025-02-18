@@ -79,7 +79,7 @@ fun CaloriesTargetScreen() {
         ) {
             TopBarSetting(
                 onBackClick = { TODO() },
-                title = R.string.calories_target,
+                title = stringResource(R.string.calories_target),
                 middleButton = null,
                 rightButton = {
                     TextButton(

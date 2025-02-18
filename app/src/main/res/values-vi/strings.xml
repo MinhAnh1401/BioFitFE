@@ -241,4 +241,18 @@
     <string name="enter_number_of_days">Nhập số ngày</string>
     <string name="workout">Tập luyện</string>
     <string name="select_exercise">Chọn bài tập</string>
+    <string name="calorie">Calo</string>
+    <string name="consume">Tiêu thụ</string>
+    <string name="burn">Đốt cháy</string>
+    <string name="eat">Ăn uống</string>
+    <string name="meals_list">Danh sách bữa ăn</string>
+    <string name="meals_detail">Chi tiết bữa ăn</string>
+    <string name="detail">Chi tiết</string>
+    <string name="bio_ai">Bio AI</string>
+    <string name="resume">Tiếp tục</string>
+    <string name="pause">Tạm dừng</string>
+    <string name="stop">Kết thúc</string>
+    <string name="congratulations_you_have_completed">Chúc mừng bạn đã hoàn thành!</string>
+    <string name="effect">Tác dụng</string>
+    <string name="guide">Hướng dẫn</string>
 </resources>
