@@ -1,10 +1,6 @@
 package com.example.biofit.view
 
 import android.content.res.Configuration
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -14,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -55,6 +49,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,65 +72,23 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import kotlin.random.Random
 
-class HomeActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            BioFitTheme {
-                HomeScreen()
-            }
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        recreate()
-    }
-}
-
 @Composable
 fun HomeScreen() {
+    val context = LocalContext.current
+
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    Column(
+        verticalArrangement = Arrangement.spacedBy(standardPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            Row(
-                modifier = Modifier.weight(1f)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                            start = standardPadding,
-                            end = standardPadding,
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    HomeScreenContent(
-                        standardPadding,
-                        modifier
-                    )
-                }
-            }
+        HeaderBar(modifier)
 
-            Row {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    BottomBar(
-                        onItemSelected = { TODO() },
-                        standardPadding = standardPadding
-                    )
-                }
-            }
-        }
+        HomeContent(
+            standardPadding,
+            modifier
+        )
     }
 }
 
@@ -190,17 +143,13 @@ fun HeaderBar(modifier: Modifier) {
 }
 
 @Composable
-fun HomeScreenContent(
+fun HomeContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
-        item {
-            HeaderBar(modifier)
-        }
-
         item {
             OverviewAndSearchBar(
                 standardPadding,

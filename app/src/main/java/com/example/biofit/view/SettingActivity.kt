@@ -133,7 +133,7 @@ fun SettingScreen() {
 
 @Composable
 fun TopBarSetting(
-    onBackClick: () -> Unit,
+    onBackClick: (() -> Unit)? = null,
     title: String? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
@@ -147,10 +147,12 @@ fun TopBarSetting(
             modifier = Modifier.weight(0.5f),
             horizontalAlignment = Alignment.Start
         ) {
-            BackButton(
-                onBackClick,
-                standardPadding
-            )
+            if (onBackClick != null) {
+                BackButton(
+                    onBackClick,
+                    standardPadding
+                )
+            }
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

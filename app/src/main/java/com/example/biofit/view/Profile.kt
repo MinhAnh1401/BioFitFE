@@ -2,9 +2,9 @@ package com.example.biofit.view
 
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,11 +22,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,78 +32,88 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.fragment.app.Fragment
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
-
-class ProfileActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            BioFitTheme {
-                ProfileScreen()
-            }
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        recreate()
-    }
-}
 
 @Composable
 fun ProfileScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    Column(
+        verticalArrangement = Arrangement.spacedBy(standardPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            Row(
-                modifier = Modifier.weight(1f)
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(R.drawable.fake_avatar), // Thay avatar của người dùng từ database
+                contentDescription = "Avatar",
+                modifier = Modifier
+                    .size(standardPadding * 5)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = standardPadding)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                            start = standardPadding,
-                            end = standardPadding,
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ProfileContent(
-                        standardPadding,
-                        modifier
+                Text(
+                    text = stringResource(R.string.full_name), // Thay tên người dùng từ database
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Row {
+                    Text(
+                        text = stringResource(R.string.gender), // Thay giới tính từ database
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+
+                    Text(
+                        text = " | ",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+
+                    Text(
+                        text = stringResource(R.string.age), // Tính tuổi từ nằm sinh trong database
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
 
-            Row {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    BottomBar(
-                        onItemSelected = { TODO() },
-                        standardPadding = standardPadding
-                    )
-                }
+            IconButton(
+                onClick = { TODO() },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.profile),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
+
+        ProfileContent(
+            standardPadding,
+            modifier
+        )
     }
 }
 
@@ -117,68 +125,6 @@ fun ProfileContent(
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Spacer(modifier = Modifier.padding(standardPadding))
-        }
-
-        item {
-            Row(
-                modifier = modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.fake_avatar), // Thay avatar của người dùng từ database
-                    contentDescription = "Avatar",
-                    modifier = Modifier
-                        .size(standardPadding * 5)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = standardPadding)
-                ) {
-                    Text(
-                        text = stringResource(R.string.full_name), // Thay tên người dùng từ database
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-
-                    Row {
-                        Text(
-                            text = stringResource(R.string.gender), // Thay giới tính từ database
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            text = " | ",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            text = stringResource(R.string.age), // Tính tuổi từ nằm sinh trong database
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-
-                IconButton(
-                    onClick = { TODO() },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = stringResource(R.string.profile),
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-        }
-
         item {
             Column(
                 modifier = modifier.padding(top = standardPadding)
@@ -500,71 +446,6 @@ fun ProfileContent(
                             + standardPadding
                 )
             )
-        }
-    }
-}
-
-@Composable
-fun BottomBar(
-    onItemSelected: (String) -> Unit,
-    standardPadding: Dp
-) {
-    val selectedItem = remember { mutableStateOf(value = "Profile") }
-    val items = listOf(
-        stringResource(R.string.home),
-        stringResource(R.string.plan),
-        "Add",
-        stringResource(R.string.knowledge),
-        stringResource(R.string.profile)
-    )
-    val icons = listOf(
-        R.drawable.ic_home,
-        R.drawable.ic_plan,
-        R.drawable.ic_add,
-        R.drawable.ic_knowledge,
-        R.drawable.ic_person
-    )
-
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimary
-    ) {
-        items.forEachIndexed { index, label ->
-            if (label == "Add") {
-                Spacer(modifier = Modifier.weight(1f))
-                FloatingActionButton(
-                    onClick = { onItemSelected(label) },
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        painter = painterResource(id = icons[index]),
-                        contentDescription = label,
-                        tint = MaterialTheme.colorScheme.primaryContainer
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = {
-                        selectedItem.value = label
-                        onItemSelected(label)
-                    },
-                    modifier = Modifier.size(standardPadding * 3)
-                ) {
-                    Icon(
-                        painter = painterResource(id = icons[index]),
-                        contentDescription = label,
-                        modifier = Modifier.size(standardPadding * 2.5f),
-                        tint = if (selectedItem.value == label) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.primary
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-            }
         }
     }
 }

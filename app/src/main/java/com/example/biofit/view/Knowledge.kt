@@ -3,10 +3,9 @@ package com.example.biofit.view
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.webkit.WebView
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,77 +41,54 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.fragment.app.Fragment
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
-
-class KnowledgeActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            BioFitTheme {
-                KnowledgeScreen()
-            }
-        }
-        WebView.setWebContentsDebuggingEnabled(true)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        recreate()
-    }
-}
 
 @Composable
 fun KnowledgeScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    Column(
+        verticalArrangement = Arrangement.spacedBy(standardPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            Row(
-                modifier = Modifier.weight(1f)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                            start = standardPadding,
-                            end = standardPadding,
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    KnowledgeContent(
-                        standardPadding,
-                        modifier
-                    )
-                }
-            }
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.nutritional_knowledge),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium
+            )
 
-            Row {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    BottomBar(
-                        onItemSelected = { TODO() },
-                        standardPadding = standardPadding
-                    )
-                }
+            IconButton(
+                onClick = { TODO() }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_knowledge_2),
+                    contentDescription = "Knowledge",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
+
+        KnowledgeContent(
+            standardPadding,
+            modifier
+        )
     }
 }
 
@@ -136,30 +112,6 @@ fun KnowledgeContent(
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
-        item {
-            Row(
-                modifier = modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(R.string.nutritional_knowledge),
-                    modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                IconButton(
-                    onClick = { TODO() }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_knowledge_2),
-                        contentDescription = "Knowledge",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        }
-
         item {
             Column(
                 modifier = modifier

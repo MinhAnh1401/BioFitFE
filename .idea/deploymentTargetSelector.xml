@@ -5,27 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="KnowledgeScreenPreviewInLargePhone">
+      <SelectionState runConfigName="LoginPortraitScreenPreviewInLargePhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="KnowledgeScreenDarkModePreviewInSmallPhone">
+      <SelectionState runConfigName="MainScreenPreviewInLargePhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="KnowledgeVideoScreenPreviewInLargePhone">
+      <SelectionState runConfigName="LoginPortraitScreenDarkModePreviewInSmallPhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="KnowledgeVideoScreenDarkModePreviewInSmallPhone">
+      <SelectionState runConfigName="StartPortraitScreenDarkModePreviewInSmallPhone">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-02-18T10:03:18.859259Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/nguyenminhdang/.android/avd/Pixel_9_Pro_XL_API_35.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ExerciseViewScreenDarkModePreviewInSmallPhone">
+      <SelectionState runConfigName="StartPortraitScreenPreviewInLargePhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -1,5 +1,7 @@
 package com.example.biofit.view
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -78,8 +81,17 @@ fun RegisterSuccessfullyContent(
 
         Spacer(modifier = Modifier.height(standardPadding))
 
+        val context = LocalContext.current
+        val activity = context as? Activity
+
         GetStartedButton(
-            onCLick = { TODO() },
+            onCLick = {
+                activity?.let {
+                    val intent = Intent(it, InfoUserNameActivity::class.java)
+                    it.startActivity(intent)
+                    it.finish()
+                }
+            },
         )
     }
 }

@@ -2,7 +2,7 @@ package com.example.biofit.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val DarkPrimary = Color(0xFF347232)
+val DarkPrimary = Color(0xFF2A9426)
 val DarkOnPrimary = Color(0xFFFFFFFF)
 val DarkPrimaryContainer = Color(0xFF2E6F2C)
 val DarkOnPrimaryContainer = Color(0xFFB5E3B3)

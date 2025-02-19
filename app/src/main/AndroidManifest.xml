@@ -17,7 +17,7 @@
         android:localeConfig="@xml/locales_config"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.StartActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:theme="@style/Theme.BioFit">
@@ -27,6 +27,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.LoginActivity" />
+        <activity android:name=".view.RegisterActivity" />
+        <activity android:name=".view.RegisterSuccessfullyActivity" />
+        <activity android:name=".view.InfoUserNameActivity" />
+        <activity android:name=".view.InfoUserGenderActivity" />
+        <activity android:name=".view.InfoUserBirthdayActivity" />
+        <activity android:name=".view.InfoUserHeightAndWeightActivity" />
+        <activity android:name=".view.InfoUserTargetActivity" />
+        <activity android:name=".view.MainActivity" />
     </application>
 
 </manifest>

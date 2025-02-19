@@ -1,5 +1,7 @@
 package com.example.biofit.view
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,6 +73,9 @@ class InfoUserNameActivity : ComponentActivity() {
 
 @Composable
 fun InfoUserNameScreen() {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val standardPadding = getStandardPadding().first
@@ -80,10 +87,6 @@ fun InfoUserNameScreen() {
     ) {
         Box {
             BackgroundInfoScreen()
-            NextButtonInfoScreen(
-                onClick = { /* TODO */ },
-                standardPadding
-            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,11 +110,23 @@ fun InfoUserNameScreen() {
                     screenHeight,
                     standardPadding
                 )
+
                 InfoUserNameContent(
                     standardPadding,
                     modifier
                 )
             }
+
+            NextButtonInfoScreen(
+                onClick = {
+                    activity?.let {
+                        val intent = Intent(it, InfoUserGenderActivity::class.java)
+                        it.startActivity(intent)
+                        it.finish()
+                    }
+                },
+                standardPadding
+            )
         }
     }
 }
@@ -145,8 +160,8 @@ fun NextButtonInfoScreen(
     ) {
         IconButton(
             onClick = onClick,
-            modifier = Modifier.size(standardPadding * 4),
-            enabled = true,
+            modifier = Modifier
+                .size(standardPadding * 4)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.btn_next),

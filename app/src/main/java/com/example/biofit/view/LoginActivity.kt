@@ -1,5 +1,7 @@
 package com.example.biofit.view
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -44,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -87,10 +89,10 @@ fun LoginScreen() {
             content = {
                 SignInAndSignUpBackground()
                 LoginContent(
-                    screenWidth,
-                    screenHeight,
-                    standardPadding,
-                    modifier
+                    screenWidth = screenWidth,
+                    screenHeight = screenHeight,
+                    standardPadding = standardPadding,
+                    modifier = modifier
                 )
             }
         )
@@ -201,6 +203,9 @@ fun LoginForm(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val context = LocalContext.current
+        val activity = context as? Activity
+
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -313,7 +318,13 @@ fun LoginForm(
         }
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = {
+                activity?.let {
+                    val intent = Intent(it, StartActivity::class.java)
+                    it.startActivity(intent)
+                    it.finish()
+                }
+            },
             modifier = Modifier.padding(vertical = standardPadding),
             shape = MaterialTheme.shapes.large,
         ) {
@@ -333,6 +344,9 @@ fun LoginForm(
 
 @Composable
 fun SignUpPrompt() {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -341,7 +355,13 @@ fun SignUpPrompt() {
             style = MaterialTheme.typography.bodySmall
         )
         TextButton(
-            onClick = { /* TODO */ },
+            onClick = {
+                activity?.let {
+                    val intent = Intent(it, RegisterActivity::class.java)
+                    it.startActivity(intent)
+                    it.finish()
+                }
+            },
         ) {
             Text(
                 text = stringResource(R.string.create_account),

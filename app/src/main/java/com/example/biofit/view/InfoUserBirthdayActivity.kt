@@ -1,5 +1,7 @@
 package com.example.biofit.view
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +61,9 @@ class InfoUserBirthdayActivity : ComponentActivity() {
 
 @Composable
 fun InfoUserBirthdayScreen() {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val standardPadding = getStandardPadding().first
@@ -69,10 +75,7 @@ fun InfoUserBirthdayScreen() {
     ) {
         Box {
             BackgroundInfoScreen()
-            NextButtonInfoScreen(
-                onClick = { /* TODO */ },
-                standardPadding
-            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,6 +104,17 @@ fun InfoUserBirthdayScreen() {
                     modifier
                 )
             }
+
+            NextButtonInfoScreen(
+                onClick = {
+                    activity?.let {
+                        val intent = Intent(it, InfoUserHeightAndWeightActivity::class.java)
+                        it.startActivity(intent)
+                        it.finish()
+                    }
+                },
+                standardPadding
+            )
         }
     }
 }

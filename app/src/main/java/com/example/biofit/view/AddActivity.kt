@@ -72,6 +72,7 @@ class AddActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun getStandardPadding(): Pair<Dp, Modifier> {
     val screenWidth = LocalConfiguration.current.screenWidthDp
@@ -118,7 +119,9 @@ fun AddScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBarSetting(
-                onBackClick = { TODO() },
+                onBackClick = {
+                    TODO()
+                },
                 title = stringResource(selectedOption.value),
                 middleButton = {
                     Box {
@@ -472,14 +475,18 @@ fun FoodItem(
 
             Text(
                 text = "${servingSize.first}${servingSize.second}, " +
-                        "${mass.toBigDecimal().setScale(
-                            1,
-                            RoundingMode.HALF_UP
-                        )}${stringResource(R.string.gam)}, " +
-                        "${calories.toBigDecimal().setScale(
-                            1,
-                            RoundingMode.HALF_UP
-                        )}${stringResource(R.string.kcal)}",
+                        "${
+                            mass.toBigDecimal().setScale(
+                                1,
+                                RoundingMode.HALF_UP
+                            )
+                        }${stringResource(R.string.gam)}, " +
+                        "${
+                            calories.toBigDecimal().setScale(
+                                1,
+                                RoundingMode.HALF_UP
+                            )
+                        }${stringResource(R.string.kcal)}",
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.labelSmall
             )
@@ -497,10 +504,12 @@ fun FoodItem(
                             contentDescription = "Macro icon"
                         )
                         Text(
-                            text = "${value.toBigDecimal().setScale(
-                                1,
-                                RoundingMode.HALF_UP
-                            )}${stringResource(R.string.gam)}",
+                            text = "${
+                                value.toBigDecimal().setScale(
+                                    1,
+                                    RoundingMode.HALF_UP
+                                )
+                            }${stringResource(R.string.gam)}",
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.labelSmall
                         )

@@ -2,10 +2,10 @@ package com.example.biofit.view
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.NumberPicker
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.Fragment
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -61,80 +63,34 @@ import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 
-class PlanningActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            BioFitTheme {
-                PlanningScreen()
-            }
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        recreate()
-    }
-}
-
 @Composable
 fun PlanningScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    Column(
+        verticalArrangement = Arrangement.spacedBy(standardPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            Row(
-                modifier = Modifier.weight(1f)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                            start = standardPadding,
-                            end = standardPadding,
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
+        PlanningHeaderBar(
+            rightButton = {
+                IconButton(
+                    onClick = { TODO() }
                 ) {
-                    PlanningHeaderBar(
-                        rightButton = {
-                            IconButton(
-                                onClick = { TODO() }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.DateRange,
-                                    contentDescription = stringResource(R.string.calendar),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        },
-                        standardPadding = standardPadding
-                    )
-
-                    PlanningScreenContent(
-                        standardPadding = standardPadding,
-                        modifier = modifier
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = stringResource(R.string.calendar),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
-            }
+            },
+            standardPadding = standardPadding
+        )
 
-            Row {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    BottomBar(
-                        onItemSelected = { TODO() },
-                        standardPadding = standardPadding
-                    )
-                }
-            }
-        }
+        PlanningScreenContent(
+            standardPadding = standardPadding,
+            modifier = modifier
+        )
     }
 }
 
