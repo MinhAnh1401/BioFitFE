@@ -255,4 +255,16 @@
     <string name="congratulations_you_have_completed">Chúc mừng bạn đã hoàn thành!</string>
     <string name="effect">Tác dụng</string>
     <string name="guide">Hướng dẫn</string>
+    <string name="make_a_plan_for_yourself">Hãy lập kế hoạch cho bản thân bạn</string>
+    <string name="des_planning">Tạo kế hoạch của riêng bạn hoặc sử dụng AI để tạo kế hoạch theo dõi dinh dưỡng và sức khỏe của bạn</string>
+    <string name="create_plan">Tạo kế hoạch</string>
+    <string name="signed_out_successfully">Đã đăng xuất thành công</string>
+    <string name="are_you_sure_you_want_to_sign_out">Bạn có chắc chắn muốn đăng xuất không?</string>
+    <string name="are_you_sure_you_want_to_delete_your_account">Bạn có chắc chắn muốn xoá tài khoản không?</string>
+    <string name="delete">Xoá</string>
+    <string name="des_delete_account">Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu và tài khoản của bạn. Hành động này không thể khôi phục.</string>
+    <string name="deleted_account_successfully">Đã xoá tài khoản thành công</string>
+    <string name="are_you_sure_you_want_to_delete_your_data">Bạn có chắc chắn muốn xoá dữ liệu không?</string>
+    <string name="des_delete_data">Xóa vĩnh viễn tất cả dữ liệu của bạn. Hành động này không thể khôi phục.</string>
+    <string name="deleted_data_successfully">Đã xoá dữ liệu thành công</string>
 </resources>

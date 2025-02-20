@@ -255,4 +255,16 @@
     <string name="congratulations_you_have_completed">Congratulations you have completed!</string>
     <string name="effect">Effect</string>
     <string name="guide">Guide</string>
+    <string name="make_a_plan_for_yourself">Make a plan for yourself</string>
+    <string name="des_planning">Create your own plan or use AI to generate plans to track your nutrition and health</string>
+    <string name="create_plan">Create plan</string>
+    <string name="signed_out_successfully">Signed out successfully</string>
+    <string name="are_you_sure_you_want_to_sign_out">Are you sure you want to sign out?</string>
+    <string name="are_you_sure_you_want_to_delete_your_account">Are you sure you want to delete your account?</string>
+    <string name="delete">Delete</string>
+    <string name="des_delete_account">Deleting your account will permanently delete all of your data and your account. This action cannot be reversed.</string>
+    <string name="deleted_account_successfully">Deleted account successfully</string>
+    <string name="are_you_sure_you_want_to_delete_your_data">Are you sure you want to delete your data?</string>
+    <string name="des_delete_data">Permanently delete all your data. This action cannot be recovered.</string>
+    <string name="deleted_data_successfully">Deleted data successfully</string>
 </resources>
