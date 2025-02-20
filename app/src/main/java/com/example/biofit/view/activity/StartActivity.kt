@@ -70,11 +70,11 @@ fun StartScreen() {
         // shadowElevation = , // tuỳ chỉnh độ getJSONShadow của Surface
         // border = , // tuỳ chỉnh viền của Surface
     ) {
-        Box(
-            // modifier = , // tuỳ chỉnh kích thước và vị trí của Box
-            // contentAlignment = , // tuỳ chỉnh vị trí của nội dung bên trong Box
-            // propagateMinConstraints = , // tuỳ chỉnh xem Box có kế thừa các ràng buộc min hay không
-        ) {
+        Box/*(
+            modifier = , // tuỳ chỉnh kích thước và vị trí của Box
+            contentAlignment = , // tuỳ chỉnh vị trí của nội dung bên trong Box
+            propagateMinConstraints = , // tuỳ chỉnh xem Box có kế thừa các ràng buộc min hay không
+        )*/ {
             StartScreenBackgroundImage()
             StartScreenContent(
                 screenWidth,
@@ -131,11 +131,11 @@ fun AppTitleAndDescription() {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
-            // modifier = , // tuỳ chỉnh kích thước và vị trí của Row
-            // horizontalArrangement = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều ngang
-            // verticalAlignment = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều dọc
-        ) {
+        Row/*(
+            modifier = , // tuỳ chỉnh kích thước và vị trí của Row
+            horizontalArrangement = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều ngang
+            verticalAlignment = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều dọc
+        )*/ {
             Text(
                 text = "BIO",
                 // modifier = , // tuỳ chỉnh kích thước và vị trí của Text

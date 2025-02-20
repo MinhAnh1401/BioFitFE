@@ -109,7 +109,8 @@ fun HeaderBar(modifier: Modifier) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val userName = stringResource(R.string.full_name) // Thay tên người dùng từ database vào User name
+    val userName =
+        stringResource(R.string.full_name) // Thay tên người dùng từ database vào User name
     val currentDate = stringResource(R.string.current_date) // Thay đổi thành ngày hiện tại
     val currentMonth = stringResource(R.string.current_month) // Thay đổi thành tháng hiện tại
     val currentYear = stringResource(R.string.current_year) // Thay đổi thành năm hiện tại

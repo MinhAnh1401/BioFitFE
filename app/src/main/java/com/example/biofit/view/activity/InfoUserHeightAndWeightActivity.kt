@@ -87,7 +87,7 @@ fun InfoUserHeightAndWeightScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 TopBarInfoScreen(
-                    onBackClick = { /* TODO */ },
+                    onBackClick = { activity?.finish() },
                     stepColors = listOf(
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.primary,

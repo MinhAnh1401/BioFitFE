@@ -585,7 +585,7 @@ fun SettingContent(
                                     } // Thay caloOfDaily từ database vào value
 
                                     Text(
-                                        text = caloOfDaily.toString(),
+                                        text = caloOfDaily,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.titleMedium
                                     )
@@ -616,7 +616,7 @@ fun SettingContent(
                                     } // Thay caloOfWeekly từ database vào value
 
                                     Text(
-                                        text = caloOfWeekly.toString(),
+                                        text = caloOfWeekly,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.titleMedium
                                     )
@@ -655,7 +655,7 @@ fun SettingContent(
                             } // Thay caloOfDailyBMR từ database vào value
 
                             Text(
-                                text = caloOfDailyBMR.toString() + " " +
+                                text = caloOfDailyBMR + " " +
                                         stringResource(R.string.calo_day),
                                 modifier = Modifier.weight(1f),
                                 color = MaterialTheme.colorScheme.outline,
@@ -689,7 +689,7 @@ fun SettingContent(
                             } // Thay caloOfDailyBMR từ database vào value
 
                             Text(
-                                text = caloOfWeeklyBMR.toString() + " " +
+                                text = caloOfWeeklyBMR + " " +
                                         stringResource(R.string.calo_week),
                                 modifier = Modifier.weight(1f),
                                 color = MaterialTheme.colorScheme.outline,
@@ -748,7 +748,7 @@ fun SettingContent(
                         val textWithIcon = buildAnnotatedString {
                             append(
                                 stringResource(R.string.your_bmi_is) + " " +
-                                        bmiIndex.toString() + ", " +
+                                        bmiIndex + ", " +
                                         stringResource(R.string.you_are_classified_as) + " " +
                                         bmiCategory + "."
                             )
@@ -817,7 +817,7 @@ fun SettingContent(
 
                                     Text(
                                         text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
-                                                estimatedWeight.toString() +
+                                                estimatedWeight +
                                                 stringResource(R.string.kg),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.labelSmall
@@ -834,13 +834,12 @@ fun SettingContent(
             Spacer(
                 modifier = Modifier.padding(
                     bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding() * 2
-                    + standardPadding
+                            + standardPadding
                 )
             )
         }
     }
 }
-
 
 
 @Composable

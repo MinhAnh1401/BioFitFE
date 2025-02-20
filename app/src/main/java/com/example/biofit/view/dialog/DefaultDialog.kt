@@ -40,8 +40,8 @@ fun DefaultScreen() {
             actionTextButton = R.string.activity,
             actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
             actionButtonColor = MaterialTheme.colorScheme.primary,
-            onClickActionButton = { TODO() },
-            onDismissRequest = { false },
+            onClickActionButton = { },
+            onDismissRequest = { },
             standardPadding = getStandardPadding().first
         )
     }
@@ -85,7 +85,7 @@ fun DefaultDialog(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.displaySmall
                 )
-                if (description != null ){
+                if (description != null) {
                     Text(
                         text = stringResource(description),
                         color = MaterialTheme.colorScheme.onBackground,
