@@ -1,4 +1,4 @@
-package com.example.biofit.view.theme
+package com.example.biofit.view.ui_theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

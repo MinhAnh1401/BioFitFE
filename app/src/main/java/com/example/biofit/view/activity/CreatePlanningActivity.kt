@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.dialog.SelectionDialog
 import com.example.biofit.view.fragment.PlanningHeaderBar
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 
 class CreatePlanningActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

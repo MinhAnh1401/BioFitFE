@@ -1,4 +1,4 @@
-package com.example.biofit.view.theme
+package com.example.biofit.view.ui_theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

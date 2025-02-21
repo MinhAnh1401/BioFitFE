@@ -64,7 +64,7 @@ import com.example.biofit.view.fragment.HomeScreen
 import com.example.biofit.view.fragment.KnowledgeScreen
 import com.example.biofit.view.fragment.PlanningScreen
 import com.example.biofit.view.fragment.ProfileScreen
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

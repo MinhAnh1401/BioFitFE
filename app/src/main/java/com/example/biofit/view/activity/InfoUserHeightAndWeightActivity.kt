@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 
 class InfoUserHeightAndWeightActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
