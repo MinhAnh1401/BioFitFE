@@ -49,7 +49,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
 import com.example.biofit.view.activity.KnowledgeVideoActivity
 import com.example.biofit.view.activity.getStandardPadding
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
 fun KnowledgeScreen() {
