@@ -53,7 +53,7 @@ import com.example.biofit.view.activity.SettingActivity
 import com.example.biofit.view.activity.TargetActivity
 import com.example.biofit.view.activity.getStandardPadding
 import com.example.biofit.view.dialog.DefaultDialog
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
 fun ProfileScreen() {

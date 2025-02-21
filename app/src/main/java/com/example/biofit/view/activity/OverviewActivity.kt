@@ -69,7 +69,7 @@ import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.fragment.getBurnedCalories
 import com.example.biofit.view.fragment.getTargetCalories
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 import com.patrykandpatrick.vico.core.extension.sumOf
 import java.math.RoundingMode
 import java.time.DayOfWeek

@@ -59,7 +59,7 @@ import com.example.biofit.view.activity.EditExerciseActivity
 import com.example.biofit.view.activity.ExerciseViewActivity
 import com.example.biofit.view.activity.MealsListActivity
 import com.example.biofit.view.activity.getStandardPadding
-import com.example.biofit.view.theme.BioFitTheme
+import com.example.biofit.view.ui_theme.BioFitTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
