@@ -162,7 +162,7 @@ fun AppTitleAndDescription() {
             )
         } // nội dung bên trong Row
         Text(
-            text = stringResource(R.string.description),
+            text = stringResource(R.string.des_app_name),
             color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -185,7 +185,7 @@ fun WelcomeSection(
         },
     ) {
         Text(
-            text = stringResource(R.string.welcome_to_biofit),
+            text = stringResource(R.string.welcome_to_app),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.displaySmall,
         )

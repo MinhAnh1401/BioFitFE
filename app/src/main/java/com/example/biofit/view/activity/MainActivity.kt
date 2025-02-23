@@ -19,6 +19,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -48,10 +49,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -90,7 +97,9 @@ fun MainScreen() {
     var showPopup by remember { mutableStateOf(false) }
     if (showPopup) {
         AddPopup(
-            onDismissPopup = { showPopup = false }, // Đóng popup khi nhấn ra ngoài hoặc nhấn nút đóng
+            onDismissPopup = {
+                showPopup = false
+            }, // Đóng popup khi nhấn ra ngoài hoặc nhấn nút đóng
             standardPadding = standardPadding
         )
     }
@@ -194,7 +203,8 @@ fun AddPopup(
     val itemPopupList = listOf(
         Pair(R.drawable.ic_exercise_2, R.string.exercise),
         Pair(R.drawable.ic_weight, R.string.weight),
-        Pair(R.drawable.ic_drink_water, R.string.drinking_water)
+        Pair(R.drawable.ic_drink_water, R.string.drinking_water),
+        Pair(R.drawable.ic_chat_bot, R.string.ai_assistant_bionix)
     )
     val sessionPopupList = listOf(
         Pair(R.drawable.ic_morning_2, R.string.morning),
@@ -220,8 +230,7 @@ fun AddPopup(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 itemPopupList.forEach { (icon, title) ->
                     Column(
@@ -240,7 +249,8 @@ fun AddPopup(
 
                                     R.string.weight ->
                                         activity?.let {
-                                            val intent = Intent(it, UpdateWeightActivity::class.java)
+                                            val intent =
+                                                Intent(it, UpdateWeightActivity::class.java)
                                             it.startActivity(intent)
                                         }
 
@@ -249,16 +259,44 @@ fun AddPopup(
                                             val intent = Intent(it, ExerciseActivity::class.java)
                                             it.startActivity(intent)
                                         }
+
+                                    R.string.ai_assistant_bionix ->
+                                        activity?.let {
+                                            val intent =
+                                                Intent(it, BioAIChatbotActivity::class.java)
+                                            it.startActivity(intent)
+                                        }
                                 }
 
                                 onDismissPopup()
                             },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(shape = MaterialTheme.shapes.large)
+                                .background(
+                                    brush = if (title == R.string.ai_assistant_bionix) {
+                                        Brush.linearGradient(
+                                            colors = listOf(
+                                                if (isSystemInDarkTheme()) {
+                                                    Color(0xFF64DD17)
+                                                } else {
+                                                    Color(0xFFAEEA00)
+                                                },
+                                                MaterialTheme.colorScheme.primary
+                                            ),
+                                            start = Offset(0f, 0f),
+                                            end = Offset(
+                                                Float.POSITIVE_INFINITY,
+                                                Float.POSITIVE_INFINITY
+                                            )
+                                        )
+                                    } else {
+                                        SolidColor(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                                    }
+                                ),
                             shape = MaterialTheme.shapes.large,
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.outline.copy(
-                                    alpha = 0.5f
-                                )
+                                containerColor = Color.Transparent
                             )
                         ) {
                             Column(
@@ -278,7 +316,9 @@ fun AddPopup(
 
                         Text(
                             text = stringResource(title),
+                            modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -286,8 +326,7 @@ fun AddPopup(
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 sessionPopupList.forEach { (icon, title) ->
                     Column(
@@ -332,9 +371,7 @@ fun AddPopup(
                             modifier = Modifier.fillMaxWidth(),
                             shape = MaterialTheme.shapes.large,
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.outline.copy(
-                                    alpha = 0.5f
-                                )
+                                containerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                             )
                         ) {
                             Column(
@@ -354,7 +391,9 @@ fun AddPopup(
 
                         Text(
                             text = stringResource(title),
+                            modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }

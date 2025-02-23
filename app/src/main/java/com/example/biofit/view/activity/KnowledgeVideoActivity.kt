@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.webkit.WebView
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.fragment.VideoItem
 import com.example.biofit.view.ui_theme.BioFitTheme
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -128,8 +130,14 @@ fun KnowledgeVideoScreen(
                     verticalArrangement = Arrangement.spacedBy(standardPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TopBarSetting(
+                    TopBar(
                         onBackClick = { activity?.finish() },
+                        onHomeClick = {
+                            activity?.let {
+                                val intent = Intent(it, MainActivity::class.java)
+                                it.startActivity(intent)
+                            }
+                        },
                         title = stringResource(R.string.nutritional_knowledge),
                         middleButton = null,
                         rightButton = {

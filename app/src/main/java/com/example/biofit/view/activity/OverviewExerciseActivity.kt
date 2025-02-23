@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 import java.time.LocalDate
 
@@ -82,8 +84,14 @@ fun OverviewExerciseScreen() {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.exercise),
                 middleButton = null,
                 rightButton = {
@@ -96,10 +104,11 @@ fun OverviewExerciseScreen() {
                             }
                         }
                     ) {
-                        Image(
+                        Icon(
                             painter = painterResource(R.drawable.ic_plus),
                             contentDescription = "Add button",
-                            modifier = Modifier.size(standardPadding * 2)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },

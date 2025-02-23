@@ -206,13 +206,14 @@ fun BackButton(
 ) {
     IconButton(
         onClick = onBackClick,
-        modifier = Modifier.size(standardPadding * 2),
+        modifier = Modifier.size(standardPadding * 1.5f),
         enabled = true,
     ) {
-        Image(
+        Icon(
             painter = painterResource(id = R.drawable.btn_back),
             contentDescription = "Back Button",
-            modifier = Modifier.size(standardPadding * 2),
+            modifier = Modifier.size(standardPadding * 1.5f),
+            tint = MaterialTheme.colorScheme.onBackground
         )
     }
 }

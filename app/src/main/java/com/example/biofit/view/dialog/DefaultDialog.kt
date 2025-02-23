@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,12 +32,13 @@ import java.util.Locale
 
 @Composable
 fun DefaultScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize()
+    Surface (
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         DefaultDialog(
-            title = R.string.bio_ai,
-            description = R.string.description,
+            title = R.string.bionix,
+            description = R.string.des_app_name,
             actionTextButton = R.string.activity,
             actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
             actionButtonColor = MaterialTheme.colorScheme.primary,

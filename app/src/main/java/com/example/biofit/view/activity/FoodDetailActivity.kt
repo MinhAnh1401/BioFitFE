@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 import java.math.RoundingMode
 
@@ -80,11 +82,18 @@ fun FoodDetailScreen() {
                     start = standardPadding,
                     end = standardPadding,
                 ),
+            verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
-                title = null,
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
+                title = stringResource(R.string.food_detail),
                 middleButton = null,
                 rightButton = null,
                 standardPadding = standardPadding

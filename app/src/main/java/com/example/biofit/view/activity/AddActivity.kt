@@ -7,8 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,8 +42,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -56,8 +52,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.FoodItem
+import com.example.biofit.view.dialog.ToggleButtonBar
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
-import java.math.RoundingMode
 
 class AddActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,8 +124,14 @@ fun AddScreen(initialSelectedOption: Int) {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(selectedOption),
                 middleButton = {
                     Box {
@@ -167,10 +171,11 @@ fun AddScreen(initialSelectedOption: Int) {
                             }
                         }
                     ) {
-                        Image(
+                        Icon(
                             painter = painterResource(R.drawable.ic_plus),
                             contentDescription = "Add button",
-                            modifier = Modifier.size(standardPadding * 2)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -255,7 +260,7 @@ fun AddContent(
     Column(
         modifier = modifier
     ) {
-        ToggleButton(
+        ToggleButtonBar(
             options = listOf(
                 R.string.create,
                 R.string.recently
@@ -474,94 +479,6 @@ val food3 = FoodInfo(
     fat = Triple(R.drawable.ic_fat, R.string.fat, 41f),
     sodium = 115f
 )
-
-@Composable
-fun FoodItem(
-    foodImg: Int,
-    foodName: String,
-    servingSize: Pair<Float, String>,
-    mass: Float,
-    calories: Float,
-    macros: List<Pair<Int, Float>>,
-    onClick: () -> Unit,
-    standardPadding: Dp
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        horizontalArrangement = Arrangement.spacedBy(standardPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(foodImg),
-            contentDescription = "Food image",
-            modifier = Modifier
-                .size(standardPadding * 5)
-                .clip(MaterialTheme.shapes.large)
-        )
-
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = foodName,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            Text(
-                text = "${servingSize.first}${servingSize.second}, " +
-                        "${
-                            mass.toBigDecimal().setScale(
-                                1,
-                                RoundingMode.HALF_UP
-                            )
-                        }${stringResource(R.string.gam)}, " +
-                        "${
-                            calories.toBigDecimal().setScale(
-                                1,
-                                RoundingMode.HALF_UP
-                            )
-                        }${stringResource(R.string.kcal)}",
-                color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.labelSmall
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
-            ) {
-                macros.forEach { (icon, value) ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(icon),
-                            contentDescription = "Macro icon"
-                        )
-                        Text(
-                            text = "${
-                                value.toBigDecimal().setScale(
-                                    1,
-                                    RoundingMode.HALF_UP
-                                )
-                            }${stringResource(R.string.gam)}",
-                            color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
-        }
-
-        Image(
-            painter = painterResource(R.drawable.btn_back),
-            contentDescription = "Extend button",
-            modifier = Modifier.rotate(180f)
-        )
-    }
-}
 
 @Preview(
     device = "id:pixel",
