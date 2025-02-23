@@ -32,6 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.FoodItem
+import com.example.biofit.view.dialog.ToggleButtonBar
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MealsListActivity : ComponentActivity() {
@@ -75,8 +78,14 @@ fun MealsListScreen(initialSelectedOption: Int) {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.meals_list),
                 middleButton = null,
                 rightButton = null,
@@ -116,7 +125,7 @@ fun MealsListContent(
             Column(
                 modifier = modifier.padding(top = standardPadding)
             ) {
-                ToggleButton(
+                ToggleButtonBar(
                     options = listOf(
                         R.string.morning,
                         R.string.afternoon,

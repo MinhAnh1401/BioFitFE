@@ -1,8 +1,9 @@
 package com.example.biofit.model
 
-data class User(
-    val id: String,
-    val fullName: String,
-    val email: String,
-    val gender: String,
+data class UserData(
+    val id: Int,
+    val name: String,
+    val hobbies: String,
+    val weight: Float,
+    val height: Float
 )

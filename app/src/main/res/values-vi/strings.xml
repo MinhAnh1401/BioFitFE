@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BioFit</string>
-    <string name="description">Dinh dưỡng và Sức khỏe</string>
-    <string name="welcome_to_biofit">Chào mừng bạn đến với BioFit!</string>
+    <string name="des_app_name">Dinh dưỡng và Sức khỏe</string>
+    <string name="welcome_to_app">Chào mừng bạn đến với BioFit!</string>
     <string name="start_title_1">Ứng dụng quản lý sức khỏe và dinh dưỡng</string>
     <string name="start_title_2">Theo dõi và cải thiện sức khỏe của bạn một cách dễ dàng với BioFit</string>
     <string name="get_started">BẮT ĐẦU</string>
@@ -248,7 +248,7 @@
     <string name="meals_list">Danh sách bữa ăn</string>
     <string name="meals_detail">Chi tiết bữa ăn</string>
     <string name="detail">Chi tiết</string>
-    <string name="bio_ai">Bio AI</string>
+    <string name="bionix">Bionix</string>
     <string name="resume">Tiếp tục</string>
     <string name="pause">Tạm dừng</string>
     <string name="stop">Kết thúc</string>
@@ -267,4 +267,10 @@
     <string name="are_you_sure_you_want_to_delete_your_data">Bạn có chắc chắn muốn xoá dữ liệu không?</string>
     <string name="des_delete_data">Xóa vĩnh viễn tất cả dữ liệu của bạn. Hành động này không thể khôi phục.</string>
     <string name="deleted_data_successfully">Đã xoá dữ liệu thành công</string>
+    <string name="sorry_i_don_t_understand">Xin lỗi, tôi không hiểu.</string>
+    <string name="thinking">Đang suy nghĩ...</string>
+    <string name="sorry_i_can_only_answer_about_health_and_nutrition">Xin lỗi, tôi chỉ có thể trả lời về sức khỏe và dinh dưỡng.</string>
+    <string name="food_detail">Chi tiết thức ăn</string>
+    <string name="enter_message">Nhập tin nhắn</string>
+    <string name="ai_assistant_bionix">Trợ lý AI - Bionix</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class CaloriesDistributionActivity : ComponentActivity() {
@@ -82,17 +84,23 @@ fun CalorieDistributionScreen() {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.calories_distribution),
                 middleButton = null,
                 rightButton = {
                     TextButton(
-                        onClick = { TODO() }
+                        onClick = { activity?.finish() }
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.inverseSurface,
+                            color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }

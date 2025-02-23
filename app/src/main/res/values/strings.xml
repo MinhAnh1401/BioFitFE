@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BioFit</string>
-    <string name="description">Nutrition and Healthy</string>
-    <string name="welcome_to_biofit">Welcome to BioFit!</string>
+    <string name="des_app_name">Nutrition and Healthy</string>
+    <string name="welcome_to_app">Welcome to BioFit!</string>
     <string name="start_title_1">Health and nutrition management application</string>
     <string name="start_title_2">Track and improve your health the easy way with BioFit</string>
     <string name="get_started">GET STARTED</string>
@@ -248,7 +248,7 @@
     <string name="meals_list">Meals list</string>
     <string name="meals_detail">Meals detail</string>
     <string name="detail">Detail</string>
-    <string name="bio_ai">Bio AI</string>
+    <string name="bionix">Bionix</string>
     <string name="resume">Resume</string>
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>
@@ -267,4 +267,10 @@
     <string name="are_you_sure_you_want_to_delete_your_data">Are you sure you want to delete your data?</string>
     <string name="des_delete_data">Permanently delete all your data. This action cannot be recovered.</string>
     <string name="deleted_data_successfully">Deleted data successfully</string>
+    <string name="sorry_i_don_t_understand">Sorry, I don\'t understand.</string>
+    <string name="thinking">Thinking...</string>
+    <string name="sorry_i_can_only_answer_about_health_and_nutrition">Sorry, I can only answer about health and nutrition.</string>
+    <string name="food_detail">Food detail</string>
+    <string name="enter_message">Enter messsage</string>
+    <string name="ai_assistant_bionix">AI assistant - Bionix</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -38,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -107,8 +109,14 @@ fun ExerciseViewScreen() {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = exercise.name,
                 middleButton = null,
                 rightButton = null,

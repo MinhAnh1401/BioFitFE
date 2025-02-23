@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -40,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MealsDetailActivity : ComponentActivity() {
@@ -138,8 +140,14 @@ fun MealsDetailScreen() {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.meals_detail),
                 middleButton = null,
                 rightButton = null,
@@ -181,12 +189,12 @@ fun MealsDetailContent(
                     text = stringResource(R.string.morning),
                     modifier = Modifier
                         .clip(shape = MaterialTheme.shapes.extraLarge)
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
                             vertical = standardPadding
                         ),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -196,12 +204,12 @@ fun MealsDetailContent(
                     text = stringResource(R.string.keto),
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.extraLarge)
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
                             vertical = standardPadding
                         ),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -210,7 +218,7 @@ fun MealsDetailContent(
                 Row(
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.extraLarge)
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
                             vertical = standardPadding
@@ -225,7 +233,7 @@ fun MealsDetailContent(
 
                     Text(
                         text = "$value${stringResource(R.string.kcal)}",
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.Bold
                         )

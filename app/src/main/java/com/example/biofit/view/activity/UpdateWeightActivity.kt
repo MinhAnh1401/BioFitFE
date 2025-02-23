@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -51,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class UpdateWeightActivity : ComponentActivity() {
@@ -96,8 +98,14 @@ fun UpdateWeightScreen() {
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TopBarSetting(
+                    TopBar(
                         onBackClick = { activity?.finish() },
+                        onHomeClick = {
+                            activity?.let {
+                                val intent = Intent(it, MainActivity::class.java)
+                                it.startActivity(intent)
+                            }
+                        },
                         title = stringResource(R.string.update_weight),
                         middleButton = null,
                         rightButton = null,

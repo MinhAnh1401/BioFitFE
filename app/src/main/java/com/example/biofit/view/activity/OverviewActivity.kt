@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
@@ -13,7 +14,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,12 +61,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.ToggleButtonBar
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.fragment.getBurnedCalories
 import com.example.biofit.view.fragment.getTargetCalories
 import com.example.biofit.view.ui_theme.BioFitTheme
@@ -121,8 +122,14 @@ fun OverviewScreen() {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.calorie_statistics),
                 middleButton = null,
                 rightButton = null,
@@ -135,53 +142,6 @@ fun OverviewScreen() {
                 standardPadding,
                 modifier
             )
-        }
-    }
-}
-
-@Composable
-fun ToggleButton(
-    options: List<Int>,
-    selectedOption: Int,
-    onOptionSelected: (Int) -> Unit,
-    standardPadding: Dp
-) {
-    Row(
-        modifier = Modifier
-            .clip(shape = MaterialTheme.shapes.extraLarge)
-            .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-            .padding(standardPadding / 4),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        options.forEach { option ->
-            val isSelected = option == selectedOption
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(shape = MaterialTheme.shapes.extraLarge)
-                    .background(
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Transparent
-                        }
-                    )
-                    .clickable { onOptionSelected(option) }
-                    .padding(vertical = standardPadding / 2),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(id = option),
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.outline
-                    },
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
         }
     }
 }
@@ -200,7 +160,7 @@ fun OverviewContent(
             Column(
                 modifier = modifier
             ) {
-                ToggleButton(
+                ToggleButtonBar(
                     options = listOf(
                         R.string.day,
                         R.string.week

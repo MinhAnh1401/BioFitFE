@@ -2,26 +2,35 @@ package com.example.biofit.view.ui_theme
 
 import androidx.compose.ui.graphics.Color
 
-val LightPrimary = Color(0xFF34A853) // Màu chính sáng
-val LightOnPrimary = Color(0xFFFFFFFF) // Màu chữ trên nền Primary
-val LightPrimaryContainer = Color(0xFFB0F2C2) // Màu nền chứa Primary
-val LightOnPrimaryContainer = Color(0xFF00320D) // Màu chữ trên nền PrimaryContainer
-val LightInversePrimary = Color(0xFF1E6E3A) // Màu nghịch đảo của Primary
+val LightPrimary = Color(0xFF34A853)
+val LightOnPrimary = Color(0xFFFFFFFF)
+val LightPrimaryContainer = Color(0xFFB0F2C2)
+val LightOnPrimaryContainer = Color(0xFF00320D)
+val LightInversePrimary = Color(0xFF1E6E3A)
 
-val LightSecondary = Color(0xFF6D9886) // Màu phụ sáng
-val LightOnSecondary = Color(0xFFFFFFFF) // Màu chữ trên nền Secondary
-val LightSecondaryContainer = Color(0xFFCDE7DA) // Màu nền chứa Secondary
-val LightOnSecondaryContainer = Color(0xFF1C3B2B) // Màu chữ trên nền SecondaryContainer
+val LightSecondary = Color(0xFF6D9886)
+val LightOnSecondary = Color(0xFFFFFFFF)
+val LightSecondaryContainer = Color(0xFFCDE7DA)
+val LightOnSecondaryContainer = Color(0xFF1C3B2B)
 
-val DarkPrimary = Color(0xFF1E6E3A) // Màu chính tối
-val DarkOnPrimary = Color(0xFFB8E6C0) // Màu chữ trên nền Primary tối
-val DarkPrimaryContainer = Color(0xFF144D29) // Màu nền chứa Primary tối
-val DarkOnPrimaryContainer = Color(0xFFB0F2C2) // Màu chữ trên nền PrimaryContainer tối
-val DarkInversePrimary = Color(0xFF34A853) // Màu nghịch đảo của Primary tối
+val LightError = Color(0xFFBA1A1A)
+val LightErrorContainer = Color(0xFFFFDAD6)
+val LightOnErrorContainer = Color(0xFF93000A)
+val LightOnError = Color(0xFFFFFFFF)
 
-val DarkSecondary = Color(0xFF4D7260) // Màu phụ tối
-val DarkOnSecondary = Color(0xFFCDE7DA) // Màu chữ trên nền Secondary tối
-val DarkSecondaryContainer = Color(0xFF365244) // Màu nền chứa Secondary tối
-val DarkOnSecondaryContainer = Color(0xFFCDE7DA) // Màu chữ trên nền SecondaryContainer tối
+val DarkPrimary = Color(0xFF1E6E3A)
+val DarkOnPrimary = Color(0xFFB8E6C0)
+val DarkPrimaryContainer = Color(0xFF144D29)
+val DarkOnPrimaryContainer = Color(0xFFB0F2C2)
+val DarkInversePrimary = Color(0xFF34A853)
 
+val DarkSecondary = Color(0xFF4D7260)
+val DarkOnSecondary = Color(0xFFCDE7DA)
+val DarkSecondaryContainer = Color(0xFF365244)
+val DarkOnSecondaryContainer = Color(0xFFCDE7DA)
+
+val DarkError = Color(0xFF690005)
+val DarkOnError = Color(0xFFFFB4AB)
+val DarkErrorContainer = Color(0xFF410002)
+val DarkOnErrorContainer = Color(0xFFFFDAD6)
 

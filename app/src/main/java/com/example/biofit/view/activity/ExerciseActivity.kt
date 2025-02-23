@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class ExerciseActivity : ComponentActivity() {
@@ -90,8 +91,14 @@ fun ExerciseScreen() {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.exercise),
                 middleButton = null,
                 rightButton = {
@@ -104,10 +111,11 @@ fun ExerciseScreen() {
                             }
                         }
                     ) {
-                        Image(
+                        Icon(
                             painter = painterResource(R.drawable.ic_plus),
                             contentDescription = "Add button",
-                            modifier = Modifier.size(standardPadding * 2)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },

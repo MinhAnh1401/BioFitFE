@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,6 +46,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.view.dialog.SelectionDialog
+import com.example.biofit.view.dialog.ToggleButtonBar
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class EditExerciseActivity : ComponentActivity() {
@@ -87,17 +90,23 @@ fun EditExerciseScreen(initialSelectedOption: Int) {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() },
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.edit_exercise),
                 middleButton = null,
                 rightButton = {
                     TextButton(
-                        onClick = { TODO() }
+                        onClick = { activity?.finish() }
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.inverseSurface,
+                            color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -140,7 +149,7 @@ fun EditExerciseScreenContent(
             Column(
                 modifier = modifier.padding(top = standardPadding)
             ) {
-                ToggleButton(
+                ToggleButtonBar(
                     options = listOf(R.string.morning, R.string.afternoon, R.string.evening),
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it },

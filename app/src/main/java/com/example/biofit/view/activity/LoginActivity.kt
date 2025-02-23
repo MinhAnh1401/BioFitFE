@@ -262,10 +262,7 @@ fun LoginForm(
                 Checkbox(
                     checked = passwordVisible,
                     onCheckedChange = { passwordVisible = it },
-                    modifier = Modifier.padding(end = standardPadding / 2),
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colorScheme.onSecondary
-                    )
+                    modifier = Modifier.padding(end = standardPadding / 2)
                 )
             },
             supportingText = {

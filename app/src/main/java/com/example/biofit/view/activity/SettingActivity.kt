@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -63,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.biofit.R
 import com.example.biofit.view.dialog.SelectionDialog
+import com.example.biofit.view.dialog.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class SettingActivity : ComponentActivity() {
@@ -106,8 +108,14 @@ fun SettingScreen() {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarSetting(
+            TopBar(
                 onBackClick = { activity?.finish() }, // Xử lý sự kiện khi người dùng nhấn nút Back
+                onHomeClick = {
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                },
                 title = stringResource(R.string.setting),
                 middleButton = null,
                 rightButton = {
@@ -116,7 +124,7 @@ fun SettingScreen() {
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.inverseSurface,
+                            color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -134,51 +142,21 @@ fun SettingScreen() {
 }
 
 @Composable
-fun TopBarSetting(
-    onBackClick: (() -> Unit)? = null,
-    title: String? = null,
-    middleButton: (@Composable () -> Unit)? = null,
-    rightButton: (@Composable () -> Unit)? = null,
+fun HomeButton(
+    onHomeClick: () -> Unit = {},
     standardPadding: Dp
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+    IconButton(
+        onClick = onHomeClick,
+        modifier = Modifier.size(standardPadding * 1.5f),
+        enabled = true,
     ) {
-        Column(
-            modifier = Modifier.weight(0.5f),
-            horizontalAlignment = Alignment.Start
-        ) {
-            if (onBackClick != null) {
-                BackButton(
-                    onBackClick,
-                    standardPadding
-                )
-            }
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                title?.let {
-                    Text(
-                        text = title,
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-
-                middleButton?.invoke()
-            }
-        }
-        Column(
-            modifier = Modifier.weight(0.5f),
-            horizontalAlignment = Alignment.End
-        ) {
-            rightButton?.invoke()
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.ic_home),
+            contentDescription = "Back Button",
+            modifier = Modifier.size(standardPadding * 1.5f),
+            tint = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
