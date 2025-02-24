@@ -52,7 +52,7 @@
         <activity android:name=".view.activity.KnowledgeVideoActivity" />
         <activity android:name=".view.activity.SettingActivity" />
         <activity android:name=".view.activity.TargetActivity" />
-        <activity android:name=".view.activity.BioAIChatbotActivity" />
+        <activity android:name=".view.activity.AIChatbotActivity" />
         <activity android:name=".view.activity.CaloriesDistributionActivity" />
         <activity android:name=".view.activity.CreateAndUpdateExerciseActivity" />
         <activity android:name=".view.activity.CreateFoodActivity" />

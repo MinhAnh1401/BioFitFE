@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -58,6 +59,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -67,6 +69,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.biofit.R
+import com.example.biofit.view.sub_components.AnimatedGradientText
 import com.example.biofit.view.fragment.HomeScreen
 import com.example.biofit.view.fragment.KnowledgeScreen
 import com.example.biofit.view.fragment.PlanningScreen
@@ -225,21 +228,17 @@ fun AddPopup(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(standardPadding),
+                .padding(standardPadding / 2),
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding)
-            ) {
+            Row {
                 itemPopupList.forEach { (icon, title) ->
                     Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(standardPadding),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Card(
-                            onClick = {
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(MaterialTheme.shapes.large)
+                            .clickable {
                                 when (title) {
                                     R.string.exercise ->
                                         activity?.let {
@@ -262,17 +261,20 @@ fun AddPopup(
 
                                     R.string.ai_assistant_bionix ->
                                         activity?.let {
-                                            val intent =
-                                                Intent(it, BioAIChatbotActivity::class.java)
+                                            val intent = Intent(it, AIChatbotActivity::class.java)
                                             it.startActivity(intent)
                                         }
                                 }
 
                                 onDismissPopup()
                             },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(shape = MaterialTheme.shapes.large)
+                                .padding(standardPadding / 2)
+                                .clip(MaterialTheme.shapes.large)
                                 .background(
                                     brush = if (title == R.string.ai_assistant_bionix) {
                                         Brush.linearGradient(
@@ -309,33 +311,57 @@ fun AddPopup(
                                     modifier = Modifier
                                         .padding(standardPadding)
                                         .size(standardPadding * 2),
-                                    tint = MaterialTheme.colorScheme.background
+                                    tint = if (title != R.string.ai_assistant_bionix) {
+                                        MaterialTheme.colorScheme.background
+                                    } else {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    }
                                 )
                             }
                         }
 
-                        Text(
-                            text = stringResource(title),
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        if (title != R.string.ai_assistant_bionix) {
+                            Text(
+                                text = stringResource(title),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = standardPadding / 2),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = standardPadding / 2),
+                            ) {
+                                AnimatedGradientText(
+                                    repeatMode = RepeatMode.Restart,
+                                    highlightColor = if (isSystemInDarkTheme()) {
+                                        Color(0xFF00C853)
+                                    } else {
+                                        Color(0xFFAEEA00)
+                                    },
+                                    baseColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    text = stringResource(title),
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding)
-            ) {
+            Row {
                 sessionPopupList.forEach { (icon, title) ->
                     Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(standardPadding),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Card(
-                            onClick = {
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(MaterialTheme.shapes.large)
+                            .clickable {
                                 when (title) {
                                     R.string.morning ->
                                         activity?.let {
@@ -368,7 +394,12 @@ fun AddPopup(
 
                                 onDismissPopup()
                             },
-                            modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(standardPadding / 2),
                             shape = MaterialTheme.shapes.large,
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
@@ -391,7 +422,9 @@ fun AddPopup(
 
                         Text(
                             text = stringResource(title),
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = standardPadding / 2),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodySmall

@@ -52,7 +52,7 @@ import com.example.biofit.view.activity.OverviewActivity
 import com.example.biofit.view.activity.SettingActivity
 import com.example.biofit.view.activity.TargetActivity
 import com.example.biofit.view.activity.getStandardPadding
-import com.example.biofit.view.dialog.DefaultDialog
+import com.example.biofit.view.sub_components.DefaultDialog
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable

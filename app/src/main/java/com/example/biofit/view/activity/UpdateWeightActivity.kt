@@ -52,7 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.view.dialog.TopBar
+import com.example.biofit.view.sub_components.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class UpdateWeightActivity : ComponentActivity() {

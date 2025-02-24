@@ -63,8 +63,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.biofit.R
-import com.example.biofit.view.dialog.SelectionDialog
-import com.example.biofit.view.dialog.TopBar
+import com.example.biofit.view.sub_components.SelectionDialog
+import com.example.biofit.view.sub_components.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class SettingActivity : ComponentActivity() {

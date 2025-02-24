@@ -32,9 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.view.dialog.FoodItem
-import com.example.biofit.view.dialog.ToggleButtonBar
-import com.example.biofit.view.dialog.TopBar
+import com.example.biofit.view.sub_components.FoodItem
+import com.example.biofit.view.sub_components.ToggleButtonBar
+import com.example.biofit.view.sub_components.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MealsListActivity : ComponentActivity() {

@@ -7,7 +7,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +32,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,9 +51,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -56,15 +65,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.controller.ChatBotController
 import com.example.biofit.controller.DatabaseHelper
 import com.example.biofit.model.ChatBotModel
 import com.example.biofit.model.UserData
-import com.example.biofit.view.dialog.TopBar
+import com.example.biofit.view.sub_components.AnimatedGradientText
+import com.example.biofit.view.sub_components.OneTimeAnimatedGradientText
+import com.example.biofit.view.sub_components.TopBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 
-class BioAIChatbotActivity : ComponentActivity() {
+class AIChatbotActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -78,7 +90,17 @@ class BioAIChatbotActivity : ComponentActivity() {
             model = model,
             context = this
         )
-        val userData = UserData(1, "Nam", "Bóng đá, Đọc sách", 70.5f, 175.0f)
+        val userData = UserData(
+            id = 1,
+            fullName = "Nguyễn Văn Chiến",
+            email = "anguyen55@gmail.com",
+            password = "Wsdfs343r",
+            gender = 0,
+            dateOfBirth = "2005-08-21",
+            height = 165f,
+            weight = 51f,
+            targetWeight = 57f
+        )
         databaseHelper.addUserData(userData)
         setContent {
             BioFitTheme {
@@ -101,18 +123,35 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
     val activity = context as? Activity
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val screenWidth = LocalConfiguration.current.screenWidthDp
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
     val chatHistory by remember { mutableStateOf(controller.chatHistory) }
-    val isLoading by controller.isLoading
     val scope = rememberCoroutineScope()
     var userInput by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
+    val keywords = listOf("log out", "sign out", "đăng xuất")
+
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = if (isSystemInDarkTheme()) {
+                    Brush.radialGradient(
+                        center = Offset(screenWidth * 1.35f, Float.POSITIVE_INFINITY),
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surfaceContainerHigh,
+                            MaterialTheme.colorScheme.background
+                        ),
+                        radius = screenWidth * 1.5f
+                    )
+                } else {
+                    SolidColor(MaterialTheme.colorScheme.background)
+                }
+            ),
+        color = Color.Transparent
     ) {
         Column(
             modifier = Modifier
@@ -134,7 +173,7 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                         it.startActivity(intent)
                     }
                 },
-                gradientTitle = stringResource(R.string.bionix),
+                gradientTitle = stringResource(R.string.ai_assistant_bionix),
                 middleButton = null,
                 rightButton = null,
                 standardPadding = standardPadding
@@ -149,16 +188,29 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                         isUser = true,
                         standardPadding = standardPadding
                     )
-                    Row {
+
+                    Column {
                         ChatBubble(
                             text = chat.botResponse,
                             isUser = false,
                             standardPadding = standardPadding
                         )
+
+                        if (keywords.any { it in chat.botResponse.lowercase() }) {
+                            AIButton(
+                                onClick = {
+                                    activity?.let {
+                                        val intent = Intent(it, LoginActivity::class.java)
+                                        it.startActivity(intent)
+                                        it.finish()
+                                    }
+                                },
+                                title = stringResource(R.string.sign_out),
+                                buttonColor = MaterialTheme.colorScheme.primary,
+                                textColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
-                }
-                if (isLoading) {
-                    item { LoadingIndicator() }
                 }
             }
 
@@ -203,20 +255,24 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                         focusedBorderColor = Color.Transparent
                     )
                 )
-                IconButton(
-                    onClick = {
-                        controller.sendMessage(userInput, scope)
-                        userInput = ""
-                        keyboardController?.hide()
-                    },
-                    modifier = Modifier.size(standardPadding * 4)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_send),
-                        contentDescription = "Send",
-                        modifier = Modifier.size(standardPadding * 2),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+
+                if (userInput != "") {
+                    IconButton(
+                        onClick = {
+                            controller.sendMessage(userInput, scope)
+                            userInput = ""
+                            keyboardController?.hide()
+                        },
+                        modifier = Modifier
+                            .size(standardPadding * 4)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_send),
+                            contentDescription = "Send",
+                            modifier = Modifier.size(standardPadding * 2),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
@@ -229,6 +285,8 @@ fun ChatBubble(
     isUser: Boolean,
     standardPadding: Dp
 ) {
+    var isAnimationFinished by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -238,52 +296,83 @@ fun ChatBubble(
         Box(
             modifier = Modifier
                 .background(
-                    brush = if (isUser) {
-                        Brush.linearGradient(
-                            colors = listOf(
-                                if (isSystemInDarkTheme()) {
-                                    Color(0xFF64DD17).copy(alpha = 0.5f)
-                                } else {
-                                    Color(0xFFAEEA00).copy(alpha = 0.5f)
-                                },
-                                MaterialTheme.colorScheme.primary
-                            ),
-                            start = Offset(0f, 0f),
-                            end = Offset(
-                                Float.POSITIVE_INFINITY,
-                                Float.POSITIVE_INFINITY
-                            )
-                        )
+                    color = if (isUser) {
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
                     } else {
-                        Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                                MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-                            ),
-                            start = Offset(0f, 0f),
-                            end = Offset(
-                                Float.POSITIVE_INFINITY,
-                                Float.POSITIVE_INFINITY
-                            )
-                        )
+                        Color.Transparent
                     },
                     shape = MaterialTheme.shapes.large
                 )
-                .padding(standardPadding)
+                .border(
+                    width = 0.1.dp,
+                    brush = if (isUser) {
+                        SolidColor(MaterialTheme.colorScheme.outline)
+                    } else {
+                        SolidColor(Color.Transparent)
+                    },
+                    shape = MaterialTheme.shapes.large
+                )
+                .padding(if (isUser) standardPadding else 0.dp)
         ) {
-            Text(
-                text = text,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
-            )
+            if (isUser) {
+                Text(
+                    text = text,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            } else {
+                if (!isAnimationFinished) {
+                    if (text == stringResource(R.string.thinking)) {
+                        AnimatedGradientText(
+                            repeatMode = RepeatMode.Restart,
+                            highlightColor = Color(0xFFAEEA00),
+                            baseColor = MaterialTheme.colorScheme.onBackground,
+                            text = text,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    } else {
+                        OneTimeAnimatedGradientText(
+                            highlightColor = Color(0xFFAEEA00),
+                            baseColor = MaterialTheme.colorScheme.onBackground,
+                            hideColor = Color.Transparent,
+                            text = text,
+                            style = MaterialTheme.typography.bodySmall,
+                            onAnimationEnd = {
+                                isAnimationFinished = true
+                            }
+                        )
+                    }
+                } else {
+                    Text(
+                        text = text,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun LoadingIndicator() {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        CircularProgressIndicator()
+fun AIButton(
+    onClick: () -> Unit,
+    title: String,
+    buttonColor: Color,
+    textColor: Color
+) {
+    Button(
+        onClick = onClick,
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = buttonColor
+        )
+    ) {
+        Text(
+            text = title,
+            color = textColor,
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }
 

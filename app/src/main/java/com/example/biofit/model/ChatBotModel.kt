@@ -19,7 +19,7 @@ class ChatBotModel(private val context: Context, apiKey: String, private val dat
 
     suspend fun getBotResponse(userInput: String): String {
         return try {
-            val userData = databaseHelper.getUserData()
+            val userData = databaseHelper.getUserDataById(userId = 1)
             val enrichedInput = enrichInputWithUserData(userInput, userData)
             val fullConversation = chatHistory.joinToString("\n") {
                 "User: ${it.userMessage}\nBot: ${it.botResponse}"
@@ -36,17 +36,23 @@ class ChatBotModel(private val context: Context, apiKey: String, private val dat
     private fun enrichInputWithUserData(userInput: String, userData: UserData?): String {
         return if (userData != null) {
             """
-            You are a health and nutrition management assistant.
-            Your name is Bionix
+            Your name is Bionix.
+            You are an AI assistant specializing in health and nutrition management, integrated into the BioFit app.
+            BioFit is a platform that helps users track and improve their personal health.
+            Response Rules:
+            If the user's question is related to health and nutrition, respond based on user data and provide useful advice.
+            If the question is about the BioFit app, provide intelligent and detailed information about its features and usage.
+            If the question is unrelated, politely decline and guide the user back to health, nutrition, or BioFit-related topics.
             
-            - If the user's question is health-related, answer based on user data.
-            - If not, politely guide them back to health-related topics.
+            If the user wants to log out of the BioFit application then reply to the user that press the log out button below.
             
             User data:
-                - Name: ${userData.name}
-                - Interests: ${userData.hobbies}
-                - Weight: ${userData.weight} kg
+                - Full Name: ${userData.fullName}
+                - Gender: ${getGenderString(userData.gender, context)}
+                - Date of Birth: ${userData.dateOfBirth}
                 - Height: ${userData.height} cm
+                - Weight: ${userData.weight} kg
+                - Target Weight: ${userData.targetWeight} kg
 
             User asks: $userInput
             """.trimIndent()
