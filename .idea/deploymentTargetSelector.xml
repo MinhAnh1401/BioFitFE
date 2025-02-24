@@ -5,13 +5,7 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="StartPortraitScreenDarkModePreviewInSmallPhone">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="StartPortraitScreenPreviewInLargePhone">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="MainScreenDarkModePreviewInSmallPhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="MainScreenPreviewInLargePhone">
@@ -20,7 +14,13 @@
       <SelectionState runConfigName="MainLandscapeScreenPreviewInTablet">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PlanningScreenDarkModePreviewInSmallPhone">
+      <SelectionState runConfigName="LoginPortraitScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="BioAIChatbotScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="MainScreenDarkModePreviewInSmallPhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -1,4 +1,4 @@
-package com.example.biofit.view.dialog
+package com.example.biofit.view.sub_components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

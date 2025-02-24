@@ -45,7 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.view.dialog.SelectionDialog
+import com.example.biofit.view.sub_components.SelectionDialog
 import com.example.biofit.view.fragment.PlanningHeaderBar
 import com.example.biofit.view.ui_theme.BioFitTheme
 

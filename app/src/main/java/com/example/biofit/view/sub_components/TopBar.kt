@@ -1,6 +1,7 @@
-package com.example.biofit.view.dialog
+package com.example.biofit.view.sub_components
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -137,25 +136,12 @@ fun TopBar(
                 }
 
                 gradientTitle?.let {
-                    Text(
+                    AnimatedGradientText(
+                        repeatMode = RepeatMode.Reverse,
+                        highlightColor = Color(0xFFAEEA00),
+                        baseColor = MaterialTheme.colorScheme.primary,
                         text = gradientTitle,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    if (isSystemInDarkTheme()) {
-                                        Color(0xFF64DD17)
-                                    } else {
-                                        Color(0xFFAEEA00)
-                                    },
-                                    MaterialTheme.colorScheme.primary
-                                ),
-                                start = Offset(0f, 0f),
-                                end = Offset(
-                                    Float.POSITIVE_INFINITY,
-                                    Float.POSITIVE_INFINITY
-                                )
-                            )
-                        )
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
 

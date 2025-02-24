@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import com.example.biofit.R
-import com.example.biofit.view.dialog.TopBar
+import com.example.biofit.view.sub_components.TopBar
 import com.example.biofit.view.fragment.VideoItem
 import com.example.biofit.view.ui_theme.BioFitTheme
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer

@@ -1,4 +1,4 @@
-package com.example.biofit.view.dialog
+package com.example.biofit.view.sub_components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ fun DefaultScreen() {
         color = MaterialTheme.colorScheme.background
     ) {
         DefaultDialog(
-            title = R.string.bionix,
+            title = R.string.app_name,
             description = R.string.des_app_name,
             actionTextButton = R.string.activity,
             actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
