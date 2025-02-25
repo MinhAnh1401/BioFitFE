@@ -79,6 +79,22 @@ class AIChatbotActivity : ComponentActivity() {
             model = model,
             context = this
         )
+        val existUserData = databaseHelper.getUserDataById(userId = 1)
+        if (existUserData == null) {
+            val userData = UserData(
+                id = 1,
+                fullName = "Nguyễn Minh Đăng",
+                email = "dangnguyen6767@gmail.com",
+                password = "Qsdvsdvnsjd546",
+                gender = 0,
+                dateOfBirth = "2002-09-06",
+                height = 170f,
+                weight = 51f,
+                targetWeight = 60f
+            )
+
+            databaseHelper.addUserData(userData)
+        }
         setContent {
             BioFitTheme {
                 BioAIChatbotScreen(

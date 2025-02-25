@@ -28,7 +28,7 @@ class ChatBotModel(
             "User: ${it.userMessage}\nBot: ${it.botResponse}"
         }
 
-        val userData = databaseHelper.getUserDataById(userId = 3)
+        val userData = databaseHelper.getUserDataById(userId = 1)
         val enrichedInput = if (userData != null) {
             enrichInputWithUserData(userInput, userData)
         } else {
@@ -52,19 +52,11 @@ class ChatBotModel(
     }
 
     private fun enrichInputWithUserData(userInput: String, userData: UserData): String {
-        return """
-            Your name is Bionix.
-            You are an AI assistant specializing in health and nutrition management, integrated into the BioFit app.
-            BioFit is a platform that helps users track and improve their personal health.
-            Response Rules:
-            If the user's question is related to health and nutrition, respond based on user data and provide useful advice.
-            If the question is related to the BioFit app, only answer that BioFit is a health and nutrition management app.
-            If the question is unrelated, politely decline and guide the user back to health, nutrition, or BioFit-related topics.
-            
+        return """ 
             Current date time: ${
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         }
-            
+        
             User data:
                 - Full Name: ${userData.fullName}
                 - Gender: ${getGenderString(userData.gender, context)}
@@ -72,8 +64,15 @@ class ChatBotModel(
                 - Height: ${userData.height} cm
                 - Weight: ${userData.weight} kg
                 - Target Weight: ${userData.targetWeight} kg
-
+                
             User asks: $userInput
+            
+            Your name is Bionix.
+            You are an AI assistant specializing in health and nutrition management, integrated into the BioFit app.
+            BioFit is a application that helps users track and improve their personal health.
+            Response Rules:
+            If the user's question is related to health and nutrition, respond based on user data and provide useful advice.
+            If the question is unrelated, politely decline and guide the user back to health, nutrition, or BioFit-related topics.
             """.trimIndent()
     }
 }
