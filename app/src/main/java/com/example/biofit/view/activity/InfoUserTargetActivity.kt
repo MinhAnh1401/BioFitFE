@@ -192,7 +192,7 @@ fun InfoUserTargetContent(
                 singleLine = true, // chỉ cho phép nhập một dòng văn bản
                 maxLines = 1, // số lượng dòng tối đa cho văn bản
                 // minLines = 1, // số lượng dòng tối thiểu cho văn bản (mặc định 1)
-                shape = MaterialTheme.shapes.large, // hình dạng của trường nhập liệu
+                shape = MaterialTheme.shapes.extraLarge, // hình dạng của trường nhập liệu
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer

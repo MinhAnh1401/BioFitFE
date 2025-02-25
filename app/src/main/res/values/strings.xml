@@ -272,4 +272,5 @@
     <string name="food_detail">Food detail</string>
     <string name="enter_message">Enter messsage</string>
     <string name="ai_assistant_bionix">AI assistant - Bionix</string>
+    <string name="error_while_retrieving_data">Error while retrieving data!</string>
 </resources>

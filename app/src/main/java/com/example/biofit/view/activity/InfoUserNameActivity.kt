@@ -245,7 +245,7 @@ fun ProgressIndicatorTopBarInfoScreen(
                                         }
                                 )
                     )
-                    .clip(MaterialTheme.shapes.large)
+                    .clip(MaterialTheme.shapes.extraLarge)
                     .background(color = color)
             )
             Spacer(modifier = Modifier.width(standardPadding))
@@ -300,7 +300,7 @@ fun InfoUserNameContent(
                 ),
                 singleLine = true,
                 maxLines = 1,
-                shape = MaterialTheme.shapes.large,
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer

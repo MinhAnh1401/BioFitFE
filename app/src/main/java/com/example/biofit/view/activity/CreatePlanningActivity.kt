@@ -147,7 +147,7 @@ fun CreatePlanningScreenContent(
                 Card(
                     onClick = { showGoalDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = Color.Transparent
                     ),
@@ -244,7 +244,7 @@ fun CreatePlanningScreenContent(
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -267,7 +267,7 @@ fun CreatePlanningScreenContent(
                 Card(
                     onClick = { showDietDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = Color.Transparent
                     ),
@@ -358,7 +358,7 @@ fun CreatePlanningScreenContent(
                 Card(
                     onClick = { showExerciseDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = Color.Transparent
                     ),
@@ -418,7 +418,7 @@ fun CreatePlanningScreenContent(
                 Card(
                     onClick = { showIntensityDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = Color.Transparent
                     ),
@@ -488,7 +488,7 @@ fun CreatePlanningScreenContent(
             ) {
                 Button(
                     onClick = { activity?.finish() },
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
                         text = stringResource(R.string.start_plan),

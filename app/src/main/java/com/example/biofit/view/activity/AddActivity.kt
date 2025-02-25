@@ -247,7 +247,7 @@ fun AddContent(
         ),
         singleLine = true,
         maxLines = 1,
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,

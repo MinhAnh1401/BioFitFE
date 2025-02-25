@@ -8,11 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,9 +28,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,16 +41,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -90,18 +79,6 @@ class AIChatbotActivity : ComponentActivity() {
             model = model,
             context = this
         )
-        val userData = UserData(
-            id = 1,
-            fullName = "Nguyễn Văn Chiến",
-            email = "anguyen55@gmail.com",
-            password = "Wsdfs343r",
-            gender = 0,
-            dateOfBirth = "2005-08-21",
-            height = 165f,
-            weight = 51f,
-            targetWeight = 57f
-        )
-        databaseHelper.addUserData(userData)
         setContent {
             BioFitTheme {
                 BioAIChatbotScreen(
@@ -123,35 +100,25 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
     val activity = context as? Activity
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val screenWidth = LocalConfiguration.current.screenWidthDp
     val standardPadding = getStandardPadding().first
-    val modifier = getStandardPadding().second
 
     val chatHistory by remember { mutableStateOf(controller.chatHistory) }
     val scope = rememberCoroutineScope()
     var userInput by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
-    val keywords = listOf("log out", "sign out", "đăng xuất")
-
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = if (isSystemInDarkTheme()) {
-                    Brush.radialGradient(
-                        center = Offset(screenWidth * 1.35f, Float.POSITIVE_INFINITY),
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surfaceContainerHigh,
-                            MaterialTheme.colorScheme.background
-                        ),
-                        radius = screenWidth * 1.5f
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFFAEEA00),
+                        MaterialTheme.colorScheme.primary
                     )
-                } else {
-                    SolidColor(MaterialTheme.colorScheme.background)
-                }
+                )
             ),
-        color = Color.Transparent
+        color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
     ) {
         Column(
             modifier = Modifier
@@ -189,28 +156,11 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                         standardPadding = standardPadding
                     )
 
-                    Column {
-                        ChatBubble(
-                            text = chat.botResponse,
-                            isUser = false,
-                            standardPadding = standardPadding
-                        )
-
-                        if (keywords.any { it in chat.botResponse.lowercase() }) {
-                            AIButton(
-                                onClick = {
-                                    activity?.let {
-                                        val intent = Intent(it, LoginActivity::class.java)
-                                        it.startActivity(intent)
-                                        it.finish()
-                                    }
-                                },
-                                title = stringResource(R.string.sign_out),
-                                buttonColor = MaterialTheme.colorScheme.primary,
-                                textColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
+                    ChatBubble(
+                        text = chat.botResponse,
+                        isUser = false,
+                        standardPadding = standardPadding
+                    )
                 }
             }
 
@@ -228,12 +178,12 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(standardPadding),
-                    textStyle = MaterialTheme.typography.bodySmall,
+                    textStyle = MaterialTheme.typography.bodyMedium,
                     placeholder = {
                         Text(
                             text = stringResource(R.string.enter_message),
                             color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     },
                     maxLines = 4,
@@ -245,7 +195,7 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                             keyboardController?.hide()
                         }
                     ),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                         focusedTextColor = MaterialTheme.colorScheme.onBackground,
@@ -285,7 +235,7 @@ fun ChatBubble(
     isUser: Boolean,
     standardPadding: Dp
 ) {
-    var isAnimationFinished by remember { mutableStateOf(false) }
+    var isAnimationFinished by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -297,20 +247,11 @@ fun ChatBubble(
             modifier = Modifier
                 .background(
                     color = if (isUser) {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
                     } else {
                         Color.Transparent
                     },
-                    shape = MaterialTheme.shapes.large
-                )
-                .border(
-                    width = 0.1.dp,
-                    brush = if (isUser) {
-                        SolidColor(MaterialTheme.colorScheme.outline)
-                    } else {
-                        SolidColor(Color.Transparent)
-                    },
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.extraLarge
                 )
                 .padding(if (isUser) standardPadding else 0.dp)
         ) {
@@ -318,7 +259,7 @@ fun ChatBubble(
                 Text(
                     text = text,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 if (!isAnimationFinished) {
@@ -326,17 +267,17 @@ fun ChatBubble(
                         AnimatedGradientText(
                             repeatMode = RepeatMode.Restart,
                             highlightColor = Color(0xFFAEEA00),
-                            baseColor = MaterialTheme.colorScheme.onBackground,
+                            baseColor = MaterialTheme.colorScheme.primary,
                             text = text,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     } else {
                         OneTimeAnimatedGradientText(
-                            highlightColor = Color(0xFFAEEA00),
+                            highlightColor = MaterialTheme.colorScheme.primary,
                             baseColor = MaterialTheme.colorScheme.onBackground,
                             hideColor = Color.Transparent,
                             text = text,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             onAnimationEnd = {
                                 isAnimationFinished = true
                             }
@@ -346,33 +287,11 @@ fun ChatBubble(
                     Text(
                         text = text,
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun AIButton(
-    onClick: () -> Unit,
-    title: String,
-    buttonColor: Color,
-    textColor: Color
-) {
-    Button(
-        onClick = onClick,
-        shape = MaterialTheme.shapes.large,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = buttonColor
-        )
-    ) {
-        Text(
-            text = title,
-            color = textColor,
-            style = MaterialTheme.typography.labelLarge
-        )
     }
 }
 

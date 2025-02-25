@@ -83,7 +83,7 @@ fun SelectionDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = screenHeight / 1.5f)
-                .clip(MaterialTheme.shapes.large)
+                .clip(MaterialTheme.shapes.extraLarge)
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
                     vertical = standardPadding * 2,

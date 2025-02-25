@@ -209,14 +209,14 @@ fun ExerciseViewContent(
                             pauseButtonState = !pauseButtonState
                         }
                     },
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = when {
                             !startButtonState -> MaterialTheme.colorScheme.primary
                             !pauseButtonState -> Color(0xFFFFAB00)
                             else -> MaterialTheme.colorScheme.primary
                         },
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor = MaterialTheme.colorScheme.scrim
                     )
                 ) {
                     Text(
@@ -246,10 +246,10 @@ fun ExerciseViewContent(
                         milliseconds = 0
                         timeLeft = (minutes * 60 * 1000L + seconds * 1000L)
                     },
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFD50000),
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
                     )
                 ) {
                     Text(

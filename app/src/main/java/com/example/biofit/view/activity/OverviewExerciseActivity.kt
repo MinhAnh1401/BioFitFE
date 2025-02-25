@@ -190,14 +190,16 @@ fun OverExerciseItem(
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large
     ) {
         Row(
             modifier = Modifier.padding(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
             ) {
                 Text(
                     text = exerciseName,

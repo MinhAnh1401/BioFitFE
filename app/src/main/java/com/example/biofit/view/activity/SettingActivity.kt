@@ -477,7 +477,7 @@ fun SettingContent(
             ) {
                 Card(
                     modifier = modifier,
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     )
@@ -688,7 +688,7 @@ fun SettingContent(
             ) {
                 Card(
                     modifier = modifier,
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     )

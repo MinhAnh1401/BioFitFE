@@ -328,7 +328,7 @@ fun OverviewDayContent(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
@@ -442,7 +442,7 @@ fun OverviewDayContent(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
@@ -542,7 +542,7 @@ fun OverviewDayContent(
 
                             Card(
                                 modifier = Modifier.weight(0.25f),
-                                shape = MaterialTheme.shapes.large,
+                                shape = MaterialTheme.shapes.extraLarge,
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer
                                 )
@@ -604,7 +604,7 @@ fun CalendarSelector(
                 val isSelected = date == selectedDate
                 Column(
                     modifier = Modifier
-                        .clip(MaterialTheme.shapes.large)
+                        .clip(MaterialTheme.shapes.medium)
                         .background(
                             if (isSelected) {
                                 MaterialTheme.colorScheme.primary
@@ -617,7 +617,7 @@ fun CalendarSelector(
                                 Modifier.border(
                                     width = 2.dp,
                                     color = MaterialTheme.colorScheme.primary,
-                                    shape = MaterialTheme.shapes.large
+                                    shape = MaterialTheme.shapes.medium
                                 )
                             } else {
                                 Modifier
@@ -924,7 +924,7 @@ fun OverviewWeekContent(
 
                         Card(
                             modifier = Modifier.weight(0.25f),
-                            shape = MaterialTheme.shapes.large,
+                            shape = MaterialTheme.shapes.extraLarge,
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                             )

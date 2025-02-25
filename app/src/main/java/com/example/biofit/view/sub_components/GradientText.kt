@@ -6,15 +6,10 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,20 +17,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.biofit.R
 import com.example.biofit.view.ui_theme.BioFitTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun AnimatedGradientText(
@@ -52,7 +45,7 @@ fun AnimatedGradientText(
         initialValue = -300f, // Xuất hiện từ ngoài màn hình
         targetValue = 1000f, // Di chuyển sang phải
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
             repeatMode = repeatMode // Restart để lặp từ đầu
         )
     )
@@ -84,32 +77,49 @@ fun OneTimeAnimatedGradientText(
     style: TextStyle,
     onAnimationEnd: () -> Unit = {}
 ) {
-    val transition = remember { Animatable(-300f) }
-    val coroutineScope = rememberCoroutineScope()
+    // Lưu chiều cao của text khi được đo
+    var textHeight by remember { mutableStateOf(0f) }
 
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
+    // Biến Animatable để điều khiển vị trí của gradient theo chiều dọc.
+    val transition = remember { Animatable(-300f) }
+
+    LaunchedEffect(textHeight) {
+        if (textHeight > 0f) {
+            // Gradient chạy từ trên (ngoài view) đến dưới (ngoài view)
+            val startValue = -300f
+            val endValue = textHeight
+            val distance = endValue - startValue
+
+            // Giả sử tốc độ LED là 0.5 pixel/ms
+            val speed = 0.5f
+            val durationMillis = (distance / speed).toInt()
+
+            transition.snapTo(startValue)
             transition.animateTo(
-                targetValue = 1000f,
-                animationSpec = tween(durationMillis = 2000, easing = LinearEasing)
+                targetValue = endValue,
+                animationSpec = tween(durationMillis = durationMillis, easing = LinearEasing)
             )
             onAnimationEnd()
         }
     }
 
+    // Gradient brush di chuyển theo chiều dọc, sử dụng transition.value
     val gradientBrush = Brush.linearGradient(
         colors = listOf(
             baseColor,
             highlightColor,
             hideColor
         ),
-        start = Offset(transition.value, transition.value),
-        end = Offset(transition.value + 100f, transition.value + 100f)
+        start = Offset(0f, transition.value),
+        end = Offset(0f, transition.value + 500f) // Điều chỉnh kích thước LED nếu cần
     )
 
     Text(
         text = text,
         style = style.copy(brush = gradientBrush),
+        modifier = Modifier.onGloballyPositioned { coordinates ->
+            textHeight = coordinates.size.height.toFloat()
+        }
     )
 }
 
@@ -185,8 +195,6 @@ private fun GradientTextPreview() {
                 style = MaterialTheme.typography.displaySmall,
                 onAnimationEnd = { isAnimationFinished = true }
             )
-
-
         }
     }
 }

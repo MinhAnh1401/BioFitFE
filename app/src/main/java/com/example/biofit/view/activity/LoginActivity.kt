@@ -240,7 +240,7 @@ fun LoginForm(
             ),
             singleLine = true,
             maxLines = 1,
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -288,7 +288,7 @@ fun LoginForm(
             ),
             singleLine = true,
             maxLines = 1,
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -323,7 +323,7 @@ fun LoginForm(
                 }
             },
             modifier = Modifier.padding(vertical = standardPadding),
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
         ) {
             Text(
                 text = stringResource(R.string.sign_in_uppercase),

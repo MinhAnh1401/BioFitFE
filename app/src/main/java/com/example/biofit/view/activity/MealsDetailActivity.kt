@@ -183,12 +183,13 @@ fun MealsDetailContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(standardPadding),
             ) {
                 Text(
                     text = stringResource(R.string.morning),
                     modifier = Modifier
-                        .clip(shape = MaterialTheme.shapes.extraLarge)
+                        .clip(shape = MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
@@ -203,7 +204,7 @@ fun MealsDetailContent(
                 Text(
                     text = stringResource(R.string.keto),
                     modifier = Modifier
-                        .clip(MaterialTheme.shapes.extraLarge)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
@@ -215,29 +216,34 @@ fun MealsDetailContent(
                     )
                 )
 
-                Row(
+                Column(
                     modifier = Modifier
-                        .clip(MaterialTheme.shapes.extraLarge)
+                        .weight(1f)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
                             vertical = standardPadding
                         ),
-                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.End,
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_fire),
-                        contentDescription = null,
-                    )
-
-                    Text(
-                        text = "$value${stringResource(R.string.kcal)}",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.Bold
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_fire),
+                            contentDescription = null,
                         )
-                    )
+
+                        Text(
+                            text = "$value${stringResource(R.string.kcal)}",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                 }
             }
         }

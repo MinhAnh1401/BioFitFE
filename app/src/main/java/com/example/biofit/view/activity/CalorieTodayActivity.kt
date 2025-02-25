@@ -134,7 +134,7 @@ fun CalorieTodayContent(
                     consumeAndBurn.forEach { (title, value) ->
                         Card(
                             modifier = Modifier.weight(0.5f),
-                            shape = MaterialTheme.shapes.large,
+                            shape = MaterialTheme.shapes.extraLarge,
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             )
@@ -167,7 +167,7 @@ fun CalorieTodayContent(
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     )

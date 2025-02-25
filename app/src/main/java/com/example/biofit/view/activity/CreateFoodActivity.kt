@@ -148,7 +148,7 @@ fun CreateFoodContent(
                     contentDescription = "Food image",
                     modifier = Modifier
                         .size(standardPadding * 15)
-                        .clip(MaterialTheme.shapes.large)
+                        .clip(MaterialTheme.shapes.extraLarge)
                 )
 
                 TextButton(
@@ -556,7 +556,7 @@ fun CreateFoodContent(
             ) {
                 Button(
                     onClick = { activity?.finish() },
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
                         text = stringResource(R.string.save_food),

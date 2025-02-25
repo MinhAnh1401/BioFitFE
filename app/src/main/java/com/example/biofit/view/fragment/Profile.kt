@@ -503,7 +503,7 @@ fun ProfileContent(
             Button(
                 onClick = { showSignOutDialog = true },
                 modifier = Modifier.padding(top = standardPadding),
-                shape = MaterialTheme.shapes.large,
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 Text(
                     text = stringResource(R.string.sign_out),

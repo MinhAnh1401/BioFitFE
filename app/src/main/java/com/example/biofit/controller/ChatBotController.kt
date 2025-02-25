@@ -10,7 +10,10 @@ import com.example.biofit.model.ChatMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class ChatBotController(private val model: ChatBotModel, private val context: Context) {
+class ChatBotController(
+    private val model: ChatBotModel,
+    private val context: Context
+) {
     private val _chatHistory = mutableStateListOf<ChatMessage>()
     val chatHistory: List<ChatMessage> get() = _chatHistory
 

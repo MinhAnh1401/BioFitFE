@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
@@ -30,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -85,7 +87,6 @@ import kotlin.random.Random
 
 @Composable
 fun HomeScreen() {
-
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -93,10 +94,6 @@ fun HomeScreen() {
         verticalArrangement = Arrangement.spacedBy(standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeaderBar(
-            modifier = modifier
-        )
-
         HomeContent(
             standardPadding = standardPadding,
             modifier = modifier
@@ -172,6 +169,12 @@ fun HomeContent(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
         item {
+            HeaderBar(
+                modifier = modifier
+            )
+        }
+        
+        item {
             OverviewAndSearchBar(
                 standardPadding = standardPadding,
                 modifier = modifier
@@ -195,7 +198,8 @@ fun HomeContent(
         item {
             Spacer(
                 modifier = Modifier.padding(
-                    bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding() * 2
+                    bottom = WindowInsets.safeDrawing.asPaddingValues()
+                        .calculateBottomPadding() * 2
                             + standardPadding
                 )
             )
@@ -228,7 +232,7 @@ fun OverviewAndSearchBar(
 
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary
         )
@@ -237,9 +241,7 @@ fun OverviewAndSearchBar(
             modifier = Modifier.padding(standardPadding),
             verticalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row {
                 Text(
                     text = stringResource(R.string.overview),
                     modifier = Modifier.weight(1f),
@@ -254,13 +256,17 @@ fun OverviewAndSearchBar(
                             it.startActivity(intent)
                         }
                     },
+                    modifier = Modifier.widthIn(
+                        min = standardPadding * 10
+                    ),
+                    shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
                     Text(
                         text = stringResource(R.string.edit),
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
@@ -284,9 +290,9 @@ fun OverviewAndSearchBar(
                     RemainingCaloriesChart(
                         loadedCalories = loadedCalories.toFloat(),
                         targetCalories = targetCalories,
-                        circleColor = MaterialTheme.colorScheme.secondaryContainer,
+                        circleColor = MaterialTheme.colorScheme.primaryContainer,
                         progressColor = MaterialTheme.colorScheme.inversePrimary,
-                        exceededColor = Color(0xFFD50000),
+                        exceededColor = MaterialTheme.colorScheme.error,
                         remainingCaloriesColor = MaterialTheme.colorScheme.onPrimary,
                         exceededCaloriesText = stringResource(R.string.exceeded_calories),
                         remainingCaloriesText = stringResource(R.string.remaining_calories),
@@ -345,22 +351,23 @@ fun OverviewAndSearchBar(
             ) {
                 nutrients.forEach { (nameRes, loaded, target) ->
                     item {
-                        NutritionChart(
-                            loadedValue = loaded.toFloat(),
-                            targetValue = target.toFloat(),
-                            circleColor = MaterialTheme.colorScheme.secondaryContainer,
-                            progressColor = MaterialTheme.colorScheme.inversePrimary,
-                            exceededColor = Color(0xFF960000),
-                            standardPadding = standardPadding
+                        Spacer(modifier = Modifier.width(standardPadding))
+
+                        CircularProgressIndicator(
+                            progress = { loaded.toFloat() / target.toFloat() },
+                            modifier = Modifier.size(standardPadding * 4),
+                            color = MaterialTheme.colorScheme.inversePrimary,
+                            strokeWidth = standardPadding / 1.5f,
+                            trackColor = MaterialTheme.colorScheme.primaryContainer
                         )
 
-                        Spacer(modifier = Modifier.width(standardPadding * 3))
+                        Spacer(modifier = Modifier.width(standardPadding))
 
                         Column {
                             Text(
                                 text = stringResource(nameRes),
                                 color = if (loaded > target) {
-                                    Color(0xFF960000)
+                                    MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
                                 },
@@ -370,13 +377,15 @@ fun OverviewAndSearchBar(
                             Text(
                                 text = "$loaded / $target" + stringResource(R.string.gam),
                                 color = if (loaded > target) {
-                                    Color(0xFF960000)
+                                    MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
                                 },
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(standardPadding))
                     }
                 }
             }
@@ -428,7 +437,7 @@ fun OverviewAndSearchBar(
         ),
         singleLine = true,
         maxLines = 1,
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -463,7 +472,7 @@ fun RemainingCaloriesChart(
         val exceeded = loadedCalories > targetCalories
 
         drawCircle(
-            color = circleColor.copy(alpha = 0.3f),
+            color = circleColor,
             center = center,
             radius = radius,
             style = Stroke(width = radius / 1.7f)
@@ -536,68 +545,6 @@ fun RemainingCaloriesChart(
                     }
                     textAlign = android.graphics.Paint.Align.CENTER
                 }
-            )
-        }
-    }
-}
-
-@Composable
-fun NutritionChart(
-    loadedValue: Float,
-    targetValue: Float,
-    circleColor: Color,
-    progressColor: Color,
-    exceededColor: Color,
-    standardPadding: Dp
-) {
-    Canvas(
-        modifier = Modifier.size(standardPadding * 3)
-    ) {
-        val center = Offset(size.width, size.height / 2)
-        val radius = size.minDimension / 2f
-
-        val totalAngle = 360f
-        val targetAngle = (targetValue / targetValue) * totalAngle
-        val loadedAngle = (loadedValue / targetValue) * totalAngle
-        val exceeded = loadedValue > targetValue
-
-        drawCircle(
-            color = circleColor.copy(alpha = 0.3f),
-            center = center,
-            radius = radius,
-            style = Stroke(
-                width = radius / 1.7f,
-                cap = StrokeCap.Round
-            )
-        )
-
-        drawArc(
-            color = progressColor,
-            startAngle = -90f,
-            sweepAngle = if (exceeded) targetAngle else loadedAngle,
-            useCenter = false,
-            topLeft = Offset(center.x - radius, center.y - radius),
-            size = Size(radius * 2, radius * 2),
-            style = Stroke(
-                width = radius / 2f,
-                cap = StrokeCap.Round
-            )
-        )
-
-        if (exceeded) {
-            val exceededAngle = (loadedValue - targetValue) / targetValue * totalAngle
-
-            drawArc(
-                color = exceededColor,
-                startAngle = -90f + targetAngle,
-                sweepAngle = exceededAngle,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = Size(radius * 2, radius * 2),
-                style = Stroke(
-                    width = radius / 2f,
-                    cap = StrokeCap.Round
-                )
             )
         }
     }
@@ -731,7 +678,7 @@ fun DailyCard(
     Card(
         onClick = onClick,
         modifier = modifier,
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
         )
@@ -854,7 +801,7 @@ fun DailyGoals(
         ) {
             Card(
                 modifier = Modifier.weight(1f),
-                shape = MaterialTheme.shapes.large,
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
@@ -953,7 +900,7 @@ fun DailyGoals(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                shape = MaterialTheme.shapes.large,
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
@@ -1028,7 +975,7 @@ fun DailyGoals(
         }
 
         Card(
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
@@ -1066,13 +1013,17 @@ fun DailyGoals(
                                 it.startActivity(intent)
                             }
                         },
+                        modifier = Modifier.widthIn(
+                            min = standardPadding * 10
+                        ),
+                        shape = MaterialTheme.shapes.large,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimary
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
                         )
                     ) {
                         Text(
                             text = stringResource(R.string.update),
-                            color = MaterialTheme.colorScheme.primary,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelSmall
                         )
                     }

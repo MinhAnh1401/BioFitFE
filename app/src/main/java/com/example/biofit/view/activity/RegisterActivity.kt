@@ -163,7 +163,7 @@ fun RegisterForm(
             ),
             singleLine = true,
             maxLines = 1,
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -211,7 +211,7 @@ fun RegisterForm(
             ),
             singleLine = true,
             maxLines = 1,
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -259,7 +259,7 @@ fun RegisterForm(
             ),
             singleLine = true,
             maxLines = 1,
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -278,7 +278,7 @@ fun RegisterForm(
                 }
             },
             modifier = Modifier.padding(vertical = standardPadding),
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.extraLarge,
         ) {
             Text(
                 text = stringResource(R.string.sign_up_uppercase),

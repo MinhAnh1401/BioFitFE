@@ -255,7 +255,7 @@ fun PlanningScreenContent(
                                             onValueChange = { selectedMinutes = it }
                                         )
                                     },
-                                    shape = MaterialTheme.shapes.large,
+                                    shape = MaterialTheme.shapes.extraLarge,
                                     confirmButton = {
                                         TextButton(
                                             onClick = { showDialog = false }
@@ -383,7 +383,7 @@ fun PlanningScreenContent(
                             Column(
                                 modifier = Modifier
                                     .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.large)
+                                    .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
                                         activity?.let {
                                             val intent = Intent(it, MealsListActivity::class.java)
@@ -403,7 +403,7 @@ fun PlanningScreenContent(
                             Column(
                                 modifier = Modifier
                                     .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.large)
+                                    .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
                                         activity?.let {
                                             val intent = Intent(it, MealsListActivity::class.java)
@@ -425,7 +425,7 @@ fun PlanningScreenContent(
                             Column(
                                 modifier = Modifier
                                     .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.large)
+                                    .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
                                         activity?.let {
                                             val intent = Intent(it, MealsListActivity::class.java)
@@ -445,7 +445,7 @@ fun PlanningScreenContent(
                             Column(
                                 modifier = Modifier
                                     .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.large)
+                                    .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable {
                                         activity?.let {
                                             val intent = Intent(it, MealsListActivity::class.java)
@@ -613,7 +613,7 @@ fun CaloriesLineChart(
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                shape = MaterialTheme.shapes.large
+                shape = MaterialTheme.shapes.extraLarge
             )
             .clickable {
                 activity?.let {
@@ -683,7 +683,7 @@ fun WellnessTrackerCard(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -751,7 +751,7 @@ fun SuggestedMeals(
             contentDescription = "Suggested meals",
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.large),
+                .clip(MaterialTheme.shapes.extraLarge),
             contentScale = ContentScale.Crop
         )
 
@@ -800,7 +800,7 @@ fun WorkoutSuggestion(
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(standardPadding)
+                    verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
                 ) {
                     Text(
                         text = exerciseName,
@@ -817,7 +817,8 @@ fun WorkoutSuggestion(
                 }
 
                 Button(
-                    onClick = onClickButton
+                    onClick = onClickButton,
+                    shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
                         text = stringResource(R.string.start),

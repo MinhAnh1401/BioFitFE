@@ -123,8 +123,8 @@ fun UpdateWeightScreen() {
                     }
 
                     Button(
-                        onClick = { TODO() }, // Xử lý sự kiện khi người dùng nhấn nút Save}
-                        shape = MaterialTheme.shapes.large
+                        onClick = { activity?.finish() }, // Xử lý sự kiện khi người dùng nhấn nút Save}
+                        shape = MaterialTheme.shapes.extraLarge
                     ) {
                         Text(
                             text = stringResource(R.string.save),
@@ -220,7 +220,7 @@ fun UpdateWeightContent(
                 ),
                 singleLine = true,
                 maxLines = 1,
-                shape = MaterialTheme.shapes.large,
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer

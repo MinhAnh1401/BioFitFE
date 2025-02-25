@@ -1,16 +1,21 @@
 package com.example.biofit.model
 
 import android.content.Context
-import android.util.Log
 import com.example.biofit.R
 import com.example.biofit.controller.DatabaseHelper
 import com.google.ai.client.generativeai.GenerativeModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 data class ChatMessage(val userMessage: String, val botResponse: String)
 
-class ChatBotModel(private val context: Context, apiKey: String, private val databaseHelper: DatabaseHelper) {
+class ChatBotModel(
+    private val context: Context,
+    apiKey: String,
+    private val databaseHelper: DatabaseHelper
+) {
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-1.5-flash",
+        modelName = "gemini-2.0-flash",
         apiKey = apiKey
     )
     private val chat = generativeModel.startChat()
@@ -18,33 +23,47 @@ class ChatBotModel(private val context: Context, apiKey: String, private val dat
     private val chatHistory = mutableListOf<ChatMessage>()
 
     suspend fun getBotResponse(userInput: String): String {
+        val recentHistory = chatHistory.takeLast(10)
+        val conversationContext = recentHistory.joinToString("\n") {
+            "User: ${it.userMessage}\nBot: ${it.botResponse}"
+        }
+
+        val userData = databaseHelper.getUserDataById(userId = 3)
+        val enrichedInput = if (userData != null) {
+            enrichInputWithUserData(userInput, userData)
+        } else {
+            userInput
+        }
+
+        val fullConversation = if (conversationContext.isNotBlank()) {
+            "$conversationContext\nUser: $enrichedInput"
+        } else {
+            enrichedInput
+        }
+
         return try {
-            val userData = databaseHelper.getUserDataById(userId = 1)
-            val enrichedInput = enrichInputWithUserData(userInput, userData)
-            val fullConversation = chatHistory.joinToString("\n") {
-                "User: ${it.userMessage}\nBot: ${it.botResponse}"
-            } + "\nUser: $enrichedInput"
             val response = chat.sendMessage(fullConversation)
             val botReply = response.text ?: context.getString(R.string.sorry_i_don_t_understand)
             chatHistory.add(ChatMessage(userInput, botReply))
             botReply
         } catch (e: Exception) {
-            "Lỗi khi lấy dữ liệu!"
+            context.getString(R.string.error_while_retrieving_data)
         }
     }
 
-    private fun enrichInputWithUserData(userInput: String, userData: UserData?): String {
-        return if (userData != null) {
-            """
+    private fun enrichInputWithUserData(userInput: String, userData: UserData): String {
+        return """
             Your name is Bionix.
             You are an AI assistant specializing in health and nutrition management, integrated into the BioFit app.
             BioFit is a platform that helps users track and improve their personal health.
             Response Rules:
             If the user's question is related to health and nutrition, respond based on user data and provide useful advice.
-            If the question is about the BioFit app, provide intelligent and detailed information about its features and usage.
+            If the question is related to the BioFit app, only answer that BioFit is a health and nutrition management app.
             If the question is unrelated, politely decline and guide the user back to health, nutrition, or BioFit-related topics.
             
-            If the user wants to log out of the BioFit application then reply to the user that press the log out button below.
+            Current date time: ${
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        }
             
             User data:
                 - Full Name: ${userData.fullName}
@@ -56,8 +75,5 @@ class ChatBotModel(private val context: Context, apiKey: String, private val dat
 
             User asks: $userInput
             """.trimIndent()
-        } else {
-            userInput
-        }
     }
 }

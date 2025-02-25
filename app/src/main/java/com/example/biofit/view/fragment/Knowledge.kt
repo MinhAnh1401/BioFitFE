@@ -350,7 +350,7 @@ fun ArticleThumbnail(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
                 context.startActivity(intent)
             },
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
         AsyncImage(

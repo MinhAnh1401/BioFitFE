@@ -36,8 +36,8 @@ class SQLiteHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
     }
 
     companion object {
-        private const val DATABASE_NAME = "UserDatabase.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_NAME = "BioFit.db"
+        private const val DATABASE_VERSION = 1
     }
 }
 
@@ -82,7 +82,28 @@ class DatabaseHelper(context: Context) {
             put("targetWeight", userData.targetWeight)
         }
         db.insert("User", null, values)
-        db.close() // Đóng database sau khi thêm
+        db.close()
     }
 
+    fun updateUserData(userData: UserData) {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put("fullName", userData.fullName)
+            put("email", userData.email)
+            put("password", userData.password)
+            put("gender", userData.gender)
+            put("dateOfBirth", userData.dateOfBirth)
+            put("height", userData.height)
+            put("weight", userData.weight)
+            put("targetWeight", userData.targetWeight)
+            }
+        db.update("User", values, "id = ?", arrayOf(userData.id.toString()))
+        db.close()
+    }
+
+    fun deleteUserData(userId: Int) {
+        val db = dbHelper.writableDatabase
+        db.delete("User", "id = ?", arrayOf(userId.toString()))
+        db.close()
+    }
 }

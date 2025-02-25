@@ -103,7 +103,7 @@
     <string name="evening">Buổi tối</string>
     <string name="snack">Bữa ăn nhẹ</string>
     <string name="daily_goals">Mục tiêu hàng ngày</string>
-    <string name="drinking_water">Nước uống</string>
+    <string name="drinking_water">Uống nước</string>
     <string name="exercise">Bài tập</string>
     <string name="activity">Hoạt động</string>
     <string name="latest_weight">Cân nặng gần đây</string>
@@ -272,4 +272,5 @@
     <string name="food_detail">Chi tiết thức ăn</string>
     <string name="enter_message">Nhập tin nhắn</string>
     <string name="ai_assistant_bionix">Trợ lý AI - Bionix</string>
+    <string name="error_while_retrieving_data">Lỗi khi lấy dữ liệu!</string>
 </resources>
