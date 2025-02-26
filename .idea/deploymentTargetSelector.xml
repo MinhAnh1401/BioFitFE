@@ -5,6 +5,9 @@
       <SelectionState runConfigName="MainScreenPreviewInLargePhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="StartPortraitScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
