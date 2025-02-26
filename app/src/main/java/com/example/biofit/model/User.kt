@@ -13,11 +13,11 @@ data class UserData(
     val height: Float,
     val weight: Float,
     val targetWeight: Float
-)
-
-fun getGenderString(gender: Int, context: Context): String {
-    return when (gender) {
-        0 -> context.getString(R.string.male)
-        else -> context.getString(R.string.female)
+) {
+    fun getGenderText(context: Context): String {
+        return when (gender) {
+            0 -> context.getString(R.string.male)
+            else -> context.getString(R.string.female)
+        }
     }
 }

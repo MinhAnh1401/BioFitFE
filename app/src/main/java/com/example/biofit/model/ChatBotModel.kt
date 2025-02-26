@@ -59,7 +59,7 @@ class ChatBotModel(
         
             User data:
                 - Full Name: ${userData.fullName}
-                - Gender: ${getGenderString(userData.gender, context)}
+                - Gender: ${userData.getGenderText(context)}
                 - Date of Birth: ${userData.dateOfBirth}
                 - Height: ${userData.height} cm
                 - Weight: ${userData.weight} kg

@@ -1,6 +1,7 @@
 package com.example.biofit.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,8 +46,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.view.sub_components.SelectionDialog
+import com.example.biofit.controller.DatabaseHelper
+import com.example.biofit.model.UserPlan
 import com.example.biofit.view.fragment.PlanningHeaderBar
+import com.example.biofit.view.sub_components.SelectionDialog
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class CreatePlanningActivity : ComponentActivity() {
@@ -112,8 +115,8 @@ fun CreatePlanningScreenContent(
     var diet by rememberSaveable { mutableStateOf(value = "") }
     LaunchedEffect(goal) { diet = "" }
     var showDietDialog by rememberSaveable { mutableStateOf(value = false) }
-    var exercise by rememberSaveable { mutableStateOf(value = "") }
-    var showExerciseDialog by rememberSaveable { mutableStateOf(value = false) }
+    /*var exercise by rememberSaveable { mutableStateOf(value = "") }*/
+    /*var showExerciseDialog by rememberSaveable { mutableStateOf(value = false) }*/
     var intensity by rememberSaveable { mutableStateOf(value = "") }
     var showIntensityDialog by rememberSaveable { mutableStateOf(value = false) }
 
@@ -355,7 +358,7 @@ fun CreatePlanningScreenContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Card(
+                /*Card(
                     onClick = { showExerciseDialog = true },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraLarge,
@@ -413,7 +416,7 @@ fun CreatePlanningScreenContent(
                         listOptions = exerciseList,
                         standardPadding = standardPadding
                     )
-                }
+                }*/
 
                 Card(
                     onClick = { showIntensityDialog = true },
@@ -486,8 +489,53 @@ fun CreatePlanningScreenContent(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val weightLoss = stringResource(R.string.weight_loss)
+                val muscleGain = stringResource(R.string.muscle_gain)
+                val healthyDiet = stringResource(R.string.healthy_diet)
+
+                val mediterranean = stringResource(R.string.mediterranean)
+                val plantBased = stringResource(R.string.plant_based)
+
+                val low = stringResource(R.string.low)
+                val medium = stringResource(R.string.medium)
+                val high = stringResource(R.string.high)
+
                 Button(
-                    onClick = { activity?.finish() },
+                    onClick = {
+                        val databaseHelper = DatabaseHelper(context)
+                        val userData = databaseHelper.getUserDataById(1)
+                        val userId = userData?.id
+                        val userPlan = userId?.let {
+                            UserPlan(
+                                id = 1,
+                                userId = it,
+                                goal = when (goal) {
+                                    weightLoss -> 0
+                                    muscleGain -> 1
+                                    else -> 2
+                                },
+                                planDuration = numberOfDays.toInt(),
+                                diet = when (diet) {
+                                    mediterranean -> 0
+                                    else -> 1
+                                },
+                                workoutIntensity = when (intensity) {
+                                    low -> 0
+                                    medium -> 1
+                                    else -> 2
+                                },
+                                status = 0
+                            )
+                        }
+                        if (userPlan != null) {
+                            databaseHelper.addUserPlan(userPlan)
+                        }
+                        
+                        activity?.let {
+                            val intent = Intent(it, MainActivity::class.java)
+                            it.startActivity(intent)
+                        }
+                    },
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
