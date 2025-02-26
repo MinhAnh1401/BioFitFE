@@ -92,7 +92,7 @@ class DatabaseHelper(context: Context) {
                 weight = cursor.getFloat(7),
                 targetWeight = cursor.getFloat(8)
             )
-            Log.d("Database", "Dữ liệu người dùng: $userData") // Xem dữ liệu có được lấy ra không
+            Log.d("Database", "Dữ liệu người : $userData") // Xem dữ liệu có được lấy ra không
         } else {
             Log.d("Database", "Không có dữ liệu trong User")
         }
