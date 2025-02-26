@@ -1,5 +1,5 @@
 package com.example.biofit.controller
-//hello
+
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -76,6 +76,22 @@ class SQLiteHelper(context: Context) :
 class DatabaseHelper(context: Context) {
     private val dbHelper = SQLiteHelper(context)
 
+    fun addUserData(userData: UserData) {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put("fullName", userData.fullName)
+            put("email", userData.email)
+            put("password", userData.password)
+            put("gender", userData.gender)
+            put("dateOfBirth", userData.dateOfBirth)
+            put("height", userData.height)
+            put("weight", userData.weight)
+            put("targetWeight", userData.targetWeight)
+        }
+        db.insert("User", null, values)
+        db.close()
+    }
+
     fun getUserDataById(userId: Int): UserData? {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM User WHERE id = ?", arrayOf(userId.toString()))
@@ -99,22 +115,6 @@ class DatabaseHelper(context: Context) {
         cursor.close()
         db.close()
         return userData
-    }
-
-    fun addUserData(userData: UserData) {
-        val db = dbHelper.writableDatabase
-        val values = ContentValues().apply {
-            put("fullName", userData.fullName)
-            put("email", userData.email)
-            put("password", userData.password)
-            put("gender", userData.gender)
-            put("dateOfBirth", userData.dateOfBirth)
-            put("height", userData.height)
-            put("weight", userData.weight)
-            put("targetWeight", userData.targetWeight)
-        }
-        db.insert("User", null, values)
-        db.close()
     }
 
     fun updateUserData(userData: UserData) {
