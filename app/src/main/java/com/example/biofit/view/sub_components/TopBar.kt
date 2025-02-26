@@ -3,7 +3,6 @@ package com.example.biofit.view.sub_components
 import android.content.res.Configuration
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.view.activity.BackButton
 import com.example.biofit.view.activity.HomeButton
-import com.example.biofit.view.activity.getStandardPadding
+import com.example.biofit.view.animated.AnimatedGradientText
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable

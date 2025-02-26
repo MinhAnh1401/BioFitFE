@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,8 +42,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -58,10 +55,11 @@ import com.example.biofit.R
 import com.example.biofit.controller.ChatBotController
 import com.example.biofit.controller.DatabaseHelper
 import com.example.biofit.model.ChatBotModel
-import com.example.biofit.model.UserData
-import com.example.biofit.view.sub_components.AnimatedGradientText
-import com.example.biofit.view.sub_components.OneTimeAnimatedGradientText
+import com.example.biofit.view.animated.AnimatedGradientText
+import com.example.biofit.view.animated.BlinkingGradientBox
+import com.example.biofit.view.animated.OneTimeAnimatedGradientText
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class AIChatbotActivity : ComponentActivity() {
@@ -78,22 +76,6 @@ class AIChatbotActivity : ComponentActivity() {
             model = model,
             context = this
         )
-        val existUserData = databaseHelper.getUserDataById(userId = 1)
-        if (existUserData == null) {
-            val userData = UserData(
-                id = 1,
-                fullName = "Nguyễn Minh Đăng",
-                email = "dangnguyen6767@gmail.com",
-                password = "Qsdvsdvnsjd546",
-                gender = 0,
-                dateOfBirth = "2002-09-06",
-                height = 170f,
-                weight = 51f,
-                targetWeight = 60f
-            )
-
-            databaseHelper.addUserData(userData)
-        }
         setContent {
             BioFitTheme {
                 BioAIChatbotScreen(
@@ -123,17 +105,8 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
     val listState = rememberLazyListState()
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        Color(0xFFAEEA00),
-                        MaterialTheme.colorScheme.primary
-                    )
-                )
-            ),
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
@@ -208,27 +181,10 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .border(
-                            width = 0.5.dp,
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.secondary
-                                )
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge
-                        )
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.secondaryContainer,
-                                    MaterialTheme.colorScheme.primaryContainer
-                                )
-                            )
-                        )
+                BlinkingGradientBox(
+                    borderAlpha = 0.25f,
+                    alpha = 0.75f,
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     OutlinedTextField(
                         value = userInput,

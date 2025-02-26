@@ -7,11 +7,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -35,10 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.sub_components.NotificationItem
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class NotificationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,7 +138,7 @@ fun NotificationContent(
                 style = MaterialTheme.typography.titleSmall,
             )
         }
-    } else{
+    } else {
         LazyColumn {
             item {
                 Column(
@@ -150,8 +147,9 @@ fun NotificationContent(
                 ) {
                     notifications.forEach { notification ->
                         NotificationItem(
-                            notification,
-                            standardPadding
+                            onClick = { TODO() },
+                            notification = notification,
+                            standardPadding = standardPadding
                         )
                     }
                 }
@@ -160,57 +158,10 @@ fun NotificationContent(
             item {
                 Spacer(
                     modifier = Modifier.padding(
-                        bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding() * 2
+                        bottom = WindowInsets.safeDrawing.asPaddingValues()
+                            .calculateBottomPadding() * 2
                                 + standardPadding
                     )
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun NotificationItem(
-    notification: String,
-    standardPadding: Dp
-) {
-    val currentDateTime = LocalDateTime.now()
-    // Thay thành điều kiện khác nếu cần thiết
-    val icon = if (currentDateTime.hour < 12){
-        R.drawable.ic_morning
-    } else if (currentDateTime.hour < 18){
-        R.drawable.ic_afternoon
-    } else {
-        R.drawable.ic_evening
-    }
-
-    Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)), // nếu đã đọc thì sẽ có màu nền này
-    ) {
-        Row(
-            modifier = Modifier.padding(standardPadding),
-            horizontalArrangement = Arrangement.spacedBy(standardPadding),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(icon),
-                contentDescription = "Notification Icon"
-            )
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
-            ) {
-                Text(
-                    text = notification,
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-
-                Text(
-                    text = currentDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }

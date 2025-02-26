@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,8 +34,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class CalorieTodayActivity : ComponentActivity() {
@@ -133,7 +136,13 @@ fun CalorieTodayContent(
                 ) {
                     consumeAndBurn.forEach { (title, value) ->
                         Card(
-                            modifier = Modifier.weight(0.5f),
+                            modifier = Modifier
+                                .weight(0.5f)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                                    shape = MaterialTheme.shapes.extraLarge
+                                ),
                             shape = MaterialTheme.shapes.extraLarge,
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -166,7 +175,13 @@ fun CalorieTodayContent(
                 }
 
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                            shape = MaterialTheme.shapes.extraLarge
+                        ),
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant

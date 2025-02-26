@@ -41,14 +41,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.sub_components.ExerciseItem
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class ExerciseActivity : ComponentActivity() {
@@ -104,7 +105,7 @@ fun ExerciseScreen() {
                 rightButton = {
                     IconButton(
                         onClick = {
-                            activity?.let { 
+                            activity?.let {
                                 val intent = Intent(it, CreateAndUpdateExerciseActivity::class.java)
                                 intent.putExtra("EXERCISE", "")
                                 it.startActivity(intent)
@@ -180,7 +181,7 @@ fun ExerciseContent(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                unfocusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -220,7 +221,8 @@ fun ExerciseContent(
             item {
                 Spacer(
                     modifier = Modifier.padding(
-                        bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding() * 2
+                        bottom = WindowInsets.safeDrawing.asPaddingValues()
+                            .calculateBottomPadding() * 2
                                 + standardPadding
                     )
                 )
@@ -281,43 +283,6 @@ val exerciseList = listOf(
     "Hollow Body Hold",
     "Jumping Jacks"
 )
-
-@Composable
-fun ExerciseItem(
-    exercise: String,
-    onClick: () -> Unit,
-    standardPadding: Dp,
-    modifier: Modifier
-) {
-    Column(
-        modifier = modifier.clickable { onClick() },
-        verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = exercise,
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            IconButton(
-                onClick = { TODO() }
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.btn_back),
-                    contentDescription = "Add button",
-                    modifier = Modifier.rotate(180f)
-                )
-            }
-        }
-
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-        )
-    }
-}
 
 @Preview(
     device = "id:pixel",

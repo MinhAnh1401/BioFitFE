@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 import java.math.RoundingMode
 
@@ -66,7 +67,7 @@ class FoodDetailActivity : ComponentActivity() {
 fun FoodDetailScreen() {
     val context = LocalContext.current
     val activity = context as? Activity
-    
+
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -290,7 +291,10 @@ fun FoodNutritionalValue(
     modifier: Modifier
 ) {
     val nutrients = listOf(
-        Pair(stringResource(R.string.serving_size), "${food1.servingSize.first} ${food1.servingSize.second}"),
+        Pair(
+            stringResource(R.string.serving_size),
+            "${food1.servingSize.first} ${food1.servingSize.second}"
+        ),
         Pair(stringResource(R.string.mass), "${food1.mass} g"),
         Pair(stringResource(R.string.calories), "${food1.calories} kcal"),
         Pair(stringResource(food1.fat.second), "${food1.fat.third} g"),

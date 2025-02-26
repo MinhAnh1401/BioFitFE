@@ -12,9 +12,10 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -47,10 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,7 +63,8 @@ import com.example.biofit.view.activity.AIChatbotActivity
 import com.example.biofit.view.activity.AddActivity
 import com.example.biofit.view.activity.ExerciseActivity
 import com.example.biofit.view.activity.UpdateWeightActivity
-import com.example.biofit.view.activity.getStandardPadding
+import com.example.biofit.view.animated.AnimatedGradientText
+import com.example.biofit.view.animated.BlinkingGradientBox
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
@@ -79,8 +78,7 @@ fun ActionPopup(
     val itemPopupList = listOf(
         Pair(R.drawable.ic_exercise_2, R.string.exercise),
         Pair(R.drawable.ic_weight, R.string.weight),
-        Pair(R.drawable.ic_drink_water, R.string.drinking_water),
-        Pair(R.drawable.ic_chat_bot, R.string.ai_assistant_bionix)
+        Pair(R.drawable.ic_drink_water, R.string.drinking_water)
     )
     val sessionPopupList = listOf(
         Pair(R.drawable.ic_morning_2, R.string.morning),
@@ -104,13 +102,10 @@ fun ActionPopup(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(standardPadding / 2),
-            verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!drinkWaterPopupState) {
-                Row(
-                    modifier = Modifier
-                ) {
+                Row {
                     itemPopupList.forEach { (icon, title) ->
                         Column(
                             modifier = Modifier
@@ -134,13 +129,6 @@ fun ActionPopup(
 
                                         R.string.drinking_water ->
                                             drinkWaterPopupState = true
-
-                                        R.string.ai_assistant_bionix ->
-                                            activity?.let {
-                                                val intent =
-                                                    Intent(it, AIChatbotActivity::class.java)
-                                                it.startActivity(intent)
-                                            }
                                     }
 
                                     if (title != R.string.drinking_water) {
@@ -153,38 +141,16 @@ fun ActionPopup(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(standardPadding / 2)
-                                    .clip(MaterialTheme.shapes.large)
-                                    .background(
-                                        brush = if (title == R.string.ai_assistant_bionix) {
-                                            Brush.linearGradient(
-                                                colors = listOf(
-                                                    Color(0xFFAEEA00),
-                                                    MaterialTheme.colorScheme.primary
-                                                ),
-                                                start = Offset(0f, 0f),
-                                                end = Offset(
-                                                    Float.POSITIVE_INFINITY,
-                                                    Float.POSITIVE_INFINITY
-                                                )
-                                            )
-                                        } else {
-                                            SolidColor(
-                                                MaterialTheme.colorScheme.secondary.copy(
-                                                    alpha = 0.5f
-                                                )
-                                            )
-                                        }
-                                    )
-                                    .background(
-                                        color = if (title == R.string.ai_assistant_bionix) {
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0.25f)
-                                        } else {
-                                            Color.Transparent
-                                        }
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                                        shape = MaterialTheme.shapes.large
                                     ),
                                 shape = MaterialTheme.shapes.large,
                                 colors = CardDefaults.cardColors(
-                                    containerColor = Color.Transparent
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                        alpha = 0.5f
+                                    )
                                 )
                             ) {
                                 Column(
@@ -202,34 +168,78 @@ fun ActionPopup(
                                 }
                             }
 
-                            if (title != R.string.ai_assistant_bionix) {
-                                Text(
-                                    text = stringResource(title),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = standardPadding),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            } else {
+                            Text(
+                                text = stringResource(title),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        start = standardPadding,
+                                        end = standardPadding,
+                                        bottom = standardPadding / 2
+                                    ),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(MaterialTheme.shapes.large)
+                            .clickable {
+                                activity?.let {
+                                    val intent = Intent(it, AIChatbotActivity::class.java)
+                                    it.startActivity(intent)
+                                }
+
+                                onDismissPopup()
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(standardPadding / 2)
+                        ) {
+                            BlinkingGradientBox(
+                                borderAlpha = 0.25f,
+                                alpha = 0.5f,
+                                shape = MaterialTheme.shapes.large
+                            ) {
                                 Column(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = standardPadding),
+                                        .fillMaxWidth(),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    AnimatedGradientText(
-                                        repeatMode = RepeatMode.Reverse,
-                                        highlightColor = Color(0xFFAEEA00),
-                                        baseColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        text = stringResource(title),
-                                        style = MaterialTheme.typography.bodySmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        )
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_chat_bot),
+                                        contentDescription = stringResource(R.string.activity),
+                                        modifier = Modifier
+                                            .padding(standardPadding)
+                                            .size(standardPadding * 2),
+                                        tint = MaterialTheme.colorScheme.background
                                     )
                                 }
                             }
+                        }
+
+                        Column(
+                            modifier = Modifier.padding(
+                                start = standardPadding,
+                                end = standardPadding,
+                                bottom = standardPadding / 2
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AnimatedGradientText(
+                                repeatMode = RepeatMode.Reverse,
+                                highlightColor = Color(0xFF2962FF),
+                                baseColor = MaterialTheme.colorScheme.onPrimary,
+                                text = stringResource(R.string.ai_assistant_bionix),
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
                         }
                     }
                 }
@@ -278,10 +288,15 @@ fun ActionPopup(
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(standardPadding / 2),
+                                    .padding(standardPadding / 2)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                                        shape = MaterialTheme.shapes.large
+                                    ),
                                 shape = MaterialTheme.shapes.large,
                                 colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary.copy(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
                                         alpha = 0.5f
                                     )
                                 )
@@ -305,8 +320,12 @@ fun ActionPopup(
                                 text = stringResource(title),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    .padding(
+                                        start = standardPadding,
+                                        end = standardPadding,
+                                        bottom = standardPadding / 2
+                                    ),
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -321,12 +340,12 @@ fun ActionPopup(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(standardPadding / 2),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimaryContainer)
+                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -370,7 +389,7 @@ fun ActionPopup(
                             onSend = { TODO() }
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent
                         )
@@ -417,12 +436,12 @@ private fun ActionPopupDarkModePreview() {
     BioFitTheme {
         AnimatedVisibility(
             visible = true,
-            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer),
+            modifier = Modifier.background(MaterialTheme.colorScheme.primary),
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
             ActionPopup(
-                onDismissPopup = {  },
+                onDismissPopup = { },
                 standardPadding = getStandardPadding().first
             )
         }
@@ -435,12 +454,12 @@ private fun ActionPopupPreview() {
     BioFitTheme {
         AnimatedVisibility(
             visible = true,
-            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer),
+            modifier = Modifier.background(MaterialTheme.colorScheme.primary),
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
             ActionPopup(
-                onDismissPopup = {  },
+                onDismissPopup = { },
                 standardPadding = getStandardPadding().first
             )
         }

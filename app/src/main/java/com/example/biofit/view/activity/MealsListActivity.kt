@@ -35,6 +35,7 @@ import com.example.biofit.R
 import com.example.biofit.view.sub_components.FoodItem
 import com.example.biofit.view.sub_components.ToggleButtonBar
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MealsListActivity : ComponentActivity() {

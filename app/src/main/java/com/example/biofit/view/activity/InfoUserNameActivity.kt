@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class InfoUserNameActivity : ComponentActivity() {
@@ -77,6 +78,7 @@ fun InfoUserNameScreen() {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 

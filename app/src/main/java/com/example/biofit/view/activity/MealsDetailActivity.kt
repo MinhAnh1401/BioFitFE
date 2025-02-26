@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MealsDetailActivity : ComponentActivity() {
@@ -68,6 +69,7 @@ fun MealsDetailScreen() {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -189,7 +191,7 @@ fun MealsDetailContent(
                 Text(
                     text = stringResource(R.string.morning),
                     modifier = Modifier
-                        .clip(shape = MaterialTheme.shapes.large)
+                        .clip(shape = MaterialTheme.shapes.extraLarge)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
@@ -204,7 +206,7 @@ fun MealsDetailContent(
                 Text(
                     text = stringResource(R.string.keto),
                     modifier = Modifier
-                        .clip(MaterialTheme.shapes.large)
+                        .clip(MaterialTheme.shapes.extraLarge)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,
@@ -219,7 +221,7 @@ fun MealsDetailContent(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(MaterialTheme.shapes.large)
+                        .clip(MaterialTheme.shapes.extraLarge)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(
                             horizontal = standardPadding * 2,

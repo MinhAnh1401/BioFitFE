@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.SelectionDialog
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class SettingActivity : ComponentActivity() {
@@ -91,6 +93,7 @@ fun SettingScreen() {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -476,7 +479,11 @@ fun SettingContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Card(
-                    modifier = modifier,
+                    modifier = modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                        shape = MaterialTheme.shapes.extraLarge
+                    ),
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -545,7 +552,13 @@ fun SettingContent(
                             horizontalArrangement = Arrangement.spacedBy(standardPadding),
                         ) {
                             Card(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                                        shape = MaterialTheme.shapes.large
+                                    ),
                                 shape = MaterialTheme.shapes.large,
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.primary
@@ -577,7 +590,13 @@ fun SettingContent(
                             }
 
                             Card(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                                        shape = MaterialTheme.shapes.large
+                                    ),
                                 shape = MaterialTheme.shapes.large,
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.primary
@@ -687,7 +706,11 @@ fun SettingContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Card(
-                    modifier = modifier,
+                    modifier = modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                        shape = MaterialTheme.shapes.extraLarge
+                    ),
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -767,7 +790,12 @@ fun SettingContent(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = standardPadding),
+                                .padding(top = standardPadding)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                                    shape = MaterialTheme.shapes.large
+                                ),
                             shape = MaterialTheme.shapes.large,
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.primary

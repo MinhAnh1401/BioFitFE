@@ -2,6 +2,7 @@ package com.example.biofit.view.sub_components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,8 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.view.activity.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
@@ -58,6 +59,11 @@ fun ToggleButtonBar(
     Row(
         modifier = Modifier
             .clip(shape = MaterialTheme.shapes.extraLarge)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                shape = MaterialTheme.shapes.extraLarge
+            )
             .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
             .padding(standardPadding / 6),
         verticalAlignment = Alignment.CenterVertically
