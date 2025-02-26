@@ -9,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +19,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -45,6 +43,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -138,14 +137,13 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.ime)
                 .padding(
                     top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
                     start = standardPadding,
                     end = standardPadding,
-                    bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding()
+                    bottom = standardPadding
                 ),
+            verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBar(
@@ -162,9 +160,9 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                 standardPadding = standardPadding
             )
 
-            Spacer(modifier = Modifier.height(standardPadding))
-
-            LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
+            LazyColumn(
+                state = listState
+            ) {
                 items(chatHistory) { chat ->
                     ChatBubble(
                         text = chat.userMessage,
@@ -178,67 +176,108 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                         standardPadding = standardPadding
                     )
                 }
+
+                item {
+                    Spacer(
+                        modifier = Modifier.padding(
+                            bottom = WindowInsets.safeDrawing.asPaddingValues()
+                                .calculateBottomPadding() * 5
+                                    + standardPadding
+                        )
+                    )
+                }
             }
 
             LaunchedEffect(chatHistory.size) {
                 listState.animateScrollToItem(chatHistory.size)
             }
+        }
 
-            Row(
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = standardPadding,
+                    end = standardPadding,
+                    bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding()
+                            + standardPadding
+                ),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                OutlinedTextField(
-                    value = userInput,
-                    onValueChange = { userInput = it },
+                Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(standardPadding),
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.enter_message),
-                            color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.bodyMedium
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .border(
+                            width = 0.5.dp,
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary
+                                )
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge
                         )
-                    },
-                    maxLines = 4,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            controller.sendMessage(userInput, scope)
-                            userInput = ""
-                            keyboardController?.hide()
-                        }
-                    ),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color.Transparent
-                    )
-                )
-
-                if (userInput != "") {
-                    IconButton(
-                        onClick = {
-                            controller.sendMessage(userInput, scope)
-                            userInput = ""
-                            keyboardController?.hide()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.secondaryContainer,
+                                    MaterialTheme.colorScheme.primaryContainer
+                                )
+                            )
+                        )
+                ) {
+                    OutlinedTextField(
+                        value = userInput,
+                        onValueChange = { userInput = it },
+                        textStyle = MaterialTheme.typography.bodyMedium,
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.enter_message),
+                                color = MaterialTheme.colorScheme.outline,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         },
-                        modifier = Modifier
-                            .size(standardPadding * 4)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_send),
-                            contentDescription = "Send",
-                            modifier = Modifier.size(standardPadding * 2),
-                            tint = MaterialTheme.colorScheme.primary
+                        trailingIcon = {
+                            if (userInput != "") {
+                                IconButton(
+                                    onClick = {
+                                        controller.sendMessage(userInput, scope)
+                                        userInput = ""
+                                        keyboardController?.hide()
+                                    },
+                                    modifier = Modifier.padding(end = standardPadding)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_send),
+                                        contentDescription = "Send",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
+                        },
+                        maxLines = 4,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                controller.sendMessage(userInput, scope)
+                                userInput = ""
+                                keyboardController?.hide()
+                            }
+                        ),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedBorderColor = Color.Transparent
                         )
-                    }
+                    )
                 }
             }
         }

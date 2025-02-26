@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -219,14 +221,18 @@ fun ActionButtons(standardPadding: Dp) {
                     it.startActivity(intent)
                     it.finish()
                 }
-            }
+            },
+            standardPadding = standardPadding
         )
         Spacer(modifier = Modifier.height(standardPadding))
     }
 }
 
 @Composable
-fun GetStartedButton(onCLick: () -> Unit = {}) {
+fun GetStartedButton(
+    onCLick: () -> Unit = {},
+    standardPadding: Dp
+) {
     // GET STARTED button
     Button(
         onClick = onCLick, // xử lý sự kiện khi nút được nhấn
@@ -253,6 +259,7 @@ fun GetStartedButton(onCLick: () -> Unit = {}) {
     ) {
         Text(
             text = stringResource(R.string.get_started),
+            modifier = Modifier.padding(horizontal = standardPadding * 2),
             color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.labelLarge
         )

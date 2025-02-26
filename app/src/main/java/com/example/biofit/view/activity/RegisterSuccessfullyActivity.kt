@@ -92,6 +92,7 @@ fun RegisterSuccessfullyContent(
                     it.finish()
                 }
             },
+            standardPadding = standardPadding
         )
     }
 }
