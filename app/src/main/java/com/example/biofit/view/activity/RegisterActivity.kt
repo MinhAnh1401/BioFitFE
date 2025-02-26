@@ -303,6 +303,10 @@ fun RegisterForm(
                 style = MaterialTheme.typography.labelLarge
             )
         }
+        SocialLoginButtons(
+            standardPadding,
+            modifier2
+        )
     }
 }
 
