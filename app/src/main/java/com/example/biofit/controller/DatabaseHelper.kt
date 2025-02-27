@@ -76,6 +76,29 @@ class SQLiteHelper(context: Context) :
 class DatabaseHelper(context: Context) {
     private val dbHelper = SQLiteHelper(context)
 
+    // Trong class DatabaseHelper
+    fun getUserByEmail(email: String): UserData? {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM User WHERE email = ?", arrayOf(email))
+        var userData: UserData? = null
+        if (cursor.moveToFirst()) {
+            userData = UserData(
+                id = cursor.getInt(0),
+                fullName = cursor.getString(1),
+                email = cursor.getString(2),
+                password = cursor.getString(3),
+                gender = cursor.getInt(4),
+                dateOfBirth = cursor.getString(5),
+                height = cursor.getFloat(6),
+                weight = cursor.getFloat(7),
+                targetWeight = cursor.getFloat(8)
+            )
+        }
+        cursor.close()
+        db.close()
+        return userData
+    }
+
     fun addUserData(userData: UserData) {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
