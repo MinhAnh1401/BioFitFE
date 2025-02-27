@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class StartActivity : ComponentActivity() {
@@ -59,6 +60,7 @@ class StartActivity : ComponentActivity() {
 fun StartScreen() {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
     val standardPadding = getStandardPadding().first
 
     Surface(
@@ -219,14 +221,18 @@ fun ActionButtons(standardPadding: Dp) {
                     it.startActivity(intent)
                     it.finish()
                 }
-            }
+            },
+            standardPadding = standardPadding
         )
         Spacer(modifier = Modifier.height(standardPadding))
     }
 }
 
 @Composable
-fun GetStartedButton(onCLick: () -> Unit = {}) {
+fun GetStartedButton(
+    onCLick: () -> Unit = {},
+    standardPadding: Dp
+) {
     // GET STARTED button
     Button(
         onClick = onCLick, // xử lý sự kiện khi nút được nhấn
@@ -253,6 +259,7 @@ fun GetStartedButton(onCLick: () -> Unit = {}) {
     ) {
         Text(
             text = stringResource(R.string.get_started),
+            modifier = Modifier.padding(horizontal = standardPadding * 2),
             color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.labelLarge
         )

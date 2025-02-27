@@ -44,6 +44,7 @@ import com.example.biofit.view.fragment.PlanningScreen
 import com.example.biofit.view.fragment.ProfileScreen
 import com.example.biofit.view.sub_components.ActionPopup
 import com.example.biofit.view.sub_components.BottomBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class MainActivity : ComponentActivity() {
@@ -66,6 +67,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val standardPadding = getStandardPadding().first
+    
     val navController = rememberNavController()
     var showPopup by remember { mutableStateOf(false) }
 
@@ -105,7 +107,7 @@ fun MainScreen() {
                 ) {
                     AnimatedVisibility(
                         visible = showPopup,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer),
+                        modifier = Modifier.background(MaterialTheme.colorScheme.primary),
                         enter = slideInVertically { it } + fadeIn() + expandVertically(),
                         exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
                     ) {

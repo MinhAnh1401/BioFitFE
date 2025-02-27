@@ -28,7 +28,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -57,6 +56,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.controller.LoginController
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class LoginActivity : ComponentActivity() {
@@ -80,6 +80,7 @@ class LoginActivity : ComponentActivity() {
 fun LoginScreen() {
     val screenWidth = LocalConfiguration.current.screenWidthDp // lấy chiều rộng màn hình thiết bị
     val screenHeight = LocalConfiguration.current.screenHeightDp // lấy chiều cao màn hình thiết bị
+
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 

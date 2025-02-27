@@ -2,6 +2,7 @@ package com.example.biofit.view.sub_components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.biofit.R
-import com.example.biofit.view.activity.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
@@ -41,8 +42,9 @@ fun SelectionDialogScreen() {
     var level by rememberSaveable { mutableStateOf(defaultLevel) }
     var showLevelDialog by rememberSaveable { mutableStateOf(value = false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+    Surface (
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         SelectionDialog(
             selectedOption = level,
@@ -84,6 +86,11 @@ fun SelectionDialog(
                 .fillMaxWidth()
                 .heightIn(max = screenHeight / 1.5f)
                 .clip(MaterialTheme.shapes.extraLarge)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                    shape = MaterialTheme.shapes.extraLarge
+                )
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
                     vertical = standardPadding * 2,

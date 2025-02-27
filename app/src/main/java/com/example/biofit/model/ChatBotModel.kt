@@ -43,7 +43,9 @@ class ChatBotModel(
 
         return try {
             val response = chat.sendMessage(fullConversation)
-            val botReply = response.text ?: context.getString(R.string.sorry_i_don_t_understand)
+            val botReply = response.text
+                ?.replace("*", " ")
+                ?: context.getString(R.string.sorry_i_don_t_understand)
             chatHistory.add(ChatMessage(userInput, botReply))
             botReply
         } catch (e: Exception) {

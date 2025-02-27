@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -81,9 +82,10 @@ enum class Intensity(val resId: Int) {
 fun ExerciseViewScreen() {
     val context = LocalContext.current
     val activity = context as? Activity
-    
+
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
+    
     val exercise = Exercise(
         name = "Exercise 1",
         time = Pair(15, 0),
@@ -311,7 +313,11 @@ fun ExerciseViewContent(
                 )
 
                 Text(
-                    text = "${stringResource(R.string.calories)}: ${exercise.calories}${stringResource(R.string.kcal)}",
+                    text = "${stringResource(R.string.calories)}: ${exercise.calories}${
+                        stringResource(
+                            R.string.kcal
+                        )
+                    }",
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodySmall
                 )

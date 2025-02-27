@@ -1,4 +1,4 @@
-package com.example.biofit.view.sub_components
+package com.example.biofit.view.animated
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.Animatable
@@ -40,25 +40,23 @@ fun AnimatedGradientText(
 ) {
     val infiniteTransition = rememberInfiniteTransition()
 
-    // Giá trị offset dịch chuyển màu highlight
     val offsetX by infiniteTransition.animateFloat(
-        initialValue = -300f, // Xuất hiện từ ngoài màn hình
-        targetValue = 1000f, // Di chuyển sang phải
+        initialValue = -300f,
+        targetValue = 1000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3000, easing = LinearEasing),
-            repeatMode = repeatMode // Restart để lặp từ đầu
+            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            repeatMode = repeatMode
         )
     )
 
-    // Gradient mô phỏng hiệu ứng LED đuổi
     val gradientBrush = Brush.linearGradient(
         colors = listOf(
-            baseColor, // Màu nền
-            highlightColor, // Màu chạy
-            baseColor // Màu nền
+            baseColor,
+            highlightColor,
+            baseColor
         ),
         start = Offset(offsetX, offsetX),
-        end = Offset(offsetX + 200f, offsetX + 200f) // Tăng khoảng cách để hiệu ứng mượt hơn
+        end = Offset(offsetX + 200f, offsetX + 200f)
     )
 
     Text(
@@ -77,20 +75,16 @@ fun OneTimeAnimatedGradientText(
     style: TextStyle,
     onAnimationEnd: () -> Unit = {}
 ) {
-    // Lưu chiều cao của text khi được đo
     var textHeight by remember { mutableStateOf(0f) }
 
-    // Biến Animatable để điều khiển vị trí của gradient theo chiều dọc.
     val transition = remember { Animatable(-300f) }
 
     LaunchedEffect(textHeight) {
         if (textHeight > 0f) {
-            // Gradient chạy từ trên (ngoài view) đến dưới (ngoài view)
             val startValue = -300f
             val endValue = textHeight
             val distance = endValue - startValue
 
-            // Giả sử tốc độ LED là 0.5 pixel/ms
             val speed = 0.5f
             val durationMillis = (distance / speed).toInt()
 
@@ -103,7 +97,6 @@ fun OneTimeAnimatedGradientText(
         }
     }
 
-    // Gradient brush di chuyển theo chiều dọc, sử dụng transition.value
     val gradientBrush = Brush.linearGradient(
         colors = listOf(
             baseColor,
@@ -111,7 +104,7 @@ fun OneTimeAnimatedGradientText(
             hideColor
         ),
         start = Offset(0f, transition.value),
-        end = Offset(0f, transition.value + 500f) // Điều chỉnh kích thước LED nếu cần
+        end = Offset(0f, transition.value + 500f)
     )
 
     Text(

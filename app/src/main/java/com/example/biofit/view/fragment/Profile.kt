@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,18 +19,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,13 +50,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.activity.LoginActivity
 import com.example.biofit.view.activity.OverviewActivity
 import com.example.biofit.view.activity.SettingActivity
 import com.example.biofit.view.activity.TargetActivity
-import com.example.biofit.view.activity.getStandardPadding
 import com.example.biofit.view.sub_components.DefaultDialog
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
@@ -63,76 +68,25 @@ fun ProfileScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Column(
+    Surface(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(standardPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
+        color = MaterialTheme.colorScheme.background
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                    start = standardPadding,
+                    end = standardPadding,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(R.drawable.fake_avatar), // Thay avatar của người dùng từ database
-                contentDescription = "Avatar",
-                modifier = Modifier
-                    .size(standardPadding * 5)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+            ProfileContent(
+                standardPadding,
+                modifier
             )
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = standardPadding)
-            ) {
-                Text(
-                    text = stringResource(R.string.full_name), // Thay tên người dùng từ database
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
-                )
-
-                Row {
-                    Text(
-                        text = stringResource(R.string.gender), // Thay giới tính từ database
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Text(
-                        text = " | ",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Text(
-                        text = stringResource(R.string.age), // Tính tuổi từ nằm sinh trong database
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
-
-            IconButton(
-                onClick = {
-                    activity?.let {
-                        val intent = Intent(it, SettingActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(R.string.profile),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
         }
-
-        ProfileContent(
-            standardPadding,
-            modifier
-        )
     }
 }
 
@@ -149,11 +103,75 @@ fun ProfileContent(
     var showDeleteDataDialog by rememberSaveable { mutableStateOf(false) }
 
     LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.fake_avatar), // Thay avatar của người dùng từ database
+                    contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(standardPadding * 5)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = standardPadding)
+                ) {
+                    Text(
+                        text = stringResource(R.string.full_name), // Thay tên người dùng từ database
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+
+                    Row {
+                        Text(
+                            text = stringResource(R.string.gender), // Thay giới tính từ database
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
+                        Text(
+                            text = " | ",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
+                        Text(
+                            text = stringResource(R.string.age), // Tính tuổi từ nằm sinh trong database
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+
+                IconButton(
+                    onClick = {
+                        activity?.let {
+                            val intent = Intent(it, SettingActivity::class.java)
+                            it.startActivity(intent)
+                        }
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.profile),
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        }
+
+        item {
             Column(
-                modifier = modifier.padding(top = standardPadding)
+                modifier = modifier
             ) {
                 Text(
                     text = stringResource(R.string.target),
@@ -162,7 +180,13 @@ fun ProfileContent(
                 )
 
                 Card(
-                    modifier = Modifier.padding(top = standardPadding),
+                    modifier = Modifier
+                        .padding(top = standardPadding)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                            shape = MaterialTheme.shapes.large
+                        ),
                     shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary
@@ -290,18 +314,29 @@ fun ProfileContent(
                         }
                     }
                 }
+            }
+        }
 
+        item {
+            Column(
+                modifier = modifier
+            ) {
                 Text(
                     text = stringResource(R.string.term_of_use)
                             + " " + stringResource(R.string.and)
                             + " " + stringResource(R.string.privacy_policy),
-                    modifier = Modifier.padding(top = standardPadding),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleSmall
                 )
 
                 Card(
-                    modifier = Modifier.padding(top = standardPadding),
+                    modifier = Modifier
+                        .padding(top = standardPadding)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                            shape = MaterialTheme.shapes.large
+                        ),
                     shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary
@@ -379,16 +414,27 @@ fun ProfileContent(
                         }
                     }
                 }
+            }
+        }
 
+        item {
+            Column(
+                modifier = modifier
+            ) {
                 Text(
                     text = stringResource(R.string.account),
-                    modifier = Modifier.padding(top = standardPadding),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleSmall
                 )
 
                 Card(
-                    modifier = Modifier.padding(top = standardPadding),
+                    modifier = Modifier
+                        .padding(top = standardPadding)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                            shape = MaterialTheme.shapes.large
+                        ),
                     shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary
@@ -431,8 +477,8 @@ fun ProfileContent(
                             title = R.string.are_you_sure_you_want_to_delete_your_data,
                             description = R.string.des_delete_data,
                             actionTextButton = R.string.delete,
-                            actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
-                            actionButtonColor = Color(0xFFD50000),
+                            actionTextButtonColor = MaterialTheme.colorScheme.onErrorContainer,
+                            actionButtonColor = MaterialTheme.colorScheme.errorContainer,
                             onClickActionButton = {
                                 if (activity != null) {
                                     deleteData(context, activity)
@@ -484,8 +530,8 @@ fun ProfileContent(
                             title = R.string.are_you_sure_you_want_to_delete_your_account,
                             description = R.string.des_delete_account,
                             actionTextButton = R.string.delete,
-                            actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
-                            actionButtonColor = Color(0xFFD50000),
+                            actionTextButtonColor = MaterialTheme.colorScheme.onError,
+                            actionButtonColor = MaterialTheme.colorScheme.error,
                             onClickActionButton = {
                                 if (activity != null) {
                                     deleteAccount(context, activity)
@@ -502,12 +548,17 @@ fun ProfileContent(
         item {
             Button(
                 onClick = { showSignOutDialog = true },
-                modifier = Modifier.padding(top = standardPadding),
+                modifier = Modifier
+                    .padding(top = standardPadding)
+                    .widthIn(min = standardPadding * 10),
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
             ) {
                 Text(
                     text = stringResource(R.string.sign_out),
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.labelLarge
                 )
             }
@@ -517,8 +568,8 @@ fun ProfileContent(
                     title = R.string.are_you_sure_you_want_to_sign_out,
                     description = null,
                     actionTextButton = R.string.sign_out,
-                    actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
-                    actionButtonColor = MaterialTheme.colorScheme.outline,
+                    actionTextButtonColor = MaterialTheme.colorScheme.onSecondary,
+                    actionButtonColor = MaterialTheme.colorScheme.secondary,
                     onClickActionButton = {
                         if (activity != null) {
                             signOut(context, activity)

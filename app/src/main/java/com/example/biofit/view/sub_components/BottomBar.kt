@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.view.activity.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
@@ -53,7 +52,7 @@ fun BottomBar(
     )
 
     BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.primaryContainer
+        containerColor = MaterialTheme.colorScheme.primary
     ) {
         items.forEachIndexed { index, label ->
             Spacer(modifier = Modifier.weight(1f))
@@ -76,9 +75,9 @@ fun BottomBar(
                             rotationZ = if (label == "Add") rotationAngle else 0f
                         },
                     tint = if (selectedItem.value == label && label != "Add") {
-                        MaterialTheme.colorScheme.onSecondaryContainer
+                        MaterialTheme.colorScheme.background
                     } else {
-                        MaterialTheme.colorScheme.primary
+                        MaterialTheme.colorScheme.inversePrimary
                     }
                 )
             }

@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
@@ -42,19 +41,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.FoodItem
 import com.example.biofit.view.sub_components.ToggleButtonBar
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class AddActivity : ComponentActivity() {
@@ -73,21 +70,6 @@ class AddActivity : ComponentActivity() {
         super.onConfigurationChanged(newConfig)
         recreate()
     }
-}
-
-
-@Composable
-fun getStandardPadding(): Pair<Dp, Modifier> {
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    val standardPadding = ((screenWidth + screenHeight) / 2).dp * 0.02f
-    val modifier = if (screenWidth > screenHeight) {
-        Modifier.width(((screenWidth + screenHeight) / 2).dp)
-    } else {
-        Modifier.fillMaxWidth()
-    }
-
-    return Pair(standardPadding, modifier)
 }
 
 @Composable
@@ -251,7 +233,7 @@ fun AddContent(
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            unfocusedBorderColor = Color.Transparent,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
             focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
             focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -329,7 +311,8 @@ fun AddContent(
                                         ),
                                         onClick = {
                                             activity?.let {
-                                                val intent = Intent(it, FoodDetailActivity::class.java)
+                                                val intent =
+                                                    Intent(it, FoodDetailActivity::class.java)
                                                 it.startActivity(intent)
                                             }
                                         },
@@ -377,7 +360,8 @@ fun AddContent(
                                         ),
                                         onClick = {
                                             activity?.let {
-                                                val intent = Intent(it, FoodDetailActivity::class.java)
+                                                val intent =
+                                                    Intent(it, FoodDetailActivity::class.java)
                                                 it.startActivity(intent)
                                             }
                                         },

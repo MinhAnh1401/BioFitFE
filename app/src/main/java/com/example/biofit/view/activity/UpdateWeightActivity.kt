@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.TopBar
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class UpdateWeightActivity : ComponentActivity() {
@@ -123,7 +124,8 @@ fun UpdateWeightScreen() {
                     }
 
                     Button(
-                        onClick = { activity?.finish() }, // Xử lý sự kiện khi người dùng nhấn nút Save}
+                        onClick = { activity?.finish() }, // Xử lý sự kiện khi người dùng nhấn nút Save
+                        modifier = Modifier.widthIn(min = standardPadding * 10),
                         shape = MaterialTheme.shapes.extraLarge
                     ) {
                         Text(

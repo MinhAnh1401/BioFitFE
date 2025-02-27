@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -50,6 +51,7 @@ import com.example.biofit.controller.DatabaseHelper
 import com.example.biofit.model.UserPlan
 import com.example.biofit.view.fragment.PlanningHeaderBar
 import com.example.biofit.view.sub_components.SelectionDialog
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class CreatePlanningActivity : ComponentActivity() {
@@ -530,12 +532,13 @@ fun CreatePlanningScreenContent(
                         if (userPlan != null) {
                             databaseHelper.addUserPlan(userPlan)
                         }
-                        
+
                         activity?.let {
                             val intent = Intent(it, MainActivity::class.java)
                             it.startActivity(intent)
                         }
                     },
+                    modifier = Modifier.widthIn(min = standardPadding * 10),
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(

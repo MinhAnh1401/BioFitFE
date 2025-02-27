@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,11 +46,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
 import com.example.biofit.view.activity.KnowledgeVideoActivity
-import com.example.biofit.view.activity.getStandardPadding
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
@@ -56,36 +59,47 @@ fun KnowledgeScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(standardPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                    start = standardPadding,
+                    end = standardPadding,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.nutritional_knowledge),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            IconButton(
-                onClick = { TODO() }
+            Row(
+                modifier = modifier,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_knowledge_2),
-                    contentDescription = "Knowledge",
-                    tint = MaterialTheme.colorScheme.primary
+                Text(
+                    text = stringResource(R.string.nutritional_knowledge),
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium
                 )
-            }
-        }
 
-        KnowledgeContent(
-            standardPadding,
-            modifier
-        )
+                IconButton(
+                    onClick = { TODO() }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_knowledge_2),
+                        contentDescription = "Knowledge",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            KnowledgeContent(
+                standardPadding,
+                modifier
+            )
+        }
     }
 }
 
@@ -349,7 +363,12 @@ fun ArticleThumbnail(
             .clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
                 context.startActivity(intent)
-            },
+            }
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                shape = MaterialTheme.shapes.extraLarge
+            ),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {

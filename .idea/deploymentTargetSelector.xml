@@ -6,6 +6,7 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="app">
+      <SelectionState runConfigName="StartPortraitScreenDarkModePreviewInSmallPhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -58,13 +60,13 @@ import com.example.biofit.controller.ChatBotController
 import com.example.biofit.controller.DatabaseHelper
 import com.example.biofit.model.AIExercise
 import com.example.biofit.model.ChatBotModel
-import com.example.biofit.view.activity.CalendarSelector
 import com.example.biofit.view.activity.CalorieTodayActivity
 import com.example.biofit.view.activity.CreatePlanningActivity
 import com.example.biofit.view.activity.EditExerciseActivity
 import com.example.biofit.view.activity.ExerciseViewActivity
 import com.example.biofit.view.activity.MealsListActivity
-import com.example.biofit.view.activity.getStandardPadding
+import com.example.biofit.view.sub_components.CalendarSelector
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -90,30 +92,41 @@ fun PlanningScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(standardPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        PlanningHeaderBar(
-            rightButton = {
-                IconButton(
-                    onClick = { TODO() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = stringResource(R.string.calendar),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            },
-            standardPadding = standardPadding
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                    start = standardPadding,
+                    end = standardPadding,
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PlanningHeaderBar(
+                rightButton = {
+                    IconButton(
+                        onClick = { TODO() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = stringResource(R.string.calendar),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                standardPadding = standardPadding
+            )
 
-        PlanningScreenContent(
-            controller = controller,
-            standardPadding = standardPadding,
-            modifier = modifier
-        )
+            PlanningScreenContent(
+                controller = controller,
+                standardPadding = standardPadding,
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -127,7 +140,8 @@ fun PlanningScreenContent(
     val activity = context as? Activity
 
     val databaseHelper = DatabaseHelper(context)
-    val userPlanning = databaseHelper.getUserPlanById(1, 0)
+//    val userPlanning = databaseHelper.getUserPlanById(1, 0)
+    val userPlanning = 0
 
     val selectedIntensityOption = rememberSaveable { mutableIntStateOf(R.string.low) }
     var expandedIntensity by rememberSaveable { mutableStateOf(false) }
@@ -503,7 +517,7 @@ fun PlanningScreenContent(
                     val userPlan = userId?.let { databaseHelper.getUserPlanById(it, 0) }
                     val userPlanId = userPlan?.id
 
-                    val workoutSuggestion : List<AIExercise> = userPlanId?.let {
+                    val workoutSuggestion: List<AIExercise> = userPlanId?.let {
                         databaseHelper.getAIExercisesByUserPlanId(
                             it
                         )
@@ -511,20 +525,24 @@ fun PlanningScreenContent(
 
                     val chatHistory by remember { mutableStateOf(controller.chatHistory) }
                     val scope = rememberCoroutineScope()
-                    var userInput by remember { mutableStateOf("Generate a workout plan tailored to my goals:\n" +
-                            "            \n" +
-                            "            My plan:\n" +
-                            "            - Goal: ${userPlan?.goal}\n" +
-                            "            - Duration: ${userPlan?.planDuration} days\n" +
-                            "            - Diet: ${userPlan?.diet}\n" +
-                            "            - Workout intensity: ${userPlan?.workoutIntensity}\n" +
-                            "            \n" +
-                            "            Response format:\n" +
-                            "            Workout Plan:\n" +
-                            "            - Morning: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
-                            "            - Afternoon: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
-                            "            - Evening: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
-                            "            Note: Each session has 1 exercise. Provide calorie burn estimates as a single number.") }
+                    var userInput by remember {
+                        mutableStateOf(
+                            "Generate a workout plan tailored to my goals:\n" +
+                                    "            \n" +
+                                    "            My plan:\n" +
+                                    "            - Goal: ${userPlan?.goal}\n" +
+                                    "            - Duration: ${userPlan?.planDuration} days\n" +
+                                    "            - Diet: ${userPlan?.diet}\n" +
+                                    "            - Workout intensity: ${userPlan?.workoutIntensity}\n" +
+                                    "            \n" +
+                                    "            Response format:\n" +
+                                    "            Workout Plan:\n" +
+                                    "            - Morning: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
+                                    "            - Afternoon: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
+                                    "            - Evening: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
+                                    "            Note: Each session has 1 exercise. Provide calorie burn estimates as a single number."
+                        )
+                    }
 
                     if (workoutSuggestion.isEmpty()) {
                         Button(
@@ -533,7 +551,8 @@ fun PlanningScreenContent(
 
                                 val responseText = chatHistory.last().botResponse
 
-                                val regex = """- (\w+): Exercise name: (.*?), Duration: (\d+) minutes, Calories burned: (\d+), Intensity: (\w+)""".toRegex()
+                                val regex =
+                                    """- (\w+): Exercise name: (.*?), Duration: (\d+) minutes, Calories burned: (\d+), Intensity: (\w+)""".toRegex()
 
                                 val exercises = mutableListOf<AIExercise>()
                                 regex.findAll(responseText).forEach { matchResult ->
@@ -753,7 +772,13 @@ fun WellnessTrackerCard(
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                shape = MaterialTheme.shapes.extraLarge
+            ),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -822,7 +847,12 @@ fun SuggestedMeals(
             contentDescription = "Suggested meals",
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.extraLarge),
+                .clip(MaterialTheme.shapes.extraLarge)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                    shape = MaterialTheme.shapes.extraLarge
+                ),
             contentScale = ContentScale.Crop
         )
 
@@ -858,7 +888,13 @@ fun WorkoutSuggestion(
 
         Card(
             onClick = onClickCard,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                    shape = MaterialTheme.shapes.large
+                ),
             shape = MaterialTheme.shapes.large,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant

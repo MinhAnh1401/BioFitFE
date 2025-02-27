@@ -2,6 +2,7 @@ package com.example.biofit.view.sub_components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,25 +24,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.biofit.R
-import com.example.biofit.view.activity.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 import java.util.Locale
 
 @Composable
-fun DefaultScreen() {
+fun DefaultDialogScreen() {
     Surface (
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         DefaultDialog(
-            title = R.string.app_name,
-            description = R.string.des_app_name,
-            actionTextButton = R.string.activity,
-            actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
-            actionButtonColor = MaterialTheme.colorScheme.primary,
+            title = R.string.delete_data,
+            description = R.string.des_delete_data,
+            actionTextButton = R.string.delete,
+            actionTextButtonColor = MaterialTheme.colorScheme.onError,
+            actionButtonColor = MaterialTheme.colorScheme.error,
             onClickActionButton = { },
             onDismissRequest = { },
             standardPadding = getStandardPadding().first
@@ -71,6 +72,11 @@ fun DefaultDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.extraLarge)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
+                    shape = MaterialTheme.shapes.extraLarge
+                )
                 .background(MaterialTheme.colorScheme.background)
                 .padding(
                     vertical = standardPadding * 2,
@@ -103,12 +109,12 @@ fun DefaultDialog(
                     Button(
                         onClick = onDismissRequest,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
+                            containerColor = MaterialTheme.colorScheme.outline
                         )
                     ) {
                         Text(
                             text = stringResource(R.string.cancel),
-                            color = MaterialTheme.colorScheme.onSecondary,
+                            color = MaterialTheme.colorScheme.background,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -144,7 +150,7 @@ fun DefaultDialog(
 @Composable
 private fun DefaultDialogDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        DefaultScreen()
+        DefaultDialogScreen()
     }
 }
 
@@ -157,7 +163,7 @@ private fun DefaultDialogDarkModePreviewInSmallPhone() {
 @Composable
 private fun DefaultDialogPreviewInLargePhone() {
     BioFitTheme {
-        DefaultScreen()
+        DefaultDialogScreen()
     }
 }
 
@@ -171,7 +177,7 @@ private fun DefaultDialogPreviewInLargePhone() {
 @Composable
 private fun DefaultDialogPreviewInTablet() {
     BioFitTheme {
-        DefaultScreen()
+        DefaultDialogScreen()
     }
 }
 
@@ -185,7 +191,7 @@ private fun DefaultDialogPreviewInTablet() {
 @Composable
 private fun DefaultDialogLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        DefaultScreen()
+        DefaultDialogScreen()
     }
 }
 
@@ -198,7 +204,7 @@ private fun DefaultDialogLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun DefaultDialogLandscapePreviewInLargePhone() {
     BioFitTheme {
-        DefaultScreen()
+        DefaultDialogScreen()
     }
 }
 
@@ -212,6 +218,6 @@ private fun DefaultDialogLandscapePreviewInLargePhone() {
 @Composable
 private fun DefaultDialogLandscapePreviewInTablet() {
     BioFitTheme {
-        DefaultScreen()
+        DefaultDialogScreen()
     }
 }

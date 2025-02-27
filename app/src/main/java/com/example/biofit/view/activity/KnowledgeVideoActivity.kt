@@ -40,6 +40,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.TopBar
 import com.example.biofit.view.fragment.VideoItem
+import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
