@@ -1,7 +1,10 @@
+// RegistrationController.kt
 package com.example.biofit.controller
 
 import android.content.Context
+import android.widget.Toast
 import com.example.biofit.model.UserData
+import com.example.biofit.utils.SecurityUtils
 
 class RegistrationController(private val context: Context) {
 
@@ -14,13 +17,20 @@ class RegistrationController(private val context: Context) {
      * @return Boolean Trả về true nếu đăng ký thành công, ngược lại trả về false.
      */
     fun registerUser(email: String, password: String): Boolean {
-        // Kiểm tra xem email và password có hợp lệ không
+        // Kiểm tra email và password có trống không
         if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(context, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        // Kiểm tra định dạng email
+        if (!SecurityUtils.isValidGmail(email)) {
+            Toast.makeText(context, "Email phải có định dạng @gmail.com", Toast.LENGTH_SHORT).show()
             return false
         }
 
         // Mã hóa mật khẩu
-        val hashedPassword = PasswordUtils.hashPassword(password)
+        val hashedPassword = SecurityUtils.hashPassword(password)
 
         // Tạo đối tượng UserData (các trường khác có thể để mặc định hoặc thêm sau)
         val userData = UserData(
@@ -38,6 +48,8 @@ class RegistrationController(private val context: Context) {
         // Lưu dữ liệu vào cơ sở dữ liệu
         dbHelper.addUserData(userData)
 
+        // Thông báo đăng ký thành công
+        Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
         return true
     }
 }

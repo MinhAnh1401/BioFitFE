@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -55,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.controller.LoginController
 import com.example.biofit.view.ui_theme.BioFitTheme
 
 class LoginActivity : ComponentActivity() {
@@ -313,13 +315,18 @@ fun LoginForm(
                 )
             }
         }
-
         Button(
             onClick = {
-                activity?.let {
-                    val intent = Intent(it, MainActivity::class.java)
-                    it.startActivity(intent)
-                    it.finish()
+                val loginController = LoginController(context)
+                val user = loginController.loginUser(email, password)
+
+                if (user != null) {
+                    // Đăng nhập thành công
+                    activity?.let {
+                        val intent = Intent(it, MainActivity::class.java)
+                        it.startActivity(intent)
+                        it.finish()
+                    }
                 }
             },
             modifier = Modifier.padding(vertical = standardPadding),
