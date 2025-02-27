@@ -5,8 +5,13 @@
       <SelectionState runConfigName="MainScreenPreviewInLargePhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="app" />
+      <SelectionState runConfigName="app">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
       <SelectionState runConfigName="StartPortraitScreenDarkModePreviewInSmallPhone">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="MainScreenDarkModePreviewInSmallPhone">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

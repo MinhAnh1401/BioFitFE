@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -203,7 +202,7 @@ fun ActionPopup(
                         ) {
                             BlinkingGradientBox(
                                 borderAlpha = 0.25f,
-                                alpha = 0.5f,
+                                alpha = 0.25f,
                                 shape = MaterialTheme.shapes.large
                             ) {
                                 Column(
@@ -232,9 +231,9 @@ fun ActionPopup(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             AnimatedGradientText(
-                                repeatMode = RepeatMode.Reverse,
                                 highlightColor = Color(0xFF2962FF),
-                                baseColor = MaterialTheme.colorScheme.onPrimary,
+                                textBodyColor1 = MaterialTheme.colorScheme.onPrimary,
+                                textBodyColor2 = MaterialTheme.colorScheme.onSecondary,
                                 text = stringResource(R.string.ai_assistant_bionix),
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Bold

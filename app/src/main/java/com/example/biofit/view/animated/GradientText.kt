@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,9 +33,9 @@ import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
 fun AnimatedGradientText(
-    repeatMode: RepeatMode,
     highlightColor: Color,
-    baseColor: Color,
+    textBodyColor1: Color,
+    textBodyColor2: Color,
     text: String,
     style: TextStyle
 ) {
@@ -45,15 +46,15 @@ fun AnimatedGradientText(
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 2000, easing = LinearEasing),
-            repeatMode = repeatMode
+            repeatMode = RepeatMode.Reverse
         )
     )
 
     val gradientBrush = Brush.linearGradient(
         colors = listOf(
-            baseColor,
+            textBodyColor1,
             highlightColor,
-            baseColor
+            textBodyColor2
         ),
         start = Offset(offsetX, offsetX),
         end = Offset(offsetX + 200f, offsetX + 200f)
@@ -75,7 +76,7 @@ fun OneTimeAnimatedGradientText(
     style: TextStyle,
     onAnimationEnd: () -> Unit = {}
 ) {
-    var textHeight by remember { mutableStateOf(0f) }
+    var textHeight by remember { mutableFloatStateOf(0f) }
 
     val transition = remember { Animatable(-300f) }
 
@@ -124,17 +125,9 @@ private fun GradientTextDarkModePreview() {
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             AnimatedGradientText(
-                repeatMode = RepeatMode.Restart,
                 highlightColor = Color(0xFFAEEA00),
-                baseColor = MaterialTheme.colorScheme.primary,
-                text = stringResource(R.string.congratulations_you_have_completed),
-                style = MaterialTheme.typography.displaySmall
-            )
-
-            AnimatedGradientText(
-                repeatMode = RepeatMode.Reverse,
-                highlightColor = Color(0xFFAEEA00),
-                baseColor = MaterialTheme.colorScheme.primary,
+                textBodyColor1 = Color(0xFFAEEA00),
+                textBodyColor2 = MaterialTheme.colorScheme.primary,
                 text = stringResource(R.string.congratulations_you_have_completed),
                 style = MaterialTheme.typography.displaySmall
             )
@@ -163,17 +156,9 @@ private fun GradientTextPreview() {
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             AnimatedGradientText(
-                repeatMode = RepeatMode.Restart,
                 highlightColor = Color(0xFFAEEA00),
-                baseColor = MaterialTheme.colorScheme.primary,
-                text = stringResource(R.string.congratulations_you_have_completed),
-                style = MaterialTheme.typography.displaySmall
-            )
-
-            AnimatedGradientText(
-                repeatMode = RepeatMode.Reverse,
-                highlightColor = Color(0xFFAEEA00),
-                baseColor = MaterialTheme.colorScheme.primary,
+                textBodyColor1 = Color(0xFFAEEA00),
+                textBodyColor2 = MaterialTheme.colorScheme.primary,
                 text = stringResource(R.string.congratulations_you_have_completed),
                 style = MaterialTheme.typography.displaySmall
             )

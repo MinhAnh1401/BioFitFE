@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -78,7 +77,7 @@ class AIChatbotActivity : ComponentActivity() {
         )
         setContent {
             BioFitTheme {
-                BioAIChatbotScreen(
+                AIChatbotScreen(
                     controller = controller
                 )
             }
@@ -92,7 +91,7 @@ class AIChatbotActivity : ComponentActivity() {
 }
 
 @Composable
-fun BioAIChatbotScreen(controller: ChatBotController) {
+fun AIChatbotScreen(controller: ChatBotController) {
     val context = LocalContext.current
     val activity = context as? Activity
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -127,7 +126,7 @@ fun BioAIChatbotScreen(controller: ChatBotController) {
                         it.startActivity(intent)
                     }
                 },
-                gradientTitle = stringResource(R.string.ai_assistant_bionix),
+                title = stringResource(R.string.ai_assistant_bionix),
                 middleButton = null,
                 rightButton = null,
                 standardPadding = standardPadding
@@ -276,9 +275,9 @@ fun ChatBubble(
                 if (!isAnimationFinished) {
                     if (text == stringResource(R.string.thinking)) {
                         AnimatedGradientText(
-                            repeatMode = RepeatMode.Restart,
                             highlightColor = Color(0xFFAEEA00),
-                            baseColor = MaterialTheme.colorScheme.primary,
+                            textBodyColor1 = Color(0xFFAEEA00),
+                            textBodyColor2 = MaterialTheme.colorScheme.primary,
                             text = text,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -325,7 +324,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
             model,
             context = LocalContext.current
         )
-        BioAIChatbotScreen(
+        AIChatbotScreen(
             controller = controller
         )
     }
@@ -349,7 +348,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
             model,
             context = LocalContext.current
         )
-        BioAIChatbotScreen(
+        AIChatbotScreen(
             controller = controller
         )
     }
@@ -374,7 +373,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
             model,
             context = LocalContext.current
         )
-        BioAIChatbotScreen(
+        AIChatbotScreen(
             controller = controller
         )
     }
@@ -399,7 +398,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
             model,
             context = LocalContext.current
         )
-        BioAIChatbotScreen(
+        AIChatbotScreen(
             controller = controller
         )
     }
@@ -423,7 +422,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
             model,
             context = LocalContext.current
         )
-        BioAIChatbotScreen(
+        AIChatbotScreen(
             controller = controller
         )
     }
@@ -448,7 +447,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
             model,
             context = LocalContext.current
         )
-        BioAIChatbotScreen(
+        AIChatbotScreen(
             controller = controller
         )
     }

@@ -16,12 +16,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -67,7 +63,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val standardPadding = getStandardPadding().first
-    
+
     val navController = rememberNavController()
     var showPopup by remember { mutableStateOf(false) }
 
@@ -87,11 +83,11 @@ fun MainScreen() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(
-                            top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                            start = standardPadding,
-                            end = standardPadding,
-                        ),
+                    /*.padding(
+                        top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                        start = standardPadding,
+                        end = standardPadding,
+                    )*/,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MainContent(
