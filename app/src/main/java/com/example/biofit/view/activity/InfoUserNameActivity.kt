@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -139,7 +140,11 @@ fun BackgroundInfoScreen() {
         verticalArrangement = Arrangement.Bottom,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.bg_info_screen),
+            painter = if (isSystemInDarkTheme()) {
+                painterResource(id = R.drawable.bg_info_screen_dark_mode)
+            } else {
+                painterResource(id = R.drawable.bg_info_screen)
+            },
             contentDescription = "Information Screen Background",
             modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.FillBounds

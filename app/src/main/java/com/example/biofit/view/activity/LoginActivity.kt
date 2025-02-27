@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -108,7 +109,11 @@ fun SignInAndSignUpBackground() {
         modifier = Modifier.fillMaxSize(),
     ) {
         Image(
-            painter = painterResource(id = R.drawable.bg_sign_in_up_top_screen),
+            painter = if (isSystemInDarkTheme()) {
+                painterResource(id = R.drawable.bg_sign_in_up_top_screen_dark_mode)
+            } else {
+                painterResource(id = R.drawable.bg_sign_in_up_top_screen)
+            },
             contentDescription = "Login Screen Background Top",
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,7 +122,11 @@ fun SignInAndSignUpBackground() {
         )
 
         Image(
-            painter = painterResource(id = R.drawable.bg_sign_in_up_bot_screen),
+            painter = if (isSystemInDarkTheme()) {
+                painterResource(id = R.drawable.bg_sign_in_up_bot_screen_dark_mode)
+            } else {
+                painterResource(id = R.drawable.bg_sign_in_up_bot_screen)
+            },
             contentDescription = "Login Screen Background Bottom",
             modifier = Modifier
                 .fillMaxWidth()

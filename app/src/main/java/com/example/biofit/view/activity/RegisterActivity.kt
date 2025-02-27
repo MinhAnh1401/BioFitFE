@@ -305,7 +305,7 @@ fun RegisterForm(
         }
         SocialLoginButtons(
             standardPadding ,
-            modifier
+            modifier2
         )
     }
 }
