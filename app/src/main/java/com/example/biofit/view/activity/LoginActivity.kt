@@ -38,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -60,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
-import com.example.biofit.view_model.LoginState
 import com.example.biofit.view_model.LoginViewModel
 
 class LoginActivity : ComponentActivity() {
@@ -179,8 +177,7 @@ fun LoginContent(
                 screenWidth = screenWidth,
                 screenHeight = screenHeight,
                 standardPadding = standardPadding,
-                modifier2 = modifier,
-                navigateToMain = {}
+                modifier2 = modifier
             )
             TermsAndPrivacy(standardPadding)
         }
@@ -215,43 +212,19 @@ fun LoginForm(
     standardPadding: Dp,
     modifier2: Modifier,
     viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    navigateToMain: () -> Unit
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val context = LocalContext.current
-        val activity = context as? Activity
+        val loginMessage = viewModel.loginMessage.value
 
-        var email by rememberSaveable { mutableStateOf("") }
-        var password by rememberSaveable { mutableStateOf("") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
-        val loginState by viewModel.loginState.collectAsState()
-
-        LaunchedEffect(loginState) {
-            loginState.let {
-                when (it) {
-                    is LoginState.Success -> {
-                        Toast.makeText(context, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
-                        activity?.let {
-                            val intent = Intent(it, MainActivity::class.java)
-                            it.startActivity(intent)
-                            it.finish()
-                        }
-                    }
-                    is LoginState.Error -> {
-                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {}
-                }
-            }
-        }
-
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = viewModel.email.value,
+            onValueChange = { viewModel.email.value = it },
             modifier = modifier2.padding(top = standardPadding),
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
@@ -287,8 +260,8 @@ fun LoginForm(
         )
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = viewModel.password.value,
+            onValueChange = { viewModel.password.value = it },
             modifier = modifier2.padding(top = standardPadding),
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
@@ -354,7 +327,7 @@ fun LoginForm(
         }
 
         Button(
-            onClick = { viewModel.loginUser(email, password) },
+            onClick = { viewModel.loginUser(context) },
             modifier = Modifier.padding(vertical = standardPadding),
             shape = MaterialTheme.shapes.extraLarge,
         ) {
@@ -362,6 +335,13 @@ fun LoginForm(
                 text = stringResource(R.string.sign_in_uppercase),
                 style = MaterialTheme.typography.labelLarge
             )
+        }
+
+        LaunchedEffect(loginMessage) {
+            loginMessage?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.loginMessage.value = null
+            }
         }
 
         SignUpPrompt()

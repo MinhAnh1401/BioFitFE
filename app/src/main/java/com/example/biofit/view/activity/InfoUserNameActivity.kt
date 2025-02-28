@@ -35,10 +35,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,16 +48,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.model.UserDTO
 import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
+import com.example.biofit.view_model.UpdateUserViewModel
 
 class InfoUserNameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val userDTO: UserDTO? = intent.getParcelableExtra("USER_DATA")
         setContent {
             BioFitTheme {
-                InfoUserNameScreen()
+                if (userDTO != null) {
+                    InfoUserNameScreen(userDTO = userDTO)
+                }
             }
         }
     }
@@ -73,7 +74,10 @@ class InfoUserNameActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserNameScreen() {
+fun InfoUserNameScreen(
+    userDTO: UserDTO,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -119,12 +123,16 @@ fun InfoUserNameScreen() {
                 )
             }
 
+            val userId = userDTO.userId
             NextButtonInfoScreen(
                 onClick = {
-                    activity?.let {
-                        val intent = Intent(it, InfoUserGenderActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
+                    viewModel.updateUser(context, userId) {
+                        userDTO.let {
+                            val intent = Intent(context, InfoUserGenderActivity::class.java).apply {
+                                putExtra("USER_DATA", it)
+                            }
+                            context.startActivity(intent)
+                        }
                     }
                 },
                 standardPadding
@@ -263,10 +271,9 @@ fun ProgressIndicatorTopBarInfoScreen(
 @Composable
 fun InfoUserNameContent(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
-    var username by rememberSaveable { mutableStateOf("") }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -286,8 +293,8 @@ fun InfoUserNameContent(
 
         item {
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = viewModel.fullName.value ?: "",
+                onValueChange = { viewModel.fullName.value = it.ifEmpty { null } },
                 modifier = modifier,
                 textStyle = MaterialTheme.typography.bodySmall,
                 label = {
@@ -335,8 +342,20 @@ fun InfoUserNameContent(
 )
 @Composable
 private fun InfoUserNamePortraitScreenDarkModePreviewInSmallPhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserNameScreen(userDTO = userDTO)
     }
 }
 
@@ -348,8 +367,20 @@ private fun InfoUserNamePortraitScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun InfoUserNamePortraitScreenPreviewInLargePhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserNameScreen(userDTO = userDTO)
     }
 }
 
@@ -362,8 +393,20 @@ private fun InfoUserNamePortraitScreenPreviewInLargePhone() {
 )
 @Composable
 private fun InfoUserNamePortraitScreenPreviewInTablet() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserNameScreen(userDTO = userDTO)
     }
 }
 
@@ -376,8 +419,20 @@ private fun InfoUserNamePortraitScreenPreviewInTablet() {
 )
 @Composable
 private fun InfoUserNameLandscapeScreenDarkModePreviewInSmallPhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserNameScreen(userDTO = userDTO)
     }
 }
 
@@ -389,8 +444,20 @@ private fun InfoUserNameLandscapeScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun InfoUserNameLandscapeScreenPreviewInLargePhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserNameScreen(userDTO = userDTO)
     }
 }
 
@@ -403,7 +470,19 @@ private fun InfoUserNameLandscapeScreenPreviewInLargePhone() {
 )
 @Composable
 private fun InfoUserNameLandscapeScreenPreviewInTablet() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        InfoUserNameScreen()
+        InfoUserNameScreen(userDTO = userDTO)
     }
 }

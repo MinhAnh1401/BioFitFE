@@ -58,6 +58,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.model.UserDTO
+import com.example.biofit.view.activity.AIChatbotActivity
 import com.example.biofit.view.activity.AddActivity
 import com.example.biofit.view.activity.ExerciseActivity
 import com.example.biofit.view.activity.UpdateWeightActivity
@@ -67,6 +69,7 @@ import com.example.biofit.view.ui_theme.BioFitTheme
 
 @Composable
 fun ActionPopup(
+    userDTO: UserDTO,
     onDismissPopup: () -> Unit,
     standardPadding: Dp
 ) {
@@ -187,10 +190,12 @@ fun ActionPopup(
                             .weight(1f)
                             .clip(MaterialTheme.shapes.large)
                             .clickable {
-                                /*activity?.let {
-                                    val intent = Intent(it, AIChatbotActivity::class.java)
-                                    it.startActivity(intent)
-                                }*/
+                                userDTO?.let {
+                                    val intent = Intent(context, AIChatbotActivity::class.java).apply {
+                                        putExtra("USER_DATA", it)
+                                    }
+                                    context.startActivity(intent)
+                                }
 
                                 onDismissPopup()
                             },
@@ -438,7 +443,20 @@ private fun ActionPopupDarkModePreview() {
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
+            val userDTO = UserDTO(
+                userId = 0,
+                fullName = "Nguyen Van A",
+                email = "anguyenvan@gmail.com",
+                gender = 0,
+                height = 170f,
+                weight = 57f,
+                targetWeight = 60f,
+                dateOfBirth = "2000-01-01",
+                avatar = null,
+                createdAccount = "2025-02-28"
+            )
             ActionPopup(
+                userDTO = userDTO,
                 onDismissPopup = { },
                 standardPadding = getStandardPadding().first
             )
@@ -456,7 +474,20 @@ private fun ActionPopupPreview() {
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
+            val userDTO = UserDTO(
+                userId = 0,
+                fullName = "Nguyen Van A",
+                email = "anguyenvan@gmail.com",
+                gender = 0,
+                height = 170f,
+                weight = 57f,
+                targetWeight = 60f,
+                dateOfBirth = "2000-01-01",
+                avatar = null,
+                createdAccount = "2025-02-28"
+            )
             ActionPopup(
+                userDTO = userDTO,
                 onDismissPopup = { },
                 standardPadding = getStandardPadding().first
             )

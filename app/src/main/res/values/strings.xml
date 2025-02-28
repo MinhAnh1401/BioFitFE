@@ -82,7 +82,7 @@
     <string name="current_month">mm</string>
     <string name="current_year">yyyy</string>
     <string name="notification">Notification</string>
-    <string name="hello">"Hello, "</string>
+    <string name="hello">Hello</string>
     <string name="today">Today</string>
     <string name="calendar">Calendar</string>
     <string name="overview">Overview</string>
@@ -275,4 +275,12 @@
     <string name="error_while_retrieving_data">Error while retrieving data!</string>
     <string name="create_exercises_by_ai">Create exercises with AI</string>
     <string name="invalid_email_or_password" translatable="false">Email hoặc mật khẩu không hợp lệ</string>
+    <string name="login_successful">Login successful</string>
+    <string name="email_or_password_is_incorrect">Email or password is incorrect!</string>
+    <string name="connection_error_please_try_again">Connection error! Please try again.</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="email_already_exists">Email already exists</string>
+    <string name="registration_failed">Registration failed</string>
+    <string name="please_enter_a_valid_email">Please enter a valid email.</string>
+    <string name="password_must_contain_at_least_8_characters_one_uppercase_letter_one_lowercase_letter_and_one_number">Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number.</string>
 </resources>

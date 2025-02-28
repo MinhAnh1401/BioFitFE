@@ -1,9 +1,7 @@
-/*
 package com.example.biofit.model
 
 import android.content.Context
 import com.example.biofit.R
-import com.example.biofit.controller.DatabaseHelper
 import com.google.ai.client.generativeai.GenerativeModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -11,9 +9,9 @@ import java.time.format.DateTimeFormatter
 data class ChatMessage(val userMessage: String, val botResponse: String)
 
 class ChatBotModel(
+    private val userDTO: UserDTO,
     private val context: Context,
     apiKey: String,
-    private val databaseHelper: DatabaseHelper
 ) {
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.0-flash",
@@ -29,7 +27,7 @@ class ChatBotModel(
             "User: ${it.userMessage}\nBot: ${it.botResponse}"
         }
 
-        val userData = databaseHelper.getUserDataById(userId = 1)
+        val userData = userDTO
         val enrichedInput = if (userData != null) {
             enrichInputWithUserData(userInput, userData)
         } else {
@@ -54,19 +52,19 @@ class ChatBotModel(
         }
     }
 
-    private fun enrichInputWithUserData(userInput: String, userData: UserData): String {
+    private fun enrichInputWithUserData(userInput: String, userDTO: UserDTO): String {
         return """ 
             Current date time: ${
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         }
         
             User data:
-                - Full Name: ${userData.fullName}
-                - Gender: ${userData.getGenderText(context)}
-                - Date of Birth: ${userData.dateOfBirth}
-                - Height: ${userData.height} cm
-                - Weight: ${userData.weight} kg
-                - Target Weight: ${userData.targetWeight} kg
+                - Full Name: ${userDTO.fullName}
+                - Gender: ${userDTO.getGenderString(context)}
+                - Date of Birth: ${userDTO.dateOfBirth}
+                - Height: ${userDTO.height} cm
+                - Weight: ${userDTO.weight} kg
+                - Target Weight: ${userDTO.targetWeight} kg
                 
             User asks: $userInput
             
@@ -79,4 +77,3 @@ class ChatBotModel(
             """.trimIndent()
     }
 }
-*/

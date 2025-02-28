@@ -1,40 +1,52 @@
 package com.example.biofit.view_model
 
-import android.util.Log
+import android.content.Context
+import android.content.Intent
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.biofit.model.User
-import com.example.biofit.repository.UserRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import com.example.biofit.R
+import com.example.biofit.model.LoginRequest
+import com.example.biofit.model.UserDTO
+import com.example.biofit.remote.RetrofitClient
+import com.example.biofit.view.activity.MainActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
-    private val repository = UserRepository()
+    var email = mutableStateOf("")
+    var password = mutableStateOf("")
+    var loginState = mutableStateOf<Boolean?>(null) // true: thành công, false: thất bại
+    var loginMessage = mutableStateOf<String?>(null) // Lưu thông báo để hiển thị Toast
 
-    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
-    val loginState: StateFlow<LoginState> get() = _loginState
+    fun loginUser(context: Context) {
+        val apiService = RetrofitClient.instance
 
-    fun loginUser(email: String, password: String) {
-        viewModelScope.launch {
-            _loginState.value = LoginState.Loading
-            try {
-                val user = repository.loginUser(email, password)
-                if (user != null) {
-                    _loginState.value = LoginState.Success(user)
+        val loginRequest = LoginRequest(email.value, password.value)
+        apiService.login(loginRequest).enqueue(object : Callback<UserDTO> {
+            override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
+                if (response.isSuccessful) {
+                    val user = response.body()
+                    loginState.value = true
+                    loginMessage.value = context.getString(R.string.login_successful)  // Xóa lỗi nếu đăng nhập đúng
+
+                    // Chuyển sang MainActivity
+                    user?.let {
+                        val intent = Intent(context, MainActivity::class.java).apply {
+                            putExtra("USER_DATA", it)
+                        }
+                        context.startActivity(intent)
+                    }
                 } else {
-                    _loginState.value = LoginState.Error("Email hoặc mật khẩu không đúng!")
+                    loginState.value = false
+                    loginMessage.value = context.getString(R.string.email_or_password_is_incorrect)
                 }
-            } catch (e: Exception) {
-                _loginState.value = LoginState.Error("Lỗi kết nối máy chủ!")
             }
-        }
-    }
-}
 
-sealed class LoginState {
-    object Idle : LoginState()
-    object Loading : LoginState()
-    data class Success(val user: User) : LoginState()
-    data class Error(val message: String) : LoginState()
+            override fun onFailure(call: Call<UserDTO>, t: Throwable) {
+                loginState.value = false
+                loginMessage.value = context.getString(R.string.connection_error_please_try_again)
+            }
+        })
+    }
 }

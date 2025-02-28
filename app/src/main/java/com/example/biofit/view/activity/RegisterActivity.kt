@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,6 +45,8 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.RegisterViewModel
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,21 +125,19 @@ fun RegisterContent(
 fun RegisterForm(
     modifier: Modifier = Modifier,
     standardPadding: Dp,
-    modifier2: Modifier
+    modifier2: Modifier,
+    viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        var email by rememberSaveable { mutableStateOf("") }
-        var password by rememberSaveable { mutableStateOf("") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
-        var confirmPassword by rememberSaveable { mutableStateOf("") }
         var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = viewModel.email.value,
+            onValueChange = { viewModel.email.value = it },
             modifier = modifier2.padding(top = standardPadding),
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
@@ -172,8 +173,8 @@ fun RegisterForm(
         )
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = viewModel.password.value,
+            onValueChange = { viewModel.password.value = it },
             modifier = modifier2.padding(top = standardPadding),
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
@@ -220,8 +221,8 @@ fun RegisterForm(
         )
 
         OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            value = viewModel.confirmPassword.value,
+            onValueChange = { viewModel.confirmPassword.value = it },
             modifier = modifier2.padding(top = standardPadding),
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
@@ -268,16 +269,9 @@ fun RegisterForm(
         )
 
         val context = LocalContext.current
-        val activity = context as? Activity
 
         Button(
-            onClick = {
-                activity?.let {
-                    val intent = Intent(it, RegisterSuccessfullyActivity::class.java)
-                    it.startActivity(intent)
-                    it.finish()
-                }
-            },
+            onClick = { viewModel.registerUser(context) },
             modifier = Modifier.padding(vertical = standardPadding),
             shape = MaterialTheme.shapes.extraLarge,
         ) {
@@ -286,6 +280,15 @@ fun RegisterForm(
                 style = MaterialTheme.typography.labelLarge
             )
         }
+
+        val registerMessage = viewModel.registerMessage.value
+        LaunchedEffect(registerMessage) {
+            registerMessage?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.registerMessage.value = null
+            }
+        }
+
         SocialLoginButtons(
             standardPadding ,
             modifier2

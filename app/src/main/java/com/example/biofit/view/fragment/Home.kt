@@ -60,10 +60,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.model.UserDTO
 import com.example.biofit.view.activity.CaloriesTargetActivity
 import com.example.biofit.view.activity.ExerciseActivity
 import com.example.biofit.view.activity.NotificationActivity
@@ -86,10 +88,12 @@ import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(userDTO: UserDTO) {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -108,6 +112,7 @@ fun HomeScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HomeContent(
+                userDTO = userDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -116,15 +121,25 @@ fun HomeScreen() {
 }
 
 @Composable
-fun HeaderBar(modifier: Modifier) {
+fun HeaderBar(
+    userDTO: UserDTO,
+    modifier: Modifier
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val userName =
-        stringResource(R.string.full_name) // Thay tên người dùng từ database vào User name
-    val currentDate = stringResource(R.string.current_date) // Thay đổi thành ngày hiện tại
-    val currentMonth = stringResource(R.string.current_month) // Thay đổi thành tháng hiện tại
-    val currentYear = stringResource(R.string.current_year) // Thay đổi thành năm hiện tại
+    val userName = if (userDTO.fullName == null) {
+        ""
+    } else {
+        ", ${userDTO.fullName}"
+    }
+
+    val currentDate = LocalDate.now()
+    val formatter = if (Locale.current.language == "vi") {
+        DateTimeFormatter.ofPattern("dd MMMM yyyy")
+    } else {
+        DateTimeFormatter.ofPattern("MMMM dd yyyy")
+    }
 
     Row(
         modifier = modifier,
@@ -140,8 +155,7 @@ fun HeaderBar(modifier: Modifier) {
             )
 
             Text(
-                text = stringResource(R.string.today) +
-                        "$currentDate / $currentMonth / $currentYear",
+                text = "${stringResource(R.string.today)}, ${currentDate.format(formatter)}",
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -176,6 +190,7 @@ fun HeaderBar(modifier: Modifier) {
 
 @Composable
 fun HomeContent(
+    userDTO: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -184,6 +199,7 @@ fun HomeContent(
     ) {
         item {
             HeaderBar(
+                userDTO = userDTO,
                 modifier = modifier
             )
         }
@@ -1358,8 +1374,20 @@ fun rememberMarkerComponent(): MarkerComponent {
 )
 @Composable
 private fun HomePortraitScreenDarkModePreviewInSmallPhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        HomeScreen()
+        HomeScreen(userDTO = userDTO)
     }
 }
 
@@ -1371,8 +1399,20 @@ private fun HomePortraitScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun HomePortraitScreenPreviewInLargePhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        HomeScreen()
+        HomeScreen(userDTO = userDTO)
     }
 }
 
@@ -1385,8 +1425,20 @@ private fun HomePortraitScreenPreviewInLargePhone() {
 )
 @Composable
 private fun HomePortraitScreenPreviewInTablet() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        HomeScreen()
+        HomeScreen(userDTO = userDTO)
     }
 }
 
@@ -1399,8 +1451,20 @@ private fun HomePortraitScreenPreviewInTablet() {
 )
 @Composable
 private fun HomeLandscapeScreenDarkModePreviewInSmallPhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        HomeScreen()
+        HomeScreen(userDTO = userDTO)
     }
 }
 
@@ -1412,8 +1476,20 @@ private fun HomeLandscapeScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun HomeLandscapeScreenPreviewInLargePhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        HomeScreen()
+        HomeScreen(userDTO = userDTO)
     }
 }
 
@@ -1426,7 +1502,19 @@ private fun HomeLandscapeScreenPreviewInLargePhone() {
 )
 @Composable
 private fun HomeLandscapeScreenPreviewInTablet() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
-        HomeScreen()
+        HomeScreen(userDTO = userDTO)
     }
 }

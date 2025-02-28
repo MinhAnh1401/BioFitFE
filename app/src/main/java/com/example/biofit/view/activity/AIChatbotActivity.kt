@@ -1,4 +1,3 @@
-/*
 package com.example.biofit.view.activity
 
 import android.app.Activity
@@ -53,8 +52,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.controller.ChatBotController
-import com.example.biofit.controller.DatabaseHelper
 import com.example.biofit.model.ChatBotModel
+import com.example.biofit.model.UserDTO
 import com.example.biofit.view.animated.AnimatedGradientText
 import com.example.biofit.view.animated.BlinkingGradientBox
 import com.example.biofit.view.animated.OneTimeAnimatedGradientText
@@ -66,21 +65,27 @@ class AIChatbotActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val databaseHelper = DatabaseHelper(this)
-        val model = ChatBotModel(
-            context = this,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            databaseHelper = databaseHelper,
-        )
-        val controller = ChatBotController(
-            model = model,
-            context = this
-        )
+        val userDTO: UserDTO? = intent.getParcelableExtra("USER_DATA")
+        val model = userDTO?.let {
+            ChatBotModel(
+                userDTO = it,
+                context = this,
+                apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            )
+        }
+        val controller = model?.let {
+            ChatBotController(
+                model = it,
+                context = this
+            )
+        }
         setContent {
             BioFitTheme {
-                AIChatbotScreen(
-                    controller = controller
-                )
+                if (controller != null) {
+                    AIChatbotScreen(
+                        controller = controller
+                    )
+                }
             }
         }
     }
@@ -316,10 +321,22 @@ fun ChatBubble(
 @Composable
 private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
+        val userDTO = UserDTO(
+            userId = 0,
+            fullName = "Nguyen Van A",
+            email = "anguyenvan@gmail.com",
+            gender = 0,
+            height = 170f,
+            weight = 57f,
+            targetWeight = 60f,
+            dateOfBirth = "2000-01-01",
+            avatar = null,
+            createdAccount = "2025-02-28"
+        )
         val model = ChatBotModel(
+            userDTO = userDTO,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            context = LocalContext.current,
-            databaseHelper = DatabaseHelper(LocalContext.current)
+            context = LocalContext.current
         )
         val controller = ChatBotController(
             model,
@@ -340,10 +357,22 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun BioAIChatbotScreenPreviewInLargePhone() {
     BioFitTheme {
+        val userDTO = UserDTO(
+            userId = 0,
+            fullName = "Nguyen Van A",
+            email = "anguyenvan@gmail.com",
+            gender = 0,
+            height = 170f,
+            weight = 57f,
+            targetWeight = 60f,
+            dateOfBirth = "2000-01-01",
+            avatar = null,
+            createdAccount = "2025-02-28"
+        )
         val model = ChatBotModel(
+            userDTO = userDTO,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            context = LocalContext.current,
-            databaseHelper = DatabaseHelper(LocalContext.current)
+            context = LocalContext.current
         )
         val controller = ChatBotController(
             model,
@@ -365,10 +394,22 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
 @Composable
 private fun BioAIChatbotScreenPreviewInTablet() {
     BioFitTheme {
+        val userDTO = UserDTO(
+            userId = 0,
+            fullName = "Nguyen Van A",
+            email = "anguyenvan@gmail.com",
+            gender = 0,
+            height = 170f,
+            weight = 57f,
+            targetWeight = 60f,
+            dateOfBirth = "2000-01-01",
+            avatar = null,
+            createdAccount = "2025-02-28"
+        )
         val model = ChatBotModel(
+            userDTO = userDTO,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            context = LocalContext.current,
-            databaseHelper = DatabaseHelper(LocalContext.current)
+            context = LocalContext.current
         )
         val controller = ChatBotController(
             model,
@@ -390,10 +431,22 @@ private fun BioAIChatbotScreenPreviewInTablet() {
 @Composable
 private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
+        val userDTO = UserDTO(
+            userId = 0,
+            fullName = "Nguyen Van A",
+            email = "anguyenvan@gmail.com",
+            gender = 0,
+            height = 170f,
+            weight = 57f,
+            targetWeight = 60f,
+            dateOfBirth = "2000-01-01",
+            avatar = null,
+            createdAccount = "2025-02-28"
+        )
         val model = ChatBotModel(
+            userDTO = userDTO,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            context = LocalContext.current,
-            databaseHelper = DatabaseHelper(LocalContext.current)
+            context = LocalContext.current
         )
         val controller = ChatBotController(
             model,
@@ -414,10 +467,22 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
+        val userDTO = UserDTO(
+            userId = 0,
+            fullName = "Nguyen Van A",
+            email = "anguyenvan@gmail.com",
+            gender = 0,
+            height = 170f,
+            weight = 57f,
+            targetWeight = 60f,
+            dateOfBirth = "2000-01-01",
+            avatar = null,
+            createdAccount = "2025-02-28"
+        )
         val model = ChatBotModel(
+            userDTO = userDTO,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            context = LocalContext.current,
-            databaseHelper = DatabaseHelper(LocalContext.current)
+            context = LocalContext.current
         )
         val controller = ChatBotController(
             model,
@@ -439,10 +504,22 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun BioAIChatbotScreenLandscapePreviewInTablet() {
     BioFitTheme {
+        val userDTO = UserDTO(
+            userId = 0,
+            fullName = "Nguyen Van A",
+            email = "anguyenvan@gmail.com",
+            gender = 0,
+            height = 170f,
+            weight = 57f,
+            targetWeight = 60f,
+            dateOfBirth = "2000-01-01",
+            avatar = null,
+            createdAccount = "2025-02-28"
+        )
         val model = ChatBotModel(
+            userDTO = userDTO,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-            context = LocalContext.current,
-            databaseHelper = DatabaseHelper(LocalContext.current)
+            context = LocalContext.current
         )
         val controller = ChatBotController(
             model,
@@ -452,4 +529,4 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
             controller = controller
         )
     }
-}*/
+}
