@@ -47,8 +47,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.controller.DatabaseHelper
-import com.example.biofit.model.UserPlan
 import com.example.biofit.view.fragment.PlanningHeaderBar
 import com.example.biofit.view.sub_components.SelectionDialog
 import com.example.biofit.view.sub_components.getStandardPadding
@@ -504,35 +502,6 @@ fun CreatePlanningScreenContent(
 
                 Button(
                     onClick = {
-                        val databaseHelper = DatabaseHelper(context)
-                        val userData = databaseHelper.getUserDataById(1)
-                        val userId = userData?.id
-                        val userPlan = userId?.let {
-                            UserPlan(
-                                id = 1,
-                                userId = it,
-                                goal = when (goal) {
-                                    weightLoss -> 0
-                                    muscleGain -> 1
-                                    else -> 2
-                                },
-                                planDuration = numberOfDays.toInt(),
-                                diet = when (diet) {
-                                    mediterranean -> 0
-                                    else -> 1
-                                },
-                                workoutIntensity = when (intensity) {
-                                    low -> 0
-                                    medium -> 1
-                                    else -> 2
-                                },
-                                status = 0
-                            )
-                        }
-                        if (userPlan != null) {
-                            databaseHelper.addUserPlan(userPlan)
-                        }
-
                         activity?.let {
                             val intent = Intent(it, MainActivity::class.java)
                             it.startActivity(intent)

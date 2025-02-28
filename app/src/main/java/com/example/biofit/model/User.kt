@@ -3,16 +3,15 @@ package com.example.biofit.model
 import android.content.Context
 import com.example.biofit.R
 
-data class UserData(
-    val id: Int,
-    val fullName: String,
+data class User(
+    val userId: Long?,
+    val fullName: String?,
     val email: String,
-    val password: String,
-    val gender: Int,
-    val dateOfBirth: String,
-    val height: Float,
-    val weight: Float,
-    val targetWeight: Float
+    val hashPassword: String,
+    val gender: Int?,
+    val dateOfBirth: String?,
+    val avatar: String?,
+    val createdAccount: String,
 ) {
     fun getGenderText(context: Context): String {
         return when (gender) {

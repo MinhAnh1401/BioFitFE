@@ -42,7 +42,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.controller.RegistrationController
 import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
 
@@ -273,26 +272,10 @@ fun RegisterForm(
 
         Button(
             onClick = {
-                // Kiểm tra mật khẩu và xác nhận mật khẩu
-                if (password == confirmPassword) {
-                    // Gọi controller để xử lý đăng ký
-                    val registrationController = RegistrationController(context)
-                    val isRegistered = registrationController.registerUser(email, password)
-
-                    if (isRegistered) {
-                        // Chuyển đến màn hình thành công
-                        activity?.let {
-                            val intent = Intent(it, RegisterSuccessfullyActivity::class.java)
-                            it.startActivity(intent)
-                            it.finish()
-                        }
-                    } else {
-                        // Hiển thị thông báo lỗi nếu đăng ký thất bại
-                        Toast.makeText(context, "Đăng ký thất bại", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    // Hiển thị thông báo lỗi nếu mật khẩu không khớp
-                    Toast.makeText(context, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show()
+                activity?.let {
+                    val intent = Intent(it, RegisterSuccessfullyActivity::class.java)
+                    it.startActivity(intent)
+                    it.finish()
                 }
             },
             modifier = Modifier.padding(vertical = standardPadding),

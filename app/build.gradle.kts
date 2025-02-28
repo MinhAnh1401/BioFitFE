@@ -66,4 +66,8 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.generativeai)
     implementation (libs.bcrypt)
+
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation( libs.androidx.lifecycle.viewmodel.compose)
 }

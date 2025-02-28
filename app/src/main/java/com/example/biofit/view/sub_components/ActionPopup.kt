@@ -58,7 +58,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.view.activity.AIChatbotActivity
 import com.example.biofit.view.activity.AddActivity
 import com.example.biofit.view.activity.ExerciseActivity
 import com.example.biofit.view.activity.UpdateWeightActivity
@@ -188,10 +187,10 @@ fun ActionPopup(
                             .weight(1f)
                             .clip(MaterialTheme.shapes.large)
                             .clickable {
-                                activity?.let {
+                                /*activity?.let {
                                     val intent = Intent(it, AIChatbotActivity::class.java)
                                     it.startActivity(intent)
-                                }
+                                }*/
 
                                 onDismissPopup()
                             },

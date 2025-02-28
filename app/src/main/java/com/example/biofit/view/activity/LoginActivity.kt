@@ -37,6 +37,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -56,9 +58,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.controller.LoginController
 import com.example.biofit.view.sub_components.getStandardPadding
 import com.example.biofit.view.ui_theme.BioFitTheme
+import com.example.biofit.view_model.LoginState
+import com.example.biofit.view_model.LoginViewModel
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -176,7 +179,8 @@ fun LoginContent(
                 screenWidth = screenWidth,
                 screenHeight = screenHeight,
                 standardPadding = standardPadding,
-                modifier2 = modifier
+                modifier2 = modifier,
+                navigateToMain = {}
             )
             TermsAndPrivacy(standardPadding)
         }
@@ -209,7 +213,9 @@ fun LoginForm(
     screenWidth: Int,
     screenHeight: Int,
     standardPadding: Dp,
-    modifier2: Modifier
+    modifier2: Modifier,
+    viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    navigateToMain: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -221,6 +227,27 @@ fun LoginForm(
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
+        val loginState by viewModel.loginState.collectAsState()
+
+        LaunchedEffect(loginState) {
+            loginState.let {
+                when (it) {
+                    is LoginState.Success -> {
+                        Toast.makeText(context, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+                        activity?.let {
+                            val intent = Intent(it, MainActivity::class.java)
+                            it.startActivity(intent)
+                            it.finish()
+                        }
+                    }
+                    is LoginState.Error -> {
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
 
         OutlinedTextField(
             value = email,
@@ -325,20 +352,9 @@ fun LoginForm(
                 )
             }
         }
-        Button(
-            onClick = {
-                val loginController = LoginController(context)
-                val user = loginController.loginUser(email, password)
 
-                if (user != null) {
-                    // Đăng nhập thành công
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
-                    }
-                }
-            },
+        Button(
+            onClick = { viewModel.loginUser(email, password) },
             modifier = Modifier.padding(vertical = standardPadding),
             shape = MaterialTheme.shapes.extraLarge,
         ) {

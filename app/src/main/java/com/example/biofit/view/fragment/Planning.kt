@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -39,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,10 +54,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.biofit.R
-import com.example.biofit.controller.ChatBotController
-import com.example.biofit.controller.DatabaseHelper
-import com.example.biofit.model.AIExercise
-import com.example.biofit.model.ChatBotModel
 import com.example.biofit.view.activity.CalorieTodayActivity
 import com.example.biofit.view.activity.CreatePlanningActivity
 import com.example.biofit.view.activity.EditExerciseActivity
@@ -78,17 +72,6 @@ import com.patrykandpatrick.vico.core.entry.entryOf
 
 @Composable
 fun PlanningScreen() {
-    val databaseHelper = DatabaseHelper(LocalContext.current)
-    val model = ChatBotModel(
-        context = LocalContext.current,
-        apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s",
-        databaseHelper = databaseHelper,
-    )
-    val controller = ChatBotController(
-        model = model,
-        context = LocalContext.current
-    )
-
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -122,7 +105,6 @@ fun PlanningScreen() {
             )
 
             PlanningScreenContent(
-                controller = controller,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -132,14 +114,12 @@ fun PlanningScreen() {
 
 @Composable
 fun PlanningScreenContent(
-    controller: ChatBotController,
     standardPadding: Dp,
     modifier: Modifier
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val databaseHelper = DatabaseHelper(context)
 //    val userPlanning = databaseHelper.getUserPlanById(1, 0)
     val userPlanning = 0
 
@@ -511,127 +491,49 @@ fun PlanningScreenContent(
                         style = MaterialTheme.typography.titleSmall
                     )
 
-                    val databaseHelper = DatabaseHelper(context)
-                    val userData = databaseHelper.getUserDataById(1)
-                    val userId = userData?.id
-                    val userPlan = userId?.let { databaseHelper.getUserPlanById(it, 0) }
-                    val userPlanId = userPlan?.id
+                    val workoutSuggestion = listOf(
+                        Pair(Pair(0, "Exercise 1"), Triple(15, 120f, 0)),
+                        Pair(Pair(1, "Exercise 2"), Triple(30, 150f, 1)),
+                        Pair(Pair(2, "Exercise 3"), Triple(45, 200f, 2))
+                    )
 
-                    val workoutSuggestion: List<AIExercise> = userPlanId?.let {
-                        databaseHelper.getAIExercisesByUserPlanId(
-                            it
-                        )
-                    } ?: emptyList()
-
-                    val chatHistory by remember { mutableStateOf(controller.chatHistory) }
-                    val scope = rememberCoroutineScope()
-                    var userInput by remember {
-                        mutableStateOf(
-                            "Generate a workout plan tailored to my goals:\n" +
-                                    "            \n" +
-                                    "            My plan:\n" +
-                                    "            - Goal: ${userPlan?.goal}\n" +
-                                    "            - Duration: ${userPlan?.planDuration} days\n" +
-                                    "            - Diet: ${userPlan?.diet}\n" +
-                                    "            - Workout intensity: ${userPlan?.workoutIntensity}\n" +
-                                    "            \n" +
-                                    "            Response format:\n" +
-                                    "            Workout Plan:\n" +
-                                    "            - Morning: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
-                                    "            - Afternoon: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
-                                    "            - Evening: Exercise name: ..., Duration: ..., Calories burned: ..., Intensity: (High/Medium/Easy)\n" +
-                                    "            Note: Each session has 1 exercise. Provide calorie burn estimates as a single number."
-                        )
-                    }
-
-                    if (workoutSuggestion.isEmpty()) {
-                        Button(
-                            onClick = {
-                                controller.sendMessage(userInput, scope)
-
-                                val responseText = chatHistory.last().botResponse
-
-                                val regex =
-                                    """- (\w+): Exercise name: (.*?), Duration: (\d+) minutes, Calories burned: (\d+), Intensity: (\w+)""".toRegex()
-
-                                val exercises = mutableListOf<AIExercise>()
-                                regex.findAll(responseText).forEach { matchResult ->
-                                    val (session, name, duration, calories, intensity) = matchResult.destructured
-                                    userPlanId?.let {
-                                        AIExercise(
-                                            0,
-                                            it,
-                                            when (session) {
-                                                "Morning" -> 0
-                                                "Afternoon" -> 1
-                                                else -> 2
-                                            },
-                                            name,
-                                            duration.toInt(),
-                                            calories.toFloat(),
-                                            when (intensity) {
-                                                "Low" -> 0
-                                                "Medium" -> 1
-                                                else -> 2
-                                            }
-                                        )
-                                    }?.let { exercises.add(it) }
-                                }
-
-                                exercises.forEach { aiExercise ->
-                                    databaseHelper.addAIExercise(aiExercise)
+                    workoutSuggestion.forEach { aiExercise ->
+                        WorkoutSuggestion(
+                            session = when (aiExercise.first.first) {
+                                0 -> R.string.morning
+                                1 -> R.string.afternoon
+                                else -> R.string.evening
+                            },
+                            exerciseName = aiExercise.first.second,
+                            time = aiExercise.second.first,
+                            calories = aiExercise.second.second,
+                            intensity = when (aiExercise.second.third) {
+                                0 -> R.string.low
+                                1 -> R.string.medium
+                                else -> R.string.high
+                            },
+                            onClickCard = {
+                                activity?.let {
+                                    val intent = Intent(it, EditExerciseActivity::class.java)
+                                    intent.putExtra(
+                                        "SESSION_TITLE",
+                                        when (aiExercise.first.first) {
+                                            0 -> R.string.morning
+                                            1 -> R.string.afternoon
+                                            else -> R.string.evening
+                                        }
+                                    )
+                                    it.startActivity(intent)
                                 }
                             },
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            )
-                        ) {
-                            Text(
-                                text = stringResource(R.string.create_exercises_by_ai),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    } else {
-                        workoutSuggestion.forEach { aiExercise ->
-                            WorkoutSuggestion(
-                                session = when (aiExercise.session) {
-                                    0 -> R.string.morning
-                                    1 -> R.string.afternoon
-                                    else -> R.string.evening
-                                },
-                                exerciseName = aiExercise.exerciseName,
-                                time = aiExercise.duration,
-                                calories = aiExercise.caloriesBurned,
-                                intensity = when (aiExercise.intensity) {
-                                    0 -> R.string.low
-                                    1 -> R.string.medium
-                                    else -> R.string.high
-                                },
-                                onClickCard = {
-                                    activity?.let {
-                                        val intent = Intent(it, EditExerciseActivity::class.java)
-                                        intent.putExtra(
-                                            "SESSION_TITLE",
-                                            when (aiExercise.session) {
-                                                0 -> R.string.morning
-                                                1 -> R.string.afternoon
-                                                else -> R.string.evening
-                                            }
-                                        )
-                                        it.startActivity(intent)
-                                    }
-                                },
-                                onClickButton = {
-                                    activity?.let {
-                                        val intent = Intent(it, ExerciseViewActivity::class.java)
-                                        it.startActivity(intent)
-                                    }
-                                },
-                                standardPadding = standardPadding
-                            )
-                        }
+                            onClickButton = {
+                                activity?.let {
+                                    val intent = Intent(it, ExerciseViewActivity::class.java)
+                                    it.startActivity(intent)
+                                }
+                            },
+                            standardPadding = standardPadding
+                        )
                     }
                 }
             }

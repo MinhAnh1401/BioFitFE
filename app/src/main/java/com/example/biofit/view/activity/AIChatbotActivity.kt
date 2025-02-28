@@ -1,3 +1,4 @@
+/*
 package com.example.biofit.view.activity
 
 import android.app.Activity
@@ -451,4 +452,4 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
             controller = controller
         )
     }
-}
+}*/

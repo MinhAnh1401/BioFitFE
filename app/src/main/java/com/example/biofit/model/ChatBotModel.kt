@@ -1,3 +1,4 @@
+/*
 package com.example.biofit.model
 
 import android.content.Context
@@ -78,3 +79,4 @@ class ChatBotModel(
             """.trimIndent()
     }
 }
+*/
