@@ -17,7 +17,7 @@
         android:localeConfig="@xml/locales_config"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".view.activity.StartActivity"
+            android:name=".ui.activity.StartActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:theme="@style/Theme.BioFit">
@@ -27,37 +27,37 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.activity.LoginActivity" />
-        <activity android:name=".view.activity.RegisterActivity" />
-        <activity android:name=".view.activity.RegisterSuccessfullyActivity" />
-        <activity android:name=".view.activity.InfoUserNameActivity" />
-        <activity android:name=".view.activity.InfoUserGenderActivity" />
-        <activity android:name=".view.activity.InfoUserBirthdayActivity" />
-        <activity android:name=".view.activity.InfoUserHeightAndWeightActivity" />
-        <activity android:name=".view.activity.InfoUserTargetActivity" />
-        <activity android:name=".view.activity.MainActivity" />
-        <activity android:name=".view.activity.ExerciseActivity" />
-        <activity android:name=".view.activity.UpdateWeightActivity" />
-        <activity android:name=".view.activity.AddActivity" />
-        <activity android:name=".view.activity.NotificationActivity" />
-        <activity android:name=".view.activity.CaloriesTargetActivity" />
-        <activity android:name=".view.activity.OverviewActivity" />
-        <activity android:name=".view.activity.TrackActivity" />
-        <activity android:name=".view.activity.OverviewExerciseActivity" />
-        <activity android:name=".view.activity.CreatePlanningActivity" />
-        <activity android:name=".view.activity.CalorieTodayActivity" />
-        <activity android:name=".view.activity.MealsListActivity" />
-        <activity android:name=".view.activity.EditExerciseActivity" />
-        <activity android:name=".view.activity.ExerciseViewActivity" />
-        <activity android:name=".view.activity.KnowledgeVideoActivity" />
-        <activity android:name=".view.activity.SettingActivity" />
-        <activity android:name=".view.activity.TargetActivity" />
-        <activity android:name=".view.activity.AIChatbotActivity" />
-        <activity android:name=".view.activity.CaloriesDistributionActivity" />
-        <activity android:name=".view.activity.CreateAndUpdateExerciseActivity" />
-        <activity android:name=".view.activity.CreateFoodActivity" />
-        <activity android:name=".view.activity.FoodDetailActivity" />
-        <activity android:name=".view.activity.MealsDetailActivity" />
+        <activity android:name=".ui.activity.LoginActivity" />
+        <activity android:name=".ui.activity.RegisterActivity" />
+        <activity android:name=".ui.activity.RegisterSuccessfullyActivity" />
+        <activity android:name=".ui.activity.InfoUserNameActivity" />
+        <activity android:name=".ui.activity.InfoUserGenderActivity" />
+        <activity android:name=".ui.activity.InfoUserBirthdayActivity" />
+        <activity android:name=".ui.activity.InfoUserHeightAndWeightActivity" />
+        <activity android:name=".ui.activity.InfoUserTargetActivity" />
+        <activity android:name=".navigation.MainActivity" />
+        <activity android:name=".ui.activity.ExerciseActivity" />
+        <activity android:name=".ui.activity.UpdateWeightActivity" />
+        <activity android:name=".ui.activity.AddActivity" />
+        <activity android:name=".ui.activity.NotificationActivity" />
+        <activity android:name=".ui.activity.CaloriesTargetActivity" />
+        <activity android:name=".navigation.OverviewActivity" />
+        <activity android:name=".ui.activity.TrackActivity" />
+        <activity android:name=".ui.activity.OverviewExerciseActivity" />
+        <activity android:name=".ui.activity.CreatePlanningActivity" />
+        <activity android:name=".ui.activity.CalorieTodayActivity" />
+        <activity android:name=".ui.activity.MealsListActivity" />
+        <activity android:name=".ui.activity.EditExerciseActivity" />
+        <activity android:name=".ui.activity.ExerciseViewActivity" />
+        <activity android:name=".ui.activity.KnowledgeVideoActivity" />
+        <activity android:name=".ui.activity.SettingActivity" />
+        <activity android:name=".ui.activity.TargetActivity" />
+        <activity android:name=".ui.activity.AIChatbotActivity" />
+        <activity android:name=".ui.activity.CaloriesDistributionActivity" />
+        <activity android:name=".ui.activity.CreateAndUpdateExerciseActivity" />
+        <activity android:name=".ui.activity.CreateFoodActivity" />
+        <activity android:name=".ui.activity.FoodDetailActivity" />
+        <activity android:name=".ui.activity.MealsDetailActivity" />
     </application>
 
 </manifest>
