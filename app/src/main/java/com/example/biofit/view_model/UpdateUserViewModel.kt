@@ -1,13 +1,12 @@
 package com.example.biofit.view_model
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.model.UpdateUserRequest
-import com.example.biofit.model.UserDTO
-import com.example.biofit.remote.RetrofitClient
+import com.example.biofit.data.model.UpdateUserRequest
+import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.remote.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

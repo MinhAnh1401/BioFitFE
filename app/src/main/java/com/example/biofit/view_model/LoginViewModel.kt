@@ -5,10 +5,10 @@ import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.model.LoginRequest
-import com.example.biofit.model.UserDTO
-import com.example.biofit.remote.RetrofitClient
-import com.example.biofit.view.activity.MainActivity
+import com.example.biofit.data.model.LoginRequest
+import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.remote.RetrofitClient
+import com.example.biofit.navigation.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,7 +28,8 @@ class LoginViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val user = response.body()
                     loginState.value = true
-                    loginMessage.value = context.getString(R.string.login_successful)  // Xóa lỗi nếu đăng nhập đúng
+                    loginMessage.value =
+                        context.getString(R.string.login_successful)  // Xóa lỗi nếu đăng nhập đúng
 
                     // Chuyển sang MainActivity
                     user?.let {

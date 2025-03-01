@@ -5,10 +5,10 @@ import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.model.RegisterRequest
-import com.example.biofit.model.UserDTO
-import com.example.biofit.remote.RetrofitClient
-import com.example.biofit.view.activity.InfoUserNameActivity
+import com.example.biofit.data.model.RegisterRequest
+import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.remote.RetrofitClient
+import com.example.biofit.ui.activity.InfoUserNameActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,9 +19,11 @@ class RegisterViewModel : ViewModel() {
     var email = mutableStateOf("")
     var password = mutableStateOf("")
     var confirmPassword = mutableStateOf("")
-    var createdAccount = mutableStateOf(LocalDateTime.now().format(
-        DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    ))
+    private var createdAccount = mutableStateOf(
+        LocalDateTime.now().format(
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        )
+    )
     var registerState = mutableStateOf<Boolean?>(null)
     var registerMessage = mutableStateOf<String?>(null)
 
@@ -73,7 +75,8 @@ class RegisterViewModel : ViewModel() {
 
             override fun onFailure(call: Call<UserDTO>, t: Throwable) {
                 registerState.value = false
-                registerMessage.value = context.getString(R.string.connection_error_please_try_again)
+                registerMessage.value =
+                    context.getString(R.string.connection_error_please_try_again)
             }
         })
     }
@@ -86,6 +89,7 @@ class RegisterViewModel : ViewModel() {
             null
         }
     }
+
     private fun validatePassword(context: Context, password: String): String? {
         val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$"
         return if (!password.matches(passwordPattern.toRegex())) {
