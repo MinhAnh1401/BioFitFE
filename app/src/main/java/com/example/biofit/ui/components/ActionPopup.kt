@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -207,7 +208,7 @@ fun ActionPopup(
                         ) {
                             BlinkingGradientBox(
                                 borderAlpha = 0.25f,
-                                alpha = 0.25f,
+                                alpha = 0.5f,
                                 shape = MaterialTheme.shapes.large
                             ) {
                                 Column(
@@ -235,14 +236,11 @@ fun ActionPopup(
                             ),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            AnimatedGradientText(
-                                highlightColor = Color(0xFF2962FF),
-                                textBodyColor1 = MaterialTheme.colorScheme.onPrimary,
-                                textBodyColor2 = MaterialTheme.colorScheme.onSecondary,
+                            Text(
                                 text = stringResource(R.string.ai_assistant_bionix),
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.Bold
-                                )
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
@@ -255,36 +253,6 @@ fun ActionPopup(
                                 .weight(1f)
                                 .clip(MaterialTheme.shapes.large)
                                 .clickable {
-                                    /*when (title) {
-                                        R.string.morning ->
-                                            activity?.let {
-                                                val intent = Intent(it, AddActivity::class.java)
-                                                intent.putExtra("SESSION_TITLE", R.string.morning)
-                                                it.startActivity(intent)
-                                            }
-
-                                        R.string.afternoon ->
-                                            activity?.let {
-                                                val intent = Intent(it, AddActivity::class.java)
-                                                intent.putExtra("SESSION_TITLE", R.string.afternoon)
-                                                it.startActivity(intent)
-                                            }
-
-                                        R.string.evening ->
-                                            activity?.let {
-                                                val intent = Intent(it, AddActivity::class.java)
-                                                intent.putExtra("SESSION_TITLE", R.string.evening)
-                                                it.startActivity(intent)
-                                            }
-
-                                        R.string.snack ->
-                                            activity?.let {
-                                                val intent = Intent(it, AddActivity::class.java)
-                                                intent.putExtra("SESSION_TITLE", R.string.snack)
-                                                it.startActivity(intent)
-                                            }
-                                    }*/
-
                                     activity?.let {
                                         val intent = Intent(it, AddActivity::class.java)
                                         intent.putExtra(

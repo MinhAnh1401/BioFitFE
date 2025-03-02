@@ -3,11 +3,13 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -62,13 +65,19 @@ import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 
+
 class AIChatbotActivity : ComponentActivity() {
-    private lateinit var AIChatBotViewModel: AIChatbotViewModel
+    private lateinit var chatViewModel: AIChatbotViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val userDTO: UserDTO? = intent.getParcelableExtra("USER_DATA")
+        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("USER_DATA")
+        }
         if (userDTO == null) {
             finish()
             return
@@ -78,10 +87,10 @@ class AIChatbotActivity : ComponentActivity() {
             context = this,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, this)
+        chatViewModel = AIChatbotViewModel(model, this)
         setContent {
             BioFitTheme {
-                AIChatbotScreen(viewModel = AIChatBotViewModel)
+                AIChatbotScreen(viewModel = chatViewModel)
             }
         }
     }
@@ -263,7 +272,20 @@ fun ChatBubble(
                     } else {
                         Color.Transparent
                     },
-                    shape = MaterialTheme.shapes.extraLarge
+                    shape = MaterialTheme.shapes.extraLarge.copy(
+                        bottomEnd = CornerSize(15f)
+                    )
+                )
+                .border(
+                    width = 1.dp,
+                    color = if (isUser) {
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
+                    } else {
+                        Color.Transparent
+                    },
+                    shape = MaterialTheme.shapes.extraLarge.copy(
+                        bottomEnd = CornerSize(15f)
+                    )
                 )
                 .padding(if (isUser) standardPadding else 0.dp)
         ) {
@@ -278,7 +300,7 @@ fun ChatBubble(
                     if (text == stringResource(R.string.thinking)) {
                         AnimatedGradientText(
                             highlightColor = Color(0xFFAEEA00),
-                            textBodyColor1 = Color(0xFFAEEA00),
+                            textBodyColor1 = MaterialTheme.colorScheme.primary,
                             textBodyColor2 = MaterialTheme.colorScheme.primary,
                             text = text,
                             style = MaterialTheme.typography.bodyMedium
@@ -317,7 +339,7 @@ fun ChatBubble(
 @Composable
 private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        lateinit var AIChatBotViewModel: AIChatbotViewModel
+        lateinit var chatBotViewModel: AIChatbotViewModel
         val userDTO = UserDTO(
             userId = 0,
             fullName = "Nguyen Van A",
@@ -335,8 +357,8 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
-        AIChatbotScreen(viewModel = AIChatBotViewModel)
+        chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
+        AIChatbotScreen(viewModel = chatBotViewModel)
     }
 }
 
@@ -349,7 +371,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun BioAIChatbotScreenPreviewInLargePhone() {
     BioFitTheme {
-        lateinit var AIChatBotViewModel: AIChatbotViewModel
+        lateinit var chatBotViewModel: AIChatbotViewModel
         val userDTO = UserDTO(
             userId = 0,
             fullName = "Nguyen Van A",
@@ -367,8 +389,8 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
-        AIChatbotScreen(viewModel = AIChatBotViewModel)
+        chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
+        AIChatbotScreen(viewModel = chatBotViewModel)
     }
 }
 
@@ -382,7 +404,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
 @Composable
 private fun BioAIChatbotScreenPreviewInTablet() {
     BioFitTheme {
-        lateinit var AIChatBotViewModel: AIChatbotViewModel
+        lateinit var chatBotViewModel: AIChatbotViewModel
         val userDTO = UserDTO(
             userId = 0,
             fullName = "Nguyen Van A",
@@ -400,8 +422,8 @@ private fun BioAIChatbotScreenPreviewInTablet() {
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
-        AIChatbotScreen(viewModel = AIChatBotViewModel)
+        chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
+        AIChatbotScreen(viewModel = chatBotViewModel)
     }
 }
 
@@ -415,7 +437,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
 @Composable
 private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        lateinit var AIChatBotViewModel: AIChatbotViewModel
+        lateinit var chatBotViewModel: AIChatbotViewModel
         val userDTO = UserDTO(
             userId = 0,
             fullName = "Nguyen Van A",
@@ -433,8 +455,8 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
-        AIChatbotScreen(viewModel = AIChatBotViewModel)
+        chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
+        AIChatbotScreen(viewModel = chatBotViewModel)
     }
 }
 
@@ -447,7 +469,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        lateinit var AIChatBotViewModel: AIChatbotViewModel
+        lateinit var chatBotViewModel: AIChatbotViewModel
         val userDTO = UserDTO(
             userId = 0,
             fullName = "Nguyen Van A",
@@ -465,8 +487,8 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
-        AIChatbotScreen(viewModel = AIChatBotViewModel)
+        chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
+        AIChatbotScreen(viewModel = chatBotViewModel)
     }
 }
 
@@ -480,7 +502,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun BioAIChatbotScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        lateinit var AIChatBotViewModel: AIChatbotViewModel
+        lateinit var chatBotViewModel: AIChatbotViewModel
         val userDTO = UserDTO(
             userId = 0,
             fullName = "Nguyen Van A",
@@ -498,7 +520,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
-        AIChatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
-        AIChatbotScreen(viewModel = AIChatBotViewModel)
+        chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
+        AIChatbotScreen(viewModel = chatBotViewModel)
     }
 }

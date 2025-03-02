@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.compose)
     implementation(libs.play.services.maps)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.support.annotations)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

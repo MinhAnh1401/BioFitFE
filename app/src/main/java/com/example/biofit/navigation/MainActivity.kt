@@ -1,6 +1,7 @@
 package com.example.biofit.navigation
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,10 +49,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val userDTO: UserDTO? = intent.getParcelableExtra("USER_DATA")
+        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("USER_DATA")
+        }
         setContent {
             BioFitTheme {
-                if (userDTO != null) {
+                userDTO?.let {
                     MainScreen(userDTO = userDTO)
                 }
             }

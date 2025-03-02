@@ -3,6 +3,7 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.data.model.UserDTO
 import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.FoodItem
 import com.example.biofit.ui.components.TopBar
@@ -61,9 +63,20 @@ class TrackActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val initialSelectedOption = intent.getIntExtra("SESSION_TITLE", R.string.morning)
+        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("USER_DATA")
+        }
         setContent {
             BioFitTheme {
-                TrackScreen(initialSelectedOption)
+                userDTO?.let {
+                    TrackScreen(
+                        initialSelectedOption = initialSelectedOption,
+                        userDTO = userDTO
+                    )
+                }
             }
         }
     }
@@ -75,7 +88,10 @@ class TrackActivity : ComponentActivity() {
 }
 
 @Composable
-fun TrackScreen(initialSelectedOption: Int) {
+fun TrackScreen(
+    initialSelectedOption: Int,
+    userDTO: UserDTO
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -114,6 +130,7 @@ fun TrackScreen(initialSelectedOption: Int) {
                 onHomeClick = {
                     activity?.let {
                         val intent = Intent(it, MainActivity::class.java)
+                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -557,9 +574,22 @@ fun MenuForSession(
 )
 @Composable
 private fun TrackScreenDarkModePreviewInSmallPhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
         TrackScreen(
-            initialSelectedOption = R.string.morning
+            initialSelectedOption = R.string.morning,
+            userDTO = userDTO
         )
     }
 }
@@ -572,9 +602,22 @@ private fun TrackScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun TrackScreenPreviewInLargePhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
         TrackScreen(
-            initialSelectedOption = R.string.morning
+            initialSelectedOption = R.string.morning,
+            userDTO = userDTO
         )
     }
 }
@@ -588,9 +631,22 @@ private fun TrackScreenPreviewInLargePhone() {
 )
 @Composable
 private fun TrackScreenPreviewInTablet() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
         TrackScreen(
-            initialSelectedOption = R.string.morning
+            initialSelectedOption = R.string.morning,
+            userDTO = userDTO
         )
     }
 }
@@ -604,9 +660,22 @@ private fun TrackScreenPreviewInTablet() {
 )
 @Composable
 private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
         TrackScreen(
-            initialSelectedOption = R.string.morning
+            initialSelectedOption = R.string.morning,
+            userDTO = userDTO
         )
     }
 }
@@ -619,9 +688,22 @@ private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun TrackScreenLandscapePreviewInLargePhone() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
         TrackScreen(
-            initialSelectedOption = R.string.morning
+            initialSelectedOption = R.string.morning,
+            userDTO = userDTO
         )
     }
 }
@@ -635,9 +717,22 @@ private fun TrackScreenLandscapePreviewInLargePhone() {
 )
 @Composable
 private fun TrackScreenLandscapePreviewInTablet() {
+    val userDTO = UserDTO(
+        userId = 0,
+        fullName = "Nguyen Van A",
+        email = "anguyenvan@gmail.com",
+        gender = 0,
+        height = 170f,
+        weight = 57f,
+        targetWeight = 60f,
+        dateOfBirth = "2000-01-01",
+        avatar = null,
+        createdAccount = "2025-02-28"
+    )
     BioFitTheme {
         TrackScreen(
-            initialSelectedOption = R.string.morning
+            initialSelectedOption = R.string.morning,
+            userDTO = userDTO
         )
     }
 }

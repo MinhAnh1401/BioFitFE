@@ -46,7 +46,7 @@ fun AnimatedGradientText(
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
+            repeatMode = RepeatMode.Restart
         )
     )
 
@@ -126,7 +126,7 @@ private fun GradientTextDarkModePreview() {
         ) {
             AnimatedGradientText(
                 highlightColor = Color(0xFFAEEA00),
-                textBodyColor1 = Color(0xFFAEEA00),
+                textBodyColor1 = MaterialTheme.colorScheme.primary,
                 textBodyColor2 = MaterialTheme.colorScheme.primary,
                 text = stringResource(R.string.congratulations_you_have_completed),
                 style = MaterialTheme.typography.displaySmall
@@ -157,7 +157,7 @@ private fun GradientTextPreview() {
         ) {
             AnimatedGradientText(
                 highlightColor = Color(0xFFAEEA00),
-                textBodyColor1 = Color(0xFFAEEA00),
+                textBodyColor1 = MaterialTheme.colorScheme.primary,
                 textBodyColor2 = MaterialTheme.colorScheme.primary,
                 text = stringResource(R.string.congratulations_you_have_completed),
                 style = MaterialTheme.typography.displaySmall

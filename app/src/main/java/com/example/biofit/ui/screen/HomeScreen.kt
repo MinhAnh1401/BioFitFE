@@ -213,8 +213,9 @@ fun HomeContent(
 
         item {
             DailyMenu(
-                standardPadding,
-                modifier
+                userDTO = userDTO,
+                standardPadding = standardPadding,
+                modifier = modifier
             )
         }
 
@@ -588,6 +589,7 @@ fun RemainingCaloriesChart(
 
 @Composable
 fun DailyMenu(
+    userDTO: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -625,6 +627,7 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.morning)
+                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -649,6 +652,7 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.afternoon)
+                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -677,6 +681,7 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.evening)
+                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -701,6 +706,7 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.snack)
+                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },

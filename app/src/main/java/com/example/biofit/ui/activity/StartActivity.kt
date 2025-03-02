@@ -113,6 +113,7 @@ fun StartScreenContent(
                 top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
                 start = standardPadding,
                 end = standardPadding,
+                bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding(),
             ), // tuỳ chỉnh kích thước và vị trí của Column
         verticalArrangement = Arrangement.SpaceBetween, // sắp xếp các phần tử theo chiều dọc
         horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang

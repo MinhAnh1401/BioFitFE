@@ -38,19 +38,28 @@ fun BlinkingGradientBox(
     val infiniteTransition = rememberInfiniteTransition()
 
     val color1 by infiniteTransition.animateColor(
-        initialValue = Color(0xFFAEEA00),
-        targetValue = Color(0xFF2962FF),
+        initialValue = Color(0xFFD50000),
+        targetValue = Color(0xFF00C853),
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         )
     )
 
     val color2 by infiniteTransition.animateColor(
-        initialValue = Color(0xFF2962FF),
-        targetValue = Color(0xFFAEEA00),
+        initialValue = Color(0xFF00C853),
+        targetValue = Color(0xFF304FFE),
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val color3 by infiniteTransition.animateColor(
+        initialValue = Color(0xFF304FFE),
+        targetValue = Color(0xFFD50000),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         )
     )
@@ -64,10 +73,13 @@ fun BlinkingGradientBox(
                 shape = shape
             )
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(color1, color2),
-                    start = Offset.Zero,
-                    end = Offset.Infinite
+                brush = Brush.sweepGradient(
+                    colors = listOf(
+                        color1.copy(alpha = 0.95f),
+                        color2.copy(alpha = 0.95f),
+                        color3.copy(alpha = 0.95f)
+                    ),
+                    center = Offset.Infinite
                 )
             )
             .background(MaterialTheme.colorScheme.background.copy(alpha = alpha))
