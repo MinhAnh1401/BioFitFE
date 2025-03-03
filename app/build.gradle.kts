@@ -72,4 +72,5 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation( libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.material)
 }

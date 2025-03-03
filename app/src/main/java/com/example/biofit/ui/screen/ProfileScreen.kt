@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -25,16 +25,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +48,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.navigation.OverviewActivity
+import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
 import com.example.biofit.ui.activity.TargetActivity
 import com.example.biofit.ui.components.DefaultDialog
+import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -167,7 +166,8 @@ fun ProfileContent(
 
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.target),
@@ -175,26 +175,17 @@ fun ProfileContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Card(
-                    modifier = Modifier
-                        .padding(top = standardPadding)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                            shape = MaterialTheme.shapes.large
-                        ),
-                    shape = MaterialTheme.shapes.large,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
+                MainCard(modifier = Modifier) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(standardPadding)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(standardPadding * 2),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = stringResource(R.string.starting_weight),
@@ -210,27 +201,33 @@ fun ProfileContent(
                             )
                         }
 
+                        VerticalDivider(
+                            modifier = Modifier.height(standardPadding * 10),
+                            color = MaterialTheme.colorScheme.background
+                        )
+
                         Column(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(standardPadding * 2),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = stringResource(R.string.target_weight),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.scrim,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Text(
                                 text = "xx kg", // Thay mục tiêu cân nặng từ database
                                 modifier = Modifier.padding(top = standardPadding),
-                                color = MaterialTheme.colorScheme.onSecondary,
+                                color = MaterialTheme.colorScheme.scrim,
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
-                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                     Column(
                         modifier = Modifier.clickable {
@@ -243,7 +240,10 @@ fun ProfileContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(standardPadding),
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
@@ -269,9 +269,7 @@ fun ProfileContent(
                         }
                     }
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
-                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                     Column(
                         modifier = Modifier.clickable {
@@ -284,7 +282,10 @@ fun ProfileContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(standardPadding),
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
@@ -315,7 +316,8 @@ fun ProfileContent(
 
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.term_of_use)
@@ -325,19 +327,7 @@ fun ProfileContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Card(
-                    modifier = Modifier
-                        .padding(top = standardPadding)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                            shape = MaterialTheme.shapes.large
-                        ),
-                    shape = MaterialTheme.shapes.large,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
+                MainCard(modifier = Modifier) {
                     Column(
                         modifier = Modifier.clickable {
                             TODO()
@@ -346,7 +336,10 @@ fun ProfileContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(standardPadding),
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
@@ -372,9 +365,7 @@ fun ProfileContent(
                         }
                     }
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
-                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                     Column(
                         modifier = Modifier.clickable {
@@ -384,7 +375,10 @@ fun ProfileContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(standardPadding),
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
@@ -415,7 +409,8 @@ fun ProfileContent(
 
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.account),
@@ -423,26 +418,17 @@ fun ProfileContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Card(
-                    modifier = Modifier
-                        .padding(top = standardPadding)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                            shape = MaterialTheme.shapes.large
-                        ),
-                    shape = MaterialTheme.shapes.large,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
+                MainCard(modifier = Modifier) {
                     Column(
                         modifier = Modifier.clickable { showDeleteDataDialog = true }
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(standardPadding),
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
@@ -473,8 +459,8 @@ fun ProfileContent(
                             title = R.string.are_you_sure_you_want_to_delete_your_data,
                             description = R.string.des_delete_data,
                             actionTextButton = R.string.delete,
-                            actionTextButtonColor = MaterialTheme.colorScheme.onErrorContainer,
-                            actionButtonColor = MaterialTheme.colorScheme.errorContainer,
+                            actionTextButtonColor = MaterialTheme.colorScheme.onError,
+                            actionButtonColor = MaterialTheme.colorScheme.error,
                             onClickActionButton = {
                                 if (activity != null) {
                                     deleteData(context, activity)
@@ -485,9 +471,7 @@ fun ProfileContent(
                         )
                     }
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
-                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                     Column(
                         modifier = Modifier.clickable { showDeleteAccountDialog = true }
@@ -495,7 +479,10 @@ fun ProfileContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(standardPadding),
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
@@ -542,20 +529,18 @@ fun ProfileContent(
         }
 
         item {
-            Button(
+            ElevatedButton(
                 onClick = { showSignOutDialog = true },
                 modifier = Modifier
                     .padding(top = standardPadding)
                     .widthIn(min = standardPadding * 10),
-                shape = MaterialTheme.shapes.extraLarge,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = MaterialTheme.colorScheme.secondary
                 )
             ) {
                 Text(
                     text = stringResource(R.string.sign_out),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    style = MaterialTheme.typography.labelLarge
+                    color = MaterialTheme.colorScheme.onSecondary
                 )
             }
 

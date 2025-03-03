@@ -3,6 +3,7 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,12 +43,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.UpdateUserViewModel
@@ -57,10 +58,15 @@ class InfoUserNameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val userDTO: UserDTO? = intent.getParcelableExtra("USER_DATA")
+        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("USER_DATA")
+        }
         setContent {
             BioFitTheme {
-                if (userDTO != null) {
+                userDTO?.let {
                     InfoUserNameScreen(userDTO = userDTO)
                 }
             }
@@ -85,7 +91,6 @@ fun InfoUserNameScreen(
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
     val standardPadding = getStandardPadding().first
-    val modifier = getStandardPadding().second
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -112,15 +117,12 @@ fun InfoUserNameScreen(
                         MaterialTheme.colorScheme.secondary,
                         MaterialTheme.colorScheme.secondary
                     ),
-                    screenWidth,
-                    screenHeight,
-                    standardPadding
+                    screenWidth = screenWidth,
+                    screenHeight = screenHeight,
+                    standardPadding = standardPadding
                 )
 
-                InfoUserNameContent(
-                    standardPadding,
-                    modifier
-                )
+                InfoUserNameContent(standardPadding = standardPadding)
             }
 
             val userId = userDTO.userId
@@ -135,7 +137,7 @@ fun InfoUserNameScreen(
                         }
                     }
                 },
-                standardPadding
+                standardPadding = standardPadding
             )
         }
     }
@@ -271,7 +273,6 @@ fun ProgressIndicatorTopBarInfoScreen(
 @Composable
 fun InfoUserNameContent(
     standardPadding: Dp,
-    modifier: Modifier,
     viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
     LazyColumn(
@@ -295,30 +296,14 @@ fun InfoUserNameContent(
             OutlinedTextField(
                 value = viewModel.fullName.value ?: "",
                 onValueChange = { viewModel.fullName.value = it.ifEmpty { null } },
-                modifier = modifier,
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
-                    Text(
-                        text = stringResource(R.string.full_name),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
+                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.Center),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Go
                 ),
+                keyboardActions = KeyboardActions(onGo = { /*TODO*/ }),
                 singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                shape = MaterialTheme.shapes.large
             )
         }
 

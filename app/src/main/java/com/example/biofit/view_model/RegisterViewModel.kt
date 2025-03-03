@@ -5,8 +5,8 @@ import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.RegisterRequest
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.RegisterRequest
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.ui.activity.InfoUserNameActivity
 import retrofit2.Call

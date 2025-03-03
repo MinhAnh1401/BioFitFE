@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,9 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.navigation.MainActivity
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
@@ -136,18 +133,8 @@ fun CalorieTodayContent(
                     horizontalArrangement = Arrangement.spacedBy(standardPadding),
                 ) {
                     consumeAndBurn.forEach { (title, value) ->
-                        Card(
-                            modifier = Modifier
-                                .weight(0.5f)
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                    shape = MaterialTheme.shapes.extraLarge
-                                ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
+                        SubCard(
+                            modifier = Modifier.weight(0.5f)
                         ) {
                             Column(
                                 modifier = Modifier.padding(standardPadding * 2),
@@ -175,18 +162,8 @@ fun CalorieTodayContent(
                     }
                 }
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                            shape = MaterialTheme.shapes.extraLarge
-                        ),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
+                SubCard(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(
                         modifier = Modifier.padding(standardPadding * 2),

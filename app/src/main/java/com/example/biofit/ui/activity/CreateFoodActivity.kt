@@ -23,15 +23,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,10 +41,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -139,6 +141,8 @@ fun CreateFoodContent(
     var fat by rememberSaveable { mutableStateOf("") }
     var sodium by rememberSaveable { mutableStateOf("") }
 
+    val focusManager = LocalFocusManager.current
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
     ) {
@@ -195,107 +199,84 @@ fun CreateFoodContent(
                 )
 
                 Column(
-                    modifier = Modifier.padding(standardPadding)
+                    modifier = Modifier.padding(standardPadding),
+                    verticalArrangement = Arrangement.spacedBy(standardPadding)
                 ) {
-                    TextField(
+                    OutlinedTextField(
                         value = foodName,
                         onValueChange = { foodName = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.enter_food_name),
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                                 textAlign = TextAlign.End,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         prefix = {
                             Text(
                                 text = stringResource(R.string.food_name) + "*",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { /*TODO*/ },
-                            onGo = { /*TODO*/ },
-                            onNext = { /*TODO*/ },
-                            onPrevious = { /*TODO*/ },
-                            onSearch = { /*TODO*/ },
-                            onSend = { /*TODO*/ }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        ),
+                        shape = MaterialTheme.shapes.large
                     )
 
-                    TextField(
+                    OutlinedTextField(
                         value = servingSize,
                         onValueChange = { servingSize = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.enter_serving_size),
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                                 textAlign = TextAlign.End,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         prefix = {
                             Text(
                                 text = stringResource(R.string.serving_size),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        ),
+                        shape = MaterialTheme.shapes.large
                     )
 
-                    TextField(
+                    OutlinedTextField(
                         value = mass,
                         onValueChange = { mass = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(R.string.mass),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         trailingIcon = {
@@ -303,34 +284,25 @@ fun CreateFoodContent(
                                 Image(
                                     painter = painterResource(R.drawable.btn_back),
                                     contentDescription = stringResource(R.string.unit_of_measure),
-                                    modifier = Modifier.rotate(180f)
+                                    modifier = Modifier.rotate(270f)
                                 )
                             }
                         },
                         suffix = {
                             Text(
                                 text = selectedUnitMeasure,
-                                color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        ),
+                        shape = MaterialTheme.shapes.large
                     )
 
                     if (showUnitDialog) {
@@ -350,209 +322,152 @@ fun CreateFoodContent(
                         )
                     }
 
-                    TextField(
+                    OutlinedTextField(
                         value = calories,
                         onValueChange = { calories = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(R.string.calories) + "*",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         suffix = {
                             Text(
                                 text = "kcal",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        )
+                        shape = MaterialTheme.shapes.large
                     )
 
-                    TextField(
+                    OutlinedTextField(
                         value = protein,
                         onValueChange = { protein = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(R.string.protein),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         suffix = {
                             Text(
                                 text = stringResource(R.string.gram),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        )
+                        shape = MaterialTheme.shapes.large
                     )
 
-                    TextField(
+                    OutlinedTextField(
                         value = carb,
                         onValueChange = { carb = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(R.string.carbohydrate),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         suffix = {
                             Text(
                                 text = stringResource(R.string.gram),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        )
+                        shape = MaterialTheme.shapes.large
                     )
 
-                    TextField(
+                    OutlinedTextField(
                         value = fat,
                         onValueChange = { fat = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(R.string.fat),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         suffix = {
                             Text(
                                 text = stringResource(R.string.gram),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        )
+                        shape = MaterialTheme.shapes.large
                     )
 
-                    TextField(
+                    OutlinedTextField(
                         value = sodium,
                         onValueChange = { sodium = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(R.string.sodium),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         suffix = {
                             Text(
                                 text = stringResource(R.string.milligram),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Go
                         ),
+                        keyboardActions = KeyboardActions(onGo = { TODO() }),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        )
+                        shape = MaterialTheme.shapes.large
                     )
                 }
             }
@@ -563,14 +478,15 @@ fun CreateFoodContent(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(
+                ElevatedButton(
                     onClick = { activity?.finish() },
-                    shape = MaterialTheme.shapes.extraLarge
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Text(
                         text = stringResource(R.string.save_food),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.labelLarge
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }

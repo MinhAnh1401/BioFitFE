@@ -111,6 +111,9 @@ fun MealsDetailScreen() {
                     ),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 10.dp
                     )
                 ) {
                     Column(

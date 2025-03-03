@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -36,9 +37,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
@@ -152,7 +156,7 @@ fun ExerciseContent(
                     style = MaterialTheme.typography.bodySmall
                 )
             },
-            leadingIcon = {
+            trailingIcon = {
                 IconButton(
                     onClick = { TODO() }
                 ) {
@@ -163,23 +167,19 @@ fun ExerciseContent(
                     )
                 }
             },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Search
+            ),
             keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
+                onSearch = { /*TODO*/ }
             ),
             singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = MaterialTheme.shapes.large,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
+                unfocusedBorderColor = Color.Transparent
             )
         )
 

@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,13 +20,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,15 +38,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.navigation.MainActivity
+import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.screen.PlanningHeaderBar
@@ -121,6 +123,8 @@ fun CreatePlanningScreenContent(
     var intensity by rememberSaveable { mutableStateOf(value = "") }
     var showIntensityDialog by rememberSaveable { mutableStateOf(value = false) }
 
+    val focusManager = LocalFocusManager.current
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
@@ -148,17 +152,9 @@ fun CreatePlanningScreenContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Card(
+                ItemCard(
                     onClick = { showGoalDialog = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.Transparent
-                    ),
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline
-                    )
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
                         modifier = Modifier
@@ -233,7 +229,6 @@ fun CreatePlanningScreenContent(
                     placeholder = {
                         Text(
                             text = stringResource(R.string.enter_number_of_days),
-                            color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
@@ -244,15 +239,17 @@ fun CreatePlanningScreenContent(
                             } else {
                                 stringResource(R.string.days).lowercase()
                             },
-                            color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    ),
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }
@@ -268,17 +265,9 @@ fun CreatePlanningScreenContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Card(
+                ItemCard(
                     onClick = { showDietDialog = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.Transparent
-                    ),
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline
-                    )
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
                         modifier = Modifier
@@ -419,17 +408,9 @@ fun CreatePlanningScreenContent(
                     )
                 }*/
 
-                Card(
+                ItemCard(
                     onClick = { showIntensityDialog = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.Transparent
-                    ),
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline
-                    )
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
                         modifier = Modifier
@@ -501,7 +482,7 @@ fun CreatePlanningScreenContent(
                 val medium = stringResource(R.string.medium)
                 val high = stringResource(R.string.high)
 
-                Button(
+                ElevatedButton(
                     onClick = {
                         activity?.let {
                             val intent = Intent(it, MainActivity::class.java)
@@ -509,12 +490,13 @@ fun CreatePlanningScreenContent(
                         }
                     },
                     modifier = Modifier.widthIn(min = standardPadding * 10),
-                    shape = MaterialTheme.shapes.extraLarge
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Text(
                         text = stringResource(R.string.start_plan),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.labelLarge
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }

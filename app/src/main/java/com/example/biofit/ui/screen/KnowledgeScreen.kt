@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,8 +26,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,11 +43,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
 import com.example.biofit.ui.activity.KnowledgeVideoActivity
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -357,20 +354,12 @@ fun ArticleThumbnail(
 ) {
     val context = LocalContext.current
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
-                context.startActivity(intent)
-            }
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                shape = MaterialTheme.shapes.extraLarge
-            ),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    SubCard(
+        onClick = {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
+            context.startActivity(intent)
+        },
+        modifier = Modifier.fillMaxWidth()
     ) {
         AsyncImage(
             model = article.imageUrl,

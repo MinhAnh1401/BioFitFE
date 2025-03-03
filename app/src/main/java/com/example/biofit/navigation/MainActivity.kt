@@ -28,14 +28,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.biofit.R
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.ui.components.ActionPopup
 import com.example.biofit.ui.components.BottomBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -114,7 +116,13 @@ fun MainScreen(userDTO: UserDTO) {
                 ) {
                     AnimatedVisibility(
                         visible = showPopup,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primary),
+                        modifier = Modifier
+                            .shadow(
+                                elevation = 10.dp,
+                                ambientColor = MaterialTheme.colorScheme.onBackground,
+                                spotColor = MaterialTheme.colorScheme.onBackground
+                            )
+                            .background(MaterialTheme.colorScheme.primary),
                         enter = slideInVertically { it } + fadeIn() + expandVertically(),
                         exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
                     ) {

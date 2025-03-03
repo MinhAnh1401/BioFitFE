@@ -6,7 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val DarkColors = darkColorScheme(
+private val DarkColorScheme = darkColorScheme(
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,
     primaryContainer = DarkPrimaryContainer,
@@ -24,7 +24,7 @@ private val DarkColors = darkColorScheme(
     onErrorContainer = DarkOnErrorContainer
 )
 
-private val LightColors = lightColorScheme(
+private val LightColorScheme = lightColorScheme(
     primary = LightPrimary,
     onPrimary = LightOnPrimary,
     primaryContainer = LightPrimaryContainer,
@@ -47,14 +47,13 @@ fun BioFitTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        DarkColors
-    } else {
-        LightColors
+    val colorScheme = when {
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
     MaterialTheme(
-        colorScheme = colors,
+        colorScheme = colorScheme,
         typography = Typography,
         content = content
     )

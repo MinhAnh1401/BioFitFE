@@ -282,4 +282,8 @@
     <string name="registration_failed">Đăng ký không thành công</string>
     <string name="please_enter_a_valid_email">Vui lòng nhập email hợp lệ.</string>
     <string name="password_must_contain_at_least_8_characters_one_uppercase_letter_one_lowercase_letter_and_one_number">Mật khẩu phải chứa ít nhất 8 ký tự, một chữ cái viết hoa, một chữ cái viết thường và một số.</string>
+    <string name="select_session">Chọn buổi</string>
+    <string name="enter_mass">Nhập khối lượng</string>
+    <string name="enter_calorie_intake">Nhập lượng calo nạp vào</string>
+    <string name="please_select_a_goal_before_weekly_goal">Vui lòng chọn mục tiêu trước mục tiêu tuần</string>
 </resources>

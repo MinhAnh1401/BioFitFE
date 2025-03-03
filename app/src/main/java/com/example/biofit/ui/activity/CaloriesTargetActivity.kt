@@ -21,11 +21,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,9 +32,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -125,12 +126,15 @@ fun CaloriesTargetContent(
 ) {
     var calorieIntake by rememberSaveable { mutableStateOf("") }
 
+    val focusManager = LocalFocusManager.current
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
     ) {
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.daily_calorie_intake),
@@ -138,38 +142,36 @@ fun CaloriesTargetContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = calorieIntake,
                     onValueChange = { calorieIntake = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.End
                     ),
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.enter_calorie_intake),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
                     prefix = {
                         Text(
                             text = stringResource(R.string.calorie_intake),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }
@@ -185,7 +187,8 @@ fun CaloriesTargetContent(
             )
 
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.macronutrient_balance),
@@ -194,45 +197,39 @@ fun CaloriesTargetContent(
                 )
 
                 listMacronutrientBalanceTextFields.forEach { (percentage, title) ->
-                    TextField(
+                    OutlinedTextField(
                         value = percentage.value,
                         onValueChange = { percentage.value = it },
                         modifier = modifier,
                         textStyle = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.End
                         ),
                         prefix = {
                             Text(
                                 text = stringResource(title),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.outline
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         suffix = {
                             Text(
                                 text = stringResource(R.string.percentage),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = if (title == R.string.fat) {
+                                ImeAction.Go
+                            } else {
+                                ImeAction.Next
+                            }
+                        ),
                         keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                            onGo = { TODO() }
                         ),
                         singleLine = true,
-                        maxLines = 1,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                        )
+                        shape = MaterialTheme.shapes.large
                     )
                 }
             }

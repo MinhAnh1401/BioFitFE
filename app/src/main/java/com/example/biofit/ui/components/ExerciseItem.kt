@@ -2,14 +2,12 @@ package com.example.biofit.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -42,6 +39,7 @@ fun ExerciseItem(
             Text(
                 text = exercise,
                 modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall
             )
 
@@ -54,9 +52,7 @@ fun ExerciseItem(
             )
         }
 
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-        )
+        HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
     }
 }
 
@@ -68,16 +64,9 @@ fun OverviewExerciseCard(
     onClick: () -> Unit,
     standardPadding: Dp
 ) {
-    Card(
+    ItemCard(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                shape = MaterialTheme.shapes.large
-            ),
-        shape = MaterialTheme.shapes.large
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.padding(standardPadding),
@@ -89,14 +78,14 @@ fun OverviewExerciseCard(
             ) {
                 Text(
                     text = exerciseName,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleSmall
                 )
 
                 Text(
                     text = "$time ${stringResource(R.string.min)}, " +
                             "$calories ${stringResource(R.string.cal)}",
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -110,11 +99,17 @@ fun OverviewExerciseCard(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_UNDEFINED)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_UNDEFINED,
+    showBackground = true
+)
 @Composable
 private fun ExerciseItemDarkModePreview() {
     BioFitTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(getStandardPadding().first)) {
+        Column(
+            modifier = Modifier.padding(getStandardPadding().first),
+            verticalArrangement = Arrangement.spacedBy(getStandardPadding().first)
+        ) {
             ExerciseItem(
                 exercise = "Exercise 1",
                 onClick = {},
@@ -133,11 +128,14 @@ private fun ExerciseItemDarkModePreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun ExerciseItemPreview() {
     BioFitTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(getStandardPadding().first)) {
+        Column(
+            modifier = Modifier.padding(getStandardPadding().first),
+            verticalArrangement = Arrangement.spacedBy(getStandardPadding().first)
+        ) {
             ExerciseItem(
                 exercise = "Exercise 1",
                 onClick = {},

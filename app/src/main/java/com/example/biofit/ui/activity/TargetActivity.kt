@@ -24,11 +24,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,16 +37,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.navigation.MainActivity
+import com.example.biofit.ui.components.DefaultDialog
+import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -133,23 +136,17 @@ fun TargetContent(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val defaultGoal = stringResource(R.string.muscle_gain)
-    var goal by rememberSaveable { mutableStateOf(defaultGoal) }
+    var goal by rememberSaveable { mutableStateOf("") }
     var showGoalDialog by rememberSaveable { mutableStateOf(false) }
     var protein by rememberSaveable { mutableStateOf("") }
     var carb by rememberSaveable { mutableStateOf("") }
-    val defaultGainWeek = stringResource(R.string.gain_025_kg_week)
-    val defaultLossWeek = stringResource(R.string.lose_025_kg_week)
-    var weeklyGoal by rememberSaveable {
-        mutableStateOf(if (goal == defaultGoal) defaultGainWeek else defaultLossWeek)
-    }
+    var weeklyGoal by rememberSaveable { mutableStateOf("") }
     var showWeeklyGoalDialog by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(goal) {
-        weeklyGoal = if (goal == defaultGoal) defaultGainWeek else defaultLossWeek
-    }
-    val defaultIntensityOfExercise = stringResource(R.string.hard_working)
-    var intensityOfExercise by rememberSaveable { mutableStateOf(defaultIntensityOfExercise) }
+    var showErrorWeeklyDialog by rememberSaveable { mutableStateOf(false) }
+    var intensityOfExercise by rememberSaveable { mutableStateOf("") }
     var showIntensityOfExerciseDialog by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(goal) { weeklyGoal = "" }
 
 
     val nutritionTargetList = listOf(
@@ -162,12 +159,15 @@ fun TargetContent(
     var targetWater by rememberSaveable { mutableStateOf("0") }
     var healthyDiet by rememberSaveable { mutableStateOf("0") }
 
+    val focusManager = LocalFocusManager.current
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
     ) {
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.weight),
@@ -175,49 +175,43 @@ fun TargetContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                TextField(
-                    value = goal,
-                    onValueChange = { goal = it },
-                    modifier = modifier,
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
+                ItemCard(
+                    onClick = { showGoalDialog = true },
+                    modifier = modifier
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = standardPadding,
+                                vertical = standardPadding / 4
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = stringResource(R.string.your_goal),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            text = if (goal == "") {
+                                stringResource(R.string.select_goal)
+                            } else {
+                                goal
+                            },
+                            modifier = Modifier.weight(1f),
+                            color = if (goal == "") {
+                                MaterialTheme.colorScheme.outline
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
+                            style = MaterialTheme.typography.bodySmall
                         )
-                    },
-                    trailingIcon = {
+
                         IconButton(onClick = { showGoalDialog = true }) {
                             Image(
                                 painter = painterResource(R.drawable.btn_back),
-                                contentDescription = stringResource(R.string.your_goal),
-                                modifier = Modifier.rotate(180f)
+                                contentDescription = stringResource(R.string.goals),
+                                modifier = Modifier.rotate(270f)
                             )
                         }
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                )
+                    }
+                }
 
                 if (showGoalDialog) {
                     SelectionDialog(
@@ -236,131 +230,109 @@ fun TargetContent(
                     )
                 }
 
-                TextField(
+                OutlinedTextField(
                     value = protein,
                     onValueChange = { protein = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.protein),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.percentage),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = carb,
                     onValueChange = { carb = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.carbohydrate),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.percentage),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
 
-                TextField(
-                    value = weeklyGoal,
-                    onValueChange = { weeklyGoal = it },
-                    modifier = modifier,
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.weekly_goal),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
+                ItemCard(
+                    onClick = {
+                        if (goal == "") {
+                            showErrorWeeklyDialog = true
+                        } else {
+                            showWeeklyGoalDialog = true
+                        }
                     },
-                    trailingIcon = {
+                    modifier = modifier
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = standardPadding,
+                                vertical = standardPadding / 4
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (weeklyGoal == "") {
+                                stringResource(R.string.select_weekly_goal)
+                            } else {
+                                weeklyGoal
+                            },
+                            modifier = Modifier.weight(1f),
+                            color = if (weeklyGoal == "") {
+                                MaterialTheme.colorScheme.outline
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
                         IconButton(onClick = { showWeeklyGoalDialog = true }) {
                             Image(
                                 painter = painterResource(R.drawable.btn_back),
                                 contentDescription = stringResource(R.string.weekly_goal),
-                                modifier = Modifier.rotate(180f)
+                                modifier = Modifier.rotate(270f)
                             )
                         }
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                )
+                    }
+                }
 
                 if (showWeeklyGoalDialog) {
                     SelectionDialog(
@@ -390,49 +362,55 @@ fun TargetContent(
                     )
                 }
 
-                TextField(
-                    value = intensityOfExercise,
-                    onValueChange = { intensityOfExercise = it },
-                    modifier = modifier,
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
+                if (showErrorWeeklyDialog) {
+                    DefaultDialog(
+                        title = R.string.please_select_a_goal_before_weekly_goal,
+                        actionTextButton = R.string.ok,
+                        actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
+                        actionButtonColor = MaterialTheme.colorScheme.primary,
+                        onClickActionButton = { showErrorWeeklyDialog = false },
+                        onDismissRequest = { showErrorWeeklyDialog = false },
+                        standardPadding = standardPadding
+                    )
+                }
+
+                ItemCard(
+                    onClick = { showIntensityOfExerciseDialog = true },
+                    modifier = modifier
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = standardPadding,
+                                vertical = standardPadding / 4
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = stringResource(R.string.intensity_of_exercise),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            text = if (intensityOfExercise == "") {
+                                stringResource(R.string.select_intensity)
+                            } else {
+                                intensityOfExercise
+                            },
+                            modifier = Modifier.weight(1f),
+                            color = if (intensityOfExercise == "") {
+                                MaterialTheme.colorScheme.outline
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
+                            style = MaterialTheme.typography.bodySmall
                         )
-                    },
-                    trailingIcon = {
+
                         IconButton(onClick = { showIntensityOfExerciseDialog = true }) {
                             Image(
                                 painter = painterResource(R.drawable.btn_back),
                                 contentDescription = stringResource(R.string.intensity_of_exercise),
-                                modifier = Modifier.rotate(180f)
+                                modifier = Modifier.rotate(270f)
                             )
                         }
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                )
+                    }
+                }
 
                 if (showIntensityOfExerciseDialog) {
                     SelectionDialog(
@@ -511,7 +489,8 @@ fun TargetContent(
 
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.exercise) + "*",
@@ -519,52 +498,42 @@ fun TargetContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = caloriesDuringExercise,
                     onValueChange = { caloriesDuringExercise = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.calories_during_exercise),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.kcal),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) },
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }
 
         item {
             Column(
-                modifier = modifier
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.drinking_water) + "*",
@@ -572,86 +541,62 @@ fun TargetContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = targetWater,
                     onValueChange = { targetWater = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.target),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.ml),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = healthyDiet,
                     onValueChange = { healthyDiet = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.healthy_diet),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.ml),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Go
                     ),
+                    keyboardActions = KeyboardActions(onGo = { TODO() }),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.example.biofit.data.model
+package com.example.biofit.data.dto
 
 import android.content.Context
 import android.os.Parcelable

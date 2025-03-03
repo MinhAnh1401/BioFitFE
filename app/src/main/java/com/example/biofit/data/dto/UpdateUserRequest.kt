@@ -1,4 +1,4 @@
-package com.example.biofit.data.model
+package com.example.biofit.data.dto
 
 data class UpdateUserRequest(
     val fullName: String?,

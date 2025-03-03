@@ -50,12 +50,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.model.ChatBotModel
-import com.example.biofit.data.model.UserDTO
 import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
@@ -199,12 +200,12 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                     OutlinedTextField(
                         value = userInput,
                         onValueChange = { userInput = it },
-                        textStyle = MaterialTheme.typography.bodyMedium,
+                        textStyle = MaterialTheme.typography.bodySmall,
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.enter_message),
-                                color = MaterialTheme.colorScheme.outline,
-                                style = MaterialTheme.typography.bodyMedium
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         },
                         trailingIcon = {
@@ -234,10 +235,8 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                                 keyboardController?.hide()
                             }
                         ),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.large,
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
                             unfocusedContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent,

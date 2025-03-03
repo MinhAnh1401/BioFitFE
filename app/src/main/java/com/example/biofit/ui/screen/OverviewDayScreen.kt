@@ -2,7 +2,6 @@ package com.example.biofit.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -28,13 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.navigation.DailyCountChart
 import com.example.biofit.navigation.getDailyCalories
 import com.example.biofit.navigation.getDailyMacroTable
 import com.example.biofit.navigation.getPercentages
 import com.example.biofit.ui.components.CalendarSelector
+import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import java.math.RoundingMode
@@ -48,7 +48,7 @@ fun OverviewDayScreen() {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -58,10 +58,12 @@ fun OverviewDayScreen() {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OverviewDayContent(
-                standardPadding,
-                modifier
-            )
+            item {
+                OverviewDayContent(
+                    standardPadding,
+                    modifier
+                )
+            }
         }
     }
 }
@@ -99,21 +101,9 @@ fun OverviewDayContent(
             modifier = modifier
         )
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                    shape = MaterialTheme.shapes.extraLarge
-                ),
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
+        MainCard(modifier = Modifier.fillMaxWidth()) {
             Column(
-                modifier = Modifier.padding(standardPadding),
+                modifier = Modifier.padding(standardPadding * 2),
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
@@ -219,28 +209,16 @@ fun OverviewDayContent(
             }
         }
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                    shape = MaterialTheme.shapes.extraLarge
-                ),
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
+        MainCard(modifier = Modifier.fillMaxWidth()) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
                 Text(
                     text = stringResource(R.string.daily_marco_count),
                     modifier = Modifier.padding(
-                        top = standardPadding,
-                        start = standardPadding,
-                        end = standardPadding
+                        top = standardPadding * 2,
+                        start = standardPadding * 2,
+                        end = standardPadding * 2
                     ),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleSmall
@@ -292,7 +270,7 @@ fun OverviewDayContent(
                     )
                 }
 
-                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.25f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                 dailyMacroTable.forEachIndexed { index, (icon, title, value, targetValue) ->
                     Column(
@@ -354,9 +332,7 @@ fun OverviewDayContent(
                         }
 
                         if (index != dailyMacroTable.lastIndex) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.25f)
-                            )
+                            HorizontalDivider(color = MaterialTheme.colorScheme.background)
                         } else {
                             Spacer(modifier = Modifier.height(standardPadding / 2))
                         }

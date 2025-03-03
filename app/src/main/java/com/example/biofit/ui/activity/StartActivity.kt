@@ -20,7 +20,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -235,17 +236,17 @@ fun GetStartedButton(
     standardPadding: Dp
 ) {
     // GET STARTED button
-    Button(
+    ElevatedButton(
         onClick = onCLick, // xử lý sự kiện khi nút được nhấn
         // modifier = Modifier, // tuỳ chỉnh kích thước và vị trí của nút
         // enabled = true, // trạng thái kích hoạt của nút (mặc định true)
-        shape = MaterialTheme.shapes.extraLarge, // hình dạng của nút
-        /* colors = ButtonDefaults.buttonColors(
-            // containerColor = MaterialTheme.colorScheme.primary, // màu nền của nút (mặc định màu primary)
+        // shape = MaterialTheme.shapes.extraLarge, // hình dạng của nút
+         colors = ButtonDefaults.buttonColors(
+             containerColor = MaterialTheme.colorScheme.primary, // màu nền của nút (mặc định màu primary)
             // contentColor = MaterialTheme.colorScheme.onPrimary, // màu của nội dung bên trong nút (mặc định màu onPrimary)
             // disabledContainerColor: màu nền của nút khi vô hiệu hóa
             // disabledContentColor: màu của nội dung bên trong nút khi vô hiệu hóa
-        ), // cấu hình màu của nút */
+        ), // cấu hình màu của nút
         /* elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 16.dp, // độ cao của nút
             pressedElevation = 8.dp, // độ cao khi nút được nhấn
@@ -258,12 +259,7 @@ fun GetStartedButton(
         // contentPadding = PaddingValues(), // quy định khoảng cách giữa nội dung và viền của nút
         // interactionSource = MutableInteractionSource(), // đối tượng lưu trữ trạng thái tương tác của nút
     ) {
-        Text(
-            text = stringResource(R.string.get_started),
-            modifier = Modifier.padding(horizontal = standardPadding * 2),
-            color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.labelLarge
-        )
+        Text(text = stringResource(R.string.get_started))
     } // nội dung bên trong nút thường là Text hoặc Icon
 }
 

@@ -18,11 +18,11 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,8 +33,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -131,6 +134,7 @@ fun RegisterForm(
     ) {
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
         var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
+        val focusManager = LocalFocusManager.current
 
         OutlinedTextField(
             value = viewModel.email.value,
@@ -139,47 +143,39 @@ fun RegisterForm(
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
-                    stringResource(R.string.email),
+                    text = stringResource(R.string.email),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
             placeholder = {
                 Text(
-                    stringResource(R.string.biofit_example_com),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
+                    text = stringResource(R.string.biofit_example_com),
+                    style = MaterialTheme.typography.bodySmall
                 )
             },
-            isError = false,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
             keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
+                onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                onDone = { focusManager.clearFocus() },
             ),
             singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            shape = MaterialTheme.shapes.large
         )
 
         OutlinedTextField(
             value = viewModel.password.value,
             onValueChange = { viewModel.password.value = it },
             modifier = modifier2.padding(top = standardPadding),
-            textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
-                    stringResource(R.string.password),
+                    text = stringResource(R.string.password),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
+            textStyle = MaterialTheme.typography.bodySmall,
             trailingIcon = {
                 Checkbox(
                     checked = passwordVisible,
@@ -189,32 +185,25 @@ fun RegisterForm(
             },
             supportingText = {
                 Text(
-                    stringResource(R.string.min_8_chars_upper_lower_numbers),
+                    text = stringResource(R.string.min_8_chars_upper_lower_numbers),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
-            isError = false,
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
             } else {
                 PasswordVisualTransformation()
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            ),
             keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
+                onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                onDone = { focusManager.clearFocus() },
             ),
             singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            shape = MaterialTheme.shapes.large
         )
 
         OutlinedTextField(
@@ -224,7 +213,7 @@ fun RegisterForm(
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
-                    stringResource(R.string.confirm_password),
+                    text = stringResource(R.string.confirm_password),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
@@ -238,43 +227,35 @@ fun RegisterForm(
             supportingText = {
                 Text(
                     stringResource(R.string.re_enter_password),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall
                 )
             },
-            isError = false,
             visualTransformation = if (confirmPasswordVisible) {
                 VisualTransformation.None
             } else {
                 PasswordVisualTransformation()
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            shape = MaterialTheme.shapes.large
         )
 
         val context = LocalContext.current
 
-        Button(
+        ElevatedButton(
             onClick = { viewModel.registerUser(context) },
             modifier = Modifier.padding(vertical = standardPadding),
-            shape = MaterialTheme.shapes.extraLarge,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
         ) {
             Text(
                 text = stringResource(R.string.sign_up_uppercase),
-                style = MaterialTheme.typography.labelLarge
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
 

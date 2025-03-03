@@ -2,6 +2,7 @@ package com.example.biofit.data.model
 
 import android.content.Context
 import com.example.biofit.R
+import com.example.biofit.data.dto.UserDTO
 import com.google.ai.client.generativeai.GenerativeModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

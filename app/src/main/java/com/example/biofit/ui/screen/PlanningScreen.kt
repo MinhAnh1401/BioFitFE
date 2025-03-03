@@ -9,24 +9,26 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +62,8 @@ import com.example.biofit.ui.activity.EditExerciseActivity
 import com.example.biofit.ui.activity.ExerciseViewActivity
 import com.example.biofit.ui.activity.MealsListActivity
 import com.example.biofit.ui.components.CalendarSelector
+import com.example.biofit.ui.components.ItemCard
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -617,20 +621,20 @@ fun CaloriesLineChart(
     ) {
         Text(
             text = stringResource(R.string.calories),
-            modifier = Modifier.padding(standardPadding),
+            modifier = Modifier.padding(standardPadding * 2),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge
         )
 
         Text(
             text = "1200kcal",
-            modifier = Modifier.padding(horizontal = standardPadding),
+            modifier = Modifier.padding(horizontal = standardPadding * 2),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.displaySmall
         )
 
         Row(
-            modifier = Modifier.padding(horizontal = standardPadding)
+            modifier = Modifier.padding(horizontal = standardPadding * 2)
         ) {
             Text(
                 text = stringResource(R.string.today) + " ",
@@ -648,7 +652,7 @@ fun CaloriesLineChart(
         Chart(
             chart = lineChart,
             model = chartEntryModel.getModel(),
-            modifier = Modifier.padding(standardPadding),
+            modifier = Modifier.padding(standardPadding * 2),
             bottomAxis = rememberBottomAxis(
                 label = textComponent(
                     color = MaterialTheme.colorScheme.onBackground,
@@ -672,19 +676,9 @@ fun WellnessTrackerCard(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    Card(
+    SubCard(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                shape = MaterialTheme.shapes.extraLarge
-            ),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier = modifier
@@ -732,34 +726,28 @@ fun SuggestedMeals(
     suggestedMeals: List<String>,
     standardPadding: Dp
 ) {
-    Column(
-        modifier = Modifier.padding(standardPadding),
-        verticalArrangement = Arrangement.spacedBy(standardPadding)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(standardPadding)) {
         Text(
             text = stringResource(suggestedMealsSession),
+            modifier = Modifier.padding(standardPadding),
             color = MaterialTheme.colorScheme.outline,
             style = MaterialTheme.typography.bodySmall.copy(
                 fontWeight = FontWeight.Bold
             )
         )
 
-        Image(
-            painter = painterResource(suggestedMealsImg),
-            contentDescription = "Suggested meals",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.extraLarge)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                    shape = MaterialTheme.shapes.extraLarge
-                ),
-            contentScale = ContentScale.Crop
-        )
+        SubCard(modifier = Modifier.padding(horizontal = standardPadding)) {
+            Image(
+                painter = painterResource(suggestedMealsImg),
+                contentDescription = "Suggested meals",
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Text(
             text = suggestedMeals.joinToString(),
+            modifier = Modifier.padding(standardPadding),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleSmall
         )
@@ -788,54 +776,59 @@ fun WorkoutSuggestion(
             )
         )
 
-        Card(
-            onClick = onClickCard,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                    shape = MaterialTheme.shapes.large
-                ),
-            shape = MaterialTheme.shapes.large,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
+        Row(
+            modifier = Modifier.height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.padding(standardPadding),
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
-                verticalAlignment = Alignment.CenterVertically
+            ItemCard(
+                onClick = onClickCard,
+                modifier = Modifier.weight(1f)
             ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = exerciseName,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(standardPadding),
+                        verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
+                    ) {
+                        Text(
+                            text = exerciseName,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleSmall
+                        )
 
-                    Text(
-                        text = "${time}min, ${calories}kcal, ${stringResource(R.string.intensity)}" +
-                                ": ${stringResource(intensity)}",
-                        color = MaterialTheme.colorScheme.outline,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                        Text(
+                            text = "${time}min, ${calories}kcal, ${stringResource(R.string.intensity)}" +
+                                    ": ${stringResource(intensity)}",
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
 
-                Button(
-                    onClick = onClickButton,
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text(
-                        text = stringResource(R.string.start),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                    ElevatedButton(
+                        onClick = onClickButton,
+                        shape = MaterialTheme.shapes.large.copy(
+                            topStart = CornerSize(0f),
+                            bottomStart = CornerSize(0f)
+                        ),
+                        modifier = Modifier.fillMaxHeight(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.start),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 }
             }
+
+
         }
     }
 }

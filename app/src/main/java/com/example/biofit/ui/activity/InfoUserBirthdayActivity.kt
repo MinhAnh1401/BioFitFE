@@ -1,6 +1,7 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -10,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -18,14 +20,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,13 +38,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import java.util.Calendar
 
 class InfoUserBirthdayActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,10 +130,6 @@ fun InfoUserBirthdayContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    var day by rememberSaveable { mutableStateOf("") }
-    var month by rememberSaveable { mutableStateOf("") }
-    var year by rememberSaveable { mutableStateOf("") }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -156,95 +156,59 @@ fun InfoUserBirthdayContent(
         }
 
         item {
-            OutlinedTextField(
-                value = day,
-                onValueChange = { day = it },
-                modifier = modifier,
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
-                    Text(
-                        text = stringResource(R.string.date_of_birth),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
-                ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
+            var dateOfBirth by rememberSaveable { mutableStateOf("") }
+            var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
-            OutlinedTextField(
-                value = month,
-                onValueChange = { month = it },
-                modifier = modifier.padding(top = standardPadding),
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
+            ItemCard(
+                onClick = { showDatePicker = true },
+                modifier = modifier
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = standardPadding, vertical = standardPadding / 4),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = stringResource(R.string.month),
+                        text = dateOfBirth.ifEmpty {
+                            stringResource(R.string.select_date_of_birth)
+                        },
+                        modifier = Modifier.weight(1f),
+                        color = if (dateOfBirth.isEmpty()) {
+                            MaterialTheme.colorScheme.outline
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        },
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall
                     )
-                },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
-                ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
 
-            OutlinedTextField(
-                value = year,
-                onValueChange = { year = it },
-                modifier = modifier.padding(top = standardPadding),
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
-                    Text(
-                        text = stringResource(R.string.year),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
-                ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = stringResource(R.string.date_of_birth),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+
+            if (showDatePicker) {
+                val context = LocalContext.current
+                val calendar = Calendar.getInstance()
+                LaunchedEffect(Unit) {
+                    DatePickerDialog(
+                        context,
+                        { _, selectedYear, selectedMonth, selectedDay ->
+                            dateOfBirth = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                            showDatePicker = false
+                        },
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                    ).show()
+                }
+            }
         }
 
         item {

@@ -1,9 +1,9 @@
 package com.example.biofit.data.remote
 
-import com.example.biofit.data.model.LoginRequest
-import com.example.biofit.data.model.RegisterRequest
-import com.example.biofit.data.model.UpdateUserRequest
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.LoginRequest
+import com.example.biofit.data.dto.RegisterRequest
+import com.example.biofit.data.dto.UpdateUserRequest
+import com.example.biofit.data.dto.UserDTO
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

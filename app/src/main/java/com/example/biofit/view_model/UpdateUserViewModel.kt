@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.UpdateUserRequest
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.UpdateUserRequest
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.remote.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback

@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -163,17 +163,17 @@ fun InfoUserTargetContent(
                 modifier = modifier, // kích thước và vị trí của trường nhập liệu
                 // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
                 // readOnly = false, // trạng thái chỉ đọc của trường nhập liệu (mặc định false)
-                textStyle = MaterialTheme.typography.bodySmall, // kiểu chữ và kích thước của văn bản trong trường nhập liệu
-                label = {
-                    Text(
-                        text = stringResource(R.string.target_weight),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }, // nhãn cho trường nhập liệu
+                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End), // kiểu chữ và kích thước của văn bản trong trường nhập liệu
+                //label = { Text(text = stringResource(R.string.target_weight)) }, // nhãn cho trường nhập liệu
                 // placeholder = null, // văn bản gợi ý bên trong trường nhập liệu (mặc định null)
                 // leadingIcon = null, // biểu tượng trước văn bản (mặc định null)
                 // trailingIcon = null, // biểu tượng sau văn bản (mặc định null)
-                // prefix = null, // tiền tố văn bản (mặc định null)
+                prefix = {
+                    Text(
+                        text = stringResource(R.string.target),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }, // tiền tố văn bản (mặc định null)
                 suffix = {
                     Text(
                         text = stringResource(R.string.kg),
@@ -181,25 +181,21 @@ fun InfoUserTargetContent(
                     )
                 }, // hậu tố văn bản
                 // supportingText = null, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
-                isError = false, // trạng thái lỗi
+                //isError = false, // trạng thái lỗi
                 // visualTransformation = VisualTransformation.None, // biến đổi hiển thị của văn bản (mặc định VisualTransformation.None)
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), // kiểu bàn phím
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
-                ), // hành động khi nhấn phím
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Go
+                ), // kiểu bàn phím
+                keyboardActions = KeyboardActions(onGo = { /*TODO*/ }), // hành động khi nhấn phím
                 singleLine = true, // chỉ cho phép nhập một dòng văn bản
-                maxLines = 1, // số lượng dòng tối đa cho văn bản
+                //maxLines = 1, // số lượng dòng tối đa cho văn bản
                 // minLines = 1, // số lượng dòng tối thiểu cho văn bản (mặc định 1)
-                shape = MaterialTheme.shapes.extraLarge, // hình dạng của trường nhập liệu
-                colors = OutlinedTextFieldDefaults.colors(
+                shape = MaterialTheme.shapes.large // hình dạng của trường nhập liệu
+                /*colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ) // màu sắc của trường nhập liệu
+                )*/ // màu sắc của trường nhập liệu
             )
         }
 

@@ -1,6 +1,7 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -8,7 +9,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,32 +31,35 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -65,10 +69,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.biofit.R
 import com.example.biofit.navigation.MainActivity
+import com.example.biofit.ui.components.ItemCard
+import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SelectionDialog
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import java.util.Calendar
 
 class SettingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -198,96 +206,87 @@ fun SettingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(standardPadding),
+                verticalArrangement = Arrangement.spacedBy(standardPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var userName by rememberSaveable { mutableStateOf(value = "User name") } // Thay tên người dùng từ database vào User name
-                val defaultGender = stringResource(R.string.gender)
-                var gender by rememberSaveable { mutableStateOf(defaultGender) } // Thay giới tính từ database vào Gender
+                var gender by rememberSaveable { mutableStateOf("") } // Thay giới tính từ database vào Gender
                 var showGenderDialog by rememberSaveable { mutableStateOf(false) }
-                var dateOfBirth by rememberSaveable { mutableStateOf("dd / mm / yyyy") } // Thay ngày sinh từ database vào dd / mm / yyyy
+                var dateOfBirth by rememberSaveable { mutableStateOf("") } // Thay ngày sinh từ database vào dd / mm / yyyy
+                var showDatePicker by rememberSaveable { mutableStateOf(false) }
                 var height by rememberSaveable { mutableStateOf("hhh") } // Thay chiều cao từ database vào hhh
                 var weight by rememberSaveable { mutableStateOf("ww") } // Thay cân nặng từ database vào ww
                 var email by rememberSaveable { mutableStateOf(value = "biofit@example.com") } // Thay email từ database vào Email
 
-                TextField(
+                val focusManager = LocalFocusManager.current
+
+                OutlinedTextField(
                     value = userName,
                     onValueChange = { userName = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.name),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { /*TODO*/ },
-                        onGo = { /*TODO*/ },
-                        onNext = { /*TODO*/ },
-                        onPrevious = { /*TODO*/ },
-                        onSearch = { /*TODO*/ },
-                        onSend = { /*TODO*/ }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    ),
+                    shape = MaterialTheme.shapes.large
                 )
 
-                TextField(
-                    value = gender,
-                    onValueChange = { gender = it },
-                    modifier = modifier,
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
+                ItemCard(
+                    onClick = { showGenderDialog = true },
+                    modifier = modifier
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = standardPadding,
+                                vertical = standardPadding / 4
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = stringResource(R.string.gender),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
-                    },
-                    trailingIcon = {
+
+                        Text(
+                            text = if (gender == "") {
+                                stringResource(R.string.select_gender)
+                            } else {
+                                gender
+                            },
+                            modifier = Modifier.weight(1f),
+                            color = if (gender == "") {
+                                MaterialTheme.colorScheme.outline
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
                         IconButton(onClick = { showGenderDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
+                            Image(
+                                painter = painterResource(R.drawable.btn_back),
                                 contentDescription = stringResource(R.string.gender),
-                                tint = MaterialTheme.colorScheme.primary
+                                modifier = Modifier.rotate(270f)
                             )
                         }
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                )
+                    }
+                }
 
                 if (showGenderDialog) {
                     SelectionDialog(
@@ -306,169 +305,142 @@ fun SettingContent(
                     )
                 }
 
-                TextField(
-                    value = dateOfBirth,
-                    onValueChange = { dateOfBirth = it },
-                    modifier = modifier,
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
+                ItemCard(
+                    onClick = { showDatePicker = true },
+                    modifier = modifier
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = standardPadding, vertical = standardPadding / 4),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = stringResource(R.string.date_of_birth),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
-                    },
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon DateRange
-                        ) {
+
+                        Text(
+                            text = dateOfBirth.ifEmpty {
+                                stringResource(R.string.select_date_of_birth)
+                            },
+                            modifier = Modifier.weight(1f),
+                            color = if (dateOfBirth.isEmpty()) {
+                                MaterialTheme.colorScheme.outline
+                            } else {
+                                MaterialTheme.colorScheme.onBackground
+                            },
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
+                        IconButton(onClick = { showDatePicker = true }) {
                             Icon(
                                 imageVector = Icons.Default.DateRange,
                                 contentDescription = stringResource(R.string.date_of_birth),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
-                    },
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
-                )
+                    }
+                }
 
-                TextField(
+                if (showDatePicker) {
+                    val context = LocalContext.current
+                    val calendar = Calendar.getInstance()
+                    LaunchedEffect(Unit) {
+                        DatePickerDialog(
+                            context,
+                            { _, selectedYear, selectedMonth, selectedDay ->
+                                dateOfBirth = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                                showDatePicker = false
+                            },
+                            calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.MONTH),
+                            calendar.get(Calendar.DAY_OF_MONTH)
+                        ).show()
+                    }
+                }
+
+                OutlinedTextField(
                     value = height,
                     onValueChange = { height = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.height),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.cm),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = weight,
                     onValueChange = { weight = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.weight),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
                     suffix = {
                         Text(
                             text = stringResource(R.string.kg),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     ),
                     prefix = {
                         Text(
                             text = stringResource(R.string.email),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            style = MaterialTheme.typography.bodySmall
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    keyboardActions = KeyboardActions(
-                        onDone = { TODO() },
-                        onGo = { TODO() },
-                        onNext = { TODO() },
-                        onPrevious = { TODO() },
-                        onSearch = { TODO() },
-                        onSend = { TODO() }
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Go
                     ),
+                    keyboardActions = KeyboardActions(onGo = { TODO() }),
                     singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                    )
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }
@@ -479,16 +451,8 @@ fun SettingContent(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Card(
-                    modifier = modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                    )
+                SubCard(
+                    modifier = modifier
                 ) {
                     Column(
                         modifier = Modifier.padding(standardPadding),
@@ -552,18 +516,8 @@ fun SettingContent(
                             modifier = Modifier.padding(top = standardPadding),
                             horizontalArrangement = Arrangement.spacedBy(standardPadding),
                         ) {
-                            Card(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                        shape = MaterialTheme.shapes.large
-                                    ),
-                                shape = MaterialTheme.shapes.large,
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                )
+                            MainCard(
+                                modifier = Modifier.weight(1f)
                             ) {
 
                                 Column(
@@ -590,18 +544,8 @@ fun SettingContent(
                                 }
                             }
 
-                            Card(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                        shape = MaterialTheme.shapes.large
-                                    ),
-                                shape = MaterialTheme.shapes.large,
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                )
+                            MainCard(
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Column(
                                     modifier = Modifier
@@ -706,16 +650,8 @@ fun SettingContent(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Card(
-                    modifier = modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                    )
+                SubCard(
+                    modifier = modifier
                 ) {
                     Column(
                         modifier = Modifier.padding(standardPadding),
@@ -788,19 +724,10 @@ fun SettingContent(
                             standardPadding
                         ) // Thay bmiIndex từ database vào parameter 1
 
-                        Card(
+                        MainCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = standardPadding)
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                    shape = MaterialTheme.shapes.large
-                                ),
-                            shape = MaterialTheme.shapes.large,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            )
                         ) {
                             Column(
                                 modifier = Modifier
@@ -815,7 +742,7 @@ fun SettingContent(
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
                                         contentDescription = "Check Circle Icon",
-                                        tint = Color(0xFF64DD17),
+                                        tint = MaterialTheme.colorScheme.inversePrimary,
                                     )
 
                                     val estimatedWeight by rememberSaveable {
@@ -925,15 +852,29 @@ fun BMIBar(
                 Surface(
                     modifier = Modifier
                         .weight(segmentWidthWeight),
+                    shape = when (index) {
+                        0 -> MaterialTheme.shapes.extraLarge.copy(
+                            topEnd = CornerSize(0.dp),
+                            bottomEnd = CornerSize(0.dp)
+                        )
+
+                        bmiSegments.size - 1 -> MaterialTheme.shapes.extraLarge.copy(
+                            topStart = CornerSize(0.dp),
+                            bottomStart = CornerSize(0.dp)
+                        )
+
+                        else -> RectangleShape
+                    },
                     color = color
                 ) {
                     Text(
                         text = weightCategories[index],
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.75f),
                         style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 10.sp
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     )
                 }

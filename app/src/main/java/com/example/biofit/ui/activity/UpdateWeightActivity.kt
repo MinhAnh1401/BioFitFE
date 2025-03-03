@@ -24,12 +24,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,11 +42,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -124,15 +127,16 @@ fun UpdateWeightScreen() {
                         )
                     }
 
-                    Button(
+                    ElevatedButton(
                         onClick = { activity?.finish() }, // Xử lý sự kiện khi người dùng nhấn nút Save
                         modifier = Modifier.widthIn(min = standardPadding * 10),
-                        shape = MaterialTheme.shapes.extraLarge
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
 
@@ -157,6 +161,8 @@ fun UpdateWeightContent(
     val targetWeight = 70f // Thay đổi giá trị mục tiêu cân nặng tại đây
     var currentWeight by rememberSaveable { mutableStateOf("70") } // Thay đổi giá trị cân nặng hiện tại tại đây
     var weighingDay by rememberSaveable { mutableStateOf("dd/mm/yyyy") } // Thay đổi ngày đo cân tại đây
+    val focusManager = LocalFocusManager.current
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(standardPadding),
@@ -204,30 +210,16 @@ fun UpdateWeightContent(
                 modifier = Modifier
                     .widthIn(min = 10.dp, max = standardPadding * 10)
                     .width(IntrinsicSize.Min),
-                textStyle = MaterialTheme.typography.bodySmall,
-                suffix = {
-                    Text(
-                        text = stringResource(R.string.kg),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(
-                    onDone = { TODO() },
-                    onGo = { TODO() },
-                    onNext = { TODO() },
-                    onPrevious = { TODO() },
-                    onSearch = { TODO() },
-                    onSend = { TODO() }
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                suffix = { Text(text = stringResource(R.string.kg)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
                 ),
-                singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
+                shape = MaterialTheme.shapes.large
             )
 
             IconButton(
@@ -249,18 +241,8 @@ fun UpdateWeightContent(
             onValueChange = { weighingDay = it },
             modifier = modifier,
             readOnly = true,
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.End
-            ),
-            leadingIcon = {
-                Text(
-                    text = stringResource(R.string.weighing_day),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+            leadingIcon = { Text(text = stringResource(R.string.weighing_day)) },
             trailingIcon = {
                 IconButton(
                     onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon DateRange
@@ -272,21 +254,9 @@ fun UpdateWeightContent(
                     )
                 }
             },
-            keyboardActions = KeyboardActions(
-                onDone = { TODO() },
-                onGo = { TODO() },
-                onNext = { TODO() },
-                onPrevious = { TODO() },
-                onSearch = { TODO() },
-                onSend = { TODO() }
-            ),
-            singleLine = true,
-            maxLines = 1,
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedContainerColor = Color.Transparent
             )
         )
     }

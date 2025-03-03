@@ -26,13 +26,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -44,12 +43,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -111,9 +113,9 @@ fun SignInAndSignUpBackground() {
     ) {
         Image(
             painter = if (isSystemInDarkTheme()) {
-                painterResource(id = R.drawable.bg_sign_in_up_top_screen_dark_mode)
-            } else {
                 painterResource(id = R.drawable.bg_sign_in_up_top_screen)
+            } else {
+                painterResource(id = R.drawable.bg_sign_in_up_top_screen_dark_mode)
             },
             contentDescription = "Login Screen Background Top",
             modifier = Modifier
@@ -124,9 +126,9 @@ fun SignInAndSignUpBackground() {
 
         Image(
             painter = if (isSystemInDarkTheme()) {
-                painterResource(id = R.drawable.bg_sign_in_up_bot_screen_dark_mode)
-            } else {
                 painterResource(id = R.drawable.bg_sign_in_up_bot_screen)
+            } else {
+                painterResource(id = R.drawable.bg_sign_in_up_bot_screen_dark_mode)
             },
             contentDescription = "Login Screen Background Bottom",
             modifier = Modifier
@@ -221,6 +223,7 @@ fun LoginForm(
         val loginMessage = viewModel.loginMessage.value
 
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
+        val focusManager = LocalFocusManager.current
 
         OutlinedTextField(
             value = viewModel.email.value,
@@ -229,34 +232,26 @@ fun LoginForm(
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
-                    stringResource(R.string.email),
+                    text = stringResource(R.string.email),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
             placeholder = {
                 Text(
-                    stringResource(R.string.biofit_example_com),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
+                    text = stringResource(R.string.biofit_example_com),
+                    style = MaterialTheme.typography.bodySmall
                 )
             },
-            isError = false,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
             keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
+                onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                onDone = { focusManager.clearFocus() },
             ),
             singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            shape = MaterialTheme.shapes.large
         )
 
         OutlinedTextField(
@@ -266,7 +261,7 @@ fun LoginForm(
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
-                    stringResource(R.string.password),
+                    text = stringResource(R.string.password),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
@@ -279,32 +274,22 @@ fun LoginForm(
             },
             supportingText = {
                 Text(
-                    stringResource(R.string.min_8_chars_upper_lower_numbers),
+                    text = stringResource(R.string.min_8_chars_upper_lower_numbers),
                     style = MaterialTheme.typography.bodySmall
                 )
             },
-            isError = false,
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
             } else {
                 PasswordVisualTransformation()
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(
-                onDone = { /*TODO*/ },
-                onGo = { /*TODO*/ },
-                onNext = { /*TODO*/ },
-                onPrevious = { /*TODO*/ },
-                onSearch = { /*TODO*/ },
-                onSend = { /*TODO*/ }
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Go
             ),
+            keyboardActions = KeyboardActions(onGo = { viewModel.loginUser(context) }),
             singleLine = true,
-            maxLines = 1,
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            shape = MaterialTheme.shapes.large
         )
 
         Row(
@@ -318,22 +303,20 @@ fun LoginForm(
             TextButton(
                 onClick = { /* TODO */ },
             ) {
-                Text(
-                    text = stringResource(R.string.forgot_password),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Text(text = stringResource(R.string.forgot_password))
             }
         }
 
-        Button(
+        ElevatedButton(
             onClick = { viewModel.loginUser(context) },
             modifier = Modifier.padding(vertical = standardPadding),
-            shape = MaterialTheme.shapes.extraLarge,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
         ) {
             Text(
                 text = stringResource(R.string.sign_in_uppercase),
-                style = MaterialTheme.typography.labelLarge
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
 
@@ -373,11 +356,7 @@ fun SignUpPrompt() {
                 }
             },
         ) {
-            Text(
-                text = stringResource(R.string.create_account),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(text = stringResource(R.string.create_account))
         }
     }
 }
@@ -388,12 +367,9 @@ fun SocialLoginButtons(
     modifier: Modifier
 ) {
     // Sign in with Google button
-    Button(
+    ElevatedButton(
         onClick = { /* TODO */ },
-        modifier = modifier,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-        ),
+        modifier = modifier
     ) {
         SocialLoginContent(
             iconId = R.drawable.ic_google,
@@ -402,12 +378,9 @@ fun SocialLoginButtons(
     }
 
     // Sign in with Facebook button
-    Button(
+    ElevatedButton(
         onClick = { /* TODO */ },
-        modifier = modifier.padding(top = standardPadding),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
-        ),
+        modifier = modifier.padding(top = standardPadding / 2)
     ) {
         SocialLoginContent(
             iconId = R.drawable.ic_facebook,
@@ -455,11 +428,7 @@ fun TermsAndPrivacy(standardPadding: Dp) {
             TextButton(
                 onClick = { /* TODO */ },
             ) {
-                Text(
-                    text = stringResource(R.string.term_of_use),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Text(text = stringResource(R.string.term_of_use))
             }
 
             Text(
@@ -471,11 +440,7 @@ fun TermsAndPrivacy(standardPadding: Dp) {
             TextButton(
                 onClick = { /* TODO */ },
             ) {
-                Text(
-                    text = stringResource(R.string.privacy_policy),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Text(text = stringResource(R.string.privacy_policy))
             }
         }
     }

@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +31,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -128,6 +130,7 @@ fun InfoUserHeightAndWeightContent(
 ) {
     var height by rememberSaveable { mutableStateOf("") }
     var weight by rememberSaveable { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -159,72 +162,54 @@ fun InfoUserHeightAndWeightContent(
                 value = height,
                 onValueChange = { height = it },
                 modifier = modifier,
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
+                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+                prefix = {
                     Text(
-                        stringResource(R.string.height),
+                        text = stringResource(R.string.height),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
                 suffix = {
                     Text(
-                        stringResource(R.string.cm),
+                        text = stringResource(R.string.cm),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
                 ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }),
                 singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                shape = MaterialTheme.shapes.large
             )
 
             OutlinedTextField(
                 value = weight,
                 onValueChange = { weight = it },
                 modifier = modifier.padding(top = standardPadding),
-                textStyle = MaterialTheme.typography.bodySmall,
-                label = {
+                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+                prefix = {
                     Text(
-                        stringResource(R.string.weight),
+                        text = stringResource(R.string.weight),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
                 suffix = {
                     Text(
-                        stringResource(R.string.kg),
-                        style = MaterialTheme.typography.bodySmall,
+                        text = stringResource(R.string.kg),
+                        style = MaterialTheme.typography.bodySmall
                     )
                 },
-                isError = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                keyboardActions = KeyboardActions(
-                    onDone = { /*TODO*/ },
-                    onGo = { /*TODO*/ },
-                    onNext = { /*TODO*/ },
-                    onPrevious = { /*TODO*/ },
-                    onSearch = { /*TODO*/ },
-                    onSend = { /*TODO*/ }
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Go
                 ),
+                keyboardActions = KeyboardActions(onGo = { /*TODO*/ }),
                 singleLine = true,
-                maxLines = 1,
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                shape = MaterialTheme.shapes.large
             )
         }
 

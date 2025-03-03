@@ -24,9 +24,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.FoodItem
 import com.example.biofit.ui.components.TopBar
@@ -218,7 +219,7 @@ fun TrackContent(
             }
         }
 
-        Button(
+        ElevatedButton(
             onClick = {
                 activity?.let {
                     val intent = Intent(it, AddActivity::class.java)
@@ -234,11 +235,12 @@ fun TrackContent(
                     it.startActivity(intent)
                 }
             },
-            shape = MaterialTheme.shapes.extraLarge,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
         ) {
             Text(
                 text = stringResource(R.string.add_food),
-                modifier = Modifier.padding(horizontal = standardPadding * 2),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.labelLarge
             )

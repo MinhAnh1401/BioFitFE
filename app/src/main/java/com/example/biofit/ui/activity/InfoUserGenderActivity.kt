@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -183,7 +183,7 @@ fun GenderOption(
         horizontalAlignment = Alignment.CenterHorizontally,
         content = {
             options.forEach { option ->
-                Button(
+                ElevatedButton(
                     onClick = { onOptionSelected(option) },
                     modifier = modifier,
                     colors = ButtonDefaults.buttonColors(

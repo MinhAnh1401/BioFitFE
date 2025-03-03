@@ -5,8 +5,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +23,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Notifications
@@ -60,19 +59,23 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.data.model.UserDTO
+import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.CaloriesTargetActivity
 import com.example.biofit.ui.activity.ExerciseActivity
 import com.example.biofit.ui.activity.NotificationActivity
-import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.OverviewExerciseActivity
 import com.example.biofit.ui.activity.TrackActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
+import com.example.biofit.ui.components.MainCard
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -261,16 +264,14 @@ fun OverviewAndSearchBar(
     )
     var search by rememberSaveable { mutableStateOf("") }
 
-    Card(
-        modifier = modifier.border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-            shape = MaterialTheme.shapes.extraLarge
-        ),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )
+    MainCard(
+        onClick = {
+            activity?.let {
+                val intent = Intent(it, OverviewActivity::class.java)
+                it.startActivity(intent)
+            }
+        },
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.padding(standardPadding),
@@ -296,15 +297,13 @@ fun OverviewAndSearchBar(
                     modifier = Modifier.widthIn(
                         min = standardPadding * 10
                     ),
-                    shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
                     Text(
                         text = stringResource(R.string.edit),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.labelSmall
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
@@ -314,14 +313,7 @@ fun OverviewAndSearchBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable {
-                            activity?.let {
-                                val intent = Intent(it, OverviewActivity::class.java)
-                                it.startActivity(intent)
-                            }
-                        },
+                    modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     RemainingCaloriesChart(
@@ -464,23 +456,19 @@ fun OverviewAndSearchBar(
                 )
             }
         },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Search
+        ),
         keyboardActions = KeyboardActions(
-            onDone = { /*TODO*/ },
-            onGo = { /*TODO*/ },
-            onNext = { /*TODO*/ },
-            onPrevious = { /*TODO*/ },
-            onSearch = { /*TODO*/ },
-            onSend = { /*TODO*/ }
+            onSearch = { /*TODO*/ }
         ),
         singleLine = true,
-        maxLines = 1,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-            focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
+            unfocusedBorderColor = Color.Transparent
         )
     )
 }
@@ -498,7 +486,7 @@ fun RemainingCaloriesChart(
     standardPadding: Dp
 ) {
     Canvas(
-        modifier = Modifier.size(standardPadding * 12)
+        modifier = Modifier.size(standardPadding * 10)
     ) {
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2 - 20f
@@ -631,13 +619,7 @@ fun DailyMenu(
                         it.startActivity(intent)
                     }
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
+                modifier = Modifier.weight(1f),
                 headIcon = R.drawable.ic_morning,
                 desIcon = R.string.morning,
                 title = R.string.morning,
@@ -656,13 +638,7 @@ fun DailyMenu(
                         it.startActivity(intent)
                     }
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
+                modifier = Modifier.weight(1f),
                 headIcon = R.drawable.ic_afternoon,
                 desIcon = R.string.afternoon,
                 title = R.string.afternoon,
@@ -685,13 +661,7 @@ fun DailyMenu(
                         it.startActivity(intent)
                     }
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
+                modifier = Modifier.weight(1f),
                 headIcon = R.drawable.ic_evening,
                 desIcon = R.string.evening,
                 title = R.string.evening,
@@ -710,13 +680,7 @@ fun DailyMenu(
                         it.startActivity(intent)
                     }
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
+                modifier = Modifier.weight(1f),
                 headIcon = R.drawable.ic_snack,
                 desIcon = R.string.snack,
                 title = R.string.snack,
@@ -741,13 +705,9 @@ fun DailyCard(
     foodName: String,
     standardPadding: Dp
 ) {
-    Card(
+    SubCard(
         onClick = onClick,
-        modifier = modifier,
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-        )
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -865,18 +825,9 @@ fun DailyGoals(
         Row(
             horizontalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            MainCard(
+                onClick = {},
+                modifier = Modifier.weight(1f)
             ) {
                 Column(
                     modifier = Modifier
@@ -964,24 +915,14 @@ fun DailyGoals(
                 }
             }
 
-            Card(
+            MainCard(
                 onClick = {
                     activity?.let {
                         val intent = Intent(it, OverviewExerciseActivity::class.java)
                         it.startActivity(intent)
                     }
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ),
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+                modifier = Modifier.weight(1f)
             ) {
                 Column(
                     modifier = Modifier
@@ -1052,18 +993,7 @@ fun DailyGoals(
             }
         }
 
-        Card(
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                    shape = MaterialTheme.shapes.extraLarge
-                ),
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
+        MainCard(modifier = modifier) {
             Column(
                 modifier = Modifier.padding(standardPadding),
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
@@ -1100,15 +1030,13 @@ fun DailyGoals(
                         modifier = Modifier.widthIn(
                             min = standardPadding * 10
                         ),
-                        shape = MaterialTheme.shapes.large,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer
                         )
                     ) {
                         Text(
                             text = stringResource(R.string.update),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.labelSmall
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
