@@ -54,7 +54,7 @@ fun DefaultDialog(
     actionTextButtonColor: Color,
     actionButtonColor: Color,
     onClickActionButton: () -> Unit,
-    cancelButton: (@Composable () -> Unit)? = null,
+    onCancelClick: (() -> Unit)? = null,
     onDismissRequest: () -> Unit,
     standardPadding: Dp,
 ) {
@@ -99,9 +99,9 @@ fun DefaultDialog(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(standardPadding),
             ) {
-                cancelButton?.let {
+                onCancelClick?.let {
                     ElevatedButton(
-                        onClick = onDismissRequest,
+                        onClick = onCancelClick,
                         modifier = Modifier.weight(0.5f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest

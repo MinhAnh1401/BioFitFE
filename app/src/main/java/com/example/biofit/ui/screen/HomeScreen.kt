@@ -1,6 +1,7 @@
 package com.example.biofit.ui.screen
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
@@ -42,6 +43,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -93,6 +96,7 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import kotlin.random.Random
 
 @Composable
@@ -179,14 +183,33 @@ fun HeaderBar(
             )
         }
 
+        var selectedDate by rememberSaveable { mutableStateOf("") }
+        var showDatePicker by rememberSaveable { mutableStateOf(false) }
+
         IconButton(
-            onClick = { TODO() },
+            onClick = { showDatePicker = true },
         ) {
             Icon(
                 imageVector = Icons.Default.DateRange,
                 contentDescription = stringResource(R.string.calendar),
                 tint = MaterialTheme.colorScheme.primary
             )
+        }
+
+        if (showDatePicker) {
+            val calendar = Calendar.getInstance()
+            LaunchedEffect(Unit) {
+                DatePickerDialog(
+                    context,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        showDatePicker = false
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
         }
     }
 }
@@ -426,7 +449,10 @@ fun OverviewAndSearchBar(
     OutlinedTextField(
         value = search,
         onValueChange = { search = it },
-        modifier = modifier,
+        modifier = modifier.shadow(
+            elevation = 6.dp,
+            shape = MaterialTheme.shapes.large
+        ),
         textStyle = MaterialTheme.typography.bodySmall,
         placeholder = {
             Text(

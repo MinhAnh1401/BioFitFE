@@ -1,6 +1,7 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -36,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -59,6 +61,7 @@ import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import java.util.Calendar
 
 class UpdateWeightActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -236,16 +239,23 @@ fun UpdateWeightContent(
             }
         }
 
+        var showDatePicker by rememberSaveable { mutableStateOf(false) }
+
         TextField(
             value = weighingDay,
             onValueChange = { weighingDay = it },
             modifier = modifier,
             readOnly = true,
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
-            leadingIcon = { Text(text = stringResource(R.string.weighing_day)) },
+            textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+            leadingIcon = {
+                Text(
+                    text = stringResource(R.string.weighing_day),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            },
             trailingIcon = {
                 IconButton(
-                    onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon DateRange
+                    onClick = { showDatePicker = true }
                 ) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
@@ -259,6 +269,23 @@ fun UpdateWeightContent(
                 unfocusedContainerColor = Color.Transparent
             )
         )
+
+        if (showDatePicker) {
+            val context = LocalContext.current
+            val calendar = Calendar.getInstance()
+            LaunchedEffect(Unit) {
+                DatePickerDialog(
+                    context,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        weighingDay = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        showDatePicker = false
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
+        }
     }
 }
 

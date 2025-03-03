@@ -139,7 +139,7 @@ fun TrackScreen(
                 middleButton = {
                     Box {
                         IconButton(
-                            onClick = { expanded = true }
+                            onClick = { expanded = !expanded }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
@@ -159,6 +159,18 @@ fun TrackScreen(
                                     onClick = {
                                         selectedOption = selection
                                         expanded = false
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            painter = when (selection) {
+                                                R.string.morning -> painterResource(R.drawable.ic_morning_2)
+                                                R.string.afternoon -> painterResource(R.drawable.ic_afternoon_2)
+                                                R.string.evening -> painterResource(R.drawable.ic_evening_2)
+                                                else -> painterResource(R.drawable.ic_snack_2)
+                                            },
+                                            contentDescription = stringResource(R.string.morning),
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
                                     }
                                 )
                             }

@@ -466,6 +466,7 @@ fun ProfileContent(
                                     deleteData(context, activity)
                                 }
                             },
+                            onCancelClick = { showDeleteDataDialog = false },
                             onDismissRequest = { showDeleteDataDialog = false },
                             standardPadding = standardPadding
                         )
@@ -520,6 +521,7 @@ fun ProfileContent(
                                     deleteAccount(context, activity)
                                 }
                             },
+                            onCancelClick = { showDeleteAccountDialog = false },
                             onDismissRequest = { showDeleteAccountDialog = false },
                             standardPadding = standardPadding
                         )
@@ -556,6 +558,7 @@ fun ProfileContent(
                             signOut(context, activity)
                         }
                     },
+                    onCancelClick = { showSignOutDialog = false },
                     onDismissRequest = { showSignOutDialog = false },
                     standardPadding = standardPadding
                 )

@@ -229,6 +229,11 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                         maxLines = 4,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                         keyboardActions = KeyboardActions(
+                            onDone = {
+                                viewModel.sendMessage(userInput, scope)
+                                userInput = ""
+                                keyboardController?.hide()
+                            },
                             onSend = {
                                 viewModel.sendMessage(userInput, scope)
                                 userInput = ""
@@ -292,7 +297,7 @@ fun ChatBubble(
                 Text(
                     text = text,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodySmall
                 )
             } else {
                 if (!isAnimationFinished) {
@@ -302,7 +307,7 @@ fun ChatBubble(
                             textBodyColor1 = MaterialTheme.colorScheme.primary,
                             textBodyColor2 = MaterialTheme.colorScheme.primary,
                             text = text,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodySmall
                         )
                     } else {
                         OneTimeAnimatedGradientText(
@@ -310,7 +315,7 @@ fun ChatBubble(
                             baseColor = MaterialTheme.colorScheme.onBackground,
                             hideColor = Color.Transparent,
                             text = text,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             onAnimationEnd = {
                                 isAnimationFinished = true
                             }
@@ -320,7 +325,7 @@ fun ChatBubble(
                     Text(
                         text = text,
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
