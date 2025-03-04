@@ -1,6 +1,8 @@
 package com.example.biofit.ui.screen
 
+import android.adservices.ondevicepersonalization.UserData
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -35,6 +37,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,7 +52,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
@@ -57,9 +64,11 @@ import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.UpdateUserViewModel
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(userData: UserDTO) {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -78,8 +87,9 @@ fun ProfileScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ProfileContent(
-                standardPadding,
-                modifier
+                userData = userData,
+                standardPadding = standardPadding,
+                modifier = modifier
             )
         }
     }
@@ -87,6 +97,7 @@ fun ProfileScreen() {
 
 @Composable
 fun ProfileContent(
+    userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -107,7 +118,7 @@ fun ProfileContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(R.drawable.fake_avatar), // Thay avatar của người dùng từ database
+                    painter = painterResource(R.drawable.fake_avatar),
                     contentDescription = "Avatar",
                     modifier = Modifier
                         .size(standardPadding * 5)
@@ -121,14 +132,14 @@ fun ProfileContent(
                         .padding(horizontal = standardPadding)
                 ) {
                     Text(
-                        text = stringResource(R.string.full_name), // Thay tên người dùng từ database
+                        text = userData.fullName ?: "N/A",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleSmall
                     )
 
                     Row {
                         Text(
-                            text = stringResource(R.string.gender), // Thay giới tính từ database
+                            text = userData.getGenderString(context, userData.gender),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -140,7 +151,7 @@ fun ProfileContent(
                         )
 
                         Text(
-                            text = stringResource(R.string.age), // Tính tuổi từ nằm sinh trong database
+                            text = userData.dateOfBirth ?: "N/A",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -194,7 +205,7 @@ fun ProfileContent(
                             )
 
                             Text(
-                                text = "xx kg", // Thay cân nặng từ database
+                                text = "${userData.weight} ${stringResource(R.string.kg)}",
                                 modifier = Modifier.padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 style = MaterialTheme.typography.titleSmall
@@ -219,7 +230,7 @@ fun ProfileContent(
                             )
 
                             Text(
-                                text = "xx kg", // Thay mục tiêu cân nặng từ database
+                                text = "${userData.targetWeight} ${stringResource(R.string.kg)}",
                                 modifier = Modifier.padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.scrim,
                                 style = MaterialTheme.typography.titleSmall
@@ -654,7 +665,7 @@ fun deleteData(
 @Composable
 private fun ProfilePortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        ProfileScreen()
+        ProfileScreen(UserDTO.default())
     }
 }
 
@@ -667,7 +678,7 @@ private fun ProfilePortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun ProfilePortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        ProfileScreen()
+        ProfileScreen(UserDTO.default())
     }
 }
 
@@ -681,7 +692,7 @@ private fun ProfilePortraitScreenPreviewInLargePhone() {
 @Composable
 private fun ProfilePortraitScreenPreviewInTablet() {
     BioFitTheme {
-        ProfileScreen()
+        ProfileScreen(UserDTO.default())
     }
 }
 
@@ -695,7 +706,7 @@ private fun ProfilePortraitScreenPreviewInTablet() {
 @Composable
 private fun ProfileLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        ProfileScreen()
+        ProfileScreen(UserDTO.default())
     }
 }
 
@@ -708,7 +719,7 @@ private fun ProfileLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun ProfileLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        ProfileScreen()
+        ProfileScreen(UserDTO.default())
     }
 }
 
@@ -722,6 +733,6 @@ private fun ProfileLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun ProfileLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        ProfileScreen()
+        ProfileScreen(UserDTO.default())
     }
 }

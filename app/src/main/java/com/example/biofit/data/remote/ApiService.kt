@@ -5,7 +5,9 @@ import com.example.biofit.data.dto.RegisterRequest
 import com.example.biofit.data.dto.UpdateUserRequest
 import com.example.biofit.data.dto.UserDTO
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -22,5 +24,4 @@ interface ApiService {
         @Path("userId") userId: Long,
         @Body request: UpdateUserRequest
     ): Call<UserDTO>
-
 }

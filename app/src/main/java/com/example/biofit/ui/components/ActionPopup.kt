@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.navigation.getUserData
 import com.example.biofit.ui.activity.AIChatbotActivity
 import com.example.biofit.ui.activity.AddActivity
 import com.example.biofit.ui.activity.ExerciseActivity
@@ -67,12 +68,13 @@ import com.example.biofit.ui.theme.BioFitTheme
 
 @Composable
 fun ActionPopup(
-    userDTO: UserDTO,
+    userData: UserDTO,
     onDismissPopup: () -> Unit,
     standardPadding: Dp
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
+
 
     val itemPopupList = listOf(
         Pair(R.drawable.ic_exercise_2, R.string.exercise),
@@ -188,13 +190,8 @@ fun ActionPopup(
                             .weight(1f)
                             .clip(MaterialTheme.shapes.large)
                             .clickable {
-                                userDTO.let {
-                                    val intent =
-                                        Intent(context, AIChatbotActivity::class.java).apply {
-                                            putExtra("USER_DATA", it)
-                                        }
-                                    context.startActivity(intent)
-                                }
+                                val intent = Intent(context, AIChatbotActivity::class.java)
+                                context.startActivity(intent)
 
                                 onDismissPopup()
                             },
@@ -422,20 +419,19 @@ private fun ActionPopupDarkModePreview() {
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
-            val userDTO = UserDTO(
-                userId = 0,
-                fullName = "Nguyen Van A",
-                email = "anguyenvan@gmail.com",
-                gender = 0,
-                height = 170f,
-                weight = 57f,
-                targetWeight = 60f,
-                dateOfBirth = "2000-01-01",
-                avatar = null,
-                createdAccount = "2025-02-28"
-            )
             ActionPopup(
-                userDTO = userDTO,
+                userData = UserDTO(
+                    userId = 0,
+                    fullName = "John",
+                    email = "john@email.com",
+                    gender = 0,
+                    height = 180f,
+                    weight = 70f,
+                    targetWeight = 75f,
+                    dateOfBirth = "2004-01-01",
+                    avatar = "",
+                    createdAccount = "2025-01-01"
+                ),
                 onDismissPopup = { },
                 standardPadding = getStandardPadding().first
             )
@@ -453,20 +449,19 @@ private fun ActionPopupPreview() {
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
-            val userDTO = UserDTO(
-                userId = 0,
-                fullName = "Nguyen Van A",
-                email = "anguyenvan@gmail.com",
-                gender = 0,
-                height = 170f,
-                weight = 57f,
-                targetWeight = 60f,
-                dateOfBirth = "2000-01-01",
-                avatar = null,
-                createdAccount = "2025-02-28"
-            )
             ActionPopup(
-                userDTO = userDTO,
+                userData = UserDTO(
+                    userId = 0,
+                    fullName = "John",
+                    email = "john@email.com",
+                    gender = 0,
+                    height = 180f,
+                    weight = 70f,
+                    targetWeight = 75f,
+                    dateOfBirth = "2004-01-01",
+                    avatar = "",
+                    createdAccount = "2025-01-01"
+                ),
                 onDismissPopup = { },
                 standardPadding = getStandardPadding().first
             )

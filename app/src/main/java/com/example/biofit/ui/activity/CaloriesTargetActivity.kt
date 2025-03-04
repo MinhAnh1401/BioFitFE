@@ -89,12 +89,6 @@ fun CaloriesTargetScreen() {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
                 title = stringResource(R.string.calories_target),
                 middleButton = null,
                 rightButton = {

@@ -97,12 +97,6 @@ fun EditExerciseScreen(initialSelectedOption: Int) {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
                 title = stringResource(R.string.edit_exercise),
                 middleButton = null,
                 rightButton = {

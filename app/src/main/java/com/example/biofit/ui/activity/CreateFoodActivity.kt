@@ -101,12 +101,6 @@ fun CreateFoodScreen() {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
                 title = stringResource(R.string.create_new_food),
                 middleButton = null,
                 rightButton = null,

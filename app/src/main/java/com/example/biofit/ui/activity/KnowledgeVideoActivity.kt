@@ -134,12 +134,6 @@ fun KnowledgeVideoScreen(
                 ) {
                     TopBar(
                         onBackClick = { activity?.finish() },
-                        onHomeClick = {
-                            activity?.let {
-                                val intent = Intent(it, MainActivity::class.java)
-                                it.startActivity(intent)
-                            }
-                        },
                         title = stringResource(R.string.nutritional_knowledge),
                         middleButton = null,
                         rightButton = {

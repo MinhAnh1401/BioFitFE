@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 data class ChatMessage(val userMessage: String, val botResponse: String)
 
 class ChatBotModel(
-    private val userDTO: UserDTO,
+    private val userData: UserDTO,
     private val context: Context,
     apiKey: String,
 ) {
@@ -28,7 +28,7 @@ class ChatBotModel(
             "User: ${it.userMessage}\nBot: ${it.botResponse}"
         }
 
-        val userData = userDTO
+        val userData = userData
         val enrichedInput = if (userData != null) {
             enrichInputWithUserData(userInput, userData)
         } else {
@@ -53,19 +53,19 @@ class ChatBotModel(
         }
     }
 
-    private fun enrichInputWithUserData(userInput: String, userDTO: UserDTO): String {
+    private fun enrichInputWithUserData(userInput: String, userData: UserDTO): String {
         return """ 
             Current date time: ${
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         }
         
             User data:
-                - Full Name: ${userDTO.fullName}
-                - Gender: ${userDTO.getGenderString(context)}
-                - Date of Birth: ${userDTO.dateOfBirth}
-                - Height: ${userDTO.height} cm
-                - Weight: ${userDTO.weight} kg
-                - Target Weight: ${userDTO.targetWeight} kg
+                - Full Name: ${userData.fullName}
+                - Gender: ${userData.getGenderString(context, userData.gender)}
+                - Date of Birth: ${userData.dateOfBirth}
+                - Height: ${userData.height} cm
+                - Weight: ${userData.weight} kg
+                - Target Weight: ${userData.targetWeight} kg
                 
             User asks: $userInput
             

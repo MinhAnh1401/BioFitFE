@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.biofit.R
+import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.ui.activity.CalorieTodayActivity
 import com.example.biofit.ui.activity.CreatePlanningActivity
 import com.example.biofit.ui.activity.EditExerciseActivity
@@ -66,6 +67,7 @@ import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart

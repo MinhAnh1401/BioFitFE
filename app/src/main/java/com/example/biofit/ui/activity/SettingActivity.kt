@@ -2,9 +2,9 @@ package com.example.biofit.ui.activity
 
 import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -67,8 +67,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.navigation.MainActivity
+import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.navigation.getUserData
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SelectionDialog
@@ -76,15 +78,25 @@ import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.UpdateUserViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class SettingActivity : ComponentActivity() {
+    private var userData: UserDTO? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        userData = getUserData(this)
         setContent {
             BioFitTheme {
-                SettingScreen()
+                SettingScreen(userData ?: UserDTO.default())
             }
         }
     }
@@ -96,7 +108,11 @@ class SettingActivity : ComponentActivity() {
 }
 
 @Composable
-fun SettingScreen() {
+fun SettingScreen(
+    userData: UserDTO,
+    updateViewModel: UpdateUserViewModel = viewModel(),
+    loginViewModel: LoginViewModel = viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -105,6 +121,8 @@ fun SettingScreen() {
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
+
+    val userId = userData.userId
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -121,18 +139,20 @@ fun SettingScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBar(
-                onBackClick = { activity?.finish() }, // Xử lý sự kiện khi người dùng nhấn nút Back
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
+                onBackClick = { activity?.finish() },
                 title = stringResource(R.string.setting),
                 middleButton = null,
                 rightButton = {
                     TextButton(
-                        onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn nút Save
+                        onClick = {
+                            updateViewModel.updateUser(context, userId, loginViewModel) {
+                                if (updateViewModel.updatedState.value == true) {
+                                    activity?.finish()
+                                } else {
+                                    Toast.makeText(context, updateViewModel.updatedMessage.value, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
                     ) {
                         Text(
                             text = stringResource(R.string.save),
@@ -143,7 +163,17 @@ fun SettingScreen() {
                 },
                 standardPadding = standardPadding
             )
+
+            val updatedMessage = updateViewModel.updatedMessage.value
+            LaunchedEffect(updatedMessage) {
+                updatedMessage?.let {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                    updateViewModel.updatedMessage.value = null
+                }
+            }
+
             SettingContent(
+                userData = userData,
                 screenWidth,
                 screenHeight,
                 standardPadding,
@@ -154,31 +184,35 @@ fun SettingScreen() {
 }
 
 @Composable
-fun HomeButton(
-    onHomeClick: () -> Unit = {},
-    standardPadding: Dp
-) {
-    IconButton(
-        onClick = onHomeClick,
-        modifier = Modifier.size(standardPadding * 1.5f),
-        enabled = true,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_home),
-            contentDescription = "Back Button",
-            modifier = Modifier.size(standardPadding * 1.5f),
-            tint = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-@Composable
 fun SettingContent(
+    userData: UserDTO,
     screenWidth: Int,
     screenHeight: Int,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    updateViewModel: UpdateUserViewModel = viewModel()
 ) {
+    val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f
+    val weight = (userData.weight ?: UserDTO.default().weight) ?: 0f
+
+    val bmiIndex: Float? = if (height != null && height > 0.001f) {
+        weight?.div(height * height)
+    } else {
+        null
+    }
+
+    val roundedBmi = bmiIndex?.let {
+        BigDecimal(it.toDouble()).setScale(1, RoundingMode.HALF_UP).toFloat()
+    } ?: 0f
+
+    val bmiCategory = when {
+        bmiIndex == null -> stringResource(R.string.unknown)
+        bmiIndex < 18.5f -> stringResource(R.string.underweight)
+        bmiIndex >= 18.5f && bmiIndex < 25f -> stringResource(R.string.healthy_weight)
+        bmiIndex >= 25f && bmiIndex < 30f -> stringResource(R.string.overweight)
+        else -> stringResource(R.string.obese)
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
@@ -209,24 +243,59 @@ fun SettingContent(
                 verticalArrangement = Arrangement.spacedBy(standardPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var userName by rememberSaveable { mutableStateOf(value = "User name") } // Thay tên người dùng từ database vào User name
-                var gender by rememberSaveable { mutableStateOf("") } // Thay giới tính từ database vào Gender
+                val context = LocalContext.current
+
+                var gender by rememberSaveable {
+                    mutableStateOf(
+                        userData.getGenderString(
+                            context,
+                            updateViewModel.gender.value
+                        )
+                    )
+                }
                 var showGenderDialog by rememberSaveable { mutableStateOf(false) }
-                var dateOfBirth by rememberSaveable { mutableStateOf("") } // Thay ngày sinh từ database vào dd / mm / yyyy
+                var dateOfBirth by rememberSaveable { mutableStateOf(updateViewModel.dateOfBirth.value) }
                 var showDatePicker by rememberSaveable { mutableStateOf(false) }
-                var height by rememberSaveable { mutableStateOf("hhh") } // Thay chiều cao từ database vào hhh
-                var weight by rememberSaveable { mutableStateOf("ww") } // Thay cân nặng từ database vào ww
-                var email by rememberSaveable { mutableStateOf(value = "biofit@example.com") } // Thay email từ database vào Email
+
+                LaunchedEffect(Unit) {
+                    if (updateViewModel.fullName.value == null) {
+                        updateViewModel.fullName.value = userData.fullName
+                    }
+                    if (updateViewModel.gender.value == null) {
+                        updateViewModel.gender.value = userData.gender
+                    }
+                    if (updateViewModel.dateOfBirth.value == null) {
+                        updateViewModel.dateOfBirth.value = userData.dateOfBirth
+                    }
+                    if (updateViewModel.height.value == null) {
+                        updateViewModel.height.value = userData.height
+                    }
+                    if (updateViewModel.weight.value == null) {
+                        updateViewModel.weight.value = userData.weight
+                    }
+                    if (updateViewModel.email.value == null) {
+                        updateViewModel.email.value = userData.email
+                    }
+                }
+
 
                 val focusManager = LocalFocusManager.current
 
                 OutlinedTextField(
-                    value = userName,
-                    onValueChange = { userName = it },
+                    value = updateViewModel.fullName.value ?: "",
+                    onValueChange = { updateViewModel.fullName.value = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.enter_your_full_name),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
                     prefix = {
                         Text(
                             text = stringResource(R.string.name),
@@ -263,13 +332,13 @@ fun SettingContent(
                         )
 
                         Text(
-                            text = if (gender == "") {
+                            text = if (updateViewModel.gender.value == null) {
                                 stringResource(R.string.select_gender)
                             } else {
-                                gender
+                                userData.getGenderString(context, updateViewModel.gender.value)
                             },
                             modifier = Modifier.weight(1f),
-                            color = if (gender == "") {
+                            color = if (updateViewModel.gender.value == null) {
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
@@ -293,6 +362,10 @@ fun SettingContent(
                         selectedOption = gender,
                         onOptionSelected = { selectedGender ->
                             gender = selectedGender
+                            updateViewModel.gender.value = userData.getGenderInt(
+                                context,
+                                selectedGender
+                            ) // ✅ Cập nhật ViewModel
                             showGenderDialog = false
                         },
                         onDismissRequest = { showGenderDialog = false },
@@ -304,6 +377,8 @@ fun SettingContent(
                         standardPadding = standardPadding
                     )
                 }
+
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
                 ItemCard(
                     onClick = { showDatePicker = true },
@@ -321,11 +396,17 @@ fun SettingContent(
                         )
 
                         Text(
-                            text = dateOfBirth.ifEmpty {
-                                stringResource(R.string.select_date_of_birth)
-                            },
+                            text = updateViewModel.dateOfBirth.value?.let { dateString ->
+                                try {
+                                    val parsedDate =
+                                        dateFormat.parse(dateString)
+                                    dateFormat.format(parsedDate ?: UserDTO.default().dateOfBirth)
+                                } catch (e: Exception) {
+                                    stringResource(R.string.select_date_of_birth)
+                                }
+                            } ?: stringResource(R.string.select_date_of_birth),
                             modifier = Modifier.weight(1f),
-                            color = if (dateOfBirth.isEmpty()) {
+                            color = if (updateViewModel.dateOfBirth.value == null) {
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
@@ -345,13 +426,17 @@ fun SettingContent(
                 }
 
                 if (showDatePicker) {
-                    val context = LocalContext.current
                     val calendar = Calendar.getInstance()
                     LaunchedEffect(Unit) {
                         DatePickerDialog(
                             context,
                             { _, selectedYear, selectedMonth, selectedDay ->
-                                dateOfBirth = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                                calendar.set(selectedYear, selectedMonth, selectedDay)
+
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                dateOfBirth = dateFormat.format(calendar.time)
+
+                                updateViewModel.dateOfBirth.value = dateOfBirth
                                 showDatePicker = false
                             },
                             calendar.get(Calendar.YEAR),
@@ -362,8 +447,8 @@ fun SettingContent(
                 }
 
                 OutlinedTextField(
-                    value = height,
-                    onValueChange = { height = it },
+                    value = updateViewModel.height.value.toString(),
+                    onValueChange = { updateViewModel.height.value = it.toFloatOrNull() ?: 0f },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
@@ -392,8 +477,8 @@ fun SettingContent(
                 )
 
                 OutlinedTextField(
-                    value = weight,
-                    onValueChange = { weight = it },
+                    value = updateViewModel.weight.value.toString(),
+                    onValueChange = { updateViewModel.weight.value = it.toFloatOrNull() ?: 0f },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
@@ -422,8 +507,8 @@ fun SettingContent(
                 )
 
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
+                    value = updateViewModel.email.value ?: "",
+                    onValueChange = { updateViewModel.email.value = it },
                     modifier = modifier,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
@@ -676,17 +761,10 @@ fun SettingContent(
                             }
                         }
 
-                        val bmiIndex by rememberSaveable {
-                            mutableStateOf(value = "__")
-                        } // Thay bmiIndex từ database vào value
-                        val bmiCategory by rememberSaveable {
-                            mutableStateOf(value = "__")
-                        } // Thay bmiCategory từ database vào value
-
                         val textWithIcon = buildAnnotatedString {
                             append(
                                 stringResource(R.string.your_bmi_is) + " " +
-                                        bmiIndex + ", " +
+                                        roundedBmi + ", " +
                                         stringResource(R.string.you_are_classified_as) + " " +
                                         bmiCategory + "."
                             )
@@ -720,9 +798,9 @@ fun SettingContent(
                         )
 
                         BMIBar(
-                            18.5f,
-                            standardPadding
-                        ) // Thay bmiIndex từ database vào parameter 1
+                            bmi = roundedBmi,
+                            standardPadding = standardPadding
+                        )
 
                         MainCard(
                             modifier = Modifier
@@ -920,7 +998,7 @@ fun BMIBar(
 @Composable
 private fun SettingPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        SettingScreen()
+        SettingScreen(UserDTO.default())
     }
 }
 
@@ -933,7 +1011,7 @@ private fun SettingPortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun SettingPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        SettingScreen()
+        SettingScreen(UserDTO.default())
     }
 }
 
@@ -947,7 +1025,7 @@ private fun SettingPortraitScreenPreviewInLargePhone() {
 @Composable
 private fun SettingPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        SettingScreen()
+        SettingScreen(UserDTO.default())
     }
 }
 
@@ -961,7 +1039,7 @@ private fun SettingPortraitScreenPreviewInTablet() {
 @Composable
 private fun SettingLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        SettingScreen()
+        SettingScreen(UserDTO.default())
     }
 }
 
@@ -974,7 +1052,7 @@ private fun SettingLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun SettingLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        SettingScreen()
+        SettingScreen(UserDTO.default())
     }
 }
 
@@ -988,6 +1066,6 @@ private fun SettingLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun SettingLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        SettingScreen()
+        SettingScreen(UserDTO.default())
     }
 }

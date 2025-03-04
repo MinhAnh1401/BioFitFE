@@ -1,7 +1,8 @@
 package com.example.biofit.navigation
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +23,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -46,24 +51,41 @@ import com.example.biofit.ui.screen.KnowledgeScreen
 import com.example.biofit.ui.screen.PlanningScreen
 import com.example.biofit.ui.screen.ProfileScreen
 import com.example.biofit.ui.theme.BioFitTheme
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("USER_DATA")
-        }
-        setContent {
-            BioFitTheme {
-                userDTO?.let {
-                    MainScreen(userDTO = userDTO)
+    private var userData: UserDTO? = null
+
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (key == "USER_DATA") {
+            userData = getUserData(this)
+            setContent {
+                BioFitTheme {
+                    MainScreen(userData ?: UserDTO.default())
                 }
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.registerOnSharedPreferenceChangeListener(prefsListener)
+
+        userData = getUserData(this)
+        setContent {
+            BioFitTheme {
+                MainScreen(userData ?: UserDTO.default())
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -72,8 +94,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+fun getUserData(context: Context): UserDTO? {
+    val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    val gson = Gson()
+    val json = sharedPreferences.getString("USER_DATA", null)
+
+    return gson.fromJson(json, UserDTO::class.java)
+}
+
 @Composable
-fun MainScreen(userDTO: UserDTO) {
+fun MainScreen(userData: UserDTO) {
     val standardPadding = getStandardPadding().first
 
     val navController = rememberNavController()
@@ -103,7 +134,7 @@ fun MainScreen(userDTO: UserDTO) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MainContent(
-                        userDTO = userDTO,
+                        userData,
                         navController = navController
                     )
                 }
@@ -127,7 +158,7 @@ fun MainScreen(userDTO: UserDTO) {
                         exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
                     ) {
                         ActionPopup(
-                            userDTO = userDTO,
+                            userData = userData,
                             onDismissPopup = { showPopup = false },
                             standardPadding = standardPadding
                         )
@@ -155,17 +186,17 @@ fun MainScreen(userDTO: UserDTO) {
 
 @Composable
 fun MainContent(
-    userDTO: UserDTO,
+    userData: UserDTO,
     navController: NavHostController
 ) {
     NavHost(
         navController = navController,
         startDestination = "home"
     ) {
-        composable("home") { HomeScreen(userDTO) }
+        composable("home") { HomeScreen(userData) }
         composable("plan") { PlanningScreen() }
         composable("knowledge") { KnowledgeScreen() }
-        composable("profile") { ProfileScreen() }
+        composable("profile") { ProfileScreen(userData) }
     }
 }
 
@@ -178,20 +209,8 @@ fun MainContent(
 )
 @Composable
 private fun MainScreenDarkModePreviewInSmallPhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        MainScreen(userDTO = userDTO)
+        MainScreen(UserDTO.default())
     }
 }
 
@@ -203,20 +222,8 @@ private fun MainScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun MainScreenPreviewInLargePhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        MainScreen(userDTO = userDTO)
+        MainScreen(UserDTO.default())
     }
 }
 
@@ -229,20 +236,8 @@ private fun MainScreenPreviewInLargePhone() {
 )
 @Composable
 private fun MainScreenPreviewInTablet() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        MainScreen(userDTO = userDTO)
+        MainScreen(UserDTO.default())
     }
 }
 
@@ -255,20 +250,8 @@ private fun MainScreenPreviewInTablet() {
 )
 @Composable
 private fun MainLandscapeScreenDarkModePreviewInSmallPhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        MainScreen(userDTO = userDTO)
+        MainScreen(UserDTO.default())
     }
 }
 
@@ -280,20 +263,8 @@ private fun MainLandscapeScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun MainLandscapeScreenPreviewInLargePhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        MainScreen(userDTO = userDTO)
+        MainScreen(UserDTO.default())
     }
 }
 
@@ -306,19 +277,7 @@ private fun MainLandscapeScreenPreviewInLargePhone() {
 )
 @Composable
 private fun MainLandscapeScreenPreviewInTablet() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        MainScreen(userDTO = userDTO)
+        MainScreen(UserDTO.default())
     }
 }

@@ -58,6 +58,7 @@ import com.example.biofit.R
 import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.navigation.MainActivity
+import com.example.biofit.navigation.getUserData
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
@@ -69,22 +70,26 @@ import com.example.biofit.view_model.AIChatbotViewModel
 
 class AIChatbotActivity : ComponentActivity() {
     private lateinit var chatViewModel: AIChatbotViewModel
+    private var userData: UserDTO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("USER_DATA")
-        }
-        if (userDTO == null) {
-            finish()
-            return
-        }
+
+        userData = getUserData(this)
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userData ?: UserDTO(
+                userId = 0,
+                fullName = "N/A",
+                email = "N/A",
+                gender = 3,
+                height = 0f,
+                weight = 0f,
+                targetWeight = 0f,
+                dateOfBirth = "N/A",
+                avatar = "N/A",
+                createdAccount = "N/A"
+            ),
             context = this,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -132,12 +137,6 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
                 title = stringResource(R.string.ai_assistant_bionix),
                 middleButton = null,
                 rightButton = null,
@@ -357,7 +356,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
             createdAccount = "2025-02-28"
         )
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userDTO,
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -389,7 +388,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
             createdAccount = "2025-02-28"
         )
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userDTO,
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -422,7 +421,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
             createdAccount = "2025-02-28"
         )
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userDTO,
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -455,7 +454,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
             createdAccount = "2025-02-28"
         )
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userDTO,
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -487,7 +486,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
             createdAccount = "2025-02-28"
         )
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userDTO,
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -520,7 +519,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
             createdAccount = "2025-02-28"
         )
         val model = ChatBotModel(
-            userDTO = userDTO,
+            userData = userDTO,
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )

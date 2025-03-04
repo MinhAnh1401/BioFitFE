@@ -128,13 +128,6 @@ fun TrackScreen(
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        intent.putExtra("USER_DATA", userDTO)
-                        it.startActivity(intent)
-                    }
-                },
                 title = stringResource(selectedOption),
                 middleButton = {
                     Box {

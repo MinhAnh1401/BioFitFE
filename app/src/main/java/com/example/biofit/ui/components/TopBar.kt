@@ -1,5 +1,7 @@
 package com.example.biofit.ui.components
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,21 +9,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.activity.BackButton
-import com.example.biofit.ui.activity.HomeButton
 import com.example.biofit.ui.theme.BioFitTheme
 
 @Composable
@@ -34,7 +39,6 @@ fun TopBarScreen() {
     ) {
         TopBar(
             onBackClick = { },
-            onHomeClick = { },
             title = "Title",
             middleButton = {
                 Icon(
@@ -58,7 +62,6 @@ fun TopBarScreen() {
 @Composable
 fun TopBar(
     onBackClick: (() -> Unit)? = null,
-    onHomeClick: (() -> Unit)? = null,
     title: String? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
@@ -82,12 +85,7 @@ fun TopBar(
 
                 Spacer(modifier = Modifier.width(standardPadding))
 
-                if (onHomeClick != null) {
-                    HomeButton(
-                        onHomeClick,
-                        standardPadding
-                    )
-                }
+                HomeButton(standardPadding)
             }
         }
 
@@ -115,6 +113,30 @@ fun TopBar(
         ) {
             rightButton?.invoke()
         }
+    }
+}
+
+@Composable
+fun HomeButton(standardPadding: Dp) {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    IconButton(
+        onClick = {
+            activity?.let {
+                val intent = Intent(it, MainActivity::class.java)
+                it.startActivity(intent)
+            }
+        },
+        modifier = Modifier.size(standardPadding * 1.5f),
+        enabled = true,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_home),
+            contentDescription = "Back Button",
+            modifier = Modifier.size(standardPadding * 1.5f),
+            tint = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 

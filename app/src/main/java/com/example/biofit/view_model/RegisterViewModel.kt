@@ -59,9 +59,7 @@ class RegisterViewModel : ViewModel() {
                     registerMessage.value = context.getString(R.string.register_successfully)
 
                     user?.let {
-                        val intent = Intent(context, InfoUserNameActivity::class.java).apply {
-                            putExtra("USER_DATA", it)
-                        }
+                        val intent = Intent(context, InfoUserNameActivity::class.java)
                         context.startActivity(intent)
                     }
                 } else if (response.code() == 409) {

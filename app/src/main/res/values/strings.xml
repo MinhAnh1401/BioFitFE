@@ -287,4 +287,7 @@
     <string name="enter_mass">Enter mass</string>
     <string name="enter_calorie_intake">Enter calorie intake</string>
     <string name="please_select_a_goal_before_weekly_goal">Please select a goal before weekly goal</string>
+    <string name="age_not_provided">Age not provided</string>
+    <string name="gender_not_provided">Gender not provided</string>
+    <string name="enter_your_full_name">Enter your full name</string>
 </resources>

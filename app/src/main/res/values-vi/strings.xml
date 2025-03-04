@@ -286,4 +286,7 @@
     <string name="enter_mass">Nhập khối lượng</string>
     <string name="enter_calorie_intake">Nhập lượng calo nạp vào</string>
     <string name="please_select_a_goal_before_weekly_goal">Vui lòng chọn mục tiêu trước mục tiêu tuần</string>
+    <string name="age_not_provided">Chưa cung cấp tuổi</string>
+    <string name="gender_not_provided">Chưa cung cấp giới tính</string>
+    <string name="enter_your_full_name">Nhập họ tên của bạn</string>
 </resources>

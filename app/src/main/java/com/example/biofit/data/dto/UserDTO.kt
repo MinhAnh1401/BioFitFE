@@ -2,8 +2,12 @@ package com.example.biofit.data.dto
 
 import android.content.Context
 import android.os.Parcelable
+import androidx.compose.ui.res.stringResource
 import com.example.biofit.R
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 
 @Parcelize
 data class UserDTO(
@@ -18,10 +22,49 @@ data class UserDTO(
     val avatar: String?,
     val createdAccount: String
 ) : Parcelable {
-    fun getGenderString(context: Context): String {
+    fun getGenderString(context: Context, gender: Int?): String {
         return when (gender) {
             0 -> context.getString(R.string.male)
-            else -> context.getString(R.string.female)
+            1 -> context.getString(R.string.female)
+            else -> context.getString(R.string.gender_not_provided)
+        }
+    }
+
+    fun getGenderInt(context: Context, gender: String?): Int? {
+        return when (gender) {
+            context.getString(R.string.male) -> 0
+            context.getString(R.string.female) -> 1
+            else -> null
+        }
+    }
+
+    fun getAge(context: Context, dateOfBirth: String?): String {
+        if (dateOfBirth.isNullOrEmpty()) return context.getString(R.string.age_not_provided)
+
+        return try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val birthDate = LocalDate.parse(dateOfBirth, formatter)
+            val currentDate = LocalDate.now()
+            context.getString(R.string.age) + ": " + Period.between(birthDate, currentDate).years.toString()
+        } catch (e: Exception) {
+            context.getString(R.string.age_not_provided)
+        }
+    }
+
+    companion object {
+        fun default(): UserDTO {
+            return UserDTO(
+                userId = 0,
+                fullName = "N/A",
+                email = "N/A",
+                gender = 3,
+                height = 0f,
+                weight = 0f,
+                targetWeight = 0f,
+                dateOfBirth = "N/A",
+                avatar = "N/A",
+                createdAccount = "N/A"
+            )
         }
     }
 }

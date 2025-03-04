@@ -89,12 +89,6 @@ fun FoodDetailScreen() {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
                 title = stringResource(R.string.food_detail),
                 middleButton = null,
                 rightButton = null,

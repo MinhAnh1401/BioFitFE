@@ -114,12 +114,6 @@ fun ExerciseViewScreen() {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                onHomeClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                    }
-                },
                 title = exercise.name,
                 middleButton = null,
                 rightButton = null,

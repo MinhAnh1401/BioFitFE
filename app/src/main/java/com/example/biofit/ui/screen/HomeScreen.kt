@@ -1,9 +1,12 @@
 package com.example.biofit.ui.screen
 
 import android.app.Activity
+import android.app.Application
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Paint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -81,6 +84,7 @@ import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -100,7 +104,7 @@ import java.util.Calendar
 import kotlin.random.Random
 
 @Composable
-fun HomeScreen(userDTO: UserDTO) {
+fun HomeScreen(userData: UserDTO) {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -119,7 +123,7 @@ fun HomeScreen(userDTO: UserDTO) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HomeContent(
-                userDTO = userDTO,
+                userData,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -129,16 +133,18 @@ fun HomeScreen(userDTO: UserDTO) {
 
 @Composable
 fun HeaderBar(
-    userDTO: UserDTO,
+    userData: UserDTO,
     modifier: Modifier
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val userName = if (userDTO.fullName == null) {
+    Log.d("HeaderBar", "Current userData in UI: $userData")
+
+    val userName = if (userData.fullName.isNullOrEmpty()) {
         ""
     } else {
-        ", ${userDTO.fullName}"
+        ", ${userData.fullName}"
     }
 
     val currentDate = LocalDate.now()
@@ -216,7 +222,7 @@ fun HeaderBar(
 
 @Composable
 fun HomeContent(
-    userDTO: UserDTO,
+    userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -225,7 +231,7 @@ fun HomeContent(
     ) {
         item {
             HeaderBar(
-                userDTO = userDTO,
+                userData,
                 modifier = modifier
             )
         }
@@ -239,7 +245,6 @@ fun HomeContent(
 
         item {
             DailyMenu(
-                userDTO = userDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -568,14 +573,14 @@ fun RemainingCaloriesChart(
                 },
                 center.x,
                 center.y + standardPadding.value,
-                android.graphics.Paint().apply {
+                Paint().apply {
                     textSize = radius / 2
                     color = if (exceeded) {
                         exceededColor.toArgb()
                     } else {
                         remainingCaloriesColor.toArgb()
                     }
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                 }
             )
 
@@ -587,14 +592,14 @@ fun RemainingCaloriesChart(
                 },
                 center.x,
                 center.y + standardPadding.value * 3.5f,
-                android.graphics.Paint().apply {
+                Paint().apply {
                     textSize = radius / 7
                     color = if (exceeded) {
                         exceededColor.toArgb()
                     } else {
                         remainingCaloriesColor.toArgb()
                     }
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                 }
             )
         }
@@ -603,7 +608,6 @@ fun RemainingCaloriesChart(
 
 @Composable
 fun DailyMenu(
-    userDTO: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -641,7 +645,6 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.morning)
-                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -660,7 +663,6 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.afternoon)
-                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -683,7 +685,6 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.evening)
-                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -702,7 +703,6 @@ fun DailyMenu(
                     activity?.let {
                         val intent = Intent(it, TrackActivity::class.java)
                         intent.putExtra("SESSION_TITLE", R.string.snack)
-                        intent.putExtra("USER_DATA", userDTO)
                         it.startActivity(intent)
                     }
                 },
@@ -1154,14 +1154,14 @@ fun WaterChart(
                 "%.1f".format(loadedValue),
                 center.x,
                 center.y + standardPadding.value,
-                android.graphics.Paint().apply {
+                Paint().apply {
                     textSize = radius / 2
                     color = if (exceeded) {
                         exceededColor.toArgb()
                     } else {
                         progressColor.toArgb()
                     }
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                 }
             )
 
@@ -1169,14 +1169,14 @@ fun WaterChart(
                 "%.1f$unit".format(targetValue),
                 center.x,
                 center.y + standardPadding.value * 3.5f,
-                android.graphics.Paint().apply {
+                Paint().apply {
                     textSize = radius / 7
                     color = if (exceeded) {
                         progressColor.toArgb()
                     } else {
                         circleColor.toArgb()
                     }
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                 }
             )
         }
@@ -1237,10 +1237,10 @@ fun ExerciseChart(
                 "%.1f".format(loadedValue),
                 center.x,
                 center.y + standardPadding.value,
-                android.graphics.Paint().apply {
+                Paint().apply {
                     textSize = radius / 2
                     color = if (exceeded) exceededColor.toArgb() else progressColor.toArgb()
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                 }
             )
 
@@ -1248,10 +1248,10 @@ fun ExerciseChart(
                 "%.1fcal".format(targetValue),
                 center.x,
                 center.y + standardPadding.value * 3.5f,
-                android.graphics.Paint().apply {
+                Paint().apply {
                     textSize = radius / 7
                     color = if (exceeded) progressColor.toArgb() else circleColor.toArgb()
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                 }
             )
         }
@@ -1334,20 +1334,21 @@ fun rememberMarkerComponent(): MarkerComponent {
 )
 @Composable
 private fun HomePortraitScreenDarkModePreviewInSmallPhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        HomeScreen(userDTO = userDTO)
+        HomeScreen(
+            userData = UserDTO(
+                userId = 0,
+                fullName = "John",
+                email = "john@email.com",
+                gender = R.string.male,
+                height = 180f,
+                weight = 70f,
+                targetWeight = 75f,
+                dateOfBirth = "2004-01-01",
+                avatar = "",
+                createdAccount = "2025-01-01"
+            )
+        )
     }
 }
 
@@ -1359,20 +1360,21 @@ private fun HomePortraitScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun HomePortraitScreenPreviewInLargePhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        HomeScreen(userDTO = userDTO)
+        HomeScreen(
+            userData = UserDTO(
+                userId = 0,
+                fullName = "John",
+                email = "john@email.com",
+                gender = R.string.male,
+                height = 180f,
+                weight = 70f,
+                targetWeight = 75f,
+                dateOfBirth = "2004-01-01",
+                avatar = "",
+                createdAccount = "2025-01-01"
+            )
+        )
     }
 }
 
@@ -1385,20 +1387,21 @@ private fun HomePortraitScreenPreviewInLargePhone() {
 )
 @Composable
 private fun HomePortraitScreenPreviewInTablet() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        HomeScreen(userDTO = userDTO)
+        HomeScreen(
+            userData = UserDTO(
+                userId = 0,
+                fullName = "John",
+                email = "john@email.com",
+                gender = R.string.male,
+                height = 180f,
+                weight = 70f,
+                targetWeight = 75f,
+                dateOfBirth = "2004-01-01",
+                avatar = "",
+                createdAccount = "2025-01-01"
+            )
+        )
     }
 }
 
@@ -1411,20 +1414,21 @@ private fun HomePortraitScreenPreviewInTablet() {
 )
 @Composable
 private fun HomeLandscapeScreenDarkModePreviewInSmallPhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        HomeScreen(userDTO = userDTO)
+        HomeScreen(
+            userData = UserDTO(
+                userId = 0,
+                fullName = "John",
+                email = "john@email.com",
+                gender = R.string.male,
+                height = 180f,
+                weight = 70f,
+                targetWeight = 75f,
+                dateOfBirth = "2004-01-01",
+                avatar = "",
+                createdAccount = "2025-01-01"
+            )
+        )
     }
 }
 
@@ -1436,20 +1440,21 @@ private fun HomeLandscapeScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun HomeLandscapeScreenPreviewInLargePhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        HomeScreen(userDTO = userDTO)
+        HomeScreen(
+            userData = UserDTO(
+                userId = 0,
+                fullName = "John",
+                email = "john@email.com",
+                gender = R.string.male,
+                height = 180f,
+                weight = 70f,
+                targetWeight = 75f,
+                dateOfBirth = "2004-01-01",
+                avatar = "",
+                createdAccount = "2025-01-01"
+            )
+        )
     }
 }
 
@@ -1462,19 +1467,20 @@ private fun HomeLandscapeScreenPreviewInLargePhone() {
 )
 @Composable
 private fun HomeLandscapeScreenPreviewInTablet() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        HomeScreen(userDTO = userDTO)
+        HomeScreen(
+            userData = UserDTO(
+                userId = 0,
+                fullName = "John",
+                email = "john@email.com",
+                gender = R.string.male,
+                height = 180f,
+                weight = 70f,
+                targetWeight = 75f,
+                dateOfBirth = "2004-01-01",
+                avatar = "",
+                createdAccount = "2025-01-01"
+            )
+        )
     }
 }
