@@ -149,7 +149,11 @@ fun SettingScreen(
                                 if (updateViewModel.updatedState.value == true) {
                                     activity?.finish()
                                 } else {
-                                    Toast.makeText(context, updateViewModel.updatedMessage.value, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        updateViewModel.updatedMessage.value,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -365,7 +369,7 @@ fun SettingContent(
                             updateViewModel.gender.value = userData.getGenderInt(
                                 context,
                                 selectedGender
-                            ) // ✅ Cập nhật ViewModel
+                            )
                             showGenderDialog = false
                         },
                         onDismissRequest = { showGenderDialog = false },

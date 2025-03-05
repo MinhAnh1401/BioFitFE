@@ -35,17 +35,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.navigation.getUserData
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.UpdateUserViewModel
 
 class InfoUserGenderActivity : ComponentActivity() {
+    private var userData: UserDTO? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userData = getUserData(this)
         enableEdgeToEdge()
         setContent {
             BioFitTheme {
-                InfoUserGenderScreen()
+                InfoUserGenderScreen(userData ?: UserDTO.default())
             }
         }
     }
@@ -57,7 +66,11 @@ class InfoUserGenderActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserGenderScreen() {
+fun InfoUserGenderScreen(
+    userData: UserDTO,
+    updateViewModel: UpdateUserViewModel = viewModel(),
+    loginViewModel: LoginViewModel = viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -66,6 +79,14 @@ fun InfoUserGenderScreen() {
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
+
+    val userId = userData.userId
+    var selectedGender by rememberSaveable { mutableStateOf<String?>(null) }
+    val gender = when (selectedGender) {
+        stringResource(R.string.male) -> 1
+        stringResource(R.string.female) -> 0
+        else -> null
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -98,6 +119,8 @@ fun InfoUserGenderScreen() {
                     standardPadding
                 )
                 InfoUserGenderContent(
+                    selectedGender, // Truyền vào đây
+                    onGenderSelected = { selectedGender = it },
                     standardPadding,
                     modifier
                 )
@@ -105,10 +128,11 @@ fun InfoUserGenderScreen() {
 
             NextButtonInfoScreen(
                 onClick = {
-                    activity?.let {
-                        val intent = Intent(it, InfoUserBirthdayActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
+                    selectedGender?.let { updateViewModel.gender.value = gender }
+
+                    updateViewModel.updateUser(context, userId, loginViewModel) {
+                        val intent = Intent(context, InfoUserBirthdayActivity::class.java)
+                        context.startActivity(intent)
                     }
                 },
                 standardPadding
@@ -119,11 +143,11 @@ fun InfoUserGenderScreen() {
 
 @Composable
 fun InfoUserGenderContent(
+    selectedGender: String?,
+    onGenderSelected: (String) -> Unit,
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    var selectedGender by rememberSaveable { mutableStateOf<String?>(null) }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -155,7 +179,7 @@ fun InfoUserGenderContent(
                     stringResource(R.string.female)
                 ),
                 selectedOption = selectedGender,
-                onOptionSelected = { selectedGender = it },
+                onOptionSelected = onGenderSelected,
                 modifier
             )
         }
@@ -220,7 +244,7 @@ fun GenderOption(
 @Composable
 private fun InfoUserGenderPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserGenderScreen()
+        InfoUserGenderScreen(UserDTO.default())
     }
 }
 
@@ -233,7 +257,7 @@ private fun InfoUserGenderPortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserGenderPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserGenderScreen()
+        InfoUserGenderScreen(UserDTO.default())
     }
 }
 
@@ -247,7 +271,7 @@ private fun InfoUserGenderPortraitScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserGenderPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserGenderScreen()
+        InfoUserGenderScreen(UserDTO.default())
     }
 }
 
@@ -261,7 +285,7 @@ private fun InfoUserGenderPortraitScreenPreviewInTablet() {
 @Composable
 private fun InfoUserGenderLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserGenderScreen()
+        InfoUserGenderScreen(UserDTO.default())
     }
 }
 
@@ -274,7 +298,7 @@ private fun InfoUserGenderLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserGenderLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserGenderScreen()
+        InfoUserGenderScreen(UserDTO.default())
     }
 }
 
@@ -288,6 +312,6 @@ private fun InfoUserGenderLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserGenderLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserGenderScreen()
+        InfoUserGenderScreen(UserDTO.default())
     }
 }

@@ -9,6 +9,9 @@ import com.example.biofit.data.dto.RegisterRequest
 import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.ui.activity.InfoUserNameActivity
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,10 +27,14 @@ class RegisterViewModel : ViewModel() {
             DateTimeFormatter.ofPattern("yyyy-MM-dd")
         )
     )
+
+    private val _userData = MutableStateFlow<UserDTO?>(null)
+    val userData: StateFlow<UserDTO?> = _userData.asStateFlow()
+
     var registerState = mutableStateOf<Boolean?>(null)
     var registerMessage = mutableStateOf<String?>(null)
 
-    fun registerUser(context: Context) {
+    fun registerUser(context: Context, loginViewModel: LoginViewModel) {
         val emailValidationMessage = validateEmail(context, email.value)
         if (emailValidationMessage != null) {
             registerState.value = false
@@ -59,6 +66,8 @@ class RegisterViewModel : ViewModel() {
                     registerMessage.value = context.getString(R.string.register_successfully)
 
                     user?.let {
+                        _userData.value = it
+                        loginViewModel.saveUserData(context, it)
                         val intent = Intent(context, InfoUserNameActivity::class.java)
                         context.startActivity(intent)
                     }

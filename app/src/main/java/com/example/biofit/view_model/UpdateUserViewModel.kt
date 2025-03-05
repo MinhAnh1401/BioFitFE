@@ -1,17 +1,12 @@
 package com.example.biofit.view_model
 
-import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.biofit.R
 import com.example.biofit.data.dto.UpdateUserRequest
 import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.remote.RetrofitClient
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,11 +29,21 @@ class UpdateUserViewModel : ViewModel() {
         loginViewModel: LoginViewModel,
         onSuccess: () -> Unit
     ) {
-        val emailValidationMessage = validateEmail(context, email.value ?: UserDTO.default().email)
+        /*val emailValidationMessage = validateEmail(context, email.value ?: UserDTO.default().email)
         if (emailValidationMessage != null) {
             updatedState.value = false
             updatedMessage.value = emailValidationMessage
             return
+        }*/
+
+        val emailValue = email.value
+        if (emailValue != null) { // Chỉ validate khi có email
+            val emailValidationMessage = validateEmail(context, emailValue)
+            if (emailValidationMessage != null) {
+                updatedState.value = false
+                updatedMessage.value = emailValidationMessage
+                return
+            }
         }
 
         val apiService = RetrofitClient.instance

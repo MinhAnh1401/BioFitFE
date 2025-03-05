@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.RegisterViewModel
 
 class RegisterActivity : ComponentActivity() {
@@ -127,6 +128,7 @@ fun RegisterForm(
     standardPadding: Dp,
     modifier2: Modifier,
     viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     Column(
         modifier = modifier,
@@ -247,7 +249,7 @@ fun RegisterForm(
         val context = LocalContext.current
 
         ElevatedButton(
-            onClick = { viewModel.registerUser(context) },
+            onClick = { viewModel.registerUser(context, loginViewModel) },
             modifier = Modifier.padding(vertical = standardPadding),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary

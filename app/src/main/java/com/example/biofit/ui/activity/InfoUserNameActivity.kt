@@ -3,8 +3,8 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -35,6 +35,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.navigation.getUserData
@@ -66,7 +69,7 @@ class InfoUserNameActivity : ComponentActivity() {
         userData = getUserData(this)
         setContent {
             BioFitTheme {
-                    InfoUserNameScreen(userData ?: UserDTO.default())
+                InfoUserNameScreen(userData ?: UserDTO.default())
             }
         }
     }
@@ -80,8 +83,8 @@ class InfoUserNameActivity : ComponentActivity() {
 @Composable
 fun InfoUserNameScreen(
     userData: UserDTO,
-    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    updateUserViewModel: UpdateUserViewModel = viewModel(),
+    loginViewModel: LoginViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -125,9 +128,12 @@ fun InfoUserNameScreen(
             }
 
             val userId = userData.userId
+            Log.d("UserId", "userId: $userId")
             NextButtonInfoScreen(
                 onClick = {
-                    viewModel.updateUser(context, userId, loginViewModel) {
+                    Log.d("NextButtonInfoScreen", "updateUserViewModel: $updateUserViewModel")
+                    updateUserViewModel.updateUser(context, userId, loginViewModel) {
+                        Log.d("NextButtonInfoScreen", "đã lưu dữ liệu và chuyển qua trang")
                         val intent = Intent(context, InfoUserGenderActivity::class.java)
                         context.startActivity(intent)
                     }
@@ -270,6 +276,8 @@ fun InfoUserNameContent(
     standardPadding: Dp,
     viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
+    val fullNameState = remember { mutableStateOf(viewModel.fullName.value ?: "") }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -289,8 +297,12 @@ fun InfoUserNameContent(
 
         item {
             OutlinedTextField(
-                value = viewModel.fullName.value ?: "",
-                onValueChange = { viewModel.fullName.value = it.ifEmpty { null } },
+                value = fullNameState.value,
+                onValueChange = {
+                    fullNameState.value = it
+                    viewModel.fullName.value = it
+                    Log.d("InfoUserNameScreen", "Updated fullName: ${viewModel.fullName.value}")
+                },
                 textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.Center),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
