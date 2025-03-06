@@ -1,12 +1,11 @@
 package com.example.biofit.ui.screen
 
 import android.app.Activity
-import android.app.Application
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -31,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -71,8 +71,10 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.DailyWeightSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.CaloriesTargetActivity
 import com.example.biofit.ui.activity.ExerciseActivity
@@ -84,7 +86,7 @@ import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.DailyWeightViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -138,8 +140,6 @@ fun HeaderBar(
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
-
-    Log.d("HeaderBar", "Current userData in UI: $userData")
 
     val userName = if (userData.fullName.isNullOrEmpty()) {
         ""
@@ -252,6 +252,7 @@ fun HomeContent(
 
         item {
             DailyGoals(
+                userData,
                 standardPadding,
                 modifier
             )
@@ -807,8 +808,10 @@ fun getBurnedCalories(): Float {
 
 @Composable
 fun DailyGoals(
+    userData: UserDTO,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    dailyWeightViewModel: DailyWeightViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -818,25 +821,26 @@ fun DailyGoals(
     val burnedCalories = getBurnedCalories()
     val targetBurnCalories = 200f
 
-    val latestWeight = 70.5f // Thay đổi thành cân nặng mới nhất
-    val currentDate = 7 // Thay đổi thành ngày hiện tại
-    val currentMonth = 2 // Thay đổi thành tháng hiện tại
-    val currentYear = 2025 // Thay đổi thành năm hiện tại
-    val sixDaysBefore = currentDate - 6 // Thay đổi thành ngày 6 ngày trước
-    val fiveDaysBefore = currentDate - 5 // Thay đổi thành ngày 5 ngày trước
-    val fourDaysBefore = currentDate - 4 // Thay đổi thành ngày 4 ngày trước
-    val threeDaysBefore = currentDate - 3 // Thay đổi thành ngày 3 ngày trước
-    val twoDaysBefore = currentDate - 2 // Thay đổi thành ngày 2 ngày trước
-    val yesterday = currentDate - 1 // Thay đổi thành ngày 1 ngày trước
-    val today = currentDate // Thay đổi thành ngày hiện tại
-
-    val weightSixDaysBefore = 69.7f // Thay đổi thành cân nặng của 6 ngày trước
-    val weightFiveDaysBefore = 67.5f // Thay đổi thành cân nặng của 5 ngày trước
-    val weightFourDaysBefore = 66.5f // Thay đổi thành cân nặng của 4 ngày trước
-    val weightThreeDaysBefore = 65.5f // Thay đổi thành cân nặng của 3 ngày trước
-    val weightTwoDaysBefore = 66.8f // Thay đổi thành cân nặng của 2 ngày trước
-    val weightYesterday = 69.5f // Thay đổi thành cân nặng của ngày hôm qua
-    val weightToday = 70.5f // Thay đổi thành cân nặng của hôm nay
+    dailyWeightViewModel.updateUserId(userData.userId)
+    var latestWeight = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+    var latestWeightState by remember { mutableStateOf(DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight) }
+    val today = LocalDate.now()
+    val weightDataState by dailyWeightViewModel.weightDataState
+    LaunchedEffect(userData.userId) {
+        dailyWeightViewModel.getWeightHistory(userData.userId)
+    }
+    LaunchedEffect(weightDataState) {
+        latestWeightState = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+    }
+    LaunchedEffect(Unit) {
+        val sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            if (key == "DAILY_WEIGHT") {
+                val updatedWeight = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+                latestWeightState = updatedWeight
+            }
+        }
+    }
 
     Column(
         modifier = modifier,
@@ -1019,7 +1023,7 @@ fun DailyGoals(
             }
         }
 
-        MainCard(modifier = modifier) {
+        SubCard(modifier = modifier) {
             Column(
                 modifier = Modifier.padding(standardPadding),
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
@@ -1028,21 +1032,39 @@ fun DailyGoals(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
                     ) {
                         Text(
                             text = stringResource(R.string.latest_weight),
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.titleSmall
                         )
 
-                        Row {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 text = "$latestWeight" + stringResource(R.string.kg) +
-                                        " | $currentDate/$currentMonth/$currentYear",
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                        " | $today",
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.labelSmall
                             )
+
+                            IconButton(
+                                onClick = {
+                                    dailyWeightViewModel.getWeightHistory(userData.userId)
+                                    latestWeight = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+                                },
+                                modifier = Modifier.size(20.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Refresh",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
 
@@ -1057,27 +1079,17 @@ fun DailyGoals(
                             min = standardPadding * 10
                         ),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Text(
                             text = stringResource(R.string.update),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
 
-                val weightData = listOf(
-                    "$sixDaysBefore/$currentMonth" to weightSixDaysBefore,
-                    "$fiveDaysBefore/$currentMonth" to weightFiveDaysBefore,
-                    "$fourDaysBefore/$currentMonth" to weightFourDaysBefore,
-                    "$threeDaysBefore/$currentMonth" to weightThreeDaysBefore,
-                    "$twoDaysBefore/$currentMonth" to weightTwoDaysBefore,
-                    "$yesterday/$currentMonth" to weightYesterday,
-                    "$today/$currentMonth" to weightToday
-                )
-
-                WeightLineChart(weightData)
+                WeightLineChart(weightDataState)
             }
         }
     }
@@ -1260,7 +1272,7 @@ fun ExerciseChart(
 
 @Composable
 fun WeightLineChart(weightData: List<Pair<String, Float>>) {
-    val chartEntryModel = remember {
+    val chartEntryModel = remember(weightData) {
         ChartEntryModelProducer(
             weightData.mapIndexed { index, data ->
                 entryOf(index.toFloat(), data.second)
@@ -1271,7 +1283,7 @@ fun WeightLineChart(weightData: List<Pair<String, Float>>) {
     val lineChart = lineChart(
         lines = listOf(
             LineChart.LineSpec(
-                lineColor = 0xFF0000FF.toInt(),
+                lineColor = 0xFF34A853.toInt(),
                 lineThicknessDp = 3f,
             )
         )
@@ -1292,12 +1304,12 @@ fun WeightLineChart(weightData: List<Pair<String, Float>>) {
             model = chartEntryModel.getModel(),
             startAxis = rememberStartAxis(
                 label = textComponent(
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             ),
             bottomAxis = rememberBottomAxis(
                 label = textComponent(
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 ),
                 valueFormatter = { value, _ ->
                     weightData.getOrNull(value.toInt())?.first ?: ""

@@ -2,7 +2,8 @@ package com.example.biofit.data.model
 
 import android.content.Context
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.data.model.dto.DailyWeightDTO
+import com.example.biofit.data.model.dto.UserDTO
 import com.google.ai.client.generativeai.GenerativeModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -11,6 +12,7 @@ data class ChatMessage(val userMessage: String, val botResponse: String)
 
 class ChatBotModel(
     private val userData: UserDTO,
+    private val dailyWeightData: DailyWeightDTO,
     private val context: Context,
     apiKey: String,
 ) {
@@ -29,11 +31,8 @@ class ChatBotModel(
         }
 
         val userData = userData
-        val enrichedInput = if (userData != null) {
-            enrichInputWithUserData(userInput, userData)
-        } else {
-            userInput
-        }
+        val dailyWeightData = dailyWeightData
+        val enrichedInput = enrichInputWithUserData(userInput, userData, dailyWeightData)
 
         val fullConversation = if (conversationContext.isNotBlank()) {
             "$conversationContext\nUser: $enrichedInput"
@@ -53,7 +52,11 @@ class ChatBotModel(
         }
     }
 
-    private fun enrichInputWithUserData(userInput: String, userData: UserDTO): String {
+    private fun enrichInputWithUserData(
+        userInput: String,
+        userData: UserDTO,
+        dailyWeightData: DailyWeightDTO
+    ): String {
         return """ 
             Current date time: ${
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
@@ -64,7 +67,8 @@ class ChatBotModel(
                 - Gender: ${userData.getGenderString(context, userData.gender)}
                 - Date of Birth: ${userData.dateOfBirth}
                 - Height: ${userData.height} cm
-                - Weight: ${userData.weight} kg
+                - Starting Weight: ${userData.weight} kg on ${userData.createdAccount}
+                - Current Weight: ${dailyWeightData.weight} kg
                 - Target Weight: ${userData.targetWeight} kg
                 
             User asks: $userInput

@@ -290,4 +290,6 @@
     <string name="age_not_provided">Age not provided</string>
     <string name="gender_not_provided">Gender not provided</string>
     <string name="enter_your_full_name">Enter your full name</string>
+    <string name="update_daily_weight_successfully">Updated daily weight successfully</string>
+    <string name="update_failed">Update failed</string>
 </resources>

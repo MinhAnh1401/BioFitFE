@@ -37,8 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
-import com.example.biofit.navigation.getUserData
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.LoginViewModel
@@ -50,7 +50,7 @@ class InfoUserGenderActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        userData = getUserData(this)
+        userData = UserSharedPrefsHelper.getUserData(this)
         enableEdgeToEdge()
         setContent {
             BioFitTheme {

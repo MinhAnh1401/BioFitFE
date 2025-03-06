@@ -46,12 +46,10 @@ import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.ui.activity.KnowledgeVideoActivity
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.LoginViewModel
 
 @Composable
 fun KnowledgeScreen() {

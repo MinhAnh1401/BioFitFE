@@ -1,8 +1,7 @@
-package com.example.biofit.data.dto
+package com.example.biofit.data.model.dto
 
 import android.content.Context
 import android.os.Parcelable
-import androidx.compose.ui.res.stringResource
 import com.example.biofit.R
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
@@ -45,7 +44,10 @@ data class UserDTO(
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val birthDate = LocalDate.parse(dateOfBirth, formatter)
             val currentDate = LocalDate.now()
-            context.getString(R.string.age) + ": " + Period.between(birthDate, currentDate).years.toString()
+            context.getString(R.string.age) + ": " + Period.between(
+                birthDate,
+                currentDate
+            ).years.toString()
         } catch (e: Exception) {
             context.getString(R.string.age_not_provided)
         }

@@ -1,4 +1,4 @@
-package com.example.biofit.data.dto
+package com.example.biofit.data.model.request
 
 class RegisterRequest(
     val email: String,
