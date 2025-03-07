@@ -292,4 +292,11 @@
     <string name="enter_your_full_name">Enter your full name</string>
     <string name="update_daily_weight_successfully">Updated daily weight successfully</string>
     <string name="update_failed">Update failed</string>
+    <string name="with_a_current_weight_of">With a current weight of</string>
+    <string name="you_need_to_drink_another">You need to drink another</string>
+    <string name="l_of_water_to_complete_your_goal">L of water to complete your goal.</string>
+    <string name="you_have_not_drank_water">You have not drank water</string>
+    <string name="because_the_amount_of_water_you_just_entered_is_0_l">Because the amount of water you just entered is 0 L</string>
+    <string name="congratulations_on_completing_your_water_drinking_goal_today">Congratulations on completing your water drinking goal today!</string>
+    <string name="well_done">Well done!</string>
 </resources>

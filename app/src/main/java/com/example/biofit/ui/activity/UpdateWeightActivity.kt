@@ -3,6 +3,7 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -54,7 +55,7 @@ import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.DailyWeightViewModel
+import com.example.biofit.view_model.DailyLogViewModel
 
 class UpdateWeightActivity : ComponentActivity() {
     private var userData: UserDTO? = null
@@ -80,7 +81,7 @@ class UpdateWeightActivity : ComponentActivity() {
 @Composable
 fun UpdateWeightScreen(
     userData: UserDTO,
-    dailyWeightViewModel: DailyWeightViewModel = viewModel()
+    dailyLogViewModel: DailyLogViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -127,8 +128,13 @@ fun UpdateWeightScreen(
 
                     ElevatedButton(
                         onClick = {
-                            dailyWeightViewModel.updateUserId(userData.userId)
-                            dailyWeightViewModel.saveDailyWeight(context)
+                            dailyLogViewModel.updateUserId(userData.userId)
+                            dailyLogViewModel.saveDailyLog(context)
+                            Toast.makeText(
+                                context,
+                                R.string.update_daily_weight_successfully,
+                                Toast.LENGTH_SHORT
+                            ).show()
                             activity?.finish()
                         },
                         modifier = Modifier.widthIn(min = standardPadding * 10),
@@ -160,20 +166,20 @@ fun UpdateWeightContent(
     userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier,
-    dailyWeightViewModel: DailyWeightViewModel = viewModel()
+    dailyLogViewModel: DailyLogViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val targetWeight = userData.targetWeight
     LaunchedEffect(userData.userId) {
-        dailyWeightViewModel.updateUserId(userData.userId)
-        dailyWeightViewModel.getLatestDailyWeight(context)
+        dailyLogViewModel.updateUserId(userData.userId)
+        dailyLogViewModel.getLatestDailyLog(context)
     }
-    val memoryWeight by produceState(initialValue = 0f, key1 = dailyWeightViewModel.memoryWeight) {
-        value = dailyWeightViewModel.memoryWeight.value
+    val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
+        value = dailyLogViewModel.memoryWeight.value
     }
     LaunchedEffect(Unit) {
-        if (dailyWeightViewModel.weight.value == null) {
-            dailyWeightViewModel.weight.value = memoryWeight
+        if (dailyLogViewModel.weight.value == null) {
+            dailyLogViewModel.weight.value = memoryWeight
         }
     }
 
@@ -207,9 +213,9 @@ fun UpdateWeightContent(
         ) {
             IconButton(
                 onClick = {
-                    val weight = dailyWeightViewModel.weight.value ?: memoryWeight
+                    val weight = dailyLogViewModel.weight.value ?: memoryWeight
                     if (weight > 0) {
-                        dailyWeightViewModel.weight.value = weight - 1f
+                        dailyLogViewModel.weight.value = weight - 1f
                     }
                 },
             ) {
@@ -221,9 +227,9 @@ fun UpdateWeightContent(
             }
 
             OutlinedTextField(
-                value = dailyWeightViewModel.weight.value.toString(),
+                value = dailyLogViewModel.weight.value.toString(),
                 onValueChange = { input ->
-                    dailyWeightViewModel.weight.value = input.toFloatOrNull() ?: 0f
+                    dailyLogViewModel.weight.value = input.toFloatOrNull() ?: 0f
                 },
                 modifier = Modifier
                     .widthIn(min = 10.dp, max = standardPadding * 10)
@@ -242,8 +248,8 @@ fun UpdateWeightContent(
 
             IconButton(
                 onClick = {
-                    val weight = dailyWeightViewModel.weight.value ?: memoryWeight
-                    dailyWeightViewModel.weight.value = weight + 1f
+                    val weight = dailyLogViewModel.weight.value ?: memoryWeight
+                    dailyLogViewModel.weight.value = weight + 1f
                 },
             ) {
                 Icon(

@@ -3,6 +3,7 @@ package com.example.biofit.ui.components
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -39,8 +40,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -56,18 +60,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.ui.activity.AIChatbotActivity
 import com.example.biofit.ui.activity.AddActivity
 import com.example.biofit.ui.activity.ExerciseActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.DailyLogViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ActionPopup(
     userData: UserDTO,
+    dailyLogViewModel: DailyLogViewModel = viewModel(),
     onDismissPopup: () -> Unit,
     standardPadding: Dp
 ) {
@@ -99,13 +111,17 @@ fun ActionPopup(
             ) { }
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(standardPadding / 2),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!drinkWaterPopupState) {
-                Row {
+                Row(
+                    modifier = Modifier.padding(
+                        top = standardPadding / 2,
+                        start = standardPadding / 2,
+                        end = standardPadding / 2
+                    )
+                ) {
                     itemPopupList.forEach { (icon, title) ->
                         Column(
                             modifier = Modifier
@@ -239,7 +255,13 @@ fun ActionPopup(
                     }
                 }
 
-                Row {
+                Row(
+                    modifier = Modifier.padding(
+                        start = standardPadding / 2,
+                        end = standardPadding / 2,
+                        bottom = standardPadding / 2
+                    )
+                ) {
                     sessionPopupList.forEach { (icon, title) ->
                         Column(
                             modifier = Modifier
@@ -311,97 +333,194 @@ fun ActionPopup(
                     }
                 }
             } else {
-                var currentWater by rememberSaveable { mutableStateOf("0.5") }
-
-                Text(
-                    text = stringResource(R.string.drinking_water),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(standardPadding / 2),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleSmall
-                )
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val targetWater = 2f
+                LaunchedEffect(userData.userId) {
+                    dailyLogViewModel.updateUserId(userData.userId)
+                    dailyLogViewModel.getLatestDailyLog(context)
+                }
+                val memoryWater by produceState(
+                    initialValue = 0f,
+                    key1 = dailyLogViewModel.memoryWater
                 ) {
-                    IconButton(
-                        onClick = {
-                            val waterQuantity = currentWater.toFloatOrNull() ?: 0f
-                            if (waterQuantity > 0) {
-                                currentWater = (waterQuantity - 1).toString()
-                            }
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_less_update_weight),
-                            contentDescription = stringResource(R.string.drinking_water),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = currentWater,
-                        onValueChange = { currentWater = it },
-                        modifier = Modifier
-                            .widthIn(min = 10.dp, max = standardPadding * 10)
-                            .width(IntrinsicSize.Min),
-                        textStyle = MaterialTheme.typography.displaySmall,
-                        suffix = {
-                            Text(
-                                text = "L",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.displaySmall
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        keyboardActions = KeyboardActions(
-                            onDone = { TODO() },
-                            onGo = { TODO() },
-                            onNext = { TODO() },
-                            onPrevious = { TODO() },
-                            onSearch = { TODO() },
-                            onSend = { TODO() }
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent
-                        )
-                    )
-
-                    IconButton(
-                        onClick = {
-                            val waterQuantity = currentWater.toFloatOrNull() ?: 0f
-                            currentWater = (waterQuantity + 1).toString()
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_add_update_weight),
-                            contentDescription = stringResource(R.string.drinking_water),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+                    value = dailyLogViewModel.memoryWater.value
+                }
+                val needWater = targetWater - memoryWater
+                LaunchedEffect(Unit) {
+                    if (dailyLogViewModel.water.value == null) {
+                        dailyLogViewModel.water.value = memoryWater
                     }
                 }
 
-                Button(
-                    onClick = {
-                        // xử lý sự kiện lưu nước đã uống vào database
-                        onDismissPopup()
-                    },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                var currentWater by rememberSaveable { mutableFloatStateOf(0f) }
+
+                Column(
+                    modifier = Modifier.padding(
+                        top = standardPadding / 2,
+                        start = standardPadding / 2,
+                        end = standardPadding / 2
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.save),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        style = MaterialTheme.typography.labelLarge
+                        text = stringResource(R.string.drinking_water),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(standardPadding),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.displaySmall
                     )
+
+                    Text(
+                        text = if (DailyLogSharedPrefsHelper.getDailyLog(context)?.date != today) {
+                            stringResource(R.string.you_need_to_drink_another) +
+                                    " $targetWater " +
+                                    stringResource(R.string.l_of_water_to_complete_your_goal)
+                        } else {
+                            if (memoryWater < targetWater) {
+                                stringResource(R.string.you_need_to_drink_another) +
+                                        " $needWater " +
+                                        stringResource(R.string.l_of_water_to_complete_your_goal)
+                            } else {
+                                stringResource(R.string.congratulations_on_completing_your_water_drinking_goal_today)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = standardPadding,
+                                end = standardPadding,
+                                bottom = standardPadding
+                            ),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
+
+                Column(
+                    modifier = Modifier.padding(
+                        start = standardPadding / 2,
+                        end = standardPadding / 2,
+                        bottom = standardPadding / 2
+                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                val waterQuantity = currentWater
+                                if (waterQuantity > 0) {
+                                    currentWater = BigDecimal(currentWater.toDouble())
+                                        .subtract(BigDecimal(0.1))
+                                        .setScale(1, RoundingMode.HALF_UP)
+                                        .toFloat()
+                                }
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_less_update_weight),
+                                contentDescription = stringResource(R.string.drinking_water),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+
+                        OutlinedTextField(
+                            value = currentWater.toString(),
+                            onValueChange = { input ->
+                                currentWater = input.toFloat()
+                            },
+                            modifier = Modifier
+                                .widthIn(min = 10.dp, max = standardPadding * 10)
+                                .width(IntrinsicSize.Min),
+                            textStyle = MaterialTheme.typography.displaySmall,
+                            suffix = {
+                                Text(
+                                    text = "L",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.displaySmall
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardActions = KeyboardActions(
+                                onDone = { TODO() },
+                                onGo = { TODO() },
+                                onNext = { TODO() },
+                                onPrevious = { TODO() },
+                                onSearch = { TODO() },
+                                onSend = { TODO() }
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent
+                            )
+                        )
+
+                        IconButton(
+                            onClick = {
+                                currentWater = BigDecimal(currentWater.toDouble())
+                                    .add(BigDecimal(0.1))
+                                    .setScale(1, RoundingMode.HALF_UP)
+                                    .toFloat()
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add_update_weight),
+                                contentDescription = stringResource(R.string.drinking_water),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+
+                    var showDrinkingWaterFailed by rememberSaveable { mutableStateOf(false) }
+                    if (showDrinkingWaterFailed) {
+                        DefaultDialog(
+                            title = R.string.you_have_not_drank_water,
+                            description = R.string.because_the_amount_of_water_you_just_entered_is_0_l,
+                            actionTextButton = R.string.ok,
+                            actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
+                            actionButtonColor = MaterialTheme.colorScheme.primary,
+                            onClickActionButton = { showDrinkingWaterFailed = false },
+                            onDismissRequest = { showDrinkingWaterFailed = false },
+                            standardPadding = standardPadding
+                        )
+                    }
+
+                    val oldDatePrefs = DailyLogSharedPrefsHelper.getDailyLog(context)?.date
+
+                    Button(
+                        onClick = {
+                            if (currentWater > 0) {
+                                dailyLogViewModel.water.value = if (oldDatePrefs == today) {
+                                    memoryWater + currentWater
+                                } else {
+                                    currentWater
+                                }
+                                dailyLogViewModel.updateUserId(userData.userId)
+                                dailyLogViewModel.saveDailyLog(context)
+                                Toast.makeText(context, R.string.well_done, Toast.LENGTH_SHORT)
+                                    .show()
+                                onDismissPopup()
+                            } else {
+                                showDrinkingWaterFailed = true
+                            }
+                        },
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.save),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 }
             }
         }

@@ -43,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,12 +60,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -80,6 +83,7 @@ import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.DailyLogViewModel
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
 import java.math.BigDecimal
@@ -196,13 +200,21 @@ fun SettingContent(
     screenHeight: Int,
     standardPadding: Dp,
     modifier: Modifier,
-    updateViewModel: UpdateUserViewModel = viewModel()
+    updateViewModel: UpdateUserViewModel = viewModel(),
+    dailyLogViewModel: DailyLogViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f
-    val weight = (userData.weight ?: UserDTO.default().weight) ?: 0f
+    LaunchedEffect(userData.userId) {
+        dailyLogViewModel.updateUserId(userData.userId)
+        dailyLogViewModel.getLatestDailyLog(context)
+    }
+    val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
+        value = dailyLogViewModel.memoryWeight.value
+    }
 
-    val bmiIndex: Float? = if (height != null && height > 0.001f) {
-        weight?.div(height * height)
+    val bmiIndex: Float? = if (height > 0.001f) {
+        memoryWeight.div(height * height)
     } else {
         null
     }
@@ -249,8 +261,6 @@ fun SettingContent(
                 verticalArrangement = Arrangement.spacedBy(standardPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val context = LocalContext.current
-
                 var gender by rememberSaveable {
                     mutableStateOf(
                         userData.getGenderString(
@@ -450,7 +460,6 @@ fun SettingContent(
                             { _, selectedYear, selectedMonth, selectedDay ->
                                 calendar.set(selectedYear, selectedMonth, selectedDay)
 
-                                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                                 dateOfBirth = dateFormat.format(calendar.time)
 
                                 updateViewModel.dateOfBirth.value = dateOfBirth
@@ -514,7 +523,7 @@ fun SettingContent(
                     ),
                     prefix = {
                         Text(
-                            text = stringResource(R.string.weight),
+                            text = stringResource(R.string.starting_weight),
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
@@ -806,12 +815,42 @@ fun SettingContent(
                         }
 
                         val textWithIcon = buildAnnotatedString {
-                            append(
-                                stringResource(R.string.your_bmi_is) + " " +
-                                        roundedBmi + ", " +
-                                        stringResource(R.string.you_are_classified_as) + " " +
-                                        bmiCategory + "."
-                            )
+                            append(stringResource(R.string.your_bmi_is) + " ")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("$roundedBmi")
+                            }
+                            append(" " + stringResource(R.string.with_a_current_weight_of) + " ")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("$memoryWeight")
+                            }
+                            append(" " + stringResource(R.string.kg) + ", ")
+                            append(stringResource(R.string.you_are_classified_as) + " ")
+
+                            withStyle(
+                                style = SpanStyle(
+                                    color = when (bmiCategory) {
+                                        stringResource(R.string.underweight) -> Color(0xFFAEEA00)
+                                        stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
+                                        stringResource(R.string.overweight) -> Color(0xFFFFAB00)
+                                        else -> Color(0xFFDD2C00)
+                                    },
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append(bmiCategory.uppercase())
+                            }
+
+                            append(" ") // Thêm khoảng trắng
                             appendInlineContent("fireIcon", "[icon]")
                         }
 

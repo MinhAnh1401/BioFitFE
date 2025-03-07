@@ -2,7 +2,7 @@ package com.example.biofit.data.model
 
 import android.content.Context
 import com.example.biofit.R
-import com.example.biofit.data.model.dto.DailyWeightDTO
+import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.google.ai.client.generativeai.GenerativeModel
 import java.time.LocalDateTime
@@ -12,7 +12,7 @@ data class ChatMessage(val userMessage: String, val botResponse: String)
 
 class ChatBotModel(
     private val userData: UserDTO,
-    private val dailyWeightData: DailyWeightDTO,
+    private val dailyWeightData: DailyLogDTO,
     private val context: Context,
     apiKey: String,
 ) {
@@ -55,7 +55,7 @@ class ChatBotModel(
     private fun enrichInputWithUserData(
         userInput: String,
         userData: UserDTO,
-        dailyWeightData: DailyWeightDTO
+        dailyWeightData: DailyLogDTO
     ): String {
         return """ 
             Current date time: ${

@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
-import com.example.biofit.data.model.dto.DailyWeightDTO
+import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
-import com.example.biofit.data.utils.DailyWeightSharedPrefsHelper
+import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
@@ -70,17 +70,17 @@ import com.example.biofit.view_model.AIChatbotViewModel
 class AIChatbotActivity : ComponentActivity() {
     private lateinit var chatViewModel: AIChatbotViewModel
     private var userData: UserDTO? = null
-    private var dailyWeightData: DailyWeightDTO? = null
+    private var dailyWeightData: DailyLogDTO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         userData = UserSharedPrefsHelper.getUserData(this)
-        dailyWeightData = DailyWeightSharedPrefsHelper.getDailyWeight(this)
+        dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
-            dailyWeightData = dailyWeightData ?: DailyWeightDTO.default(),
+            dailyWeightData = dailyWeightData ?: DailyLogDTO.default(),
             context = this,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -336,7 +336,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyWeightDTO.default(),
+            dailyWeightData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -357,7 +357,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyWeightDTO.default(),
+            dailyWeightData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -379,7 +379,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyWeightDTO.default(),
+            dailyWeightData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -401,7 +401,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyWeightDTO.default(),
+            dailyWeightData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -422,7 +422,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyWeightDTO.default(),
+            dailyWeightData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -444,7 +444,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyWeightDTO.default(),
+            dailyWeightData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )

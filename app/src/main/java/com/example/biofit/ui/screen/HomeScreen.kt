@@ -6,6 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
+import android.util.Log
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -60,6 +64,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -74,7 +79,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
-import com.example.biofit.data.utils.DailyWeightSharedPrefsHelper
+import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.CaloriesTargetActivity
 import com.example.biofit.ui.activity.ExerciseActivity
@@ -86,7 +91,7 @@ import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.DailyWeightViewModel
+import com.example.biofit.view_model.DailyLogViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -811,7 +816,7 @@ fun DailyGoals(
     userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier,
-    dailyWeightViewModel: DailyWeightViewModel = viewModel(),
+    dailyLogViewModel: DailyLogViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -821,22 +826,22 @@ fun DailyGoals(
     val burnedCalories = getBurnedCalories()
     val targetBurnCalories = 200f
 
-    dailyWeightViewModel.updateUserId(userData.userId)
-    var latestWeight = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
-    var latestWeightState by remember { mutableStateOf(DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight) }
+    dailyLogViewModel.updateUserId(userData.userId)
+    var latestWeight = DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
+    var latestWeightState by remember { mutableStateOf(DailyLogSharedPrefsHelper.getDailyLog(context)?.weight) }
     val today = LocalDate.now()
-    val weightDataState by dailyWeightViewModel.weightDataState
+    val weightDataState by dailyLogViewModel.weightDataState
     LaunchedEffect(userData.userId) {
-        dailyWeightViewModel.getWeightHistory(userData.userId)
+        dailyLogViewModel.getWeightHistory(userData.userId)
     }
     LaunchedEffect(weightDataState) {
-        latestWeightState = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+        latestWeightState = DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
     }
     LaunchedEffect(Unit) {
         val sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            if (key == "DAILY_WEIGHT") {
-                val updatedWeight = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+            if (key == "DAILY_LOG") {
+                val updatedWeight = DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
                 latestWeightState = updatedWeight
             }
         }
@@ -1052,17 +1057,28 @@ fun DailyGoals(
                                 style = MaterialTheme.typography.labelSmall
                             )
 
+                            var isRotating by remember { mutableStateOf(false) }
+                            val rotation by animateFloatAsState(
+                                targetValue = if (isRotating) 360f else 0f,
+                                animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+                                finishedListener = { isRotating = false } // Reset trạng thái sau khi xoay xong
+                            )
+
                             IconButton(
                                 onClick = {
-                                    dailyWeightViewModel.getWeightHistory(userData.userId)
-                                    latestWeight = DailyWeightSharedPrefsHelper.getDailyWeight(context)?.weight
+                                    Log.d("HomeScreen", "today: $today")
+                                    Log.d("HomeScreen", "latestWeightDate: ${DailyLogSharedPrefsHelper.getDailyLog(context)?.date}")
+                                    isRotating = true
+                                    dailyLogViewModel.getWeightHistory(userData.userId)
+                                    latestWeight = DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
                                 },
                                 modifier = Modifier.size(20.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
                                     contentDescription = "Refresh",
-                                    tint = MaterialTheme.colorScheme.onSurface
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.graphicsLayer(rotationZ = rotation)
                                 )
                             }
                         }

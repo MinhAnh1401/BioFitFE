@@ -524,7 +524,7 @@ fun TargetContent(
             }
         }
 
-        item {
+        /*item {
             Column(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
@@ -593,7 +593,7 @@ fun TargetContent(
                     shape = MaterialTheme.shapes.large
                 )
             }
-        }
+        }*/
 
         item {
             Spacer(

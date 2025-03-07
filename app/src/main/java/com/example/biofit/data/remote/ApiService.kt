@@ -1,6 +1,6 @@
 package com.example.biofit.data.remote
 
-import com.example.biofit.data.model.dto.DailyWeightDTO
+import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.request.LoginRequest
 import com.example.biofit.data.model.request.RegisterRequest
 import com.example.biofit.data.model.request.UpdateUserRequest
@@ -29,15 +29,15 @@ interface ApiService {
 /*
     ------------------------------------------------------------------------------------------------
 */
-    // Daily Weight API
-    @GET("api/daily-weight/user/{userId}/latest")
+    // Daily Log API
+    @GET("api/daily-log/user/{userId}/latest")
     fun getLatestDailyWeight(
         @Path("userId") userId: Long
-    ): Call<DailyWeightDTO>
+    ): Call<DailyLogDTO>
 
-    @POST("/api/daily-weight/save-or-update")
-    fun saveOrUpdateDailyWeight(@Body request: DailyWeightDTO): Call<DailyWeightDTO>
+    @POST("/api/daily-log/save-or-update")
+    fun saveOrUpdateDailyWeight(@Body request: DailyLogDTO): Call<DailyLogDTO>
 
-    @GET("/api/daily-weight/user/{userId}/history")
-    fun getWeightHistory(@Path("userId") userId: Long): Call<List<DailyWeightDTO>>
+    @GET("/api/daily-log/user/{userId}/history")
+    fun getWeightHistory(@Path("userId") userId: Long): Call<List<DailyLogDTO>>
 }

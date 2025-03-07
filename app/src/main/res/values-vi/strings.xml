@@ -289,6 +289,13 @@
     <string name="age_not_provided">Chưa cung cấp tuổi</string>
     <string name="gender_not_provided">Chưa cung cấp giới tính</string>
     <string name="enter_your_full_name">Nhập họ tên của bạn</string>
-    <string name="update_daily_weight_successfully">Updated daily weight successfully</string>
-    <string name="update_failed">Update failed</string>
+    <string name="update_daily_weight_successfully">Cập nhật cân nặng hàng ngày thành công</string>
+    <string name="update_failed">Lỗi cập nhật</string>
+    <string name="with_a_current_weight_of">với cân nặng hiện tại là</string>
+    <string name="you_need_to_drink_another">Bạn cần uống thêm</string>
+    <string name="l_of_water_to_complete_your_goal">L nước để hoàn thành mục tiêu.</string>
+    <string name="you_have_not_drank_water">Bạn chưa uống nước</string>
+    <string name="because_the_amount_of_water_you_just_entered_is_0_l">Do lượng nước bạn vừa nhập bằng 0 L</string>
+    <string name="congratulations_on_completing_your_water_drinking_goal_today">Chúc mừng bạn đã hoàn thành mục tiêu uống nước hôm nay!</string>
+    <string name="well_done">Làm tốt lắm!</string>
 </resources>
