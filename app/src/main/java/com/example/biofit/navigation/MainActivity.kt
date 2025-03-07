@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,17 +30,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.ActionPopup
 import com.example.biofit.ui.components.BottomBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -51,14 +48,13 @@ import com.example.biofit.ui.screen.KnowledgeScreen
 import com.example.biofit.ui.screen.PlanningScreen
 import com.example.biofit.ui.screen.ProfileScreen
 import com.example.biofit.ui.theme.BioFitTheme
-import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     private var userData: UserDTO? = null
 
-    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == "USER_DATA") {
-            userData = getUserData(this)
+            userData = UserSharedPrefsHelper.getUserData(this)
             setContent {
                 BioFitTheme {
                     MainScreen(userData ?: UserDTO.default())
@@ -74,7 +70,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         sharedPreferences.registerOnSharedPreferenceChangeListener(prefsListener)
 
-        userData = getUserData(this)
+        userData = UserSharedPrefsHelper.getUserData(this)
         setContent {
             BioFitTheme {
                 MainScreen(userData ?: UserDTO.default())
@@ -93,6 +89,7 @@ class MainActivity : ComponentActivity() {
         recreate()
     }
 }
+/*
 
 fun getUserData(context: Context): UserDTO? {
     val sharedPreferences: SharedPreferences =
@@ -102,6 +99,7 @@ fun getUserData(context: Context): UserDTO? {
 
     return gson.fromJson(json, UserDTO::class.java)
 }
+*/
 
 @Composable
 fun MainScreen(userData: UserDTO) {

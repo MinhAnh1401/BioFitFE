@@ -40,6 +40,7 @@ fun MainCard(
     ElevatedCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         content()

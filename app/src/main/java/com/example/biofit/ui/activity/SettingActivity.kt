@@ -35,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -69,8 +71,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
-import com.example.biofit.navigation.getUserData
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SelectionDialog
@@ -93,7 +95,7 @@ class SettingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        userData = getUserData(this)
+        userData = UserSharedPrefsHelper.getUserData(this)
         setContent {
             BioFitTheme {
                 SettingScreen(userData ?: UserDTO.default())
@@ -149,7 +151,11 @@ fun SettingScreen(
                                 if (updateViewModel.updatedState.value == true) {
                                     activity?.finish()
                                 } else {
-                                    Toast.makeText(context, updateViewModel.updatedMessage.value, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        updateViewModel.updatedMessage.value,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -284,7 +290,10 @@ fun SettingContent(
                 OutlinedTextField(
                     value = updateViewModel.fullName.value ?: "",
                     onValueChange = { updateViewModel.fullName.value = it },
-                    modifier = modifier,
+                    modifier = modifier.shadow(
+                        elevation = 6.dp,
+                        shape = MaterialTheme.shapes.large
+                    ),
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
@@ -310,7 +319,13 @@ fun SettingContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    )
                 )
 
                 ItemCard(
@@ -328,6 +343,7 @@ fun SettingContent(
                     ) {
                         Text(
                             text = stringResource(R.string.gender),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                             style = MaterialTheme.typography.bodySmall
                         )
 
@@ -365,7 +381,7 @@ fun SettingContent(
                             updateViewModel.gender.value = userData.getGenderInt(
                                 context,
                                 selectedGender
-                            ) // ✅ Cập nhật ViewModel
+                            )
                             showGenderDialog = false
                         },
                         onDismissRequest = { showGenderDialog = false },
@@ -392,6 +408,7 @@ fun SettingContent(
                     ) {
                         Text(
                             text = stringResource(R.string.date_of_birth),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                             style = MaterialTheme.typography.bodySmall
                         )
 
@@ -449,7 +466,10 @@ fun SettingContent(
                 OutlinedTextField(
                     value = updateViewModel.height.value.toString(),
                     onValueChange = { updateViewModel.height.value = it.toFloatOrNull() ?: 0f },
-                    modifier = modifier,
+                    modifier = modifier.shadow(
+                        elevation = 6.dp,
+                        shape = MaterialTheme.shapes.large
+                    ),
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
@@ -473,13 +493,22 @@ fun SettingContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    )
                 )
 
                 OutlinedTextField(
                     value = updateViewModel.weight.value.toString(),
                     onValueChange = { updateViewModel.weight.value = it.toFloatOrNull() ?: 0f },
-                    modifier = modifier,
+                    modifier = modifier.shadow(
+                        elevation = 6.dp,
+                        shape = MaterialTheme.shapes.large
+                    ),
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
@@ -503,13 +532,22 @@ fun SettingContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    )
                 )
 
                 OutlinedTextField(
                     value = updateViewModel.email.value ?: "",
                     onValueChange = { updateViewModel.email.value = it },
-                    modifier = modifier,
+                    modifier = modifier.shadow(
+                        elevation = 6.dp,
+                        shape = MaterialTheme.shapes.large
+                    ),
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
@@ -525,7 +563,13 @@ fun SettingContent(
                     ),
                     keyboardActions = KeyboardActions(onGo = { TODO() }),
                     singleLine = true,
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    )
                 )
             }
         }

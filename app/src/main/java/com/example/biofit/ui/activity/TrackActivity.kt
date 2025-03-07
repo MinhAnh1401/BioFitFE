@@ -3,7 +3,6 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,8 +49,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.FoodItem
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -63,21 +60,11 @@ class TrackActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         val initialSelectedOption = intent.getIntExtra("SESSION_TITLE", R.string.morning)
-        val userDTO: UserDTO? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("USER_DATA", UserDTO::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("USER_DATA")
-        }
         setContent {
             BioFitTheme {
-                userDTO?.let {
-                    TrackScreen(
-                        initialSelectedOption = initialSelectedOption,
-                        userDTO = userDTO
-                    )
-                }
+                TrackScreen(initialSelectedOption = initialSelectedOption)
             }
         }
     }
@@ -89,10 +76,7 @@ class TrackActivity : ComponentActivity() {
 }
 
 @Composable
-fun TrackScreen(
-    initialSelectedOption: Int,
-    userDTO: UserDTO
-) {
+fun TrackScreen(initialSelectedOption: Int) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -581,23 +565,8 @@ fun MenuForSession(
 )
 @Composable
 private fun TrackScreenDarkModePreviewInSmallPhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        TrackScreen(
-            initialSelectedOption = R.string.morning,
-            userDTO = userDTO
-        )
+        TrackScreen(initialSelectedOption = R.string.morning)
     }
 }
 
@@ -609,23 +578,8 @@ private fun TrackScreenDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun TrackScreenPreviewInLargePhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        TrackScreen(
-            initialSelectedOption = R.string.morning,
-            userDTO = userDTO
-        )
+        TrackScreen(initialSelectedOption = R.string.morning)
     }
 }
 
@@ -638,23 +592,8 @@ private fun TrackScreenPreviewInLargePhone() {
 )
 @Composable
 private fun TrackScreenPreviewInTablet() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        TrackScreen(
-            initialSelectedOption = R.string.morning,
-            userDTO = userDTO
-        )
+        TrackScreen(initialSelectedOption = R.string.morning)
     }
 }
 
@@ -667,23 +606,8 @@ private fun TrackScreenPreviewInTablet() {
 )
 @Composable
 private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        TrackScreen(
-            initialSelectedOption = R.string.morning,
-            userDTO = userDTO
-        )
+        TrackScreen(initialSelectedOption = R.string.morning)
     }
 }
 
@@ -695,23 +619,8 @@ private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
 )
 @Composable
 private fun TrackScreenLandscapePreviewInLargePhone() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        TrackScreen(
-            initialSelectedOption = R.string.morning,
-            userDTO = userDTO
-        )
+        TrackScreen(initialSelectedOption = R.string.morning)
     }
 }
 
@@ -724,22 +633,7 @@ private fun TrackScreenLandscapePreviewInLargePhone() {
 )
 @Composable
 private fun TrackScreenLandscapePreviewInTablet() {
-    val userDTO = UserDTO(
-        userId = 0,
-        fullName = "Nguyen Van A",
-        email = "anguyenvan@gmail.com",
-        gender = 0,
-        height = 170f,
-        weight = 57f,
-        targetWeight = 60f,
-        dateOfBirth = "2000-01-01",
-        avatar = null,
-        createdAccount = "2025-02-28"
-    )
     BioFitTheme {
-        TrackScreen(
-            initialSelectedOption = R.string.morning,
-            userDTO = userDTO
-        )
+        TrackScreen(initialSelectedOption = R.string.morning)
     }
 }

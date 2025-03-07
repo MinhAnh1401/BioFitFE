@@ -45,18 +45,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.UpdateUserViewModel
 import java.util.Calendar
 
 class InfoUserBirthdayActivity : ComponentActivity() {
+    private var userData: UserDTO? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        userData = UserSharedPrefsHelper.getUserData(this)
         setContent {
             BioFitTheme {
-                InfoUserBirthdayScreen()
+                InfoUserBirthdayScreen(userData ?: UserDTO.default())
             }
         }
     }
@@ -68,7 +75,11 @@ class InfoUserBirthdayActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserBirthdayScreen() {
+fun InfoUserBirthdayScreen(
+    userData: UserDTO,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -114,15 +125,15 @@ fun InfoUserBirthdayScreen() {
                 )
             }
 
+            val userId = userData.userId
             NextButtonInfoScreen(
                 onClick = {
-                    activity?.let {
-                        val intent = Intent(it, InfoUserHeightAndWeightActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
+                    viewModel.updateUser(context, userId, loginViewModel) {
+                        val intent = Intent(context, InfoUserHeightAndWeightActivity::class.java)
+                        context.startActivity(intent)
                     }
                 },
-                standardPadding
+                standardPadding = standardPadding
             )
         }
     }
@@ -131,7 +142,8 @@ fun InfoUserBirthdayScreen() {
 @Composable
 fun InfoUserBirthdayContent(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -159,9 +171,9 @@ fun InfoUserBirthdayContent(
         }
 
         item {
-            var dateOfBirth by rememberSaveable { mutableStateOf("") }
-            var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
+            var showDatePicker by rememberSaveable { mutableStateOf(false) }
+            val dateOfBirth = viewModel.dateOfBirth.value ?: ""
             ItemCard(
                 onClick = { showDatePicker = true },
                 modifier = modifier
@@ -199,18 +211,17 @@ fun InfoUserBirthdayContent(
             if (showDatePicker) {
                 val context = LocalContext.current
                 val calendar = Calendar.getInstance()
-                LaunchedEffect(Unit) {
-                    DatePickerDialog(
-                        context,
-                        { _, selectedYear, selectedMonth, selectedDay ->
-                            dateOfBirth = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-                            showDatePicker = false
-                        },
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
+                DatePickerDialog(
+                    context,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                        viewModel.dateOfBirth.value = selectedDate // Lưu vào ViewModel
+                        showDatePicker = false
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
             }
         }
 
@@ -235,7 +246,7 @@ fun InfoUserBirthdayContent(
 @Composable
 private fun InfoUserBirthdayPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserBirthdayScreen()
+        InfoUserBirthdayScreen(UserDTO.default())
     }
 }
 
@@ -248,7 +259,7 @@ private fun InfoUserBirthdayPortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserBirthdayPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserBirthdayScreen()
+        InfoUserBirthdayScreen(UserDTO.default())
     }
 }
 
@@ -262,7 +273,7 @@ private fun InfoUserBirthdayPortraitScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserBirthdayPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserBirthdayScreen()
+        InfoUserBirthdayScreen(UserDTO.default())
     }
 }
 
@@ -276,7 +287,7 @@ private fun InfoUserBirthdayPortraitScreenPreviewInTablet() {
 @Composable
 private fun InfoUserBirthdayLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserBirthdayScreen()
+        InfoUserBirthdayScreen(UserDTO.default())
     }
 }
 
@@ -289,12 +300,13 @@ private fun InfoUserBirthdayLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserBirthdayLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserBirthdayScreen()
+        InfoUserBirthdayScreen(UserDTO.default())
     }
 }
 
 @Preview(
     device = "spec:parent=Nexus 10",
+
     locale = "vi",
     showSystemUi = true,
     showBackground = true,
@@ -303,6 +315,6 @@ private fun InfoUserBirthdayLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserBirthdayLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserBirthdayScreen()
+        InfoUserBirthdayScreen(UserDTO.default())
     }
 }

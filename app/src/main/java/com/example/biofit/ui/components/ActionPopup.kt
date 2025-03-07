@@ -57,8 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
-import com.example.biofit.navigation.getUserData
+import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.ui.activity.AIChatbotActivity
 import com.example.biofit.ui.activity.AddActivity
 import com.example.biofit.ui.activity.ExerciseActivity

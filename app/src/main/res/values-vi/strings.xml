@@ -289,4 +289,6 @@
     <string name="age_not_provided">Chưa cung cấp tuổi</string>
     <string name="gender_not_provided">Chưa cung cấp giới tính</string>
     <string name="enter_your_full_name">Nhập họ tên của bạn</string>
+    <string name="update_daily_weight_successfully">Updated daily weight successfully</string>
+    <string name="update_failed">Update failed</string>
 </resources>

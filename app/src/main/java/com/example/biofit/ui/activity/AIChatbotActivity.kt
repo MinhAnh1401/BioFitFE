@@ -1,9 +1,7 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -55,10 +53,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
 import com.example.biofit.data.model.ChatBotModel
-import com.example.biofit.navigation.MainActivity
-import com.example.biofit.navigation.getUserData
+import com.example.biofit.data.model.dto.DailyWeightDTO
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.DailyWeightSharedPrefsHelper
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
@@ -71,25 +70,17 @@ import com.example.biofit.view_model.AIChatbotViewModel
 class AIChatbotActivity : ComponentActivity() {
     private lateinit var chatViewModel: AIChatbotViewModel
     private var userData: UserDTO? = null
+    private var dailyWeightData: DailyWeightDTO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        userData = getUserData(this)
+        userData = UserSharedPrefsHelper.getUserData(this)
+        dailyWeightData = DailyWeightSharedPrefsHelper.getDailyWeight(this)
         val model = ChatBotModel(
-            userData = userData ?: UserDTO(
-                userId = 0,
-                fullName = "N/A",
-                email = "N/A",
-                gender = 3,
-                height = 0f,
-                weight = 0f,
-                targetWeight = 0f,
-                dateOfBirth = "N/A",
-                avatar = "N/A",
-                createdAccount = "N/A"
-            ),
+            userData = userData ?: UserDTO.default(),
+            dailyWeightData = dailyWeightData ?: DailyWeightDTO.default(),
             context = this,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -343,20 +334,9 @@ fun ChatBubble(
 private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         lateinit var chatBotViewModel: AIChatbotViewModel
-        val userDTO = UserDTO(
-            userId = 0,
-            fullName = "Nguyen Van A",
-            email = "anguyenvan@gmail.com",
-            gender = 0,
-            height = 170f,
-            weight = 57f,
-            targetWeight = 60f,
-            dateOfBirth = "2000-01-01",
-            avatar = null,
-            createdAccount = "2025-02-28"
-        )
         val model = ChatBotModel(
-            userData = userDTO,
+            userData = UserDTO.default(),
+            dailyWeightData = DailyWeightDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -375,20 +355,9 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
 private fun BioAIChatbotScreenPreviewInLargePhone() {
     BioFitTheme {
         lateinit var chatBotViewModel: AIChatbotViewModel
-        val userDTO = UserDTO(
-            userId = 0,
-            fullName = "Nguyen Van A",
-            email = "anguyenvan@gmail.com",
-            gender = 0,
-            height = 170f,
-            weight = 57f,
-            targetWeight = 60f,
-            dateOfBirth = "2000-01-01",
-            avatar = null,
-            createdAccount = "2025-02-28"
-        )
         val model = ChatBotModel(
-            userData = userDTO,
+            userData = UserDTO.default(),
+            dailyWeightData = DailyWeightDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -408,20 +377,9 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
 private fun BioAIChatbotScreenPreviewInTablet() {
     BioFitTheme {
         lateinit var chatBotViewModel: AIChatbotViewModel
-        val userDTO = UserDTO(
-            userId = 0,
-            fullName = "Nguyen Van A",
-            email = "anguyenvan@gmail.com",
-            gender = 0,
-            height = 170f,
-            weight = 57f,
-            targetWeight = 60f,
-            dateOfBirth = "2000-01-01",
-            avatar = null,
-            createdAccount = "2025-02-28"
-        )
         val model = ChatBotModel(
-            userData = userDTO,
+            userData = UserDTO.default(),
+            dailyWeightData = DailyWeightDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -441,20 +399,9 @@ private fun BioAIChatbotScreenPreviewInTablet() {
 private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         lateinit var chatBotViewModel: AIChatbotViewModel
-        val userDTO = UserDTO(
-            userId = 0,
-            fullName = "Nguyen Van A",
-            email = "anguyenvan@gmail.com",
-            gender = 0,
-            height = 170f,
-            weight = 57f,
-            targetWeight = 60f,
-            dateOfBirth = "2000-01-01",
-            avatar = null,
-            createdAccount = "2025-02-28"
-        )
         val model = ChatBotModel(
-            userData = userDTO,
+            userData = UserDTO.default(),
+            dailyWeightData = DailyWeightDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -473,20 +420,9 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
 private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         lateinit var chatBotViewModel: AIChatbotViewModel
-        val userDTO = UserDTO(
-            userId = 0,
-            fullName = "Nguyen Van A",
-            email = "anguyenvan@gmail.com",
-            gender = 0,
-            height = 170f,
-            weight = 57f,
-            targetWeight = 60f,
-            dateOfBirth = "2000-01-01",
-            avatar = null,
-            createdAccount = "2025-02-28"
-        )
         val model = ChatBotModel(
-            userData = userDTO,
+            userData = UserDTO.default(),
+            dailyWeightData = DailyWeightDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -506,20 +442,9 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
 private fun BioAIChatbotScreenLandscapePreviewInTablet() {
     BioFitTheme {
         lateinit var chatBotViewModel: AIChatbotViewModel
-        val userDTO = UserDTO(
-            userId = 0,
-            fullName = "Nguyen Van A",
-            email = "anguyenvan@gmail.com",
-            gender = 0,
-            height = 170f,
-            weight = 57f,
-            targetWeight = 60f,
-            dateOfBirth = "2000-01-01",
-            avatar = null,
-            createdAccount = "2025-02-28"
-        )
         val model = ChatBotModel(
-            userData = userDTO,
+            userData = UserDTO.default(),
+            dailyWeightData = DailyWeightDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )

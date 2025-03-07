@@ -1,8 +1,6 @@
 package com.example.biofit.ui.screen
 
-import android.adservices.ondevicepersonalization.UserData
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -37,8 +35,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -52,10 +48,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
@@ -64,8 +58,6 @@ import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.LoginViewModel
-import com.example.biofit.view_model.UpdateUserViewModel
 
 @Composable
 fun ProfileScreen(userData: UserDTO) {
@@ -151,7 +143,7 @@ fun ProfileContent(
                         )
 
                         Text(
-                            text = userData.dateOfBirth ?: "N/A",
+                            text = userData.getAge(context, userData.dateOfBirth),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.bodySmall
                         )

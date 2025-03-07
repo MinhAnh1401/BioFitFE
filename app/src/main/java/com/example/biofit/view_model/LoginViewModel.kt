@@ -7,10 +7,9 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.data.dto.LoginRequest
-import com.example.biofit.data.dto.UserDTO
+import com.example.biofit.data.model.request.LoginRequest
+import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.navigation.MainActivity
 import com.google.gson.Gson
