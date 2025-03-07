@@ -40,17 +40,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.UpdateUserViewModel
 
 class InfoUserTargetActivity : ComponentActivity() {
+    private var userData: UserDTO? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        userData = UserSharedPrefsHelper.getUserData(this)
         setContent {
             BioFitTheme {
-                InfoUserTargetScreen()
+                InfoUserTargetScreen(userData ?: UserDTO.default())
             }
         }
     }
@@ -62,7 +69,11 @@ class InfoUserTargetActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserTargetScreen() {
+fun InfoUserTargetScreen(
+    userData: UserDTO,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -104,19 +115,20 @@ fun InfoUserTargetScreen() {
                 )
                 InfoUserTargetContent(
                     standardPadding,
-                    modifier
+                    modifier,
+                    viewModel
                 )
             }
 
+            val userId = userData.userId
             NextButtonInfoScreen(
                 onClick = {
-                    activity?.let {
-                        val intent = Intent(it, MainActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
+                    viewModel.updateUser(context, userId, loginViewModel) {
+                        val intent = Intent(context, MainActivity::class.java)
+                        context.startActivity(intent)
                     }
                 },
-                standardPadding
+                standardPadding = standardPadding
             )
         }
     }
@@ -125,8 +137,10 @@ fun InfoUserTargetScreen() {
 @Composable
 fun InfoUserTargetContent(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
+    val targetWeight = viewModel.targetWeight.value?.toString() ?: ""
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -153,12 +167,10 @@ fun InfoUserTargetContent(
         }
 
         item {
-            var targetWeight by rememberSaveable { mutableStateOf("") }
-
             OutlinedTextField(
-                value = targetWeight, // giá trị hiện tại của trường nhập liệu
+                value = targetWeight,
                 onValueChange = {
-                    targetWeight = it
+                    viewModel.targetWeight.value = it.toFloatOrNull()
                 }, // xử lý thay đổi giá trị và cập nhật trạng thái tương ứng
                 modifier = modifier, // kích thước và vị trí của trường nhập liệu
                 // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
@@ -220,7 +232,7 @@ fun InfoUserTargetContent(
 @Composable
 private fun InfoUserTargetPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserTargetScreen()
+        InfoUserTargetScreen(UserDTO.default())
     }
 }
 
@@ -233,7 +245,7 @@ private fun InfoUserTargetPortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserTargetPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserTargetScreen()
+        InfoUserTargetScreen(UserDTO.default())
     }
 }
 
@@ -247,7 +259,7 @@ private fun InfoUserTargetPortraitScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserTargetPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserTargetScreen()
+        InfoUserTargetScreen(UserDTO.default())
     }
 }
 
@@ -261,7 +273,7 @@ private fun InfoUserTargetPortraitScreenPreviewInTablet() {
 @Composable
 private fun InfoUserTargetLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserTargetScreen()
+        InfoUserTargetScreen(UserDTO.default())
     }
 }
 
@@ -274,7 +286,7 @@ private fun InfoUserTargetLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserTargetLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserTargetScreen()
+        InfoUserTargetScreen(UserDTO.default())
     }
 }
 
@@ -288,6 +300,6 @@ private fun InfoUserTargetLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserTargetLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserTargetScreen()
+        InfoUserTargetScreen(UserDTO.default())
     }
 }

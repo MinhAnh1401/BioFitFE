@@ -42,16 +42,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.UpdateUserViewModel
 
 class InfoUserHeightAndWeightActivity : ComponentActivity() {
+    private var userData: UserDTO? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        userData = UserSharedPrefsHelper.getUserData(this)
         setContent {
             BioFitTheme {
-                InfoUserHeightAndWeightScreen()
+                InfoUserHeightAndWeightScreen(userData ?: UserDTO.default())
             }
         }
     }
@@ -63,7 +70,11 @@ class InfoUserHeightAndWeightActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoUserHeightAndWeightScreen() {
+fun InfoUserHeightAndWeightScreen(
+    userData: UserDTO,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -109,15 +120,15 @@ fun InfoUserHeightAndWeightScreen() {
                 )
             }
 
+            val userId = userData.userId
             NextButtonInfoScreen(
                 onClick = {
-                    activity?.let {
-                        val intent = Intent(it, InfoUserTargetActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
+                    viewModel.updateUser(context, userId, loginViewModel) {
+                        val intent = Intent(context, InfoUserTargetActivity::class.java)
+                        context.startActivity(intent)
                     }
                 },
-                standardPadding
+                standardPadding = standardPadding
             )
         }
     }
@@ -126,10 +137,12 @@ fun InfoUserHeightAndWeightScreen() {
 @Composable
 fun InfoUserHeightAndWeightContent(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
-    var height by rememberSaveable { mutableStateOf("") }
-    var weight by rememberSaveable { mutableStateOf("") }
+    // Lấy dữ liệu từ ViewModel
+    val height = viewModel.height.value?.toString() ?: ""
+    val weight = viewModel.weight.value?.toString() ?: ""
     val focusManager = LocalFocusManager.current
 
     LazyColumn(
@@ -160,7 +173,7 @@ fun InfoUserHeightAndWeightContent(
         item {
             OutlinedTextField(
                 value = height,
-                onValueChange = { height = it },
+                onValueChange = { viewModel.height.value = it.toFloatOrNull() },
                 modifier = modifier,
                 textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
                 prefix = {
@@ -188,7 +201,7 @@ fun InfoUserHeightAndWeightContent(
 
             OutlinedTextField(
                 value = weight,
-                onValueChange = { weight = it },
+                onValueChange = { viewModel.weight.value = it.toFloatOrNull() },
                 modifier = modifier.padding(top = standardPadding),
                 textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
                 prefix = {
@@ -234,7 +247,7 @@ fun InfoUserHeightAndWeightContent(
 @Composable
 private fun InfoUserHeightAndWeightPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserHeightAndWeightScreen(UserDTO.default())
     }
 }
 
@@ -247,7 +260,7 @@ private fun InfoUserHeightAndWeightPortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun InfoUserHeightAndWeightPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserHeightAndWeightScreen(UserDTO.default())
     }
 }
 
@@ -261,7 +274,7 @@ private fun InfoUserHeightAndWeightPortraitScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserHeightAndWeightPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserHeightAndWeightScreen(UserDTO.default())
     }
 }
 
@@ -275,7 +288,7 @@ private fun InfoUserHeightAndWeightPortraitScreenPreviewInTablet() {
 @Composable
 private fun InfoUserHeightAndWeightLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserHeightAndWeightScreen(UserDTO.default())
     }
 }
 
@@ -288,7 +301,7 @@ private fun InfoUserHeightAndWeightLandscapeScreenDarkModePreviewInSmallPhone() 
 @Composable
 private fun InfoUserHeightAndWeightLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserHeightAndWeightScreen(UserDTO.default())
     }
 }
 
@@ -302,6 +315,6 @@ private fun InfoUserHeightAndWeightLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun InfoUserHeightAndWeightLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        InfoUserHeightAndWeightScreen()
+        InfoUserHeightAndWeightScreen(UserDTO.default())
     }
 }
