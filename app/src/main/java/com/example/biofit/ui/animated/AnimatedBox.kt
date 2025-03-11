@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,7 +31,6 @@ import com.example.biofit.ui.theme.BioFitTheme
 
 @Composable
 fun BlinkingGradientBox(
-    borderAlpha: Float,
     alpha: Float,
     shape: Shape,
     content: @Composable () -> Unit
@@ -66,23 +66,23 @@ fun BlinkingGradientBox(
 
     Box(
         modifier = Modifier
-            .clip(shape = shape)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = borderAlpha),
+            .shadow(
+                elevation = 6.dp,
                 shape = shape
             )
+            .clip(shape = shape)
             .background(
                 brush = Brush.sweepGradient(
                     colors = listOf(
-                        color1.copy(alpha = 0.95f),
-                        color2.copy(alpha = 0.95f),
-                        color3.copy(alpha = 0.95f)
+                        color1,
+                        color2,
+                        color3
                     ),
                     center = Offset.Infinite
                 )
             )
             .background(MaterialTheme.colorScheme.background.copy(alpha = alpha))
+
     ) {
         content()
     }
@@ -93,7 +93,6 @@ fun BlinkingGradientBox(
 private fun AnimatedBoxDarkModePreview() {
     BioFitTheme {
         BlinkingGradientBox(
-            borderAlpha = 0.25f,
             alpha = 0.5f,
             shape = MaterialTheme.shapes.extraLarge,
             content = {
@@ -112,7 +111,6 @@ private fun AnimatedBoxDarkModePreview() {
 private fun AnimatedBoxPreview() {
     BioFitTheme {
         BlinkingGradientBox(
-            borderAlpha = 0.25f,
             alpha = 0.5f,
             shape = MaterialTheme.shapes.extraLarge,
             content = {

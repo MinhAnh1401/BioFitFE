@@ -360,8 +360,7 @@ fun TargetContent(
                     DefaultDialog(
                         title = R.string.please_select_a_goal_before_weekly_goal,
                         actionTextButton = R.string.ok,
-                        actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
-                        actionButtonColor = MaterialTheme.colorScheme.primary,
+                        actionTextButtonColor = MaterialTheme.colorScheme.primary,
                         onClickActionButton = { showErrorWeeklyDialog = false },
                         onDismissRequest = { showErrorWeeklyDialog = false },
                         standardPadding = standardPadding

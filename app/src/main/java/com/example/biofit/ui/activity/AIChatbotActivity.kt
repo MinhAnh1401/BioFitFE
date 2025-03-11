@@ -42,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -80,7 +81,7 @@ class AIChatbotActivity : ComponentActivity() {
         dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
-            dailyWeightData = dailyWeightData ?: DailyLogDTO.default(),
+            dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
             context = this,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -183,7 +184,6 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 BlinkingGradientBox(
-                    borderAlpha = 0.25f,
                     alpha = 0.75f,
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
@@ -262,7 +262,7 @@ fun ChatBubble(
             modifier = Modifier
                 .background(
                     color = if (isUser) {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
+                        MaterialTheme.colorScheme.surfaceContainerHighest
                     } else {
                         Color.Transparent
                     },
@@ -336,7 +336,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyLogDTO.default(),
+            dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -357,7 +357,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyLogDTO.default(),
+            dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -379,7 +379,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyLogDTO.default(),
+            dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -401,7 +401,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyLogDTO.default(),
+            dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -422,7 +422,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyLogDTO.default(),
+            dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )
@@ -444,7 +444,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
         lateinit var chatBotViewModel: AIChatbotViewModel
         val model = ChatBotModel(
             userData = UserDTO.default(),
-            dailyWeightData = DailyLogDTO.default(),
+            dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
             apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
         )

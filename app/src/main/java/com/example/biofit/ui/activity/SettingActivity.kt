@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -205,12 +206,13 @@ fun SettingContent(
 ) {
     val context = LocalContext.current
     val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f
-    LaunchedEffect(userData.userId) {
-        dailyLogViewModel.updateUserId(userData.userId)
-        dailyLogViewModel.getLatestDailyLog(context)
-    }
+    dailyLogViewModel.getLatestDailyLog(context, userData.userId)
     val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
-        value = dailyLogViewModel.memoryWeight.value
+        value = if (dailyLogViewModel.memoryWeight.value != 0f) {
+            dailyLogViewModel.memoryWeight.value
+        } else {
+            userData.weight!!
+        }
     }
 
     val bmiIndex: Float? = if (height > 0.001f) {

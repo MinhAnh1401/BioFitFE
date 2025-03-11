@@ -89,17 +89,6 @@ class MainActivity : ComponentActivity() {
         recreate()
     }
 }
-/*
-
-fun getUserData(context: Context): UserDTO? {
-    val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-    val gson = Gson()
-    val json = sharedPreferences.getString("USER_DATA", null)
-
-    return gson.fromJson(json, UserDTO::class.java)
-}
-*/
 
 @Composable
 fun MainScreen(userData: UserDTO) {
@@ -151,7 +140,7 @@ fun MainScreen(userData: UserDTO) {
                                 ambientColor = MaterialTheme.colorScheme.onBackground,
                                 spotColor = MaterialTheme.colorScheme.onBackground
                             )
-                            .background(MaterialTheme.colorScheme.primary),
+                            .background(MaterialTheme.colorScheme.background),
                         enter = slideInVertically { it } + fadeIn() + expandVertically(),
                         exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
                     ) {

@@ -128,8 +128,7 @@ fun UpdateWeightScreen(
 
                     ElevatedButton(
                         onClick = {
-                            dailyLogViewModel.updateUserId(userData.userId)
-                            dailyLogViewModel.saveDailyLog(context)
+                            dailyLogViewModel.saveDailyLog(context, userData.userId)
                             Toast.makeText(
                                 context,
                                 R.string.update_daily_weight_successfully,
@@ -170,10 +169,7 @@ fun UpdateWeightContent(
 ) {
     val context = LocalContext.current
     val targetWeight = userData.targetWeight
-    LaunchedEffect(userData.userId) {
-        dailyLogViewModel.updateUserId(userData.userId)
-        dailyLogViewModel.getLatestDailyLog(context)
-    }
+    dailyLogViewModel.getLatestDailyLog(context, userData.userId)
     val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
         value = dailyLogViewModel.memoryWeight.value
     }

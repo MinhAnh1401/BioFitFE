@@ -12,7 +12,7 @@ data class ChatMessage(val userMessage: String, val botResponse: String)
 
 class ChatBotModel(
     private val userData: UserDTO,
-    private val dailyWeightData: DailyLogDTO,
+    private val dailyLogData: DailyLogDTO,
     private val context: Context,
     apiKey: String,
 ) {
@@ -31,8 +31,8 @@ class ChatBotModel(
         }
 
         val userData = userData
-        val dailyWeightData = dailyWeightData
-        val enrichedInput = enrichInputWithUserData(userInput, userData, dailyWeightData)
+        val dailyLogData = dailyLogData
+        val enrichedInput = enrichInputWithUserData(userInput, userData, dailyLogData)
 
         val fullConversation = if (conversationContext.isNotBlank()) {
             "$conversationContext\nUser: $enrichedInput"
@@ -55,7 +55,7 @@ class ChatBotModel(
     private fun enrichInputWithUserData(
         userInput: String,
         userData: UserDTO,
-        dailyWeightData: DailyLogDTO
+        dailyLogData: DailyLogDTO
     ): String {
         return """ 
             Current date time: ${
@@ -68,7 +68,8 @@ class ChatBotModel(
                 - Date of Birth: ${userData.dateOfBirth}
                 - Height: ${userData.height} cm
                 - Starting Weight: ${userData.weight} kg on ${userData.createdAccount}
-                - Current Weight: ${dailyWeightData.weight} kg
+                - Current Weight: ${dailyLogData.weight} kg
+                - Drank ${dailyLogData.water} L of water today.
                 - Target Weight: ${userData.targetWeight} kg
                 
             User asks: $userInput
@@ -79,7 +80,7 @@ class ChatBotModel(
             Response Rules:
             If the user's question is related to health and nutrition, respond based on user data and provide useful advice.
             If the question is unrelated, politely decline and guide the user back to health, nutrition, or BioFit-related topics.
-            Respond as detailed and concisely as possible and in the tone and context of a conversation like a close friend.
+            Respond briefly, concisely and completely, in a friendly tone.
             """.trimIndent()
     }
 }

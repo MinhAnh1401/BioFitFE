@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.google.gson.Gson
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 object DailyLogSharedPrefsHelper {
     private const val PREF_NAME = "UserPrefs"
@@ -21,6 +19,7 @@ object DailyLogSharedPrefsHelper {
 
         editor.putString(DAILY_LOG_KEY, json)
         editor.apply()
+        Log.d("SharedPrefs", "Saved Water: ${dailyLog.water}") // Kiểm tra lại
     }
 
     fun getDailyLog(context: Context): DailyLogDTO? {
@@ -31,4 +30,11 @@ object DailyLogSharedPrefsHelper {
 
         return gson.fromJson(json, DailyLogDTO::class.java)
     }
+
+    fun clearDailyLog(context: Context) {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove(DAILY_LOG_KEY).apply()
+    }
+
 }

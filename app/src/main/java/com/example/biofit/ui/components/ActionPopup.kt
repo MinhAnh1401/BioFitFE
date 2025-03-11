@@ -90,7 +90,7 @@ fun ActionPopup(
     val itemPopupList = listOf(
         Pair(R.drawable.ic_exercise_2, R.string.exercise),
         Pair(R.drawable.ic_weight, R.string.weight),
-        Pair(R.drawable.ic_drink_water, R.string.drinking_water)
+        /*Pair(R.drawable.ic_drink_water, R.string.drinking_water)*/
     )
     val sessionPopupList = listOf(
         Pair(R.drawable.ic_morning_2, R.string.morning),
@@ -99,7 +99,7 @@ fun ActionPopup(
         Pair(R.drawable.ic_snack_2, R.string.snack)
     )
 
-    var drinkWaterPopupState by rememberSaveable { mutableStateOf(false) }
+    /*var drinkWaterPopupState by rememberSaveable { mutableStateOf(false) }*/
 
     Row(
         modifier = Modifier
@@ -114,7 +114,7 @@ fun ActionPopup(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!drinkWaterPopupState) {
+            /*if (!drinkWaterPopupState) {*/
                 Row(
                     modifier = Modifier.padding(
                         top = standardPadding / 2,
@@ -143,17 +143,17 @@ fun ActionPopup(
                                                 it.startActivity(intent)
                                             }
 
-                                        R.string.drinking_water ->
-                                            drinkWaterPopupState = true
+                                        /*R.string.drinking_water ->
+                                            drinkWaterPopupState = true*/
                                     }
 
-                                    if (title != R.string.drinking_water) {
+                                    /*if (title != R.string.drinking_water) {
                                         onDismissPopup()
-                                    }
+                                    }*/
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Card(
+                            /*Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(standardPadding / 2)
@@ -164,10 +164,13 @@ fun ActionPopup(
                                     ),
                                 shape = MaterialTheme.shapes.large,
                                 colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                        alpha = 0.5f
-                                    )
+                                    containerColor = MaterialTheme.colorScheme.primary
                                 )
+                            )*/
+                            MainCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(standardPadding / 2)
                             ) {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
@@ -193,7 +196,7 @@ fun ActionPopup(
                                         end = standardPadding,
                                         bottom = standardPadding / 2
                                     ),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -216,9 +219,8 @@ fun ActionPopup(
                             modifier = Modifier.padding(standardPadding / 2)
                         ) {
                             BlinkingGradientBox(
-                                borderAlpha = 0.25f,
                                 alpha = 0.5f,
-                                shape = MaterialTheme.shapes.large
+                                shape = MaterialTheme.shapes.extraLarge
                             ) {
                                 Column(
                                     modifier = Modifier
@@ -247,7 +249,7 @@ fun ActionPopup(
                         ) {
                             Text(
                                 text = stringResource(R.string.ai_assistant_bionix),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -285,7 +287,7 @@ fun ActionPopup(
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Card(
+                            /*Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(standardPadding / 2)
@@ -296,10 +298,13 @@ fun ActionPopup(
                                     ),
                                 shape = MaterialTheme.shapes.large,
                                 colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                        alpha = 0.5f
-                                    )
+                                    containerColor = MaterialTheme.colorScheme.primary
                                 )
+                            )*/
+                            SubCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(standardPadding / 2)
                             ) {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
@@ -311,7 +316,7 @@ fun ActionPopup(
                                         modifier = Modifier
                                             .padding(standardPadding)
                                             .size(standardPadding * 2),
-                                        tint = MaterialTheme.colorScheme.background
+                                        tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -325,20 +330,17 @@ fun ActionPopup(
                                         end = standardPadding,
                                         bottom = standardPadding / 2
                                     ),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
                 }
-            } else {
+            /*} else {
                 val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                 val targetWater = 2f
-                LaunchedEffect(userData.userId) {
-                    dailyLogViewModel.updateUserId(userData.userId)
-                    dailyLogViewModel.getLatestDailyLog(context)
-                }
+                dailyLogViewModel.getLatestDailyLog(context, userData.userId)
                 val memoryWater by produceState(
                     initialValue = 0f,
                     key1 = dailyLogViewModel.memoryWater
@@ -483,8 +485,7 @@ fun ActionPopup(
                             title = R.string.you_have_not_drank_water,
                             description = R.string.because_the_amount_of_water_you_just_entered_is_0_l,
                             actionTextButton = R.string.ok,
-                            actionTextButtonColor = MaterialTheme.colorScheme.onPrimary,
-                            actionButtonColor = MaterialTheme.colorScheme.primary,
+                            actionTextButtonColor = MaterialTheme.colorScheme.primary,
                             onClickActionButton = { showDrinkingWaterFailed = false },
                             onDismissRequest = { showDrinkingWaterFailed = false },
                             standardPadding = standardPadding
@@ -501,8 +502,7 @@ fun ActionPopup(
                                 } else {
                                     currentWater
                                 }
-                                dailyLogViewModel.updateUserId(userData.userId)
-                                dailyLogViewModel.saveDailyLog(context)
+                                dailyLogViewModel.saveDailyLog(context, userData.userId)
                                 Toast.makeText(context, R.string.well_done, Toast.LENGTH_SHORT)
                                     .show()
                                 onDismissPopup()
@@ -522,7 +522,7 @@ fun ActionPopup(
                         )
                     }
                 }
-            }
+            }*/
         }
     }
 }
@@ -533,7 +533,7 @@ private fun ActionPopupDarkModePreview() {
     BioFitTheme {
         AnimatedVisibility(
             visible = true,
-            modifier = Modifier.background(MaterialTheme.colorScheme.primary),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {
@@ -563,7 +563,7 @@ private fun ActionPopupPreview() {
     BioFitTheme {
         AnimatedVisibility(
             visible = true,
-            modifier = Modifier.background(MaterialTheme.colorScheme.primary),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
             enter = slideInVertically { it } + fadeIn() + expandVertically(),
             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
         ) {

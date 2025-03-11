@@ -299,4 +299,5 @@
     <string name="because_the_amount_of_water_you_just_entered_is_0_l">Because the amount of water you just entered is 0 L</string>
     <string name="congratulations_on_completing_your_water_drinking_goal_today">Congratulations on completing your water drinking goal today!</string>
     <string name="well_done">Well done!</string>
+    <string name="invalid_water">Invalid water</string>
 </resources>

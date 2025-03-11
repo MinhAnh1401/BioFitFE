@@ -298,4 +298,5 @@
     <string name="because_the_amount_of_water_you_just_entered_is_0_l">Do lượng nước bạn vừa nhập bằng 0 L</string>
     <string name="congratulations_on_completing_your_water_drinking_goal_today">Chúc mừng bạn đã hoàn thành mục tiêu uống nước hôm nay!</string>
     <string name="well_done">Làm tốt lắm!</string>
+    <string name="invalid_water">Lượng nước không hợp lệ</string>
 </resources>

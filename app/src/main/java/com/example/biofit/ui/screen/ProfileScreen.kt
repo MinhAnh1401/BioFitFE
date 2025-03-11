@@ -46,10 +46,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
@@ -192,14 +194,19 @@ fun ProfileContent(
                         ) {
                             Text(
                                 text = stringResource(R.string.starting_weight),
+                                modifier = Modifier.fillMaxWidth(),
                                 color = MaterialTheme.colorScheme.onPrimary,
+                                textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Text(
                                 text = "${userData.weight} ${stringResource(R.string.kg)}",
-                                modifier = Modifier.padding(top = standardPadding),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.onPrimary,
+                                textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
@@ -217,14 +224,19 @@ fun ProfileContent(
                         ) {
                             Text(
                                 text = stringResource(R.string.target_weight),
+                                modifier = Modifier.fillMaxWidth(),
                                 color = MaterialTheme.colorScheme.scrim,
+                                textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Text(
                                 text = "${userData.targetWeight} ${stringResource(R.string.kg)}",
-                                modifier = Modifier.padding(top = standardPadding),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.scrim,
+                                textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
@@ -462,8 +474,7 @@ fun ProfileContent(
                             title = R.string.are_you_sure_you_want_to_delete_your_data,
                             description = R.string.des_delete_data,
                             actionTextButton = R.string.delete,
-                            actionTextButtonColor = MaterialTheme.colorScheme.onError,
-                            actionButtonColor = MaterialTheme.colorScheme.error,
+                            actionTextButtonColor = MaterialTheme.colorScheme.error,
                             onClickActionButton = {
                                 if (activity != null) {
                                     deleteData(context, activity)
@@ -517,8 +528,7 @@ fun ProfileContent(
                             title = R.string.are_you_sure_you_want_to_delete_your_account,
                             description = R.string.des_delete_account,
                             actionTextButton = R.string.delete,
-                            actionTextButtonColor = MaterialTheme.colorScheme.onError,
-                            actionButtonColor = MaterialTheme.colorScheme.error,
+                            actionTextButtonColor = MaterialTheme.colorScheme.error,
                             onClickActionButton = {
                                 if (activity != null) {
                                     deleteAccount(context, activity)
@@ -554,10 +564,10 @@ fun ProfileContent(
                     title = R.string.are_you_sure_you_want_to_sign_out,
                     description = null,
                     actionTextButton = R.string.sign_out,
-                    actionTextButtonColor = MaterialTheme.colorScheme.onSecondary,
-                    actionButtonColor = MaterialTheme.colorScheme.secondary,
+                    actionTextButtonColor = MaterialTheme.colorScheme.secondary,
                     onClickActionButton = {
                         if (activity != null) {
+                            DailyLogSharedPrefsHelper.clearDailyLog(context)
                             signOut(context, activity)
                         }
                     },

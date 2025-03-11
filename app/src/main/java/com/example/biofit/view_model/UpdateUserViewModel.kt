@@ -29,13 +29,6 @@ class UpdateUserViewModel : ViewModel() {
         loginViewModel: LoginViewModel,
         onSuccess: () -> Unit
     ) {
-        /*val emailValidationMessage = validateEmail(context, email.value ?: UserDTO.default().email)
-        if (emailValidationMessage != null) {
-            updatedState.value = false
-            updatedMessage.value = emailValidationMessage
-            return
-        }*/
-
         val emailValue = email.value
         if (emailValue != null) { // Chỉ validate khi có email
             val emailValidationMessage = validateEmail(context, emailValue)

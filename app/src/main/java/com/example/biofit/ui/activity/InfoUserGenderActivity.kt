@@ -83,8 +83,8 @@ fun InfoUserGenderScreen(
     val userId = userData.userId
     var selectedGender by rememberSaveable { mutableStateOf<String?>(null) }
     val gender = when (selectedGender) {
-        stringResource(R.string.male) -> 1
-        stringResource(R.string.female) -> 0
+        stringResource(R.string.male) -> 0
+        stringResource(R.string.female) -> 1
         else -> null
     }
 

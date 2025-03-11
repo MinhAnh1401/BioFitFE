@@ -113,9 +113,9 @@ fun SignInAndSignUpBackground() {
     ) {
         Image(
             painter = if (isSystemInDarkTheme()) {
-                painterResource(id = R.drawable.bg_sign_in_up_top_screen)
-            } else {
                 painterResource(id = R.drawable.bg_sign_in_up_top_screen_dark_mode)
+            } else {
+                painterResource(id = R.drawable.bg_sign_in_up_top_screen)
             },
             contentDescription = "Login Screen Background Top",
             modifier = Modifier
@@ -126,9 +126,9 @@ fun SignInAndSignUpBackground() {
 
         Image(
             painter = if (isSystemInDarkTheme()) {
-                painterResource(id = R.drawable.bg_sign_in_up_bot_screen)
-            } else {
                 painterResource(id = R.drawable.bg_sign_in_up_bot_screen_dark_mode)
+            } else {
+                painterResource(id = R.drawable.bg_sign_in_up_bot_screen)
             },
             contentDescription = "Login Screen Background Bottom",
             modifier = Modifier
@@ -303,7 +303,10 @@ fun LoginForm(
             TextButton(
                 onClick = { /* TODO */ },
             ) {
-                Text(text = stringResource(R.string.forgot_password))
+                Text(
+                    text = stringResource(R.string.forgot_password),
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
             }
         }
 
@@ -356,7 +359,10 @@ fun SignUpPrompt() {
                 }
             },
         ) {
-            Text(text = stringResource(R.string.create_account))
+            Text(
+                text = stringResource(R.string.create_account),
+                color = MaterialTheme.colorScheme.inversePrimary
+            )
         }
     }
 }
@@ -428,7 +434,10 @@ fun TermsAndPrivacy(standardPadding: Dp) {
             TextButton(
                 onClick = { /* TODO */ },
             ) {
-                Text(text = stringResource(R.string.term_of_use))
+                Text(
+                    text = stringResource(R.string.term_of_use),
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
             }
 
             Text(
@@ -440,7 +449,10 @@ fun TermsAndPrivacy(standardPadding: Dp) {
             TextButton(
                 onClick = { /* TODO */ },
             ) {
-                Text(text = stringResource(R.string.privacy_policy))
+                Text(
+                    text = stringResource(R.string.privacy_policy),
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
             }
         }
     }

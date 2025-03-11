@@ -31,7 +31,7 @@ interface ApiService {
 */
     // Daily Log API
     @GET("api/daily-log/user/{userId}/latest")
-    fun getLatestDailyWeight(
+    fun getLatestDailyLog(
         @Path("userId") userId: Long
     ): Call<DailyLogDTO>
 

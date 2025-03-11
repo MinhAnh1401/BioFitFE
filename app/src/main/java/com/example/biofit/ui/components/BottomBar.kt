@@ -60,7 +60,7 @@ fun BottomBar(
             ambientColor = MaterialTheme.colorScheme.onBackground,
             spotColor = MaterialTheme.colorScheme.onBackground
         ),
-        containerColor = MaterialTheme.colorScheme.primary
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         items.forEachIndexed { index, label ->
             Spacer(modifier = Modifier.weight(1f))
@@ -83,9 +83,9 @@ fun BottomBar(
                             rotationZ = if (label == "Add") rotationAngle else 0f
                         },
                     tint = if (selectedItem.value == label && label != "Add") {
-                        MaterialTheme.colorScheme.background
+                        MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme.colorScheme.inversePrimary
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                     }
                 )
             }

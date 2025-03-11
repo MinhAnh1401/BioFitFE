@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -52,8 +53,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -109,6 +112,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import kotlin.random.Random
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun HomeScreen(userData: UserDTO) {
@@ -821,15 +826,9 @@ fun DailyGoals(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val loadedWater = 1.4 // Thay đổi thành lượng nước đã nạp
-    val targetWater = 2 // Thay đổi thành lượng nước mục tiêu
-    val burnedCalories = getBurnedCalories()
-    val targetBurnCalories = 200f
-
-    dailyLogViewModel.updateUserId(userData.userId)
     var latestWeight = DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
     var latestWeightState by remember { mutableStateOf(DailyLogSharedPrefsHelper.getDailyLog(context)?.weight) }
-    val today = LocalDate.now()
+    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     val weightDataState by dailyLogViewModel.weightDataState
     LaunchedEffect(userData.userId) {
         dailyLogViewModel.getWeightHistory(userData.userId)
@@ -846,6 +845,18 @@ fun DailyGoals(
             }
         }
     }
+
+    val oldDatePrefs = DailyLogSharedPrefsHelper.getDailyLog(context)?.date
+    val memoryWater = DailyLogSharedPrefsHelper.getDailyLog(context)?.water ?: 0f
+    Log.d("TAG", "DailyMenu: $memoryWater")
+    var loadedWater by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(memoryWater) {
+        loadedWater = if (oldDatePrefs == today) memoryWater else 0f
+    }
+    val targetWater = 2f
+
+    val burnedCalories = getBurnedCalories()
+    val targetBurnCalories = 200f
 
     Column(
         modifier = modifier,
@@ -890,21 +901,21 @@ fun DailyGoals(
 
                     WaterChart(
                         sizeChart = standardPadding * 10,
-                        loadedWater.toFloat(),
-                        targetWater.toFloat(),
-                        MaterialTheme.colorScheme.secondaryContainer,
-                        if (isSystemInDarkTheme()) {
+                        loadedValue = loadedWater,
+                        targetValue = targetWater,
+                        circleColor = MaterialTheme.colorScheme.secondaryContainer,
+                        progressColor = if (isSystemInDarkTheme()) {
                             Color(0xFF32FCF9)
                         } else {
                             Color(0xFF91FCF9)
                         },
-                        if (isSystemInDarkTheme()) {
+                        exceededColor = if (isSystemInDarkTheme()) {
                             Color(0xFF000096)
                         } else {
                             Color(0xFF0000AF)
                         },
-                        "L",
-                        standardPadding
+                        unit = "L",
+                        standardPadding = standardPadding
                     )
 
                     Card(
@@ -921,7 +932,31 @@ fun DailyGoals(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(
-                                onClick = { TODO() }
+                                onClick = {
+                                    if (loadedWater > 0f) {
+                                        val newValue = if (oldDatePrefs == today) {
+                                            BigDecimal(loadedWater.toDouble())
+                                                .subtract(BigDecimal(0.1))
+                                                .setScale(1, RoundingMode.HALF_UP)
+                                                .toFloat()
+                                        } else {
+                                            0.1f
+                                        }
+
+                                        dailyLogViewModel.updateWater(newValue)  // Gọi hàm update để đảm bảo state cập nhật
+                                        dailyLogViewModel.saveDailyLog(context, userData.userId)
+
+                                        Log.d("TAG", "DailyMenu: ${dailyLogViewModel.water.value}")
+                                        loadedWater =
+                                            newValue  // Cập nhật loadedWater để UI phản hồi ngay lập tức
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            R.string.invalid_water,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.ic_less_water),
@@ -937,7 +972,25 @@ fun DailyGoals(
                             )
 
                             IconButton(
-                                onClick = { TODO() }
+                                onClick = {
+                                    val newValue = if (oldDatePrefs == today) {
+                                        BigDecimal(loadedWater.toDouble())
+                                            .add(BigDecimal(0.1))
+                                            .setScale(1, RoundingMode.HALF_UP)
+                                            .toFloat()
+                                    } else {
+                                        0.1f
+                                    }
+
+                                    dailyLogViewModel.updateWater(newValue)
+                                    dailyLogViewModel.saveDailyLog(context, userData.userId)
+
+                                    Log.d("TAG", "DailyMenu: ${dailyLogViewModel.water.value}")
+                                    loadedWater = newValue  // Đảm bảo UI cập nhật ngay lập tức
+
+                                    Toast.makeText(context, R.string.well_done, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.ic_add_water),
@@ -1061,16 +1114,17 @@ fun DailyGoals(
                             val rotation by animateFloatAsState(
                                 targetValue = if (isRotating) 360f else 0f,
                                 animationSpec = tween(durationMillis = 500, easing = LinearEasing),
-                                finishedListener = { isRotating = false } // Reset trạng thái sau khi xoay xong
+                                finishedListener = {
+                                    isRotating = false
+                                } // Reset trạng thái sau khi xoay xong
                             )
 
                             IconButton(
                                 onClick = {
-                                    Log.d("HomeScreen", "today: $today")
-                                    Log.d("HomeScreen", "latestWeightDate: ${DailyLogSharedPrefsHelper.getDailyLog(context)?.date}")
                                     isRotating = true
                                     dailyLogViewModel.getWeightHistory(userData.userId)
-                                    latestWeight = DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
+                                    latestWeight =
+                                        DailyLogSharedPrefsHelper.getDailyLog(context)?.weight
                                 },
                                 modifier = Modifier.size(20.dp)
                             ) {
