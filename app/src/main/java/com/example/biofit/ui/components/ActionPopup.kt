@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -112,12 +113,13 @@ fun ActionPopup(
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             /*if (!drinkWaterPopupState) {*/
                 Row(
                     modifier = Modifier.padding(
-                        top = standardPadding / 2,
+                        top = standardPadding,
                         start = standardPadding / 2,
                         end = standardPadding / 2
                     )
@@ -198,7 +200,7 @@ fun ActionPopup(
                                     ),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.labelSmall
                             )
                         }
                     }
@@ -251,7 +253,7 @@ fun ActionPopup(
                                 text = stringResource(R.string.ai_assistant_bionix),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.labelSmall
                             )
                         }
                     }
@@ -261,7 +263,7 @@ fun ActionPopup(
                     modifier = Modifier.padding(
                         start = standardPadding / 2,
                         end = standardPadding / 2,
-                        bottom = standardPadding / 2
+                        bottom = standardPadding
                     )
                 ) {
                     sessionPopupList.forEach { (icon, title) ->
@@ -332,7 +334,7 @@ fun ActionPopup(
                                     ),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.labelSmall
                             )
                         }
                     }

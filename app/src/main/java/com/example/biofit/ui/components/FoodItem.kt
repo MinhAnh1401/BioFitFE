@@ -62,6 +62,7 @@ fun FoodItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(MaterialTheme.shapes.large)
             .clickable { onClick() },
         horizontalArrangement = Arrangement.spacedBy(standardPadding),
         verticalAlignment = Alignment.CenterVertically

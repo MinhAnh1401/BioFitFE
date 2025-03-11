@@ -42,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.biofit.R
 import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.FoodItem
@@ -200,7 +202,12 @@ fun AddContent(
     OutlinedTextField(
         value = search,
         onValueChange = { search = it },
-        modifier = modifier.padding(vertical = standardPadding),
+        modifier = modifier
+            .padding(vertical = standardPadding)
+            .shadow(
+                elevation = 6.dp,
+                shape = MaterialTheme.shapes.large
+            ),
         textStyle = MaterialTheme.typography.bodySmall,
         placeholder = {
             Text(

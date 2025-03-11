@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -596,6 +595,7 @@ fun SettingContent(
                 ) {
                     Column(
                         modifier = Modifier.padding(standardPadding),
+                        verticalArrangement = Arrangement.spacedBy(standardPadding),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Row(
@@ -795,6 +795,7 @@ fun SettingContent(
                 ) {
                     Column(
                         modifier = Modifier.padding(standardPadding),
+                        verticalArrangement = Arrangement.spacedBy(standardPadding),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Row(
