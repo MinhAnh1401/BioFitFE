@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -46,6 +47,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
@@ -164,7 +167,10 @@ fun ExerciseContent(
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
-            modifier = modifier,
+            modifier = modifier.shadow(
+                elevation = 6.dp,
+                shape = MaterialTheme.shapes.large
+            ),
             textStyle = MaterialTheme.typography.bodySmall,
             placeholder = {
                 Text(
@@ -287,6 +293,11 @@ fun ExerciseContent(
                                     Log.d("ExerciseListScreen", "Deleting exercise: ${exercise.exerciseId}")
                                     exerciseViewModel.deleteExercise(exercise.exerciseId)
                                     expanded = false
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.exercise_deleted_successfully),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 },
                                 leadingIcon = {
                                     Icon(

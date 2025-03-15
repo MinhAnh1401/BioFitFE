@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -50,6 +53,7 @@ import com.example.biofit.R
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDetailDTO
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
@@ -95,11 +99,28 @@ fun UpdateExerciseScreen(
 
     val exerciseDetailList by exerciseViewModel.exerciseDetail.collectAsState()
 
+    val exerciseGoal = exerciseDetailList?.exerciseGoal
+    val intensity = exerciseDetailList?.intensity
+    Log.d("UpdateExerciseScreen", "exerciseGoal: $exerciseGoal, intensity: $intensity")
+
     LaunchedEffect(exerciseDetailList) {
         exerciseDetailList?.let {
             time = it.time.toString()
             caloriesConsumed = it.burnedCalories.toString()
         }
+    }
+
+    var showUpdateErrorDialog by rememberSaveable { mutableStateOf(false) }
+    if (showUpdateErrorDialog) {
+        DefaultDialog(
+            title = R.string.exercises_not_updated_yet,
+            description = R.string.des_update_exercise,
+            actionTextButton = R.string.ok,
+            actionTextButtonColor = MaterialTheme.colorScheme.primary,
+            onClickActionButton = { showUpdateErrorDialog = false },
+            onDismissRequest = { showUpdateErrorDialog = false },
+            standardPadding = standardPadding
+        )
     }
 
     Surface(
@@ -124,21 +145,30 @@ fun UpdateExerciseScreen(
                 rightButton = {
                     TextButton(
                         onClick = {
-                            val updatedExercise = exerciseDTO.copy(
-                                exerciseName = exerciseName,
-                                detailList = listOf(
-                                    ExerciseDetailDTO(
-                                        exerciseDetailId = 0L,
-                                        exerciseId = exerciseDTO.exerciseId,
-                                        exerciseGoal = 0,
-                                        intensity = 0,
-                                        time = time.toFloatOrNull() ?: 0f,
-                                        burnedCalories = caloriesConsumed.toFloatOrNull() ?: 0f
+                            if (exerciseGoal == 0 && intensity == 0) {
+                                val updatedExercise = exerciseDTO.copy(
+                                    exerciseName = exerciseName,
+                                    detailList = listOf(
+                                        ExerciseDetailDTO(
+                                            exerciseDetailId = 0L,
+                                            exerciseId = exerciseDTO.exerciseId,
+                                            exerciseGoal = 0,
+                                            intensity = 0,
+                                            time = time.toFloatOrNull() ?: 0f,
+                                            burnedCalories = caloriesConsumed.toFloatOrNull() ?: 0f
+                                        )
                                     )
                                 )
-                            )
-                            exerciseViewModel.updateExercise(updatedExercise)
-                            activity?.finish()
+                                exerciseViewModel.updateExercise(updatedExercise)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.exercise_updated_successfully),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                activity?.finish()
+                            } else {
+                                showUpdateErrorDialog = true
+                            }
                         }
                     ) {
                         Text(
@@ -185,7 +215,7 @@ fun UpdateExerciseContent(
     val exerciseDetailList by exerciseViewModel.exerciseDetail.collectAsState()
     Log.d("CAUExerciseContent", "exerciseDetail: $exerciseDetailList")
 
-    var level by rememberSaveable { mutableStateOf("") }
+    var level by rememberSaveable { mutableStateOf(value = "") }
     var showLevelDialog by rememberSaveable { mutableStateOf(value = false) }
     var intensity by rememberSaveable { mutableStateOf(value = "") }
     var showIntensityDialog by rememberSaveable { mutableStateOf(value = false) }
@@ -196,7 +226,10 @@ fun UpdateExerciseContent(
             exerciseDTO.getExerciseGoalInt(context, level),
             exerciseDTO.getIntensityInt(context, intensity)
         )
-        Log.d("CAUExerciseContent", "exerciseGoal: ${exerciseDTO.getExerciseGoalInt(context, level)}")
+        Log.d(
+            "CAUExerciseContent",
+            "exerciseGoal: ${exerciseDTO.getExerciseGoalInt(context, level)}"
+        )
         Log.d("CAUExerciseContent", "intensity: ${exerciseDTO.getIntensityInt(context, intensity)}")
     }
 
@@ -368,6 +401,7 @@ fun UpdateExerciseContent(
             value = time,
             onValueChange = onTimeChange,
             modifier = modifier,
+            enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             textStyle = MaterialTheme.typography.bodySmall.copy(
                 textAlign = TextAlign.End
@@ -399,6 +433,7 @@ fun UpdateExerciseContent(
             value = caloriesConsumed,
             onValueChange = onCaloriesConsumedChange,
             modifier = modifier,
+            enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             textStyle = MaterialTheme.typography.bodySmall.copy(
                 textAlign = TextAlign.End

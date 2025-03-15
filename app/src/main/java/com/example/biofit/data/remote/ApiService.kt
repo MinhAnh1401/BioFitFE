@@ -8,13 +8,17 @@ import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.model.request.LoginRequest
 import com.example.biofit.data.model.request.RegisterRequest
 import com.example.biofit.data.model.request.UpdateUserRequest
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,13 +30,22 @@ interface ApiService {
     @POST("api/user/register")
     fun register(@Body request: RegisterRequest): Call<UserDTO>
 
-    @PUT("api/user/update/{userId}")
+    /*@PUT("api/user/update/{userId}")
     fun updateUser(
         @Path("userId") userId: Long,
         @Body request: UpdateUserRequest
+    ): Call<UserDTO>*/
+
+    @PUT("api/user/update/{userId}")
+    @Multipart
+    fun updateUser(
+        @Path("userId") userId: Long,
+        @Part avatar: MultipartBody.Part?,
+        @Part("user") user: RequestBody
     ): Call<UserDTO>
 
-/*
+
+    /*
     ------------------------------------------------------------------------------------------------
 */
     // Daily Log API
