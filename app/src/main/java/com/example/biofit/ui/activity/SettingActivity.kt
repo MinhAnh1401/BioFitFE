@@ -558,6 +558,7 @@ fun SettingContent(
                         elevation = 6.dp,
                         shape = MaterialTheme.shapes.large
                     ),
+                    readOnly = true,
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
@@ -576,7 +577,7 @@ fun SettingContent(
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         unfocusedBorderColor = Color.Transparent,
                         focusedBorderColor = Color.Transparent
                     )

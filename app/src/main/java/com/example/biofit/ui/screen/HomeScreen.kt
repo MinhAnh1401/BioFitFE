@@ -56,7 +56,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -108,12 +107,12 @@ import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import kotlin.random.Random
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 @Composable
 fun HomeScreen(userData: UserDTO) {
@@ -903,7 +902,7 @@ fun DailyGoals(
                         sizeChart = standardPadding * 10,
                         loadedValue = loadedWater,
                         targetValue = targetWater,
-                        circleColor = MaterialTheme.colorScheme.secondaryContainer,
+                        circleColor = MaterialTheme.colorScheme.inversePrimary,
                         progressColor = if (isSystemInDarkTheme()) {
                             Color(0xFF32FCF9)
                         } else {
@@ -921,9 +920,7 @@ fun DailyGoals(
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                                alpha = 0.3f
-                            )
+                            containerColor = MaterialTheme.colorScheme.inversePrimary
                         )
                     ) {
                         Row(
@@ -1039,7 +1036,7 @@ fun DailyGoals(
                     ExerciseChart(
                         burnedCalories,
                         targetBurnCalories,
-                        MaterialTheme.colorScheme.secondaryContainer,
+                        MaterialTheme.colorScheme.inversePrimary,
                         if (isSystemInDarkTheme()) {
                             Color(0xFF8C3200)
                         } else {
@@ -1056,9 +1053,7 @@ fun DailyGoals(
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                                alpha = 0.3f
-                            )
+                            containerColor = MaterialTheme.colorScheme.inversePrimary
                         )
                     ) {
                         TextButton(
@@ -1191,7 +1186,7 @@ fun WaterChart(
         val exceeded = loadedValue > targetValue
 
         drawCircle(
-            color = circleColor.copy(alpha = 0.3f),
+            color = circleColor,
             center = center,
             radius = radius,
             style = Stroke(width = radius / 1.7f)
@@ -1289,7 +1284,7 @@ fun ExerciseChart(
         val exceeded = loadedValue > targetValue
 
         drawArc(
-            color = circleColor.copy(alpha = 0.3f),
+            color = circleColor,
             startAngle = -240f,
             sweepAngle = totalAngle,
             useCenter = false,

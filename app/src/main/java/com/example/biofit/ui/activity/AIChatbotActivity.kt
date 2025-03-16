@@ -42,7 +42,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -66,6 +67,7 @@ import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.BuildConfig
 
 
 class AIChatbotActivity : ComponentActivity() {
@@ -77,13 +79,14 @@ class AIChatbotActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val apiKey = BuildConfig.GOOGLE_API_KEY
         userData = UserSharedPrefsHelper.getUserData(this)
         dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
             dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
             context = this,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = apiKey
         )
         chatViewModel = AIChatbotViewModel(model, this)
         setContent {
@@ -104,12 +107,17 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
     val context = LocalContext.current
     val activity = context as? Activity
     val keyboardController = LocalSoftwareKeyboardController.current
+    keyboardController?.show()
 
     val standardPadding = getStandardPadding().first
 
     val chatHistory by remember { mutableStateOf(viewModel.chatHistory) }
     val scope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
     var userInput by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     val listState = rememberLazyListState()
 
     Surface(
@@ -190,6 +198,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                     OutlinedTextField(
                         value = userInput,
                         onValueChange = { userInput = it },
+                        modifier = Modifier.focusRequester(focusRequester),
                         textStyle = MaterialTheme.typography.bodySmall,
                         placeholder = {
                             Text(
@@ -338,7 +347,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = BuildConfig.GOOGLE_API_KEY
         )
         chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
         AIChatbotScreen(viewModel = chatBotViewModel)
@@ -359,7 +368,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = BuildConfig.GOOGLE_API_KEY
         )
         chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
         AIChatbotScreen(viewModel = chatBotViewModel)
@@ -381,7 +390,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = BuildConfig.GOOGLE_API_KEY
         )
         chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
         AIChatbotScreen(viewModel = chatBotViewModel)
@@ -403,7 +412,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = BuildConfig.GOOGLE_API_KEY
         )
         chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
         AIChatbotScreen(viewModel = chatBotViewModel)
@@ -424,7 +433,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = BuildConfig.GOOGLE_API_KEY
         )
         chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
         AIChatbotScreen(viewModel = chatBotViewModel)
@@ -446,7 +455,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
             context = LocalContext.current,
-            apiKey = "AIzaSyD5vPJ7S-mnKpnc-Pf3lKXZqB3G6p5vZ6s"
+            apiKey = BuildConfig.GOOGLE_API_KEY
         )
         chatBotViewModel = AIChatbotViewModel(model, LocalContext.current)
         AIChatbotScreen(viewModel = chatBotViewModel)

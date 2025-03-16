@@ -204,8 +204,8 @@ fun ProfileContent(
                         onDismissRequest = { showAvatarDialog = false },
                         title = R.string.choose_how_to_set_avatar,
                         listOptions = listOf(
-                            "Take a photo",
-                            "Choose from gallery",
+                            stringResource(R.string.take_a_photo),
+                            stringResource(R.string.choose_from_gallery),
                         ),
                         standardPadding = standardPadding
                     )

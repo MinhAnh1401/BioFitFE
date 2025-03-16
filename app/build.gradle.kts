@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,6 +20,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GOOGLE_API_KEY", "\"${getLocalProperty("GOOGLE_API_KEY")}\"")
     }
 
     buildTypes {
@@ -37,11 +42,11 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
-
 }
 
 dependencies {
@@ -77,4 +82,13 @@ dependencies {
     implementation (libs.converter.gson)
     implementation( libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.material)
+}
+
+fun getLocalProperty(key: String): String {
+    val properties = Properties()
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        properties.load(FileInputStream(file))
+    }
+    return properties.getProperty(key, "")
 }
