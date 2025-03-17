@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -35,6 +37,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -176,6 +179,13 @@ fun InfoUserHeightAndWeightContent(
                 onValueChange = { viewModel.height.value = it.toFloatOrNull() },
                 modifier = modifier,
                 textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.figure_stand),
+                        contentDescription = stringResource(R.string.height),
+                        modifier = Modifier.size(standardPadding * 1.5f)
+                    )
+                },
                 prefix = {
                     Text(
                         text = stringResource(R.string.height),
@@ -204,6 +214,13 @@ fun InfoUserHeightAndWeightContent(
                 onValueChange = { viewModel.weight.value = it.toFloatOrNull() },
                 modifier = modifier.padding(top = standardPadding),
                 textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.scalemass),
+                        contentDescription = stringResource(R.string.weight),
+                        modifier = Modifier.size(standardPadding * 1.5f)
+                    )
+                },
                 prefix = {
                     Text(
                         text = stringResource(R.string.weight),

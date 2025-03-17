@@ -1,7 +1,6 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -53,7 +52,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -168,6 +166,7 @@ fun CreateFoodContent(
                         Icon(
                             painter = painterResource(R.drawable.ic_plus),
                             contentDescription = "Add button",
+                            modifier = Modifier.size(standardPadding),
                             tint = MaterialTheme.colorScheme.primary
                         )
 
@@ -276,7 +275,7 @@ fun CreateFoodContent(
                         trailingIcon = {
                             IconButton(onClick = { showUnitDialog = true }) {
                                 Image(
-                                    painter = painterResource(R.drawable.btn_back),
+                                    painter = painterResource(R.drawable.ic_back),
                                     contentDescription = stringResource(R.string.unit_of_measure),
                                     modifier = Modifier.rotate(270f)
                                 )

@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,11 +33,11 @@ fun NotificationItem(
     val currentDateTime = LocalDateTime.now()
     // Thay thành điều kiện khác nếu cần thiết
     val icon = if (currentDateTime.hour < 12) {
-        R.drawable.ic_morning
+        Pair(R.drawable.cloud_sun_fill, Color(0xFFFFAB00))
     } else if (currentDateTime.hour < 18) {
-        R.drawable.ic_afternoon
+        Pair(R.drawable.sun_max_fill, Color(0xFFDD2C00))
     } else {
-        R.drawable.ic_evening
+        Pair(R.drawable.cloud_moon_fill, Color(0xFF2962FF))
     }
 
     Column(
@@ -47,9 +50,11 @@ fun NotificationItem(
             horizontalArrangement = Arrangement.spacedBy(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(icon),
-                contentDescription = "Notification Icon"
+            Icon(
+                painter = painterResource(icon.first),
+                contentDescription = "Notification Icon",
+                modifier = Modifier.size(standardPadding * 3f),
+                tint = icon.second
             )
 
             Column(

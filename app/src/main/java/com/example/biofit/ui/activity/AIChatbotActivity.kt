@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -220,6 +221,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_send),
                                         contentDescription = "Send",
+                                        modifier = Modifier.size(standardPadding * 2),
                                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 }

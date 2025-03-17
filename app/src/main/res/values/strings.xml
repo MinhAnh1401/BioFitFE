@@ -311,4 +311,5 @@
     <string name="choose_how_to_set_avatar">Choose how to set avatar</string>
     <string name="take_a_photo">Take a photo</string>
     <string name="choose_from_gallery">Choose from gallery</string>
+    <string name="update_avatar_successfully">Update avatar successfully</string>
 </resources>

@@ -30,13 +30,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -45,8 +44,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,7 +57,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -72,8 +69,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -83,12 +78,16 @@ import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
+import com.example.biofit.ui.activity.AIChatbotActivity
 import com.example.biofit.ui.activity.CaloriesTargetActivity
 import com.example.biofit.ui.activity.ExerciseActivity
 import com.example.biofit.ui.activity.NotificationActivity
 import com.example.biofit.ui.activity.OverviewExerciseActivity
 import com.example.biofit.ui.activity.TrackActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
+import com.example.biofit.ui.animated.AnimatedGradientText
+import com.example.biofit.ui.animated.AnimatedGradientText2
+import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
@@ -145,7 +144,8 @@ fun HomeScreen(userData: UserDTO) {
 @Composable
 fun HeaderBar(
     userData: UserDTO,
-    modifier: Modifier
+    modifier: Modifier,
+    standardPadding: Dp
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -192,8 +192,9 @@ fun HeaderBar(
             },
         ) {
             Icon(
-                imageVector = Icons.Default.Notifications,
+                painter = painterResource(R.drawable.bell_fill),
                 contentDescription = stringResource(R.string.notification),
+                modifier = Modifier.size(standardPadding * 2f),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -205,8 +206,9 @@ fun HeaderBar(
             onClick = { showDatePicker = true },
         ) {
             Icon(
-                imageVector = Icons.Default.DateRange,
+                painter = painterResource(R.drawable.calendar),
                 contentDescription = stringResource(R.string.calendar),
+                modifier = Modifier.size(standardPadding * 2f),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -241,7 +243,8 @@ fun HomeContent(
         item {
             HeaderBar(
                 userData,
-                modifier = modifier
+                modifier = modifier,
+                standardPadding = standardPadding
             )
         }
 
@@ -300,7 +303,7 @@ fun OverviewAndSearchBar(
         Triple(R.string.salt, 600, 1000), // Thay đổi thành muối
         Triple(R.string.fiber, 500, 1000) // Thay đổi thành chất xơ
     )
-    var search by rememberSaveable { mutableStateOf("") }
+    /*var search by rememberSaveable { mutableStateOf("") }*/
 
     MainCard(
         onClick = {
@@ -316,8 +319,16 @@ fun OverviewAndSearchBar(
             verticalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
             Row(
+                horizontalArrangement = Arrangement.spacedBy(standardPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(
+                    painter = painterResource(R.drawable.apple_meditate),
+                    contentDescription = stringResource(R.string.overview),
+                    modifier = Modifier.size(standardPadding * 2),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+
                 Text(
                     text = stringResource(R.string.overview),
                     modifier = Modifier.weight(1f),
@@ -378,6 +389,7 @@ fun OverviewAndSearchBar(
                         Icon(
                             painter = painterResource(R.drawable.ic_loaded_cal),
                             contentDescription = "Loaded Calories",
+                            modifier = Modifier.size(standardPadding),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
 
@@ -394,8 +406,9 @@ fun OverviewAndSearchBar(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_target_cal),
+                            painter = painterResource(R.drawable.target),
                             contentDescription = "Target Calories",
+                            modifier = Modifier.size(standardPadding),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
 
@@ -461,7 +474,7 @@ fun OverviewAndSearchBar(
 
     Spacer(modifier = Modifier.height(standardPadding))
 
-    OutlinedTextField(
+    /*OutlinedTextField(
         value = search,
         onValueChange = { search = it },
         modifier = modifier.shadow(
@@ -502,7 +515,7 @@ fun OverviewAndSearchBar(
             imeAction = ImeAction.Search
         ),
         keyboardActions = KeyboardActions(
-            onSearch = { /*TODO*/ }
+            onSearch = { *//*TODO*//* }
         ),
         singleLine = true,
         shape = MaterialTheme.shapes.large,
@@ -511,7 +524,56 @@ fun OverviewAndSearchBar(
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             unfocusedBorderColor = Color.Transparent
         )
-    )
+    )*/
+
+    BlinkingGradientBox(
+        onClick = {
+            activity?.let {
+                val intent = Intent(it, AIChatbotActivity::class.java)
+                it.startActivity(intent)
+            }
+        },
+        alpha = 0.5f,
+        shape = MaterialTheme.shapes.extraLarge
+    ) {
+        Row(
+            modifier = modifier.padding(standardPadding),
+            horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_chatbot_ai),
+                contentDescription = stringResource(R.string.ai_assistant_bionix),
+                modifier = Modifier.size(standardPadding * 4),
+                tint = if (isSystemInDarkTheme()) {
+                    Color(0xFFB388FF)
+                } else {
+                    Color(0xFF6200EA)
+                }
+            )
+
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.ai_assistant_bionix),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+
+            Icon(
+                painter = painterResource(R.drawable.ic_back),
+                contentDescription = stringResource(R.string.ai_assistant_bionix),
+                modifier = Modifier
+                    .size(standardPadding )
+                    .rotate(180f),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
 }
 
 @Composable
@@ -641,11 +703,23 @@ fun DailyMenu(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(standardPadding)
     ) {
-        Text(
-            text = stringResource(R.string.track_your_daily_menu),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleSmall
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.menucard),
+                contentDescription = stringResource(R.string.track_your_daily_menu),
+                modifier = Modifier.size(standardPadding * 2),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            
+            Text(
+                text = stringResource(R.string.track_your_daily_menu),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall
+            )
+        }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(standardPadding)
@@ -659,7 +733,8 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.ic_morning,
+                headIcon = R.drawable.cloud_sun_fill,
+                headIconColor = Color(0xFFFFAB00),
                 desIcon = R.string.morning,
                 title = R.string.morning,
                 loaded = loadedBreakfast,
@@ -677,7 +752,8 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.ic_afternoon,
+                headIcon = R.drawable.sun_max_fill,
+                headIconColor = Color(0xFFDD2C00),
                 desIcon = R.string.afternoon,
                 title = R.string.afternoon,
                 loaded = loadedLunch,
@@ -699,7 +775,8 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.ic_evening,
+                headIcon = R.drawable.cloud_moon_fill,
+                headIconColor = Color(0xFF2962FF),
                 desIcon = R.string.evening,
                 title = R.string.evening,
                 loaded = loadedDinner,
@@ -717,7 +794,8 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.ic_snack,
+                headIcon = R.drawable.circle_hexagongrid_fill,
+                headIconColor = Color(0xFF00BFA5),
                 desIcon = R.string.snack,
                 title = R.string.snack,
                 loaded = loadedSnack,
@@ -734,6 +812,7 @@ fun DailyCard(
     onClick: () -> Unit,
     modifier: Modifier,
     headIcon: Int,
+    headIconColor: Color,
     desIcon: Int,
     title: Int,
     loaded: Int,
@@ -749,39 +828,19 @@ fun DailyCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
-            ) {
-            }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
-                Spacer(modifier = Modifier.weight(1f))
-
-                Image(
+                Icon(
                     painter = painterResource(headIcon),
                     contentDescription = stringResource(desIcon),
                     modifier = Modifier
                         .padding(top = standardPadding)
-                        .size(standardPadding * 3)
-                        .weight(1f)
+                        .size(standardPadding * 2f)
+                        .weight(1f),
+                    tint = headIconColor
                 )
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(standardPadding),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_add_daily_menu),
-                        contentDescription = "Add",
-                        modifier = Modifier.size(standardPadding * 1.5f)
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(standardPadding))
@@ -861,11 +920,23 @@ fun DailyGoals(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(standardPadding)
     ) {
-        Text(
-            text = stringResource(R.string.daily_goals),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleSmall
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.target),
+                contentDescription = stringResource(R.string.daily_goals),
+                modifier = Modifier.size(standardPadding * 2),
+                tint = MaterialTheme.colorScheme.primary
+            )
+
+            Text(
+                text = stringResource(R.string.daily_goals),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall
+            )
+        }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(standardPadding)
@@ -885,10 +956,11 @@ fun DailyGoals(
                         horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_water),
+                        Icon(
+                            painter = painterResource(R.drawable.drop),
                             contentDescription = stringResource(R.string.drinking_water),
-                            modifier = Modifier.size(standardPadding * 1.5f)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFF32FCF9)
                         )
 
                         Text(
@@ -1020,10 +1092,11 @@ fun DailyGoals(
                         horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_exercise),
+                        Icon(
+                            painter = painterResource(R.drawable.flame),
                             contentDescription = stringResource(R.string.activity),
-                            modifier = Modifier.size(standardPadding * 1.5f)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFFDD2C00)
                         )
 
                         Text(
@@ -1081,18 +1154,28 @@ fun DailyGoals(
                 modifier = Modifier.padding(standardPadding),
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                Row {
                     Column(
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
                     ) {
-                        Text(
-                            text = stringResource(R.string.latest_weight),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleSmall
-                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.scalemass),
+                                contentDescription = stringResource(R.string.weight),
+                                modifier = Modifier.size(standardPadding * 2),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Text(
+                                text = stringResource(R.string.latest_weight),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(standardPadding),
@@ -1124,10 +1207,12 @@ fun DailyGoals(
                                 modifier = Modifier.size(20.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Refresh,
+                                    painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise),
                                     contentDescription = "Refresh",
                                     tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.graphicsLayer(rotationZ = rotation)
+                                    modifier = Modifier
+                                        .size(standardPadding)
+                                        .graphicsLayer(rotationZ = rotation)
                                 )
                             }
                         }

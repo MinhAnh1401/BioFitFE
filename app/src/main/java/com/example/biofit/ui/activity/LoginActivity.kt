@@ -242,6 +242,13 @@ fun LoginForm(
                     style = MaterialTheme.typography.bodySmall
                 )
             },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
+                    contentDescription = stringResource(R.string.email),
+                    modifier = Modifier.size(standardPadding * 1.5f)
+                )
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -263,6 +270,13 @@ fun LoginForm(
                 Text(
                     text = stringResource(R.string.password),
                     style = MaterialTheme.typography.bodySmall
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ellipsis_rectangle),
+                    contentDescription = stringResource(R.string.password),
+                    modifier = Modifier.size(standardPadding * 1.5f)
                 )
             },
             trailingIcon = {

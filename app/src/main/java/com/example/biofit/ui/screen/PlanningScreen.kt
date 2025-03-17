@@ -20,10 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -44,13 +43,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -99,8 +99,9 @@ fun PlanningScreen() {
                         onClick = { TODO() }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.DateRange,
+                            painter = painterResource(R.drawable.calendar),
                             contentDescription = stringResource(R.string.calendar),
+                            modifier = Modifier.size(standardPadding * 2f),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -185,6 +186,7 @@ fun PlanningScreenContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_plus),
                                 contentDescription = "Create new plan",
+                                modifier = Modifier.size(standardPadding * 2f),
                                 tint = MaterialTheme.colorScheme.primary
                             )
 
@@ -359,6 +361,13 @@ fun PlanningScreenContent(
                         horizontalArrangement = Arrangement.spacedBy(standardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            painter = painterResource(R.drawable.fork_knife),
+                            contentDescription = "Food",
+                            modifier = Modifier.size(standardPadding * 2f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
                         Text(
                             text = stringResource(R.string.suggested_meals),
                             modifier = Modifier.weight(1f),
@@ -372,6 +381,7 @@ fun PlanningScreenContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_edit),
                                 contentDescription = "Edit",
+                                modifier = Modifier.size(standardPadding * 2f),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -395,90 +405,83 @@ fun PlanningScreenContent(
                     )
 
                     Column(
-                        modifier = modifier
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(standardPadding)
                     ) {
-                        Row {
-                            Column(
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable {
-                                        activity?.let {
-                                            val intent = Intent(it, MealsListActivity::class.java)
-                                            intent.putExtra("SESSION_TOGGLE", R.string.morning)
-                                            it.startActivity(intent)
-                                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding)
+                        ) {
+                            SuggestedMeals(
+                                onClick = {
+                                    activity?.let {
+                                        val intent = Intent(it, MealsListActivity::class.java)
+                                        intent.putExtra("SESSION_TOGGLE", R.string.morning)
+                                        it.startActivity(intent)
                                     }
-                            ) {
-                                SuggestedMeals(
-                                    suggestedMealsSession = R.string.morning,
-                                    suggestedMealsImg = R.drawable.img_food_default,
-                                    suggestedMeals = morningMeals,
-                                    standardPadding = standardPadding
-                                )
-                            }
+                                },
+                                modifier = Modifier.weight(1f),
+                                suggestedMealsSession = R.string.morning,
+                                suggestedMealsSessionColor = Color(0xFFFFAB00),
+                                suggestedMealsSessionIcon = R.drawable.cloud_sun_fill,
+                                suggestedMealsImg = R.drawable.img_food_default,
+                                suggestedMeals = morningMeals,
+                                standardPadding = standardPadding,
+                            )
 
-                            Column(
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable {
-                                        activity?.let {
-                                            val intent = Intent(it, MealsListActivity::class.java)
-                                            intent.putExtra("SESSION_TOGGLE", R.string.afternoon)
-                                            it.startActivity(intent)
-                                        }
+                            SuggestedMeals(
+                                onClick = {
+                                    activity?.let {
+                                        val intent = Intent(it, MealsListActivity::class.java)
+                                        intent.putExtra("SESSION_TOGGLE", R.string.afternoon)
+                                        it.startActivity(intent)
                                     }
-                            ) {
-                                SuggestedMeals(
-                                    suggestedMealsSession = R.string.afternoon,
-                                    suggestedMealsImg = R.drawable.img_food_default,
-                                    suggestedMeals = afternoonMeals,
-                                    standardPadding = standardPadding
-                                )
-                            }
+                                },
+                                modifier = Modifier.weight(1f),
+                                suggestedMealsSession = R.string.afternoon,
+                                suggestedMealsSessionColor = Color(0xFFDD2C00),
+                                suggestedMealsSessionIcon = R.drawable.sun_max_fill,
+                                suggestedMealsImg = R.drawable.img_food_default,
+                                suggestedMeals = afternoonMeals,
+                                standardPadding = standardPadding
+                            )
                         }
 
-                        Row {
-                            Column(
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable {
-                                        activity?.let {
-                                            val intent = Intent(it, MealsListActivity::class.java)
-                                            intent.putExtra("SESSION_TOGGLE", R.string.evening)
-                                            it.startActivity(intent)
-                                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding)
+                        ) {
+                            SuggestedMeals(
+                                onClick = {
+                                    activity?.let {
+                                        val intent = Intent(it, MealsListActivity::class.java)
+                                        intent.putExtra("SESSION_TOGGLE", R.string.evening)
+                                        it.startActivity(intent)
                                     }
-                            ) {
-                                SuggestedMeals(
-                                    suggestedMealsSession = R.string.evening,
-                                    suggestedMealsImg = R.drawable.img_food_default,
-                                    suggestedMeals = eveningMeals,
-                                    standardPadding = standardPadding
-                                )
-                            }
+                                },
+                                modifier = Modifier.weight(1f),
+                                suggestedMealsSession = R.string.evening,
+                                suggestedMealsSessionColor = Color(0xFF2962FF),
+                                suggestedMealsSessionIcon = R.drawable.cloud_moon_fill,
+                                suggestedMealsImg = R.drawable.img_food_default,
+                                suggestedMeals = eveningMeals,
+                                standardPadding = standardPadding
+                            )
 
-                            Column(
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable {
-                                        activity?.let {
-                                            val intent = Intent(it, MealsListActivity::class.java)
-                                            intent.putExtra("SESSION_TOGGLE", R.string.snack)
-                                            it.startActivity(intent)
-                                        }
+                            SuggestedMeals(
+                                onClick = {
+                                    activity?.let {
+                                        val intent = Intent(it, MealsListActivity::class.java)
+                                        intent.putExtra("SESSION_TOGGLE", R.string.snack)
+                                        it.startActivity(intent)
                                     }
-                            ) {
-                                SuggestedMeals(
-                                    suggestedMealsSession = R.string.snack,
-                                    suggestedMealsImg = R.drawable.img_food_default,
-                                    suggestedMeals = snackMeals,
-                                    standardPadding = standardPadding
-                                )
-                            }
+                                },
+                                modifier = Modifier.weight(1f),
+                                suggestedMealsSession = R.string.snack,
+                                suggestedMealsSessionColor = Color(0xFF00BFA5),
+                                suggestedMealsSessionIcon = R.drawable.circle_hexagongrid_fill,
+                                suggestedMealsImg = R.drawable.img_food_default,
+                                suggestedMeals = snackMeals,
+                                standardPadding = standardPadding
+                            )
                         }
                     }
                 }
@@ -489,11 +492,23 @@ fun PlanningScreenContent(
                     modifier = modifier,
                     verticalArrangement = Arrangement.spacedBy(standardPadding)
                 ) {
-                    Text(
-                        text = stringResource(R.string.workout_suggestion),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.figure_core_training),
+                            contentDescription = stringResource(R.string.workout_suggestion),
+                            modifier = Modifier.size(standardPadding * 2f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                        Text(
+                            text = stringResource(R.string.workout_suggestion),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
 
                     val workoutSuggestion = listOf(
                         Pair(Pair(0, "Exercise 1"), Triple(15, 120f, 0)),
@@ -565,8 +580,9 @@ fun PlanningHeaderBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_planning),
+            painter = painterResource(R.drawable.leaf),
             contentDescription = "Planning",
+            modifier = Modifier.size(standardPadding * 2f),
             tint = MaterialTheme.colorScheme.primary
         )
 
@@ -619,12 +635,24 @@ fun CaloriesLineChart(
             },
         verticalArrangement = Arrangement.spacedBy(standardPadding),
     ) {
-        Text(
-            text = stringResource(R.string.calories),
+        Row(
             modifier = Modifier.padding(standardPadding * 2),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleLarge
-        )
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.atom),
+                contentDescription = stringResource(R.string.calories),
+                modifier = Modifier.size(standardPadding * 2f),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+
+            Text(
+                text = stringResource(R.string.calories),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
 
         Text(
             text = "1200kcal",
@@ -721,27 +749,44 @@ fun NumberPicker(
 
 @Composable
 fun SuggestedMeals(
+    onClick: () -> Unit,
+    modifier: Modifier,
     suggestedMealsSession: Int,
+    suggestedMealsSessionColor: Color,
+    suggestedMealsSessionIcon: Int,
     suggestedMealsImg: Int,
     suggestedMeals: List<String>,
     standardPadding: Dp
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(standardPadding)) {
-        Text(
-            text = stringResource(suggestedMealsSession),
-            modifier = Modifier.padding(standardPadding),
-            color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.bodySmall.copy(
-                fontWeight = FontWeight.Bold
-            )
+    SubCard(
+        onClick = { onClick() },
+        modifier = modifier
+    ) {
+        Image(
+            painter = painterResource(suggestedMealsImg),
+            contentDescription = "Suggested meals",
+            modifier = Modifier.fillMaxWidth(),
+            contentScale = ContentScale.Crop
         )
 
-        SubCard(modifier = Modifier.padding(horizontal = standardPadding)) {
-            Image(
-                painter = painterResource(suggestedMealsImg),
-                contentDescription = "Suggested meals",
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Crop
+        Row(
+            modifier = Modifier.padding(standardPadding),
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(suggestedMealsSession),
+                color = suggestedMealsSessionColor,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+
+            Icon(
+                painter = painterResource(suggestedMealsSessionIcon),
+                contentDescription = stringResource(R.string.session),
+                modifier = Modifier.size(standardPadding * 1.5f),
+                tint = suggestedMealsSessionColor
             )
         }
 
@@ -749,7 +794,9 @@ fun SuggestedMeals(
             text = suggestedMeals.joinToString(),
             modifier = Modifier.padding(standardPadding),
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleSmall
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }

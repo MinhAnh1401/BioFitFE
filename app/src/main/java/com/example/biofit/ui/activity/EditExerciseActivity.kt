@@ -1,7 +1,6 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,9 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -47,7 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.ToggleButtonBar
@@ -224,10 +224,13 @@ fun EditExerciseScreenContent(
                         )
 
                         IconButton(onClick = { showLevelDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.level),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -307,10 +310,13 @@ fun EditExerciseScreenContent(
                         )
 
                         IconButton(onClick = { showSessionDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.session),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -393,10 +399,13 @@ fun EditExerciseScreenContent(
                         )
 
                         IconButton(onClick = { showIntensityDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

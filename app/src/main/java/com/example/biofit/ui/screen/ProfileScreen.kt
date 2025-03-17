@@ -6,10 +6,13 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,13 +45,15 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -56,6 +61,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
@@ -67,26 +73,11 @@ import com.example.biofit.ui.activity.TargetActivity
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SelectionDialog
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.UpdateUserViewModel
-import android.os.Environment
-import androidx.core.content.FileProvider
-import android.provider.MediaStore
-import android.util.Base64
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.view_model.LoginViewModel
-import java.io.File
+import com.example.biofit.view_model.UpdateUserViewModel
 
 @Composable
 fun ProfileScreen(userData: UserDTO) {
@@ -120,11 +111,12 @@ fun base64ToBitmap(base64String: String?): Bitmap? {
     return try {
         val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
         BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun ProfileContent(
     userData: UserDTO,
@@ -147,7 +139,11 @@ fun ProfileContent(
             bitmap?.let {
                 viewModel.setAvatar(it)
                 viewModel.updateUser(context, userData.userId, loginViewModel) {
-                    Toast.makeText(context, "Update avatar successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.update_avatar_successfully),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -157,10 +153,15 @@ fun ProfileContent(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             uri?.let {
-                val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                val source = ImageDecoder.createSource(context.contentResolver, it)
+                val bitmap = ImageDecoder.decodeBitmap(source)
                 viewModel.setAvatar(bitmap)
                 viewModel.updateUser(context, userData.userId, loginViewModel) {
-                    Toast.makeText(context, "Update avatar successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.update_avatar_successfully),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -252,8 +253,9 @@ fun ProfileContent(
                     },
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Settings,
+                        painter = painterResource(R.drawable.gear),
                         contentDescription = stringResource(R.string.profile),
+                        modifier = Modifier.size(standardPadding * 2),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -271,7 +273,7 @@ fun ProfileContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                MainCard(modifier = Modifier) {
+                SubCard(modifier = Modifier) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(standardPadding),
@@ -283,10 +285,19 @@ fun ProfileContent(
                                 .padding(standardPadding * 2),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            Icon(
+                                painter = painterResource(R.drawable.scalemass),
+                                contentDescription = stringResource(R.string.starting_weight),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+
                             Text(
                                 text = stringResource(R.string.starting_weight),
-                                modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = standardPadding),
+                                color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -296,14 +307,14 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
 
                         VerticalDivider(
-                            modifier = Modifier.height(standardPadding * 10),
+                            modifier = Modifier.height(standardPadding * 13),
                             color = MaterialTheme.colorScheme.background
                         )
 
@@ -313,10 +324,19 @@ fun ProfileContent(
                                 .padding(standardPadding * 2),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            Icon(
+                                painter = painterResource(R.drawable.scalemass_fill),
+                                contentDescription = stringResource(R.string.target_weight),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
                             Text(
                                 text = stringResource(R.string.target_weight),
-                                modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.scrim,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = standardPadding),
+                                color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -326,7 +346,7 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = standardPadding),
-                                color = MaterialTheme.colorScheme.scrim,
+                                color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleSmall
                             )
@@ -353,9 +373,10 @@ fun ProfileContent(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_target),
+                                painter = painterResource(R.drawable.target),
                                 contentDescription = stringResource(R.string.target),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
                             )
 
                             Text(
@@ -363,14 +384,17 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = "Arrow right icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(180f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -395,9 +419,10 @@ fun ProfileContent(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_nutrition_report),
+                                painter = painterResource(R.drawable.heart_text_clipboard),
                                 contentDescription = stringResource(R.string.nutrition_report),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFFAA00FF)
                             )
 
                             Text(
@@ -405,14 +430,17 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = "Arrow right icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(180f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -433,7 +461,7 @@ fun ProfileContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                MainCard(modifier = Modifier) {
+                SubCard(modifier = Modifier) {
                     Column(
                         modifier = Modifier.clickable {
                             TODO()
@@ -451,7 +479,8 @@ fun ProfileContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_term_of_use),
                                 contentDescription = stringResource(R.string.term_of_use),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFF2962FF)
                             )
 
                             Text(
@@ -459,14 +488,17 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = "Arrow right icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(180f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -490,7 +522,8 @@ fun ProfileContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_privacy_policy),
                                 contentDescription = stringResource(R.string.privacy_policy),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFFC51162)
                             )
 
                             Text(
@@ -498,14 +531,17 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodySmall
                             )
 
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = "Arrow right icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(180f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -524,7 +560,7 @@ fun ProfileContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                MainCard(modifier = Modifier) {
+                SubCard(modifier = Modifier) {
                     Column(
                         modifier = Modifier.clickable { showDeleteDataDialog = true }
                     ) {
@@ -540,7 +576,8 @@ fun ProfileContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_delete_data),
                                 contentDescription = stringResource(R.string.delete_data),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFFFF6D00)
                             )
 
                             Text(
@@ -548,14 +585,8 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodySmall
-                            )
-
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                contentDescription = "Arrow right icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -594,7 +625,8 @@ fun ProfileContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_delete_account),
                                 contentDescription = stringResource(R.string.delete_account),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFFD50000)
                             )
 
                             Text(
@@ -602,14 +634,8 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodySmall
-                            )
-
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                contentDescription = "Arrow right icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -687,7 +713,7 @@ fun signOut(
     val sharedPreferences = activity.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     // Xóa dữ liệu đăng nhập (SharedPreferences)
-    sharedPreferences.edit().clear().apply()
+    sharedPreferences.edit { clear() }
 
     // Đăng xuất Firebase (nếu dùng Firebase)
     //FirebaseAuth.getInstance().signOut()
@@ -715,7 +741,7 @@ fun deleteAccount(
     activity: Activity
 ) {
     val sharedPreferences = activity.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    sharedPreferences.edit().clear().apply()
+    sharedPreferences.edit { clear() }
     activity.let {
         val intent = Intent(it, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -734,7 +760,7 @@ fun deleteData(
     activity: Activity
 ) {
     val sharedPreferences = activity.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    sharedPreferences.edit().clear().apply()
+    sharedPreferences.edit { clear() }
     activity.let {
         val intent = Intent(it, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

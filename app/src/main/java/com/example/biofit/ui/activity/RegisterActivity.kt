@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -155,6 +158,13 @@ fun RegisterForm(
                     style = MaterialTheme.typography.bodySmall
                 )
             },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
+                    contentDescription = stringResource(R.string.email),
+                    modifier = Modifier.size(standardPadding * 1.5f)
+                )
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -178,6 +188,13 @@ fun RegisterForm(
                 )
             },
             textStyle = MaterialTheme.typography.bodySmall,
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ellipsis_rectangle),
+                    contentDescription = stringResource(R.string.password),
+                    modifier = Modifier.size(standardPadding * 1.5f)
+                )
+            },
             trailingIcon = {
                 Checkbox(
                     checked = passwordVisible,
@@ -217,6 +234,13 @@ fun RegisterForm(
                 Text(
                     text = stringResource(R.string.confirm_password),
                     style = MaterialTheme.typography.bodySmall
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ellipsis_rectangle_fill),
+                    contentDescription = stringResource(R.string.confirm_password),
+                    modifier = Modifier.size(standardPadding * 1.5f)
                 )
             },
             trailingIcon = {

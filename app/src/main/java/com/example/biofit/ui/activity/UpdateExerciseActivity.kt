@@ -18,12 +18,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -52,7 +52,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDetailDTO
-import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
@@ -305,10 +304,13 @@ fun UpdateExerciseContent(
                 )
 
                 IconButton(onClick = { showLevelDialog = true }) {
-                    Image(
-                        painter = painterResource(R.drawable.btn_back),
+                    Icon(
+                        painter = painterResource(R.drawable.ic_back),
                         contentDescription = stringResource(R.string.level),
-                        modifier = Modifier.rotate(270f)
+                        modifier = Modifier
+                            .size(standardPadding)
+                            .rotate(270f),
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -365,10 +367,13 @@ fun UpdateExerciseContent(
                 )
 
                 IconButton(onClick = { showIntensityDialog = true }) {
-                    Image(
-                        painter = painterResource(R.drawable.btn_back),
+                    Icon(
+                        painter = painterResource(R.drawable.ic_back),
                         contentDescription = stringResource(R.string.intensity),
-                        modifier = Modifier.rotate(270f)
+                        modifier = Modifier
+                            .size(standardPadding)
+                            .rotate(270f),
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

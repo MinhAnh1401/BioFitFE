@@ -3,6 +3,7 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
@@ -316,6 +318,13 @@ fun SettingContent(
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_person),
+                            contentDescription = stringResource(R.string.name),
+                            modifier = Modifier.size(standardPadding * 1.5f)
+                        )
+                    },
                     prefix = {
                         Text(
                             text = stringResource(R.string.name),
@@ -352,6 +361,15 @@ fun SettingContent(
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            painter = painterResource(R.drawable.figure_stand_dress_line_vertical_figure),
+                            contentDescription = stringResource(R.string.gender),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.width(standardPadding))
+
                         Text(
                             text = stringResource(R.string.gender),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
@@ -375,10 +393,13 @@ fun SettingContent(
                         )
 
                         IconButton(onClick = { showGenderDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.gender),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -417,6 +438,15 @@ fun SettingContent(
                             .padding(horizontal = standardPadding, vertical = standardPadding / 4),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            painter = painterResource(R.drawable.birthday_cake_fill),
+                            contentDescription = stringResource(R.string.gender),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.width(standardPadding))
+
                         Text(
                             text = stringResource(R.string.date_of_birth),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
@@ -445,9 +475,10 @@ fun SettingContent(
 
                         IconButton(onClick = { showDatePicker = true }) {
                             Icon(
-                                imageVector = Icons.Default.DateRange,
+                                painter = painterResource(R.drawable.calendar),
                                 contentDescription = stringResource(R.string.date_of_birth),
-                                tint = MaterialTheme.colorScheme.primary
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -483,6 +514,13 @@ fun SettingContent(
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.figure_stand),
+                            contentDescription = stringResource(R.string.height),
+                            modifier = Modifier.size(standardPadding * 1.5f)
+                        )
+                    },
                     prefix = {
                         Text(
                             text = stringResource(R.string.height),
@@ -522,6 +560,13 @@ fun SettingContent(
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.scalemass),
+                            contentDescription = stringResource(R.string.starting_weight),
+                            modifier = Modifier.size(standardPadding * 1.5f)
+                        )
+                    },
                     prefix = {
                         Text(
                             text = stringResource(R.string.starting_weight),
@@ -562,6 +607,13 @@ fun SettingContent(
                     textStyle = MaterialTheme.typography.bodySmall.copy(
                         textAlign = TextAlign.End
                     ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
+                            contentDescription = stringResource(R.string.email),
+                            modifier = Modifier.size(standardPadding * 1.5f)
+                        )
+                    },
                     prefix = {
                         Text(
                             text = stringResource(R.string.email),
@@ -612,8 +664,10 @@ fun SettingContent(
                                 onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon Info
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Info,
+                                    painter = painterResource(R.drawable.info_circle),
                                     contentDescription = stringResource(R.string.calorie_intake_target),
+                                    modifier = Modifier.size(standardPadding * 1.5f),
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -635,12 +689,11 @@ fun SettingContent(
                                     placeholderVerticalAlign = PlaceholderVerticalAlign.Center
                                 )
                             ) {
-                                Image(
-                                    painter = painterResource(R.drawable.ic_fire),
-                                    contentDescription = stringResource(
-                                        R.string.calorie_intake_target
-                                    ),
-                                    modifier = Modifier.size(16.dp)
+                                Icon(
+                                    painter = painterResource(R.drawable.flame_fill),
+                                    contentDescription = stringResource(R.string.calorie_intake_target),
+                                    modifier = Modifier.size(standardPadding * 2f),
+                                    tint = Color(0xFFDD2C00)
                                 )
                             }
                         )
@@ -812,8 +865,10 @@ fun SettingContent(
                                 onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon Info
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Info,
+                                    painter = painterResource(R.drawable.info_circle),
                                     contentDescription = stringResource(R.string.bmi_index),
+                                    modifier = Modifier.size(standardPadding * 1.5f),
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -866,12 +921,11 @@ fun SettingContent(
                                     placeholderVerticalAlign = PlaceholderVerticalAlign.Center
                                 )
                             ) {
-                                Image(
-                                    painter = painterResource(R.drawable.ic_fire),
-                                    contentDescription = stringResource(
-                                        R.string.bmi_index
-                                    ),
-                                    modifier = Modifier.size(16.dp)
+                                Icon(
+                                    painter = painterResource(R.drawable.flame_fill),
+                                    contentDescription = stringResource(R.string.bmi_index),
+                                    modifier = Modifier.size(standardPadding * 2f),
+                                    tint = Color(0xFFDD2C00)
                                 )
                             }
                         )
@@ -905,8 +959,9 @@ fun SettingContent(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.CheckCircle,
+                                        painter = painterResource(R.drawable.checkmark_circle_fill),
                                         contentDescription = "Check Circle Icon",
+                                        modifier = Modifier.size(standardPadding * 1.5f),
                                         tint = MaterialTheme.colorScheme.inversePrimary,
                                     )
 

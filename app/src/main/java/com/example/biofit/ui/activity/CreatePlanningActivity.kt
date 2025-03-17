@@ -182,7 +182,7 @@ fun CreatePlanningScreenContent(
 
                         IconButton(onClick = { showGoalDialog = true }) {
                             Image(
-                                painter = painterResource(R.drawable.btn_back),
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
                                 modifier = Modifier.rotate(270f)
                             )
@@ -295,7 +295,7 @@ fun CreatePlanningScreenContent(
 
                         IconButton(onClick = { showDietDialog = true }) {
                             Image(
-                                painter = painterResource(R.drawable.btn_back),
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
                                 modifier = Modifier.rotate(270f)
                             )
@@ -438,7 +438,7 @@ fun CreatePlanningScreenContent(
 
                         IconButton(onClick = { showIntensityDialog = true }) {
                             Image(
-                                painter = painterResource(R.drawable.btn_back),
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
                                 modifier = Modifier.rotate(270f)
                             )

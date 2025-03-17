@@ -282,6 +282,7 @@ fun ExerciseContent(
                                     Icon(
                                         painter = painterResource(R.drawable.ic_edit),
                                         contentDescription = stringResource(R.string.edit_exercise),
+                                        modifier = Modifier.size(standardPadding * 1.5f),
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
@@ -301,8 +302,9 @@ fun ExerciseContent(
                                 },
                                 leadingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.ic_delete_data),
+                                        painter = painterResource(R.drawable.trash),
                                         contentDescription = stringResource(R.string.delete_exercise),
+                                        modifier = Modifier.size(standardPadding * 1.5f),
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }

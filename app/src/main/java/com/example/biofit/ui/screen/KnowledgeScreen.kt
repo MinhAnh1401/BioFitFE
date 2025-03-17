@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,13 +37,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
@@ -85,8 +92,9 @@ fun KnowledgeScreen() {
                     onClick = { TODO() }
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_knowledge_2),
+                        painter = painterResource(R.drawable.brain_filled_head_profile),
                         contentDescription = "Knowledge",
+                        modifier = Modifier.size(standardPadding * 2f),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -109,7 +117,6 @@ val videoList = listOf(
     VideoItem("N0Yy5iCrTLU", "10 tips for healthy nutrition towards sustainable public health")
 )
 
-
 @Composable
 fun KnowledgeContent(
     standardPadding: Dp,
@@ -125,11 +132,23 @@ fun KnowledgeContent(
             Column(
                 modifier = modifier
             ) {
-                Text(
-                    text = stringResource(R.string.nutrition_and_care),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.heart_fill),
+                        contentDescription = "Heart",
+                        modifier = Modifier.size(standardPadding * 2f),
+                        tint = Color(0xFFDD2C00)
+                    )
+
+                    Text(
+                        text = stringResource(R.string.nutrition_and_care),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
 
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(standardPadding)
@@ -179,11 +198,23 @@ fun KnowledgeContent(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
-                Text(
-                    text = stringResource(R.string.exercise),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.figure_strengthtraining_traditional),
+                        contentDescription = "Exercise",
+                        modifier = Modifier.size(standardPadding * 2f),
+                        tint = Color(0xFF00C853)
+                    )
+
+                    Text(
+                        text = stringResource(R.string.exercise),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
 
                 Row {
                     videoExerciseList.forEach { videoItem ->
@@ -220,11 +251,23 @@ fun KnowledgeContent(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(standardPadding)
             ) {
-                Text(
-                    text = stringResource(R.string.article),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.magazine_fill),
+                        contentDescription = "Article",
+                        modifier = Modifier.size(standardPadding * 2f),
+                        tint = Color(0xFF0091EA)
+                    )
+
+                    Text(
+                        text = stringResource(R.string.article),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(standardPadding)
@@ -370,10 +413,15 @@ fun ArticleThumbnail(
             contentScale = ContentScale.Crop
         )
 
-        Column(modifier = Modifier.padding(standardPadding)) {
+        Column(
+            modifier = Modifier.padding(standardPadding),
+            verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
+        ) {
             Text(
                 text = article.title,
                 color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontWeight = FontWeight.Bold
                 )
@@ -382,6 +430,8 @@ fun ArticleThumbnail(
             Text(
                 text = article.description,
                 color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelSmall
             )
         }

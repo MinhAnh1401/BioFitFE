@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -141,8 +142,9 @@ fun KnowledgeVideoScreen(
                                 onClick = { TODO() },
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.ic_knowledge_2),
+                                    painter = painterResource(R.drawable.brain_filled_head_profile),
                                     contentDescription = "Knowledge",
+                                    modifier = Modifier.size(standardPadding * 2f),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }

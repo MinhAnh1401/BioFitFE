@@ -18,10 +18,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -48,7 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
@@ -198,10 +199,13 @@ fun TargetContent(
                         )
 
                         IconButton(onClick = { showGoalDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.goals),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -319,10 +323,13 @@ fun TargetContent(
                         )
 
                         IconButton(onClick = { showWeeklyGoalDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.weekly_goal),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -396,10 +403,13 @@ fun TargetContent(
                         )
 
                         IconButton(onClick = { showIntensityOfExerciseDialog = true }) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity_of_exercise),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -465,10 +475,13 @@ fun TargetContent(
                                 }
                             }
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.btn_back),
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = "Add button",
-                                modifier = Modifier.rotate(180f)
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(180f),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

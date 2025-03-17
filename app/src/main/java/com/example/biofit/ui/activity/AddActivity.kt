@@ -42,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -122,10 +123,12 @@ fun AddScreen(initialSelectedOption: Int) {
                             onClick = { expanded = !expanded }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
+                                painter = painterResource(R.drawable.ic_back),
                                 contentDescription = null,
-                                modifier = Modifier.size(standardPadding * 3),
-                                tint = MaterialTheme.colorScheme.onBackground
+                                modifier = Modifier
+                                    .size(standardPadding)
+                                    .rotate(270f),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
 
@@ -143,13 +146,19 @@ fun AddScreen(initialSelectedOption: Int) {
                                     leadingIcon = {
                                         Icon(
                                             painter = when (selection) {
-                                                R.string.morning -> painterResource(R.drawable.ic_morning_2)
-                                                R.string.afternoon -> painterResource(R.drawable.ic_afternoon_2)
-                                                R.string.evening -> painterResource(R.drawable.ic_evening_2)
-                                                else -> painterResource(R.drawable.ic_snack_2)
+                                                R.string.morning -> painterResource(R.drawable.cloud_sun_fill)
+                                                R.string.afternoon -> painterResource(R.drawable.sun_max_fill)
+                                                R.string.evening -> painterResource(R.drawable.cloud_moon_fill)
+                                                else -> painterResource(R.drawable.circle_hexagongrid_fill)
                                             },
                                             contentDescription = stringResource(R.string.morning),
-                                            tint = MaterialTheme.colorScheme.onSurface
+                                            modifier = Modifier.size(standardPadding * 1.5f),
+                                            tint = when (selection) {
+                                                R.string.morning -> Color(0xFFFFAB00)
+                                                R.string.afternoon -> Color(0xFFDD2C00)
+                                                R.string.evening -> Color(0xFF2962FF)
+                                                else -> Color(0xFF00BFA5)
+                                            }
                                         )
                                     }
                                 )
@@ -429,6 +438,7 @@ fun EmptyAddScreen(
                     Icon(
                         painter = painterResource(R.drawable.ic_plus),
                         contentDescription = "Add button",
+                        modifier = Modifier.size(standardPadding),
                         tint = MaterialTheme.colorScheme.primary
                     )
 

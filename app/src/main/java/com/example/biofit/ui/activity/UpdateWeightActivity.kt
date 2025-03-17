@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
@@ -216,8 +217,9 @@ fun UpdateWeightContent(
                 },
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_less_update_weight),
+                    painter = painterResource(R.drawable.ic_minus),
                     contentDescription = stringResource(R.string.current_weight),
+                    modifier = Modifier.size(standardPadding),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -249,8 +251,9 @@ fun UpdateWeightContent(
                 },
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_add_update_weight),
+                    painter = painterResource(R.drawable.ic_plus),
                     contentDescription = stringResource(R.string.current_weight),
+                    modifier = Modifier.size(standardPadding),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }

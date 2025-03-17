@@ -68,6 +68,42 @@ fun AnimatedGradientText(
 }
 
 @Composable
+fun AnimatedGradientText2(
+    highlightColor: Color,
+    textBodyColor1: Color,
+    textBodyColor2: Color,
+    text: String,
+    style: TextStyle
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+
+    val offsetX by infiniteTransition.animateFloat(
+        initialValue = -300f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val gradientBrush = Brush.linearGradient(
+        colors = listOf(
+            textBodyColor1,
+            highlightColor,
+            textBodyColor2
+        ),
+        start = Offset(offsetX, offsetX),
+        end = Offset(offsetX + 200f, offsetX + 200f)
+    )
+
+    Text(
+        text = text,
+        textAlign = TextAlign.Center,
+        style = style.copy(brush = gradientBrush)
+    )
+}
+
+@Composable
 fun OneTimeAnimatedGradientText(
     highlightColor: Color,
     baseColor: Color,

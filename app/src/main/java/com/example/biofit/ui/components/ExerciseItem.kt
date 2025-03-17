@@ -2,15 +2,15 @@ package com.example.biofit.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,12 +51,14 @@ fun ExerciseItem(
                 style = MaterialTheme.typography.bodySmall
             )
 
-            Image(
-                painter = painterResource(R.drawable.btn_back),
+            Icon(
+                painter = painterResource(R.drawable.ic_back),
                 contentDescription = "Add button",
                 modifier = Modifier
                     .padding(standardPadding)
-                    .rotate(180f)
+                    .size(standardPadding)
+                    .rotate(180f),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -98,10 +100,13 @@ fun OverviewExerciseCard(
                 )
             }
 
-            Image(
-                painter = painterResource(R.drawable.btn_back),
+            Icon(
+                painter = painterResource(R.drawable.ic_back),
                 contentDescription = "Extend button",
-                modifier = Modifier.rotate(180f)
+                modifier = Modifier
+                    .size(standardPadding)
+                    .rotate(180f),
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
     }

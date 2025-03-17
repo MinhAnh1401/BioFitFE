@@ -13,6 +13,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,15 +62,15 @@ fun ActionPopup(
 
 
     val itemPopupList = listOf(
-        Pair(R.drawable.ic_exercise_2, R.string.exercise),
-        Pair(R.drawable.ic_weight, R.string.weight),
+        Pair(R.drawable.figure_strengthtraining_traditional, R.string.exercise),
+        Pair(R.drawable.scalemass, R.string.weight),
         /*Pair(R.drawable.ic_drink_water, R.string.drinking_water)*/
     )
     val sessionPopupList = listOf(
-        Pair(R.drawable.ic_morning_2, R.string.morning),
-        Pair(R.drawable.ic_afternoon_2, R.string.afternoon),
-        Pair(R.drawable.ic_evening_2, R.string.evening),
-        Pair(R.drawable.ic_snack_2, R.string.snack)
+        Triple(R.drawable.cloud_sun_fill, R.string.morning, Color(0xFFFFAB00)),
+        Triple(R.drawable.sun_max_fill, R.string.afternoon, Color(0xFFDD2C00)),
+        Triple(R.drawable.cloud_moon_fill, R.string.evening, Color(0xFF2962FF)),
+        Triple(R.drawable.circle_hexagongrid_fill, R.string.snack, Color(0xFF00BFA5))
     )
 
     /*var drinkWaterPopupState by rememberSaveable { mutableStateOf(false) }*/
@@ -203,12 +205,15 @@ fun ActionPopup(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.ic_chat_bot),
+                                    painter = painterResource(R.drawable.ic_chatbot_ai),
                                     contentDescription = stringResource(R.string.activity),
                                     modifier = Modifier
-                                        .padding(standardPadding)
-                                        .size(standardPadding * 2),
-                                    tint = MaterialTheme.colorScheme.background
+                                        .size(standardPadding * 4),
+                                    tint = if (isSystemInDarkTheme()) {
+                                        Color(0xFFB388FF)
+                                    } else {
+                                        Color(0xFF6200EA)
+                                    }
                                 )
                             }
                         }
@@ -239,7 +244,7 @@ fun ActionPopup(
                     bottom = standardPadding
                 )
             ) {
-                sessionPopupList.forEach { (icon, title) ->
+                sessionPopupList.forEach { (icon, title, color) ->
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -291,7 +296,7 @@ fun ActionPopup(
                                     modifier = Modifier
                                         .padding(standardPadding)
                                         .size(standardPadding * 2),
-                                    tint = MaterialTheme.colorScheme.onSurface
+                                    tint = color
                                 )
                             }
                         }
