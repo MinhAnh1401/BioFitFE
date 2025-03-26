@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -40,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.UserSharedPrefsHelper
+import com.example.biofit.data.utils.UserSharedPrefsHelper.getUserId
 import com.example.biofit.ui.components.ActionPopup
 import com.example.biofit.ui.components.BottomBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -48,8 +51,11 @@ import com.example.biofit.ui.screen.KnowledgeScreen
 import com.example.biofit.ui.screen.PlanningScreen
 import com.example.biofit.ui.screen.ProfileScreen
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.SubscriptionViewModel
+
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: SubscriptionViewModel by viewModels()
     private var userData: UserDTO? = null
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -71,6 +77,15 @@ class MainActivity : ComponentActivity() {
         sharedPreferences.registerOnSharedPreferenceChangeListener(prefsListener)
 
         userData = UserSharedPrefsHelper.getUserData(this)
+
+        // nếu gói hết hạn hiển thị thông báo
+        val userId = getUserId(this)
+        viewModel.checkSubscriptionStatus(userId) { isExpired ->
+            if (isExpired) {
+                Toast.makeText(this, R.string.check_subscription, Toast.LENGTH_LONG).show()
+            }
+        }
+
         setContent {
             BioFitTheme {
                 MainScreen(userData ?: UserDTO.default())

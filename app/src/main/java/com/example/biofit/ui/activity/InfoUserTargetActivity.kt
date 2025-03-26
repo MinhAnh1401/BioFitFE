@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.UserSharedPrefsHelper
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.LoginViewModel
@@ -123,7 +122,7 @@ fun InfoUserTargetScreen(
             NextButtonInfoScreen(
                 onClick = {
                     viewModel.updateUser(context, userId, loginViewModel) {
-                        val intent = Intent(context, MainActivity::class.java)
+                        val intent = Intent(context, UpgradeActivity::class.java)
                         context.startActivity(intent)
                     }
                 },
