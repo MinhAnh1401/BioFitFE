@@ -6,11 +6,15 @@ import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDetailDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.model.request.LoginRequest
+import com.example.biofit.data.model.request.PaymentRequest
 import com.example.biofit.data.model.request.RegisterRequest
 import com.example.biofit.data.model.request.UpdateUserRequest
+import com.example.biofit.data.model.response.PaymentResponse
+import com.example.biofit.data.model.response.SubscriptionResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -82,4 +86,17 @@ interface ApiService {
 
     @PUT("api/exercise/{exerciseId}")
     fun updateExercise(@Path("exerciseId") exerciseId: Long, @Body exercise: ExerciseDTO): Call<Void>
+
+    // Google API
+//    @POST("api/auth/google")
+//    suspend fun googleSignIn(@Body request: GoogleAuthDTO): Response<SocialAccountDTO>
+
+    @POST("api/payment/create-payment")
+    fun createPayment(@Body request: PaymentRequest): Call<PaymentResponse>
+
+    @GET("subscription/status/{userId}")
+    fun getSubscriptionStatus(@Path("userId") userId: Long): Call<SubscriptionResponse>
+
+    @GET("subscription/status_sub/{userId}")
+    suspend fun checkSubscription(@Path("userId") userId: Long): Boolean
 }

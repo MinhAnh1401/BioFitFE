@@ -27,12 +27,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
@@ -61,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
@@ -71,13 +70,14 @@ import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
 import com.example.biofit.ui.activity.TargetActivity
 import com.example.biofit.ui.components.DefaultDialog
-import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
+import com.example.biofit.ui.activity.UpgradeActivity
+
 
 @Composable
 fun ProfileScreen(userData: UserDTO) {
@@ -105,6 +105,7 @@ fun ProfileScreen(userData: UserDTO) {
             )
         }
     }
+
 }
 
 fun base64ToBitmap(base64String: String?): Bitmap? {
@@ -215,13 +216,36 @@ fun ProfileContent(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = standardPadding)
-                ) {
-                    Text(
-                        text = userData.fullName ?: "N/A",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                        .padding(horizontal = standardPadding))
+                {
+                    Row {
+                        Text(
+                            text = userData.fullName ?: "N/A",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+//                        Text(
+//                            text = if (paymentData.success) "PRO" else "BASIC",
+//                            color = if (paymentData.success)
+//                                MaterialTheme.colorScheme.primary
+//                            else MaterialTheme.colorScheme.secondary,
+//                            style = MaterialTheme.typography.labelSmall,
+//                            modifier = Modifier
+//                                .align(Alignment.CenterVertically)
+//                                .background(
+//                                    color = if (paymentData.success)
+//                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+//                                    else MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
+//                                    shape = RoundedCornerShape(4.dp)
+//                                )
+//                                .padding(horizontal = 6.dp, vertical = 2.dp)
+//                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     Row {
                         Text(
@@ -631,6 +655,42 @@ fun ProfileContent(
 
                             Text(
                                 text = stringResource(R.string.delete_account),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(start = standardPadding),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
+
+                    Column(
+                        modifier = Modifier.clickable {
+                            val intent = Intent(context, UpgradeActivity::class.java).apply {
+                                putExtra("source", "ProfileScreen")
+                            }
+                            context.startActivity(intent)
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    vertical = standardPadding,
+                                    horizontal = standardPadding * 2
+                                ),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_backup_24),
+                                contentDescription = stringResource(R.string.upgrade_now),
+                                tint = Color(0xFF05F6EA)
+                            )
+
+                            Text(
+                                text = stringResource(R.string.upgrade_now),
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = standardPadding),

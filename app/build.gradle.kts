@@ -78,6 +78,21 @@ dependencies {
     implementation(libs.generativeai)
     implementation (libs.bcrypt)
 
+    // Google
+    implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+    // OkHttp
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // AndroidX hỗ trợ LiveData
+    implementation ("androidx.compose.runtime:runtime-livedata:1.7.8")
+
+    // Koin
+    implementation ("io.insert-koin:koin-android:3.4.0")
+    implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
+
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation( libs.androidx.lifecycle.viewmodel.compose)
