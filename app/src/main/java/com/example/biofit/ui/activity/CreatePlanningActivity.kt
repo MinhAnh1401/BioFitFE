@@ -18,12 +18,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -181,10 +183,13 @@ fun CreatePlanningScreenContent(
                         )
 
                         IconButton(onClick = { showGoalDialog = true }) {
-                            Image(
+                            Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .rotate(270f)
+                                    .size(standardPadding),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -294,10 +299,13 @@ fun CreatePlanningScreenContent(
                         )
 
                         IconButton(onClick = { showDietDialog = true }) {
-                            Image(
+                            Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .rotate(270f)
+                                    .size(standardPadding),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -437,10 +445,13 @@ fun CreatePlanningScreenContent(
                         )
 
                         IconButton(onClick = { showIntensityDialog = true }) {
-                            Image(
+                            Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity),
-                                modifier = Modifier.rotate(270f)
+                                modifier = Modifier
+                                    .rotate(270f)
+                                    .size(standardPadding),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

@@ -274,10 +274,13 @@ fun CreateFoodContent(
                         },
                         trailingIcon = {
                             IconButton(onClick = { showUnitDialog = true }) {
-                                Image(
+                                Icon(
                                     painter = painterResource(R.drawable.ic_back),
                                     contentDescription = stringResource(R.string.unit_of_measure),
-                                    modifier = Modifier.rotate(270f)
+                                    modifier = Modifier
+                                        .rotate(270f)
+                                        .size(standardPadding),
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         },
