@@ -1,6 +1,7 @@
 package com.example.biofit.ui.screen
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,15 +22,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.DailyCountChart
 import com.example.biofit.navigation.getDailyCalories
 import com.example.biofit.navigation.getDailyMacroTable
@@ -38,10 +44,12 @@ import com.example.biofit.ui.components.CalendarSelector
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.LoginViewModel
 import java.math.RoundingMode
 
 @Composable
-fun OverviewDayScreen(userData: UserDTO) {
+fun OverviewDayScreen() {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -61,7 +69,6 @@ fun OverviewDayScreen(userData: UserDTO) {
         ) {
             item {
                 OverviewDayContent(
-                    userData = userData,
                     standardPadding,
                     modifier
                 )
@@ -72,21 +79,37 @@ fun OverviewDayScreen(userData: UserDTO) {
 
 @Composable
 fun OverviewDayContent(
-    userData: UserDTO,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    exerciseViewModel: ExerciseViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+    val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
+    val userId = UserSharedPrefsHelper.getUserId(context)
     val dailyCaloriesTable = getDailyCalories()
     val dailyCalories = dailyCaloriesTable.map { it.calories }
 
     val foodCaloriesIntake = dailyCalories[0] + dailyCalories[1] +
             dailyCalories[2] + dailyCalories[3]
-    val netCalories = foodCaloriesIntake - getBurnedCalories()
+    exerciseViewModel.getBurnedCaloriesToday(userId)
+    val burnedCalories = exerciseViewModel.burnedCalories.observeAsState(initial = 0f).value
+    val netCalories = foodCaloriesIntake - burnedCalories
+    val targetCalories = when (userData.gender) {
+        0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..45 -> 2000f
+            else -> 1500f
+        }
+        1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..30 -> 1500f
+            else -> 1000f
+        }
+        else -> 0f
+    }
     val dailyCaloriesStatistics = listOf(
         stringResource(R.string.food_calories_intake) to foodCaloriesIntake,
-        stringResource(R.string.exercise_calories) to getBurnedCalories(),
+        stringResource(R.string.exercise_calories) to burnedCalories,
         stringResource(R.string.net_calories) to netCalories,
-        stringResource(R.string.target_calories) to getTargetCalories(userData)
+        stringResource(R.string.target_calories) to targetCalories
     )
 
     val dailyMacroTable = getDailyMacroTable()
@@ -167,7 +190,7 @@ fun OverviewDayContent(
                                 }
 
                                 Text(
-                                    text = "$calories ${stringResource(R.string.cal)}",
+                                    text = "$calories ${stringResource(R.string.kcal)}",
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(start = standardPadding * 4),
@@ -194,7 +217,7 @@ fun OverviewDayContent(
                     )
 
                     Text(
-                        text = "$calories ${stringResource(R.string.cal)}",
+                        text = "$calories ${stringResource(R.string.kcal)}",
                         color = if (title == stringResource(R.string.target_calories)) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -356,7 +379,7 @@ fun OverviewDayContent(
 @Composable
 private fun OverviewDayScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewDayScreen(UserDTO.default())
+        OverviewDayScreen()
     }
 }
 
@@ -369,7 +392,7 @@ private fun OverviewDayScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewDayScreenPreviewInLargePhone() {
     BioFitTheme {
-        OverviewDayScreen(UserDTO.default())
+        OverviewDayScreen()
     }
 }
 
@@ -383,7 +406,7 @@ private fun OverviewDayScreenPreviewInLargePhone() {
 @Composable
 private fun OverviewDayScreenPreviewInTablet() {
     BioFitTheme {
-        OverviewDayScreen(UserDTO.default())
+        OverviewDayScreen()
     }
 }
 
@@ -397,7 +420,7 @@ private fun OverviewDayScreenPreviewInTablet() {
 @Composable
 private fun OverviewDayScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewDayScreen(UserDTO.default())
+        OverviewDayScreen()
     }
 }
 
@@ -410,7 +433,7 @@ private fun OverviewDayScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewDayScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        OverviewDayScreen(UserDTO.default())
+        OverviewDayScreen()
     }
 }
 
@@ -424,6 +447,6 @@ private fun OverviewDayScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun OverviewDayScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        OverviewDayScreen(UserDTO.default())
+        OverviewDayScreen()
     }
 }

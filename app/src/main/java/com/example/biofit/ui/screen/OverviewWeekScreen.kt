@@ -24,11 +24,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.BarChart
 import com.example.biofit.navigation.StackedBarChart
 import com.example.biofit.navigation.WeekNavigationBar
@@ -73,10 +76,22 @@ fun OverviewWeekContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
+    val context = LocalContext.current
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-
-    val targetCaloriesWeek = 2500 * 7 // Lấy tổng lượng calo mục tiêu từ thứ 2 đến chủ nhật
-    val targetCaloriesDay = 2500 // Tính lượng calo mục tiêu trung bình của 1 ngày
+    val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
+    val targetCalories = when (userData.gender) {
+        0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..45 -> 2000f
+            else -> 1500f
+        }
+        1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..30 -> 1500f
+            else -> 1000f
+        }
+        else -> 0f
+    }
+    val targetCaloriesWeek = targetCalories * 7 // Lấy tổng lượng calo mục tiêu từ thứ 2 đến chủ nhật
+    val targetCaloriesDay = targetCalories // Tính lượng calo mục tiêu trung bình của 1 ngày
     val actualCaloriesWeek =
         weeklyData.sumOf { it.calories } // Lấy tổng lượng calo thực tế từ thứ 2 đến chủ nhật
     val actualCaloriesDay = (actualCaloriesWeek / 7)
@@ -130,7 +145,7 @@ fun OverviewWeekContent(
                     )
 
                     Text(
-                        text = "$calories ${stringResource(R.string.cal)}",
+                        text = "$calories ${stringResource(R.string.kcal)}",
                         color = if (title == stringResource(R.string.target_calories)) {
                             MaterialTheme.colorScheme.primary
                         } else {

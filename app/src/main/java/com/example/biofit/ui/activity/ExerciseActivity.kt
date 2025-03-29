@@ -279,7 +279,9 @@ fun ExerciseContent(
                             },
                             onLongClick = { expanded = true },
                             standardPadding = standardPadding,
-                            modifier = modifier.onGloballyPositioned { coordinates ->
+                            modifier = modifier
+                                .padding(top = standardPadding)
+                                .onGloballyPositioned { coordinates ->
                                 menuAnchor.value =
                                     coordinates.boundsInRoot() // Lưu vị trí của ExerciseItem
                             }

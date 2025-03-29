@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -203,6 +204,9 @@ fun SettingContent(
             userData.weight!!
         }
     }
+
+    var createdAccount by rememberSaveable { mutableStateOf(userData.createdAccount ?: "") }
+    Log.d("createdAccount", createdAccount)
 
     /*val bmiIndex: Float? = if (height > 0.001f) {
         memoryWeight.div(height * height)
@@ -451,15 +455,20 @@ fun SettingContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = standardPadding, vertical = standardPadding / 4),
+                            .padding(vertical = standardPadding / 4)
+                            .padding(end = standardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.birthday_cake_fill),
-                            contentDescription = stringResource(R.string.gender),
-                            modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = Color(0xFF6200EA)
-                        )
+                        IconButton(
+                            onClick = { showDatePicker = true }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.birthday_cake_fill),
+                                contentDescription = stringResource(R.string.gender),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFF6200EA)
+                            )
+                        }
 
                         Spacer(modifier = Modifier.width(standardPadding))
 
@@ -488,15 +497,6 @@ fun SettingContent(
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.bodySmall
                         )
-
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.calendar),
-                                contentDescription = stringResource(R.string.date_of_birth),
-                                modifier = Modifier.size(standardPadding * 1.5f),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
                     }
                 }
 
@@ -651,6 +651,44 @@ fun SettingContent(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         unfocusedBorderColor = Color.Transparent,
                         focusedBorderColor = Color.Transparent
+                    )
+                )
+
+                OutlinedTextField(
+                    value = createdAccount,
+                    onValueChange = { createdAccount = it },
+                    modifier = modifier.shadow(
+                        elevation = 6.dp,
+                        shape = MaterialTheme.shapes.large
+                    ),
+                    readOnly = true,
+                    textStyle = MaterialTheme.typography.bodySmall.copy(
+                        textAlign = TextAlign.End
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.calendar),
+                            contentDescription = stringResource(R.string.account_creation_date),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    prefix = {
+                        Text(
+                            text = stringResource(R.string.account_creation_date),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.large,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                        focusedTextColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }

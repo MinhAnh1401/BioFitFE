@@ -235,7 +235,7 @@ class ExerciseViewModel : ViewModel() {
             })
     }
 
-    private val _burnedCalories = MutableLiveData<Float>().apply { value = 0f }
+    private val _burnedCalories = MutableLiveData<Float>()
     val burnedCalories: LiveData<Float> get() = _burnedCalories
 
     fun getBurnedCaloriesToday(userId: Long) {

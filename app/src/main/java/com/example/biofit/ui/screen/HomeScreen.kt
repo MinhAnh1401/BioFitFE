@@ -45,6 +45,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +55,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,6 +92,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.AIChatbotActivity
 import com.example.biofit.ui.activity.CaloriesTargetActivity
@@ -264,7 +267,6 @@ fun HomeContent(
 
         item {
             OverviewAndSearchBar(
-                userData,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -297,8 +299,17 @@ fun HomeContent(
     }
 }
 
-fun getTargetCalories(userData: UserDTO): Float {
-    return when (userData.gender) {
+@Composable
+fun OverviewAndSearchBar(
+    standardPadding: Dp,
+    modifier: Modifier
+) {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    val loadedCalories = 430 // Thay đổi thành lượng calo đã nạp
+    val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
+    val targetCalories = when (userData.gender) {
         0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..45 -> 2000f
             else -> 1500f
@@ -309,19 +320,6 @@ fun getTargetCalories(userData: UserDTO): Float {
         }
         else -> 0f
     }
-}
-
-@Composable
-fun OverviewAndSearchBar(
-    userData: UserDTO,
-    standardPadding: Dp,
-    modifier: Modifier
-) {
-    val context = LocalContext.current
-    val activity = context as? Activity
-
-    val loadedCalories = 430 // Thay đổi thành lượng calo đã nạp
-    val targetCalories = getTargetCalories(userData)
     val nutrients = listOf(
         Triple(R.string.protein, 400, 1000), // Thay đổi thành protein
         Triple(R.string.powdered_sugar, 1700, 1000), // Thay đổi thành đường
@@ -335,7 +333,6 @@ fun OverviewAndSearchBar(
         onClick = {
             activity?.let {
                 val intent = Intent(it, OverviewActivity::class.java)
-                intent.putExtra("userData", userData)
                 it.startActivity(intent)
             }
         },
@@ -363,7 +360,7 @@ fun OverviewAndSearchBar(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Button(
+                ElevatedButton(
                     onClick = {
                         activity?.let {
                             val intent = Intent(it, CaloriesTargetActivity::class.java)
@@ -897,9 +894,12 @@ fun DailyCard(
     }
 }
 
-fun getBurnedCalories(): Float {
-    return Random.nextInt(100, 300).toFloat() // Thay đổi thành lượng calo tiêu thụ
-}
+/*fun getBurnedCalories(exerciseViewModel: ExerciseViewModel): Float {
+    val userData = UserSharedPrefsHelper.getUserData(this).
+    exerciseViewModel.getBurnedCaloriesToday(userData.userId)
+    val burnedCalories = exerciseViewModel.burnedCalories.value ?: 0f
+    return burnedCalories
+}*/
 
 @Composable
 fun DailyGoals(
@@ -942,7 +942,7 @@ fun DailyGoals(
     val targetWater = 2f
 
     exerciseViewModel.getBurnedCaloriesToday(userData.userId)
-    val burnedCalories = exerciseViewModel.burnedCalories.value ?: 0f
+    val burnedCalories = exerciseViewModel.burnedCalories.observeAsState(initial = 0f).value
 
     val targetBurnCalories = when (userData.gender) {
         0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
@@ -1287,7 +1287,7 @@ fun DailyGoals(
                         }
                     }
 
-                    Button(
+                    ElevatedButton(
                         onClick = {
                             activity?.let {
                                 val intent = Intent(it, UpdateWeightActivity::class.java)
@@ -1311,7 +1311,6 @@ fun DailyGoals(
                 WeightLineChart(weightDataState)
 
                 Column(
-                    modifier = Modifier.padding(standardPadding),
                     verticalArrangement = Arrangement.spacedBy(standardPadding),
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -1430,7 +1429,7 @@ fun DailyGoals(
 
                                 Text(
                                     text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
-                                            estimatedWeight +
+                                            estimatedWeight + " " +
                                             stringResource(R.string.kg),
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelSmall

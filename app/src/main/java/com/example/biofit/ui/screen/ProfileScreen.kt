@@ -438,7 +438,6 @@ fun ProfileContent(
                         modifier = Modifier.clickable {
                             activity?.let {
                                 val intent = Intent(it, OverviewActivity::class.java)
-                                intent.putExtra("userData", userData)
                                 it.startActivity(intent)
                             }
                         }

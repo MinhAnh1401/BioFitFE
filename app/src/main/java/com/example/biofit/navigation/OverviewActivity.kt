@@ -74,15 +74,12 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 class OverviewActivity : ComponentActivity() {
-    private var userData: UserDTO? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        userData = intent.getParcelableExtra("userData")
         setContent {
             BioFitTheme {
-                OverviewScreen(userData ?: UserDTO.default())
+                OverviewScreen()
             }
         }
     }
@@ -94,7 +91,7 @@ class OverviewActivity : ComponentActivity() {
 }
 
 @Composable
-fun OverviewScreen(userData: UserDTO) {
+fun OverviewScreen() {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -126,7 +123,6 @@ fun OverviewScreen(userData: UserDTO) {
             Spacer(modifier = Modifier.height(standardPadding))
 
             OverviewContent(
-                userData,
                 standardPadding,
                 modifier
             )
@@ -136,7 +132,6 @@ fun OverviewScreen(userData: UserDTO) {
 
 @Composable
 fun OverviewContent(
-    userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -164,7 +159,6 @@ fun OverviewContent(
         item {
             when (selectedOption) {
                 R.string.day -> OverviewDayContent(
-                    userData,
                     standardPadding,
                     modifier
                 )
@@ -639,7 +633,7 @@ fun StackedBarChart(
 @Composable
 private fun OverviewPortraitScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewScreen(UserDTO.default())
+        OverviewScreen()
     }
 }
 
@@ -652,7 +646,7 @@ private fun OverviewPortraitScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewPortraitScreenPreviewInLargePhone() {
     BioFitTheme {
-        OverviewScreen(UserDTO.default())
+        OverviewScreen()
     }
 }
 
@@ -666,7 +660,7 @@ private fun OverviewPortraitScreenPreviewInLargePhone() {
 @Composable
 private fun OverviewPortraitScreenPreviewInTablet() {
     BioFitTheme {
-        OverviewScreen(UserDTO.default())
+        OverviewScreen()
     }
 }
 
@@ -680,7 +674,7 @@ private fun OverviewPortraitScreenPreviewInTablet() {
 @Composable
 private fun OverviewLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewScreen(UserDTO.default())
+        OverviewScreen()
     }
 }
 
@@ -693,7 +687,7 @@ private fun OverviewLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        OverviewScreen(UserDTO.default())
+        OverviewScreen()
     }
 }
 
@@ -707,6 +701,6 @@ private fun OverviewLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun OverviewLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        OverviewScreen(UserDTO.default())
+        OverviewScreen()
     }
 }

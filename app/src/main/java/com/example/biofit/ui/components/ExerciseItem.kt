@@ -65,7 +65,7 @@ fun ExerciseItem(
             )
         }
 
-        HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
     }
 }
 
