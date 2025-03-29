@@ -344,4 +344,7 @@
     <string name="congratulations">Payment unsuccessful. Please check your payment method or contact support.</string>
     <string name="processing">Your transaction is processing. Premium features will be activated shortly.</string>
     <string name="unsuccess">Payment unsuccessful. Please check your payment method or contact support.</string>
+    <string name="congratulations_dialog">Congratulations!</string>
+    <string name="content_dialog">You have successfully registered! Please log in again for the best experience.</string>
+    <string name="loginnow_dialog">Login Now</string>
 </resources>
