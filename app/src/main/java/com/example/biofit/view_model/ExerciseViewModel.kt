@@ -7,10 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDetailDTO
+import com.example.biofit.data.model.dto.ExerciseDoneDTO
+import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -154,5 +157,103 @@ class ExerciseViewModel : ViewModel() {
                     Log.e("ExerciseViewModel", "Update Failed", t)
                 }
             })
+    }
+
+    private val _createdExerciseDone = MutableLiveData<ExerciseDoneDTO?>()
+    val createdExerciseDone: LiveData<ExerciseDoneDTO?> get() = _createdExerciseDone
+
+    private val _exerciseDoneList = MutableStateFlow<List<ExerciseDoneDTO>>(emptyList())
+    val exerciseDoneList: StateFlow<List<ExerciseDoneDTO>> = _exerciseDoneList.asStateFlow()
+
+    fun createExerciseDone(exerciseDoneDTO: ExerciseDoneDTO) {
+        val apiService = RetrofitClient.instance
+
+        apiService.createExerciseDone(exerciseDoneDTO).enqueue(object : Callback<ExerciseDoneDTO> {
+            override fun onResponse(call: Call<ExerciseDoneDTO>, response: Response<ExerciseDoneDTO>) {
+                if (response.isSuccessful) {
+                    /*_createdExercise.value = response.body()
+                    Log.d("ExerciseViewModel", "Exercise created: ${response.body()}")*/
+                    response.body()?.let { newExerciseDone ->
+                        _createdExerciseDone.value = newExerciseDone
+                        Log.d("ExerciseViewModel", "Exercise created: $newExerciseDone")
+
+                        val updatedList = _exerciseDoneList.value.toMutableList()
+                        updatedList.add(newExerciseDone) // Thêm bài tập mới vào danh sách
+                        _exerciseDoneList.value = updatedList // Cập nhật danh sách
+                    }
+                } else {
+                    Log.e("ExerciseViewModel", "Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ExerciseDoneDTO>, t: Throwable) {
+                Log.e("ExerciseViewModel", "Failed to create exercise done", t)
+            }
+        })
+    }
+
+    /*fun fetchExerciseDoneList(userId: Long, startDate: String, endDate: String) {
+        val apiService = RetrofitClient.instance
+
+        apiService.getExerciseDone(userId, startDate, endDate)
+            .enqueue(object : Callback<List<ExerciseDoneDTO>> {
+                override fun onResponse(call: Call<List<ExerciseDoneDTO>>, response: Response<List<ExerciseDoneDTO>>) {
+                    if (response.isSuccessful) {
+                        _exerciseDoneList.value = response.body() ?: emptyList()
+                    } else {
+                        Log.e("ExerciseViewModel", "API Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<ExerciseDoneDTO>>, t: Throwable) {
+                    Log.e("ExerciseViewModel", "Network Error", t)
+                }
+            })
+    }*/
+
+    private val _overviewExerciseList = MutableStateFlow<List<OverviewExerciseDTO>>(emptyList())
+    val overviewExerciseList: StateFlow<List<OverviewExerciseDTO>> = _overviewExerciseList.asStateFlow()
+
+    fun fetchOverviewExercises(userId: Long, startDate: String, endDate: String) {
+        RetrofitClient.instance.getOverviewExercises(userId, startDate, endDate)
+            .enqueue(object : Callback<List<OverviewExerciseDTO>> {
+                override fun onResponse(
+                    call: Call<List<OverviewExerciseDTO>>,
+                    response: Response<List<OverviewExerciseDTO>>
+                ) {
+                    if (response.isSuccessful) {
+                        _overviewExerciseList.value = response.body() ?: emptyList()
+                        Log.d("OverviewExerciseVM", "Overview exercises: ${response.body()}")
+                    } else {
+                        Log.e("OverviewExerciseVM", "API Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<OverviewExerciseDTO>>, t: Throwable) {
+                    Log.e("OverviewExerciseVM", "Network Error", t)
+                }
+            })
+    }
+
+    private val _burnedCalories = MutableLiveData<Float>().apply { value = 0f }
+    val burnedCalories: LiveData<Float> get() = _burnedCalories
+
+    fun getBurnedCaloriesToday(userId: Long) {
+        val apiService = RetrofitClient.instance
+        apiService.getBurnedCaloriesToday(userId).enqueue(object : Callback<Float> {
+            override fun onResponse(call: Call<Float>, response: Response<Float>) {
+                if (response.isSuccessful) {
+                    val calories = response.body() ?: 0f  // Xử lý trường hợp null
+                    _burnedCalories.postValue(calories)
+                    Log.d("ExerciseViewModel", "Burned calories today: $calories")
+                } else {
+                    Log.e("ExerciseViewModel", "API Error: ${response.code()} - ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Float>, t: Throwable) {
+                Log.e("ExerciseViewModel", "Network Error: ${t.message}", t)
+            }
+        })
     }
 }

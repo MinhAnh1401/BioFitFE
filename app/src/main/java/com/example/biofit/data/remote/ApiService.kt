@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDetailDTO
+import com.example.biofit.data.model.dto.ExerciseDoneDTO
+import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.model.request.LoginRequest
 import com.example.biofit.data.model.request.PaymentRequest
@@ -86,6 +88,32 @@ interface ApiService {
 
     @PUT("api/exercise/{exerciseId}")
     fun updateExercise(@Path("exerciseId") exerciseId: Long, @Body exercise: ExerciseDTO): Call<Void>
+
+/*
+----------------------------------------------------------------------------------------------------
+*/
+    // Exercise Done API
+    @POST("api/exercise-done/create")
+    fun createExerciseDone(@Body exerciseDoneDTO: ExerciseDoneDTO): Call<ExerciseDoneDTO>
+
+    /*@GET("api/exercise-done/user/{userId}")
+    fun getExerciseDone(
+        @Path("userId") userId: Long,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
+    ): Call<List<ExerciseDoneDTO>>*/
+
+    @GET("api/exercise-done/overview")
+    fun getOverviewExercises(
+        @Query("userId") userId: Long,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
+    ): Call<List<OverviewExerciseDTO>>
+
+    @GET("api/exercise-done/burned-calories/today")
+    fun getBurnedCaloriesToday(
+        @Query("userId") userId: Long
+    ): Call<Float>
 
     // Google API
 //    @POST("api/auth/google")

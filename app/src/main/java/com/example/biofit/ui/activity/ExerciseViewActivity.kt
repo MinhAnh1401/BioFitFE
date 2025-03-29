@@ -1,9 +1,9 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,14 +17,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -35,14 +38,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.navigation.MainActivity
+import com.example.biofit.data.model.dto.ExerciseDTO
+import com.example.biofit.data.model.dto.ExerciseDetailDTO
+import com.example.biofit.data.model.dto.ExerciseDoneDTO
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.ExerciseViewModel
 import kotlinx.coroutines.delay
 import java.util.Locale
 
@@ -50,9 +58,16 @@ class ExerciseViewActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val exerciseDTO = intent.getParcelableExtra<ExerciseDTO>("exerciseDTO")
+        Log.d("ExerciseViewActivity", "exerciseDTO: $exerciseDTO")
+        val exerciseDetailDTO = intent.getParcelableExtra<ExerciseDetailDTO>("exerciseDetailDTO")
+        Log.d("ExerciseViewActivity", "exerciseDetailDTO: $exerciseDetailDTO")
         setContent {
             BioFitTheme {
-                ExerciseViewScreen()
+                ExerciseViewScreen(
+                    exerciseDTO = exerciseDTO ?: ExerciseDTO.default(),
+                    exerciseDetailDTO = exerciseDetailDTO ?: ExerciseDetailDTO.default()
+                )
             }
         }
     }
@@ -67,31 +82,40 @@ data class Exercise(
     val name: String,
     val time: Pair<Int, Int>,
     val calories: Float,
-    val intensity: Intensity,
+    val level: String,
+    val intensity: String,
     val guide: String,
     val effect: String,
     val state: Boolean
 )
-
-enum class Intensity(val resId: Int) {
-    LOW(R.string.low),
-    MEDIUM(R.string.medium),
-    HIGH(R.string.high)
-}
-
 @Composable
-fun ExerciseViewScreen() {
+fun ExerciseViewScreen(
+    exerciseDTO: ExerciseDTO,
+    exerciseDetailDTO: ExerciseDetailDTO
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
+    val exerciseName = exerciseDTO.exerciseName
+    Log.d("ExerciseViewScreen", "exerciseName: $exerciseName")
+    val time = exerciseDetailDTO.time.toInt()
+    Log.d("ExerciseViewScreen", "time: $time")
+    val burnedCalories = exerciseDetailDTO.burnedCalories
+    Log.d("ExerciseViewScreen", "burnedCalories: $burnedCalories")
+    val level = exerciseDTO.getExerciseGoalString(context, exerciseDetailDTO.exerciseGoal)
+    Log.d("ExerciseViewScreen", "level: $level")
+    val intensity = exerciseDTO.getIntensityString(context, exerciseDetailDTO.intensity)
+    Log.d("ExerciseViewScreen", "intensity: $intensity")
+
     val exercise = Exercise(
-        name = "Exercise 1",
-        time = Pair(15, 0),
-        calories = 150f,
-        intensity = Intensity.LOW,
+        name = exerciseName,
+        time = Pair(time, 0),
+        calories = burnedCalories,
+        level = level,
+        intensity = intensity,
         guide = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
         effect = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
         state = false
@@ -122,6 +146,7 @@ fun ExerciseViewScreen() {
 
             ExerciseViewContent(
                 exercise = exercise,
+                exerciseDetailDTO = exerciseDetailDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -132,8 +157,10 @@ fun ExerciseViewScreen() {
 @Composable
 fun ExerciseViewContent(
     exercise: Exercise,
+    exerciseDetailDTO: ExerciseDetailDTO,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    exerciseViewModel: ExerciseViewModel = viewModel()
 ) {
     var exerciseState by rememberSaveable { mutableStateOf(exercise.state) }
 
@@ -231,6 +258,14 @@ fun ExerciseViewContent(
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleSmall
                 )
+
+                val exerciseDone = ExerciseDoneDTO.default().copy(
+                    exerciseDetailId = exerciseDetailDTO.exerciseDetailId
+
+                )
+                LaunchedEffect(key1 = exerciseState) {
+                    exerciseViewModel.createExerciseDone(exerciseDone)
+                }
             }
 
             if (startButtonState) {
@@ -291,37 +326,91 @@ fun ExerciseViewContent(
                     style = MaterialTheme.typography.titleSmall
                 )
 
-                Text(
-                    text = "${stringResource(R.string.time)}:" +
-                            if (exercise.time.first != 0) {
-                                " ${exercise.time.first}min"
-                            } else {
-                                " "
-                            } +
-                            if (exercise.time.second != 0) {
-                                " ${exercise.time.second}sec"
-                            } else {
-                                ""
-                            },
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.decrease_quotelevel),
+                        contentDescription = stringResource(R.string.level),
+                        modifier = Modifier.size(standardPadding * 1.5f),
+                        tint = Color(0xFFFFAB00)
+                    )
 
-                Text(
-                    text = "${stringResource(R.string.calories)}: ${exercise.calories}${
-                        stringResource(
-                            R.string.kcal
-                        )
-                    }",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                    Text(
+                        text = "${stringResource(R.string.level)}: ${exercise.level}",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
-                Text(
-                    text = "${stringResource(R.string.intensity)}: ${stringResource(exercise.intensity.resId)}",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
+                        contentDescription = stringResource(R.string.level),
+                        modifier = Modifier.size(standardPadding * 1.5f),
+                        tint = Color(0xFFDD2C00)
+                    )
+
+                    Text(
+                        text = "${stringResource(R.string.intensity)}: ${exercise.intensity}",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.timer),
+                        contentDescription = stringResource(R.string.level),
+                        modifier = Modifier.size(standardPadding * 1.5f),
+                        tint = Color(0xFF00C853)
+                    )
+
+                    Text(
+                        text = "${stringResource(R.string.time)}:" +
+                                if (exercise.time.first != 0) {
+                                    " ${exercise.time.first} ${stringResource(R.string.min)}"
+                                } else {
+                                    " "
+                                } +
+                                if (exercise.time.second != 0) {
+                                    " ${exercise.time.second} ${stringResource(R.string.sec)}"
+                                } else {
+                                    ""
+                                },
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_loaded_cal),
+                        contentDescription = stringResource(R.string.level),
+                        modifier = Modifier.size(standardPadding * 1.5f),
+                        tint = Color(0xFFFF6D00)
+                    )
+
+                    Text(
+                        text = "${stringResource(R.string.calories)}: ${exercise.calories} ${
+                            stringResource(
+                                R.string.kcal
+                            )
+                        }",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
         }
 
@@ -365,7 +454,10 @@ fun ExerciseViewContent(
 @Composable
 private fun ExerciseViewScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        ExerciseViewScreen()
+        ExerciseViewScreen(
+            ExerciseDTO.default(),
+            ExerciseDetailDTO.default()
+        )
     }
 }
 
@@ -378,7 +470,10 @@ private fun ExerciseViewScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun ExerciseViewScreenPreviewInLargePhone() {
     BioFitTheme {
-        ExerciseViewScreen()
+        ExerciseViewScreen(
+            ExerciseDTO.default(),
+            ExerciseDetailDTO.default()
+        )
     }
 }
 
@@ -392,7 +487,10 @@ private fun ExerciseViewScreenPreviewInLargePhone() {
 @Composable
 private fun ExerciseViewScreenPreviewInTablet() {
     BioFitTheme {
-        ExerciseViewScreen()
+        ExerciseViewScreen(
+            ExerciseDTO.default(),
+            ExerciseDetailDTO.default()
+        )
     }
 }
 
@@ -406,7 +504,10 @@ private fun ExerciseViewScreenPreviewInTablet() {
 @Composable
 private fun ExerciseViewScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        ExerciseViewScreen()
+        ExerciseViewScreen(
+            ExerciseDTO.default(),
+            ExerciseDetailDTO.default()
+        )
     }
 }
 
@@ -419,7 +520,10 @@ private fun ExerciseViewScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun ExerciseViewScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        ExerciseViewScreen()
+        ExerciseViewScreen(
+            ExerciseDTO.default(),
+            ExerciseDetailDTO.default()
+        )
     }
 }
 
@@ -433,6 +537,9 @@ private fun ExerciseViewScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun ExerciseViewScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        ExerciseViewScreen()
+        ExerciseViewScreen(
+            ExerciseDTO.default(),
+            ExerciseDetailDTO.default()
+        )
     }
 }

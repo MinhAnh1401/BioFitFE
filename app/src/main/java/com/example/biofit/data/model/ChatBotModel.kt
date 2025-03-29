@@ -72,7 +72,7 @@ class ChatBotModel(
                 - Drank ${dailyLogData.water} L of water today.
                 - Target Weight: ${userData.targetWeight} kg
                 
-            User asks: $userInput
+            User input: $userInput
             
             Your name is Bionix.
             You are an AI assistant specializing in health and nutrition management, integrated into the BioFit app.

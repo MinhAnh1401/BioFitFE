@@ -53,6 +53,13 @@ data class UserDTO(
         }
     }
 
+    fun getAgeInt(dateOfBirth: String?): Int {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val birthDate = LocalDate.parse(dateOfBirth, formatter)
+        val currentDate = LocalDate.now()
+        return Period.between(birthDate, currentDate).years
+    }
+
     companion object {
         fun default(): UserDTO {
             return UserDTO(

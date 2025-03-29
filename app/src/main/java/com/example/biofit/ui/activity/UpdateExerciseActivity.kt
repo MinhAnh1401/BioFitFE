@@ -1,6 +1,7 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +22,8 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -209,6 +212,7 @@ fun UpdateExerciseContent(
     exerciseViewModel: ExerciseViewModel = viewModel(),
 ) {
     val context = LocalContext.current
+    val activity = context as? Activity
     val exerciseId = exerciseDTO.exerciseId
     Log.d("CAUExerciseContent", "exerciseId: $exerciseId")
     val exerciseDetailList by exerciseViewModel.exerciseDetail.collectAsState()
@@ -235,7 +239,8 @@ fun UpdateExerciseContent(
     val focusManager = LocalFocusManager.current
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(standardPadding)
+        verticalArrangement = Arrangement.spacedBy(standardPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
             value = exerciseName,
@@ -463,6 +468,48 @@ fun UpdateExerciseContent(
             singleLine = true,
             shape = MaterialTheme.shapes.large
         )
+
+        var showDoExerciseDialog by rememberSaveable { mutableStateOf(value = false) }
+        val exerciseDetailId = exerciseDetailList?.exerciseDetailId
+        Log.d("UpdateExerciseContent", "exerciseDTO: $exerciseDTO")
+        Log.d("UpdateExerciseContent", "exerciseDetailDTO: $exerciseDetailList")
+
+        ElevatedButton(
+            onClick = {
+                if (exerciseDetailId != null) {
+                    activity?.let {
+                        val intent = Intent(it, ExerciseViewActivity::class.java)
+                        intent.putExtra("exerciseDTO", exerciseDTO)
+                        intent.putExtra("exerciseDetailDTO", exerciseDetailList)
+                        it.startActivity(intent)
+                    }
+                } else {
+                    showDoExerciseDialog = true
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.do_exercise),
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
+        
+        if (showDoExerciseDialog) {
+            DefaultDialog(
+                title = R.string.can_t_do_the_exercise,
+                description = R.string.please_select_your_exercise_level_and_intensity_before_performing_the_exercise,
+                actionTextButton = R.string.ok,
+                actionTextButtonColor = MaterialTheme.colorScheme.primary,
+                onClickActionButton = { showDoExerciseDialog = false },
+                onCancelClick = null,
+                onDismissRequest = { showDoExerciseDialog = false },
+                standardPadding = standardPadding
+            )
+        }
     }
 }
 

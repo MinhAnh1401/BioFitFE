@@ -68,6 +68,7 @@ import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
+import com.example.biofit.ui.activity.TOUAndPPActivity
 import com.example.biofit.ui.activity.TargetActivity
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.SelectionDialog
@@ -429,6 +430,7 @@ fun ProfileContent(
                         modifier = Modifier.clickable {
                             activity?.let {
                                 val intent = Intent(it, OverviewActivity::class.java)
+                                intent.putExtra("userData", userData)
                                 it.startActivity(intent)
                             }
                         }
@@ -488,7 +490,11 @@ fun ProfileContent(
                 SubCard(modifier = Modifier) {
                     Column(
                         modifier = Modifier.clickable {
-                            TODO()
+                            activity?.let {
+                                val intent = Intent(it, TOUAndPPActivity::class.java)
+                                intent.putExtra("title", context.getString(R.string.term_of_use))
+                                it.startActivity(intent)
+                            }
                         }
                     ) {
                         Row(
@@ -531,7 +537,11 @@ fun ProfileContent(
 
                     Column(
                         modifier = Modifier.clickable {
-                            TODO()
+                            activity?.let {
+                                val intent = Intent(it, TOUAndPPActivity::class.java)
+                                intent.putExtra("title", context.getString(R.string.privacy_policy))
+                                it.startActivity(intent)
+                            }
                         }
                     ) {
                         Row(

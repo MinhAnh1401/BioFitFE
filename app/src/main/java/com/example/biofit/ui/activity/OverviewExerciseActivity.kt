@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -18,13 +20,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,21 +42,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.navigation.WeekNavigationBar
 import com.example.biofit.ui.components.OverviewExerciseCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.LoginViewModel
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 class OverviewExerciseActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val userId = intent.getLongExtra("USER_ID", 0L)
         setContent {
             BioFitTheme {
-                OverviewExerciseScreen()
+                OverviewExerciseScreen(userId = userId)
             }
         }
     }
@@ -60,7 +76,7 @@ class OverviewExerciseActivity : ComponentActivity() {
 }
 
 @Composable
-fun OverviewExerciseScreen() {
+fun OverviewExerciseScreen(userId: Long) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -84,14 +100,13 @@ fun OverviewExerciseScreen() {
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                title = stringResource(R.string.exercise),
+                title = stringResource(R.string.exercise_done),
                 middleButton = null,
                 rightButton = {
                     IconButton(
                         onClick = {
                             activity?.let {
-                                val intent = Intent(it, UpdateExerciseActivity::class.java)
-                                intent.putExtra("EXERCISE", "")
+                                val intent = Intent(it, ExerciseActivity::class.java)
                                 it.startActivity(intent)
                             }
                         }
@@ -108,6 +123,7 @@ fun OverviewExerciseScreen() {
             )
 
             OverviewExerciseContent(
+                userId = userId,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -117,13 +133,29 @@ fun OverviewExerciseScreen() {
 
 @Composable
 fun OverviewExerciseContent(
+    userId: Long,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    exerciseViewModel: ExerciseViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val startOfWeek = selectedDate.with(WeekFields.of(Locale.getDefault()).firstDayOfWeek)
+    val startOfWeekFormatted = startOfWeek.format(formatter)
+    val endOfWeek = startOfWeek.plusDays(6)
+    val endOfWeekFormatted = endOfWeek.format(formatter)
+
+    val overviewList by exerciseViewModel.overviewExerciseList.collectAsState()
+
+    Log.d("userId", "$userId")
+    LaunchedEffect(userId, startOfWeekFormatted, endOfWeekFormatted) {
+        exerciseViewModel.fetchOverviewExercises(userId, startOfWeekFormatted, endOfWeekFormatted)
+    }
+    Log.d("listOverviewExercise", "$overviewList")
 
     Column(
         modifier = modifier,
@@ -136,12 +168,12 @@ fun OverviewExerciseContent(
         )
 
         LazyColumn {
-            item {
+            /*item {
                 Column(
                     modifier = Modifier.padding(top = standardPadding),
                     verticalArrangement = Arrangement.spacedBy(standardPadding)
                 ) {
-                    listOverviewExercise.forEach { (exerciseName, time, calories) ->
+                    *//*listOverviewExercise.forEach { (exerciseName, time, calories) ->
                         OverviewExerciseCard(
                             exerciseName = exerciseName,
                             time = time,
@@ -157,7 +189,69 @@ fun OverviewExerciseContent(
                             standardPadding = standardPadding
 
                         )
+                    }*//*
+
+                    val groupedExercises = overviewList
+                        .sortedBy { it.date }
+                        .groupBy { it.date }
+
+                    groupedExercises.forEach { (date, exerciseDone) ->
+                        item {
+                            Text(
+                                text = date,
+                                modifier = modifier.padding(top = standardPadding * 2),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+
+                        items(exerciseDone) { exerciseDone ->
+                            OverviewExerciseCard(
+                                exerciseName = exerciseDone.exerciseName,
+                                time = exerciseDone.time.toInt(),
+                                calories = exerciseDone.burnedCalories,
+                                date = exerciseDone.date,
+                                session = exerciseDone.session,
+                                onClick = {
+                                    activity?.let {
+                                        val intent =
+                                            Intent(it, UpdateExerciseActivity::class.java)
+                                        intent.putExtra("EXERCISE", exerciseDone.exerciseName)
+                                        it.startActivity(intent)
+                                    }
+                                },
+                                standardPadding = standardPadding
+
+                            )
+                        }
                     }
+                }
+            }*/
+
+            val groupedExercises = overviewList
+                .sortedByDescending { it.date }
+                .groupBy { it.date }
+
+            groupedExercises.forEach { (date,  exerciseDones) ->
+                item {
+                    Text(
+                        text = date,
+                        modifier = modifier.padding(top = standardPadding * 2),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+
+                items(exerciseDones) { exerciseDone ->
+                    Spacer(modifier = Modifier.padding(top = standardPadding))
+
+                    OverviewExerciseCard(
+                        exerciseName = exerciseDone.exerciseName,
+                        time = exerciseDone.time.toInt(),
+                        calories = exerciseDone.burnedCalories,
+                        session = exerciseDone.session,
+                        standardPadding = standardPadding
+                    )
                 }
             }
 
@@ -187,7 +281,6 @@ val listOverviewExercise = listOf(
     Triple("Bicycle Crunches", 12, 105f)
 )
 
-
 @Preview(
     device = "id:pixel",
     showSystemUi = true,
@@ -198,7 +291,7 @@ val listOverviewExercise = listOf(
 @Composable
 private fun OverviewExerciseScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewExerciseScreen()
+        OverviewExerciseScreen(UserDTO.default().userId)
     }
 }
 
@@ -211,7 +304,7 @@ private fun OverviewExerciseScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewExerciseScreenPreviewInLargePhone() {
     BioFitTheme {
-        OverviewExerciseScreen()
+        OverviewExerciseScreen(UserDTO.default().userId)
     }
 }
 
@@ -225,7 +318,7 @@ private fun OverviewExerciseScreenPreviewInLargePhone() {
 @Composable
 private fun OverviewExerciseScreenPreviewInTablet() {
     BioFitTheme {
-        OverviewExerciseScreen()
+        OverviewExerciseScreen(UserDTO.default().userId)
     }
 }
 
@@ -239,7 +332,7 @@ private fun OverviewExerciseScreenPreviewInTablet() {
 @Composable
 private fun OverviewExerciseScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewExerciseScreen()
+        OverviewExerciseScreen(UserDTO.default().userId)
     }
 }
 
@@ -252,7 +345,7 @@ private fun OverviewExerciseScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewExerciseScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        OverviewExerciseScreen()
+        OverviewExerciseScreen(UserDTO.default().userId)
     }
 }
 
@@ -266,6 +359,6 @@ private fun OverviewExerciseScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun OverviewExerciseScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        OverviewExerciseScreen()
+        OverviewExerciseScreen(UserDTO.default().userId)
     }
 }
