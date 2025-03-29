@@ -3,13 +3,11 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.res.Configuration
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,16 +21,10 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +46,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -62,14 +53,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -206,15 +194,15 @@ fun SettingContent(
     dailyLogViewModel: DailyLogViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    /*val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f*/
+    val height = (userData.height ?: UserDTO.default().height) ?: 0f
     dailyLogViewModel.getLatestDailyLog(context, userData.userId)
-    /*val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
+    val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
         value = if (dailyLogViewModel.memoryWeight.value != 0f) {
             dailyLogViewModel.memoryWeight.value
         } else {
             userData.weight!!
         }
-    }*/
+    }
 
     /*val bmiIndex: Float? = if (height > 0.001f) {
         memoryWeight.div(height * height)
@@ -233,6 +221,34 @@ fun SettingContent(
         bmiIndex >= 25f && bmiIndex < 30f -> stringResource(R.string.overweight)
         else -> stringResource(R.string.obese)
     }*/
+
+    val caloOfDaily = when (userData.gender) {
+        0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..45 -> 2000f
+            else -> 1500f
+        }
+
+        1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..30 -> 1500f
+            else -> 1200f
+        }
+
+        else -> 0f
+    }
+
+    val caloOfWeekly = caloOfDaily * 7
+
+    val caloOfDailyBMR = BigDecimal(
+        ((10 * memoryWeight) + (6.25f * height) - (5 * userData.getAgeInt(userData.dateOfBirth)) +
+                if (userData.gender == 0) 5 else -161
+                ).toDouble()
+    )
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+
+    val caloOfWeeklyTDEE = BigDecimal(caloOfDailyBMR.toDouble() * 1.55)
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
@@ -723,18 +739,14 @@ fun SettingContent(
                                         .padding(standardPadding),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    val caloOfDaily by rememberSaveable {
-                                        mutableStateOf(value = "__")
-                                    } // Thay caloOfDaily từ database vào value
-
                                     Text(
-                                        text = caloOfDaily,
+                                        text = caloOfDaily.toString(),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.titleMedium
                                     )
 
                                     Text(
-                                        text = stringResource(R.string.calo_day),
+                                        text = stringResource(R.string.kcal_day),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.bodySmall
                                     )
@@ -750,18 +762,14 @@ fun SettingContent(
                                         .padding(standardPadding),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    val caloOfWeekly by rememberSaveable {
-                                        mutableStateOf(value = "__")
-                                    } // Thay caloOfWeekly từ database vào value
-
                                     Text(
-                                        text = caloOfWeekly,
+                                        text = caloOfWeekly.toString(),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.titleMedium
                                     )
 
                                     Text(
-                                        text = stringResource(R.string.calo_week),
+                                        text = stringResource(R.string.kcal_week),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         style = MaterialTheme.typography.bodySmall
                                     )
@@ -789,13 +797,9 @@ fun SettingContent(
                                 )
                             }
 
-                            val caloOfDailyBMR by rememberSaveable {
-                                mutableStateOf(value = "__")
-                            } // Thay caloOfDailyBMR từ database vào value
-
                             Text(
-                                text = caloOfDailyBMR + " " +
-                                        stringResource(R.string.calo_day),
+                                text = caloOfDailyBMR.toString() + " " +
+                                        stringResource(R.string.kcal_day),
                                 modifier = Modifier.weight(1f),
                                 color = MaterialTheme.colorScheme.outline,
                                 textAlign = TextAlign.End,
@@ -823,13 +827,9 @@ fun SettingContent(
                                 )
                             }
 
-                            val caloOfWeeklyBMR by rememberSaveable {
-                                mutableStateOf(value = "__")
-                            } // Thay caloOfDailyBMR từ database vào value
-
                             Text(
-                                text = caloOfWeeklyBMR + " " +
-                                        stringResource(R.string.calo_week),
+                                text = caloOfWeeklyTDEE.toString() + " " +
+                                        stringResource(R.string.kcal_week),
                                 modifier = Modifier.weight(1f),
                                 color = MaterialTheme.colorScheme.outline,
                                 textAlign = TextAlign.End,

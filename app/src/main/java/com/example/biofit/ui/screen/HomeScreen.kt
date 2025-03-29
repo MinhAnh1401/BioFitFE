@@ -106,6 +106,7 @@ import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.DailyLogViewModel
+import com.example.biofit.view_model.ExerciseViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -263,6 +264,7 @@ fun HomeContent(
 
         item {
             OverviewAndSearchBar(
+                userData,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -295,12 +297,23 @@ fun HomeContent(
     }
 }
 
-fun getTargetCalories(): Float {
-    return 1000f // Thay đổi thành lượng calo mục tiêu
+fun getTargetCalories(userData: UserDTO): Float {
+    return when (userData.gender) {
+        0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..45 -> 2000f
+            else -> 1500f
+        }
+        1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..30 -> 1500f
+            else -> 1000f
+        }
+        else -> 0f
+    }
 }
 
 @Composable
 fun OverviewAndSearchBar(
+    userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -308,7 +321,7 @@ fun OverviewAndSearchBar(
     val activity = context as? Activity
 
     val loadedCalories = 430 // Thay đổi thành lượng calo đã nạp
-    val targetCalories = getTargetCalories()
+    val targetCalories = getTargetCalories(userData)
     val nutrients = listOf(
         Triple(R.string.protein, 400, 1000), // Thay đổi thành protein
         Triple(R.string.powdered_sugar, 1700, 1000), // Thay đổi thành đường
@@ -322,6 +335,7 @@ fun OverviewAndSearchBar(
         onClick = {
             activity?.let {
                 val intent = Intent(it, OverviewActivity::class.java)
+                intent.putExtra("userData", userData)
                 it.startActivity(intent)
             }
         },
@@ -408,7 +422,7 @@ fun OverviewAndSearchBar(
 
                         Text(
                             text = stringResource(R.string.loaded) + " $loadedCalories " +
-                                    stringResource(R.string.cal),
+                                    stringResource(R.string.kcal),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -427,7 +441,7 @@ fun OverviewAndSearchBar(
 
                         Text(
                             text = stringResource(R.string.target) + " $targetCalories " +
-                                    stringResource(R.string.cal),
+                                    stringResource(R.string.kcal),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -893,6 +907,7 @@ fun DailyGoals(
     standardPadding: Dp,
     modifier: Modifier,
     dailyLogViewModel: DailyLogViewModel = viewModel(),
+    exerciseViewModel: ExerciseViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -926,8 +941,20 @@ fun DailyGoals(
     }
     val targetWater = 2f
 
-    val burnedCalories = getBurnedCalories()
-    val targetBurnCalories = 200f
+    exerciseViewModel.getBurnedCaloriesToday(userData.userId)
+    val burnedCalories = exerciseViewModel.burnedCalories.value ?: 0f
+
+    val targetBurnCalories = when (userData.gender) {
+        0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..45 -> 500f
+            else -> 400f
+        }
+        1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..30 -> 400f
+            else -> 300f
+        }
+        else -> 0f
+    }
 
     val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f
     val bmiIndex: Float? = if (height > 0.001f) {
@@ -947,6 +974,15 @@ fun DailyGoals(
         bmiIndex >= 25f && bmiIndex < 30f -> stringResource(R.string.overweight)
         else -> stringResource(R.string.obese)
     }
+
+    val oddHeight = (height - 1) * 100
+    val estimatedWeight = BigDecimal(oddHeight.toDouble() * 9 / 10)
+        .setScale(1, RoundingMode.HALF_UP)
+        .toFloat()
+
+    /*val estimatedWeight by rememberSaveable {
+        mutableStateOf(value = "__")
+    } // Thay estimatedWeight từ database vào value*/
 
     Column(
         modifier = modifier,
@@ -1108,6 +1144,7 @@ fun DailyGoals(
                 onClick = {
                     activity?.let {
                         val intent = Intent(it, OverviewExerciseActivity::class.java)
+                        intent.putExtra("USER_ID", userData.userId)
                         it.startActivity(intent)
                     }
                 },
@@ -1139,20 +1176,20 @@ fun DailyGoals(
                     }
 
                     ExerciseChart(
-                        burnedCalories,
-                        targetBurnCalories,
-                        MaterialTheme.colorScheme.inversePrimary,
-                        if (isSystemInDarkTheme()) {
+                        loadedValue = burnedCalories,
+                        targetValue = targetBurnCalories,
+                        circleColor = MaterialTheme.colorScheme.inversePrimary,
+                        progressColor = if (isSystemInDarkTheme()) {
                             Color(0xFF8C3200)
                         } else {
                             Color(0xFFAA4600)
                         },
-                        if (isSystemInDarkTheme()) {
+                        exceededColor = if (isSystemInDarkTheme()) {
                             Color(0xFF960000)
                         } else {
                             Color(0xFFAF0000)
                         },
-                        standardPadding
+                        standardPadding = standardPadding
                     )
 
                     Card(
@@ -1391,10 +1428,6 @@ fun DailyGoals(
                                     tint = MaterialTheme.colorScheme.inversePrimary,
                                 )
 
-                                val estimatedWeight by rememberSaveable {
-                                    mutableStateOf(value = "__")
-                                } // Thay estimatedWeight từ database vào value
-
                                 Text(
                                     text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
                                             estimatedWeight +
@@ -1494,16 +1527,12 @@ fun WaterChart(
             )
 
             drawText(
-                "%.1f$unit".format(targetValue),
+                "%.1f $unit".format(targetValue),
                 center.x,
-                center.y + standardPadding.value * 3.5f,
+                center.y + standardPadding.value * 4.5f,
                 Paint().apply {
-                    textSize = radius / 7
-                    color = if (exceeded) {
-                        progressColor.toArgb()
-                    } else {
-                        circleColor.toArgb()
-                    }
+                    textSize = radius / 4.5f
+                    color = exceededColor.toArgb()
                     textAlign = Paint.Align.CENTER
                 }
             )
@@ -1573,12 +1602,12 @@ fun ExerciseChart(
             )
 
             drawText(
-                "%.1fcal".format(targetValue),
+                "%.1f kcal".format(targetValue),
                 center.x,
-                center.y + standardPadding.value * 3.5f,
+                center.y + standardPadding.value * 4.5f,
                 Paint().apply {
-                    textSize = radius / 7
-                    color = if (exceeded) progressColor.toArgb() else circleColor.toArgb()
+                    textSize = radius / 4.5f
+                    color = exceededColor.toArgb()
                     textAlign = Paint.Align.CENTER
                 }
             )

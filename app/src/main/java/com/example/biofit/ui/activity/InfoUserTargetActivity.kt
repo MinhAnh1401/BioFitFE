@@ -45,6 +45,8 @@ import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class InfoUserTargetActivity : ComponentActivity() {
     private var userData: UserDTO? = null
@@ -112,6 +114,7 @@ fun InfoUserTargetScreen(
                     standardPadding
                 )
                 InfoUserTargetContent(
+                    userData,
                     standardPadding,
                     modifier,
                     viewModel
@@ -134,11 +137,18 @@ fun InfoUserTargetScreen(
 
 @Composable
 fun InfoUserTargetContent(
+    userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier,
     viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
     val targetWeight = viewModel.targetWeight.value?.toString() ?: ""
+    val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f
+    val oddHeight = (height - 1) * 100
+    val estimatedWeight = BigDecimal(oddHeight.toDouble() * 9 / 10)
+        .setScale(1, RoundingMode.HALF_UP)
+        .toFloat()
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -197,7 +207,13 @@ fun InfoUserTargetContent(
                         style = MaterialTheme.typography.bodySmall
                     )
                 }, // hậu tố văn bản
-                // supportingText = null, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
+                supportingText = {
+                    Text(
+                        text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
+                                estimatedWeight +
+                                stringResource(R.string.kg)
+                    )
+                }, // văn bản trợ giúp dưới trường nhập liệu (mặc định null)
                 //isError = false, // trạng thái lỗi
                 // visualTransformation = VisualTransformation.None, // biến đổi hiển thị của văn bản (mặc định VisualTransformation.None)
                 keyboardOptions = KeyboardOptions(

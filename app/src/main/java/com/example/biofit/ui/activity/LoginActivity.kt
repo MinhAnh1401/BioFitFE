@@ -434,6 +434,9 @@ fun SocialLoginContent(
 
 @Composable
 fun TermsAndPrivacy(standardPadding: Dp) {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
@@ -446,7 +449,13 @@ fun TermsAndPrivacy(standardPadding: Dp) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
-                onClick = { /* TODO */ },
+                onClick = {
+                    activity?.let {
+                        val intent = Intent(it, TOUAndPPActivity::class.java)
+                        intent.putExtra("title", context.getString(R.string.term_of_use))
+                        it.startActivity(intent)
+                    }
+                },
             ) {
                 Text(
                     text = stringResource(R.string.term_of_use),
@@ -461,7 +470,13 @@ fun TermsAndPrivacy(standardPadding: Dp) {
             )
 
             TextButton(
-                onClick = { /* TODO */ },
+                onClick = {
+                    activity?.let {
+                        val intent = Intent(it, TOUAndPPActivity::class.java)
+                        intent.putExtra("title", context.getString(R.string.privacy_policy))
+                        it.startActivity(intent)
+                    }
+                },
             ) {
                 Text(
                     text = stringResource(R.string.privacy_policy),

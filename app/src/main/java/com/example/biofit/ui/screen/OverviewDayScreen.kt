@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.navigation.DailyCountChart
 import com.example.biofit.navigation.getDailyCalories
 import com.example.biofit.navigation.getDailyMacroTable
@@ -40,7 +41,7 @@ import com.example.biofit.ui.theme.BioFitTheme
 import java.math.RoundingMode
 
 @Composable
-fun OverviewDayScreen() {
+fun OverviewDayScreen(userData: UserDTO) {
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
 
@@ -60,6 +61,7 @@ fun OverviewDayScreen() {
         ) {
             item {
                 OverviewDayContent(
+                    userData = userData,
                     standardPadding,
                     modifier
                 )
@@ -70,6 +72,7 @@ fun OverviewDayScreen() {
 
 @Composable
 fun OverviewDayContent(
+    userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
@@ -83,7 +86,7 @@ fun OverviewDayContent(
         stringResource(R.string.food_calories_intake) to foodCaloriesIntake,
         stringResource(R.string.exercise_calories) to getBurnedCalories(),
         stringResource(R.string.net_calories) to netCalories,
-        stringResource(R.string.target_calories) to getTargetCalories()
+        stringResource(R.string.target_calories) to getTargetCalories(userData)
     )
 
     val dailyMacroTable = getDailyMacroTable()
@@ -353,7 +356,7 @@ fun OverviewDayContent(
 @Composable
 private fun OverviewDayScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewDayScreen()
+        OverviewDayScreen(UserDTO.default())
     }
 }
 
@@ -366,7 +369,7 @@ private fun OverviewDayScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewDayScreenPreviewInLargePhone() {
     BioFitTheme {
-        OverviewDayScreen()
+        OverviewDayScreen(UserDTO.default())
     }
 }
 
@@ -380,7 +383,7 @@ private fun OverviewDayScreenPreviewInLargePhone() {
 @Composable
 private fun OverviewDayScreenPreviewInTablet() {
     BioFitTheme {
-        OverviewDayScreen()
+        OverviewDayScreen(UserDTO.default())
     }
 }
 
@@ -394,7 +397,7 @@ private fun OverviewDayScreenPreviewInTablet() {
 @Composable
 private fun OverviewDayScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        OverviewDayScreen()
+        OverviewDayScreen(UserDTO.default())
     }
 }
 
@@ -407,7 +410,7 @@ private fun OverviewDayScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun OverviewDayScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        OverviewDayScreen()
+        OverviewDayScreen(UserDTO.default())
     }
 }
 
@@ -421,6 +424,6 @@ private fun OverviewDayScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun OverviewDayScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        OverviewDayScreen()
+        OverviewDayScreen(UserDTO.default())
     }
 }

@@ -67,8 +67,8 @@
     <string name="delete_data">Delete data</string>
     <string name="delete_account">Delete account</string>
     <string name="sign_out">SIGN OUT</string>
-    <string name="calo_day">calo / day</string>
-    <string name="calo_week">calo / week</string>
+    <string name="kcal_day">kcal / day</string>
+    <string name="kcal_week">kcal / week</string>
     <string name="basal_metabolic_rate_bmr">Basal metabolic rate (BMR).</string>
     <string name="learn_more">Learn more</string>
     <string name="total_energy_expenditure_tdee">Total energy expenditure (TDEE).</string>
@@ -349,4 +349,11 @@
     <string name="congratulations_dialog">Congratulations!</string>
     <string name="content_dialog">You have successfully registered! Please log in again for the best experience.</string>
     <string name="loginnow_dialog">Login Now</string>
+    <string name="do_exercise">Do exercise</string>
+    <string name="can_t_do_the_exercise">Can\'t do the exercise</string>
+    <string name="please_select_your_exercise_level_and_intensity_before_performing_the_exercise">Please select your exercise level and intensity before performing the exercise.</string>
+    <string name="exercise_done">Exercise done</string>
+    <string name="sec">sec</string>
+    <string name="term_of_use_content">1. Introduction\n\nWelcome to BioFit! By using our application, you agree to comply with these Terms of Use. If you do not agree, please do not use the application.\n\n2. Use of the Application\n\nBioFit is designed to help users track their fitness progress and provide insights.\n\nYou must be at least 13 years old to use this application.\n\nYou agree not to misuse the application, including attempting unauthorized access or disrupting the service.\n\n3. User Accounts\n\nYou are responsible for maintaining the confidentiality of your account credentials.\n\nAny activity under your account is your responsibility.\n\nWe reserve the right to terminate or suspend accounts that violate our policies.\n\n4. Data and Content\n\nBy using BioFit, you agree that we may collect and process data as described in our Privacy Policy.\n\nYou are responsible for the accuracy of the information you provide.\n\n5. Limitation of Liability\n\nBioFit provides fitness tracking tools, but it does not substitute professional medical advice.\n\nWe are not liable for any injuries, losses, or damages arising from the use of the application.\n\n6. Changes to the Terms\n\nWe may update these Terms of Use periodically. Continued use of BioFit constitutes acceptance of the changes.\n\n7. Contact Information\n\nFor any questions regarding these Terms, contact us at biofit@gmail.com.</string>
+    <string name="privacy_policy_content">1. Introduction\n\nYour privacy is important to us. This Privacy Policy explains how BioFit collects, uses, and protects your information.\n\n2. Information We Collect\n\nPersonal Information: Name, email, profile information.\n\nHealth Data: Exercise records, calories burned, and other fitness-related data.\n\nUsage Data: Device information, log data, and interactions with the application.\n\n3. How We Use Your Information\n\nTo provide and improve our services.\n\nTo personalize user experience.\n\nTo analyze usage trends and improve performance.\n\nTo communicate with users regarding updates and support.\n\n4. Data Sharing and Security\n\nWe do not sell your data to third parties.\n\nWe may share data with trusted partners to improve our service (e.g., cloud storage, analytics).\n\nYour data is secured using industry-standard encryption methods.\n\n5. User Rights\n\nYou can access, update, or delete your personal information.\n\nYou can request to stop data collection by contacting us.\n\n6. Changes to this Policy\n\nWe may update this Privacy Policy from time to time. We will notify users of significant changes.\n\n7. Contact Information\n\nFor privacy concerns, contact us at biofit@gmail.com.\n</string>
 </resources>

@@ -27,6 +27,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -166,7 +167,9 @@ fun ExerciseContent(
     ) {
         OutlinedTextField(
             value = search,
-            onValueChange = { search = it },
+            onValueChange = { newValue ->
+                search = newValue
+            },
             modifier = modifier.shadow(
                 elevation = 6.dp,
                 shape = MaterialTheme.shapes.large
@@ -179,14 +182,22 @@ fun ExerciseContent(
                 )
             },
             trailingIcon = {
-                IconButton(
-                    onClick = { TODO() }
-                ) {
+                if (search.isEmpty()) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(R.string.search),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
+                } else {
+                    IconButton(
+                        onClick = { search = "" }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(R.string.delete),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -219,11 +230,23 @@ fun ExerciseContent(
             savedUserId.let { viewModel.setUserId(it) }
         }
 
+        // Lọc danh sách dựa trên từ khóa tìm kiếm; tìm kiếm tự động khi 'search' thay đổi
+        val filteredList = if (search.isEmpty()) {
+            exerciseList
+        } else {
+            exerciseList.filter { it.exerciseName.contains(search, ignoreCase = true) }
+        }
+
+        // Nhóm danh sách đã lọc theo chữ cái đầu của tên bài tập
+        val groupedExercises = filteredList
+            .sortedBy { it.exerciseName }
+            .groupBy { it.exerciseName.first().uppercaseChar() }
+
         LazyColumn {
             Log.d("ExerciseListScreen", "exerciseList size: ${exerciseList.size}")
-            val groupedExercises = exerciseList
+            /*val groupedExercises = exerciseList
                 .sortedBy { it.exerciseName }
-                .groupBy { it.exerciseName.first().uppercaseChar() }
+                .groupBy { it.exerciseName.first().uppercaseChar() }*/
 
             groupedExercises.forEach { (letter, exercises) ->
                 item {
@@ -257,7 +280,8 @@ fun ExerciseContent(
                             onLongClick = { expanded = true },
                             standardPadding = standardPadding,
                             modifier = modifier.onGloballyPositioned { coordinates ->
-                                menuAnchor.value = coordinates.boundsInRoot() // Lưu vị trí của ExerciseItem
+                                menuAnchor.value =
+                                    coordinates.boundsInRoot() // Lưu vị trí của ExerciseItem
                             }
                         )
 
@@ -283,7 +307,7 @@ fun ExerciseContent(
                                         painter = painterResource(R.drawable.ic_edit),
                                         contentDescription = stringResource(R.string.edit_exercise),
                                         modifier = Modifier.size(standardPadding * 1.5f),
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = Color(0xFFFF6D00)
                                     )
                                 }
                             )
@@ -291,7 +315,10 @@ fun ExerciseContent(
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.delete_exercise)) },
                                 onClick = {
-                                    Log.d("ExerciseListScreen", "Deleting exercise: ${exercise.exerciseId}")
+                                    Log.d(
+                                        "ExerciseListScreen",
+                                        "Deleting exercise: ${exercise.exerciseId}"
+                                    )
                                     exerciseViewModel.deleteExercise(exercise.exerciseId)
                                     expanded = false
                                     Toast.makeText(
@@ -305,7 +332,7 @@ fun ExerciseContent(
                                         painter = painterResource(R.drawable.trash),
                                         contentDescription = stringResource(R.string.delete_exercise),
                                         modifier = Modifier.size(standardPadding * 1.5f),
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = Color(0xFFDD2C00)
                                     )
                                 }
                             )

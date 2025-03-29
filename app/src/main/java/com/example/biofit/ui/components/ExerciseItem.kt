@@ -2,6 +2,7 @@ package com.example.biofit.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,15 +74,15 @@ fun OverviewExerciseCard(
     exerciseName: String,
     time: Int,
     calories: Float,
-    onClick: () -> Unit,
+    session: Int,
     standardPadding: Dp
 ) {
-    ItemCard(
-        onClick = onClick,
+    SubCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.padding(standardPadding),
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
@@ -94,19 +97,27 @@ fun OverviewExerciseCard(
 
                 Text(
                     text = "$time ${stringResource(R.string.min)}, " +
-                            "$calories ${stringResource(R.string.cal)}",
+                            "$calories ${stringResource(R.string.kcal)}",
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Icon(
-                painter = painterResource(R.drawable.ic_back),
-                contentDescription = "Extend button",
-                modifier = Modifier
-                    .size(standardPadding)
-                    .rotate(180f),
-                tint = MaterialTheme.colorScheme.onSurface
+                painter = painterResource(
+                    when (session) {
+                        0 -> R.drawable.cloud_sun_fill
+                        1 -> R.drawable.sun_max_fill
+                        else -> R.drawable.cloud_moon_fill
+                    }
+                ),
+                contentDescription = stringResource(R.string.session),
+                modifier = Modifier.size(standardPadding * 3f),
+                tint = when (session) {
+                    0 -> Color(0xFFFFAB00)
+                    1 -> Color(0xFFDD2C00)
+                    else -> Color(0xFF2962FF)
+                }
             )
         }
     }
@@ -135,7 +146,7 @@ private fun ExerciseItemDarkModePreview() {
                 exerciseName = "Exercise 1",
                 time = 30,
                 calories = 100f,
-                onClick = {},
+                session = 1,
                 standardPadding = getStandardPadding().first
             )
         }
@@ -162,7 +173,7 @@ private fun ExerciseItemPreview() {
                 exerciseName = "Exercise 1",
                 time = 30,
                 calories = 100f,
-                onClick = {},
+                session = 1,
                 standardPadding = getStandardPadding().first
             )
         }

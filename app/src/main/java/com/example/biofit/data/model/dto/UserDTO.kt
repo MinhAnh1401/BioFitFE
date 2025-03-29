@@ -56,6 +56,12 @@ data class UserDTO(
 
     fun getSubscriptionStatus(context: Context): String {
         return if (paymentStatus == "COMPLETED") "PRO" else "BASIC"
+      
+    fun getAgeInt(dateOfBirth: String?): Int {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val birthDate = LocalDate.parse(dateOfBirth, formatter)
+        val currentDate = LocalDate.now()
+        return Period.between(birthDate, currentDate).years
     }
 
     companion object {
