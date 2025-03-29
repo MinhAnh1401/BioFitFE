@@ -54,7 +54,9 @@ import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class InfoUserBirthdayActivity : ComponentActivity() {
     private var userData: UserDTO? = null
@@ -147,6 +149,8 @@ fun InfoUserBirthdayContent(
     modifier: Modifier,
     viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -187,8 +191,17 @@ fun InfoUserBirthdayContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = dateOfBirth.ifEmpty {
+                        text = if (dateOfBirth.isEmpty()) {
                             stringResource(R.string.select_date_of_birth)
+                        } else {
+                            try {
+                                val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateOfBirth)
+                                parsedDate?.let {
+                                    dateFormat.format(it)
+                                } ?: dateOfBirth
+                            } catch (e: Exception) {
+                                dateOfBirth
+                            }
                         },
                         modifier = Modifier.weight(1f),
                         color = if (dateOfBirth.isEmpty()) {
@@ -214,16 +227,32 @@ fun InfoUserBirthdayContent(
             if (showDatePicker) {
                 val context = LocalContext.current
                 val calendar = Calendar.getInstance()
+
+                val initialDate = if (dateOfBirth.isNotEmpty()) {
+                    try {
+                        val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateOfBirth)
+                        parsedDate?.let {
+                            val cal = Calendar.getInstance()
+                            cal.time = it
+                            cal
+                        } ?: calendar
+                    } catch (e: Exception) {
+                        calendar
+                    }
+                } else {
+                    calendar
+                }
+
                 DatePickerDialog(
                     context,
                     { _, selectedYear, selectedMonth, selectedDay ->
-                        val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                        val selectedDate = "$selectedYear-${String.format("%02d", selectedMonth + 1)}-${String.format("%02d", selectedDay)}"
                         viewModel.dateOfBirth.value = selectedDate // Lưu vào ViewModel
                         showDatePicker = false
                     },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
+                    initialDate.get(Calendar.YEAR),
+                    initialDate.get(Calendar.MONTH),
+                    initialDate.get(Calendar.DAY_OF_MONTH)
                 ).show()
             }
         }

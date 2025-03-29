@@ -206,23 +206,23 @@ fun SettingContent(
     dailyLogViewModel: DailyLogViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f
+    /*val height = ((userData.height ?: UserDTO.default().height) ?: 0f) / 100f*/
     dailyLogViewModel.getLatestDailyLog(context, userData.userId)
-    val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
+    /*val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
         value = if (dailyLogViewModel.memoryWeight.value != 0f) {
             dailyLogViewModel.memoryWeight.value
         } else {
             userData.weight!!
         }
-    }
+    }*/
 
-    val bmiIndex: Float? = if (height > 0.001f) {
+    /*val bmiIndex: Float? = if (height > 0.001f) {
         memoryWeight.div(height * height)
     } else {
         null
-    }
+    }*/
 
-    val roundedBmi = bmiIndex?.let {
+    /*val roundedBmi = bmiIndex?.let {
         BigDecimal(it.toDouble()).setScale(1, RoundingMode.HALF_UP).toFloat()
     } ?: 0f
 
@@ -232,7 +232,7 @@ fun SettingContent(
         bmiIndex >= 18.5f && bmiIndex < 25f -> stringResource(R.string.healthy_weight)
         bmiIndex >= 25f && bmiIndex < 30f -> stringResource(R.string.overweight)
         else -> stringResource(R.string.obese)
-    }
+    }*/
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
@@ -259,8 +259,7 @@ fun SettingContent(
         item {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(standardPadding),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(standardPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -322,7 +321,8 @@ fun SettingContent(
                         Icon(
                             painter = painterResource(R.drawable.ic_person),
                             contentDescription = stringResource(R.string.name),
-                            modifier = Modifier.size(standardPadding * 1.5f)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFF2962FF)
                         )
                     },
                     prefix = {
@@ -365,7 +365,7 @@ fun SettingContent(
                             painter = painterResource(R.drawable.figure_stand_dress_line_vertical_figure),
                             contentDescription = stringResource(R.string.gender),
                             modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = Color(0xFFC51162)
                         )
 
                         Spacer(modifier = Modifier.width(standardPadding))
@@ -442,7 +442,7 @@ fun SettingContent(
                             painter = painterResource(R.drawable.birthday_cake_fill),
                             contentDescription = stringResource(R.string.gender),
                             modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = Color(0xFF6200EA)
                         )
 
                         Spacer(modifier = Modifier.width(standardPadding))
@@ -518,7 +518,8 @@ fun SettingContent(
                         Icon(
                             painter = painterResource(R.drawable.figure_stand),
                             contentDescription = stringResource(R.string.height),
-                            modifier = Modifier.size(standardPadding * 1.5f)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFF00C853)
                         )
                     },
                     prefix = {
@@ -564,7 +565,8 @@ fun SettingContent(
                         Icon(
                             painter = painterResource(R.drawable.scalemass),
                             contentDescription = stringResource(R.string.starting_weight),
-                            modifier = Modifier.size(standardPadding * 1.5f)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFFFF6D00)
                         )
                     },
                     prefix = {
@@ -611,7 +613,8 @@ fun SettingContent(
                         Icon(
                             painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
                             contentDescription = stringResource(R.string.email),
-                            modifier = Modifier.size(standardPadding * 1.5f)
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFF00BFA5)
                         )
                     },
                     prefix = {
@@ -838,7 +841,7 @@ fun SettingContent(
             }
         }
 
-        item {
+        /*item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -982,7 +985,7 @@ fun SettingContent(
                     }
                 }
             }
-        }
+        }*/
 
         item {
             Spacer(
@@ -995,8 +998,7 @@ fun SettingContent(
     }
 }
 
-
-@Composable
+/*@Composable
 fun BMIBar(
     bmi: Float,
     standardPadding: Dp
@@ -1128,7 +1130,7 @@ fun BMIBar(
             }
         }
     }
-}
+}*/
 
 @Preview(
     device = "id:pixel",
