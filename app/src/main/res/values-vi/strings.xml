@@ -15,6 +15,8 @@
     <string name="sign_in_uppercase">ĐĂNG NHẬP</string>
     <string name="don_t_have_an_account">Bạn chưa có tài khoản?</string>
     <string name="create_account">Tạo tài khoản</string>
+    <string name="have_an_account">Bạn đã có tài khoản?</string>
+    <string name="login_account">Đăng nhập</string>
     <string name="sign_in_with_google">Đăng nhập bằng Google</string>
     <string name="sign_in_with_facebook">Đăng nhập bằng Facebook</string>
     <string name="term_of_use">Điều khoản sử dụng</string>
