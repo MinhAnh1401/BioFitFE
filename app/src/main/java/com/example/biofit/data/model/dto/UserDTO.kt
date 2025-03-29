@@ -19,7 +19,8 @@ data class UserDTO(
     val targetWeight: Float?,
     val dateOfBirth: String?,
     val avatar: String?,
-    val createdAccount: String
+    val createdAccount: String,
+    val paymentStatus: String? = "BASIC"
 ) : Parcelable {
     fun getGenderString(context: Context, gender: Int?): String {
         return when (gender) {
@@ -53,6 +54,9 @@ data class UserDTO(
         }
     }
 
+    fun getSubscriptionStatus(context: Context): String {
+        return if (paymentStatus == "COMPLETED") "PRO" else "BASIC"
+      
     fun getAgeInt(dateOfBirth: String?): Int {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val birthDate = LocalDate.parse(dateOfBirth, formatter)
@@ -72,7 +76,8 @@ data class UserDTO(
                 targetWeight = 0f,
                 dateOfBirth = "N/A",
                 avatar = "N/A",
-                createdAccount = "N/A"
+                createdAccount = "N/A",
+                paymentStatus = "BASIC"
             )
         }
     }
