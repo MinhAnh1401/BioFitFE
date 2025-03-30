@@ -5,10 +5,9 @@ import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.request.RegisterRequest
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.model.request.RegisterRequest
 import com.example.biofit.data.remote.RetrofitClient
-import com.example.biofit.ui.activity.InfoUserNameActivity
 import com.example.biofit.ui.activity.RegisterSuccessfullyActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

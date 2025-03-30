@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -47,6 +48,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
@@ -68,7 +71,6 @@ import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
-import com.example.biofit.BuildConfig
 
 
 class AIChatbotActivity : ComponentActivity() {
@@ -165,7 +167,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                     Spacer(
                         modifier = Modifier.padding(
                             bottom = WindowInsets.safeDrawing.asPaddingValues()
-                                .calculateBottomPadding() * 5
+                                .calculateBottomPadding() * 10
                                     + standardPadding
                         )
                     )
@@ -177,14 +179,23 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
             }
         }
 
+        val imeInsets = WindowInsets.ime.getBottom(LocalDensity.current)
+        val keyboardHeight = with(LocalDensity.current) { imeInsets.toDp() }
+        val bottomPadding = if (keyboardHeight > 0.dp) {
+            standardPadding * 2 // Thêm khoảng cách 16dp giữa nội dung và bàn phím
+        } else {
+            WindowInsets.safeDrawing.asPaddingValues()
+                .calculateBottomPadding()
+                .plus(standardPadding) // Khoảng cách mặc định khi bàn phím chưa mở
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     start = standardPadding,
                     end = standardPadding,
-                    bottom = WindowInsets.safeDrawing.asPaddingValues().calculateBottomPadding()
-                            + standardPadding
+                    bottom = bottomPadding
                 ),
             verticalAlignment = Alignment.Bottom
         ) {

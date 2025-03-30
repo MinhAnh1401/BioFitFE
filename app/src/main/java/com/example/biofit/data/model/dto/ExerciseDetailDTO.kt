@@ -1,8 +1,6 @@
 package com.example.biofit.data.model.dto
 
-import android.content.Context
 import android.os.Parcelable
-import com.example.biofit.R
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.biofit.R
 
-val SFProDisplay = FontFamily(Font(R.font.sf_pro_display))
+val SFProDisplay = FontFamily(Font(R.font.sf_pro_rounded_regular))
 
 val Typography = Typography(
     // Body Text Styles

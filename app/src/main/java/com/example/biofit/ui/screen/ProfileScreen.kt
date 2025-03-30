@@ -52,12 +52,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -72,6 +74,7 @@ import com.example.biofit.ui.activity.LoginActivity
 import com.example.biofit.ui.activity.SettingActivity
 import com.example.biofit.ui.activity.TOUAndPPActivity
 import com.example.biofit.ui.activity.TargetActivity
+import com.example.biofit.ui.activity.UpgradeActivity
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.SubCard
@@ -79,7 +82,6 @@ import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
-import com.example.biofit.ui.activity.UpgradeActivity
 
 
 @Composable
@@ -203,8 +205,13 @@ fun ProfileContent(
                         onOptionSelected = { option ->
                             showAvatarDialog = false
                             when (option) {
-                                context.getString(R.string.take_a_photo) -> cameraLauncher.launch(null)
-                                context.getString(R.string.choose_from_gallery) -> galleryLauncher.launch("image/*")
+                                context.getString(R.string.take_a_photo) -> cameraLauncher.launch(
+                                    null
+                                )
+
+                                context.getString(R.string.choose_from_gallery) -> galleryLauncher.launch(
+                                    "image/*"
+                                )
                             }
                         },
                         onDismissRequest = { showAvatarDialog = false },
@@ -220,16 +227,18 @@ fun ProfileContent(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = standardPadding))
+                        .padding(horizontal = standardPadding)
+                )
                 {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = userData.fullName ?: "N/A",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleSmall
                         )
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         // cập nhật pro sau khi thanh toán thành công
                         Text(
@@ -238,7 +247,16 @@ fun ProfileContent(
                                 MaterialTheme.colorScheme.primary
                             else
                                 MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                shadow = Shadow(
+                                    color = if (userData.getSubscriptionStatus(context) == "PRO")
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                    else
+                                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                                    blurRadius = 8f
+                                )
+                            ),
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .background(

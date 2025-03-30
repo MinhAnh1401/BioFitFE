@@ -1,7 +1,6 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -44,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme

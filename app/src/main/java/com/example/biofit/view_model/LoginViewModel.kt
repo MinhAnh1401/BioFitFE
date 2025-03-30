@@ -8,8 +8,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.request.LoginRequest
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.model.request.LoginRequest
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.navigation.MainActivity
 import com.google.gson.Gson
@@ -66,7 +66,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveUserData(context: Context, user: UserDTO) {
-        val sharedPreferences: SharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         val gson = Gson()

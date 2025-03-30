@@ -20,14 +20,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -38,6 +43,8 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class StartActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +97,7 @@ fun StartScreen() {
 
 @Composable
 fun StartScreenBackgroundImage() {
-    Image(
+    /*Image(
         painter = painterResource(id = R.drawable.bg_start_screen), // nguồn ảnh
         contentDescription = "Start screen background", // mô tả nội dung của ảnh
         modifier = Modifier.fillMaxSize(), // tuỳ chỉnh kích thước của hình ảnh
@@ -98,7 +105,43 @@ fun StartScreenBackgroundImage() {
         contentScale = ContentScale.FillBounds,
         // alpha = , // tuỳ chỉnh độ mờ của hình ảnh
         // colorFilter = , // tuỳ chỉnh màu sắc của hình ảnh
+    )*/
+
+    val images = listOf(
+        R.drawable.bg_start_screen1,
+        R.drawable.bg_start_screen2,
+        R.drawable.bg_start_screen3
     )
+
+    val pagerState = rememberPagerState(
+        initialPage = 500,
+        initialPageOffsetFraction = 0f,
+        pageCount = { Int.MAX_VALUE }
+    ) // Bắt đầu từ giữa danh sách
+    val coroutineScope = rememberCoroutineScope()
+
+    // Auto-scroll effect
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000) // Chuyển ảnh sau mỗi 3 giây
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            }
+        }
+    }
+
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxSize()
+    ) { page ->
+        val index = page % images.size
+        Image(
+            painter = painterResource(id = images[index]),
+            contentDescription = "Background Image $index",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+    }
 }
 
 @Composable
@@ -157,18 +200,33 @@ fun AppTitleAndDescription() {
                 // maxLines = , // tuỳ chỉnh số lượng dòng tối đa
                 // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
                 // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
-                style = MaterialTheme.typography.displaySmall, // tuỳ chỉnh kiểu chữ
+                style = MaterialTheme.typography.displaySmall.copy(
+                    shadow = Shadow(
+                        color = MaterialTheme.colorScheme.primary,
+                        blurRadius = 10f
+                    )
+                ) // tuỳ chỉnh kiểu chữ
             )
             Text(
                 text = "FIT",
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.displaySmall.copy(
+                    shadow = Shadow(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        blurRadius = 10f
+                    )
+                )
             )
         } // nội dung bên trong Row
         Text(
             text = stringResource(R.string.des_app_name),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodySmall.copy(
+                shadow = Shadow(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    blurRadius = 10f
+                )
+            )
         )
     }
 }
@@ -241,8 +299,8 @@ fun GetStartedButton(
         // modifier = Modifier, // tuỳ chỉnh kích thước và vị trí của nút
         // enabled = true, // trạng thái kích hoạt của nút (mặc định true)
         // shape = MaterialTheme.shapes.extraLarge, // hình dạng của nút
-         colors = ButtonDefaults.buttonColors(
-             containerColor = MaterialTheme.colorScheme.primary, // màu nền của nút (mặc định màu primary)
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary, // màu nền của nút (mặc định màu primary)
             // contentColor = MaterialTheme.colorScheme.onPrimary, // màu của nội dung bên trong nút (mặc định màu onPrimary)
             // disabledContainerColor: màu nền của nút khi vô hiệu hóa
             // disabledContentColor: màu của nội dung bên trong nút khi vô hiệu hóa

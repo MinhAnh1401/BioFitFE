@@ -8,11 +8,19 @@ import android.content.res.Configuration
 import android.graphics.Paint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,14 +41,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -63,11 +63,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -101,8 +104,6 @@ import com.example.biofit.ui.activity.NotificationActivity
 import com.example.biofit.ui.activity.OverviewExerciseActivity
 import com.example.biofit.ui.activity.TrackActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
-import com.example.biofit.ui.animated.AnimatedGradientText
-import com.example.biofit.ui.animated.AnimatedGradientText2
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
@@ -128,7 +129,6 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import kotlin.random.Random
 
 @Composable
 fun HomeScreen(userData: UserDTO) {
@@ -314,10 +314,12 @@ fun OverviewAndSearchBar(
             in 0..45 -> 2000f
             else -> 1500f
         }
+
         1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..30 -> 1500f
             else -> 1000f
         }
+
         else -> 0f
     }
     val nutrients = listOf(
@@ -592,7 +594,7 @@ fun OverviewAndSearchBar(
                 painter = painterResource(R.drawable.ic_back),
                 contentDescription = stringResource(R.string.ai_assistant_bionix),
                 modifier = Modifier
-                    .size(standardPadding )
+                    .size(standardPadding)
                     .rotate(180f),
                 tint = MaterialTheme.colorScheme.onBackground
             )
@@ -737,7 +739,7 @@ fun DailyMenu(
                 modifier = Modifier.size(standardPadding * 2),
                 tint = MaterialTheme.colorScheme.primary
             )
-            
+
             Text(
                 text = stringResource(R.string.track_your_daily_menu),
                 color = MaterialTheme.colorScheme.primary,
@@ -949,10 +951,12 @@ fun DailyGoals(
             in 0..45 -> 500f
             else -> 400f
         }
+
         1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..30 -> 400f
             else -> 300f
         }
+
         else -> 0f
     }
 
@@ -983,6 +987,8 @@ fun DailyGoals(
     /*val estimatedWeight by rememberSaveable {
         mutableStateOf(value = "__")
     } // Thay estimatedWeight từ database vào value*/
+
+    var showBMIInfo by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier,
@@ -1310,11 +1316,11 @@ fun DailyGoals(
 
                 WeightLineChart(weightDataState)
 
-                Column(
+                /*Column(
                     verticalArrangement = Arrangement.spacedBy(standardPadding),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    /*Row(
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -1333,7 +1339,7 @@ fun DailyGoals(
                                 tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                    }*/
+                    }
 
                     val textWithIcon = buildAnnotatedString {
                         append(stringResource(R.string.your_bmi_is) + " ")
@@ -1345,16 +1351,16 @@ fun DailyGoals(
                         ) {
                             append("$roundedBmi")
                         }
-                        append(" " + stringResource(R.string.with_a_current_weight_of) + " ")
+                        append(", ")
+                        *//*append(" " + stringResource(R.string.with_a_current_weight_of) + " ")
                         withStyle(
                             style = SpanStyle(
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold
                             )
                         ) {
-                            append("$latestWeight")
-                        }
-                        append(" " + stringResource(R.string.kg) + ", ")
+                            append("$latestWeight " + stringResource(R.string.kg) + ", ")
+                        }*//*
                         append(stringResource(R.string.you_are_classified_as) + " ")
 
                         withStyle(
@@ -1365,7 +1371,16 @@ fun DailyGoals(
                                     stringResource(R.string.overweight) -> Color(0xFFFFAB00)
                                     else -> Color(0xFFDD2C00)
                                 },
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                shadow = Shadow(
+                                    color = when (bmiCategory) {
+                                        stringResource(R.string.underweight) -> Color(0xFFAEEA00)
+                                        stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
+                                        stringResource(R.string.overweight) -> Color(0xFFFFAB00)
+                                        else -> Color(0xFFDD2C00)
+                                    },
+                                    blurRadius = standardPadding.value / 2
+                                )
                             )
                         ) {
                             append(bmiCategory.uppercase())
@@ -1397,6 +1412,7 @@ fun DailyGoals(
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.outline,
                         inlineContent = inlineContent,
+                        textAlign = TextAlign.Justify,
                         style = MaterialTheme.typography.bodySmall
                     )
 
@@ -1435,6 +1451,175 @@ fun DailyGoals(
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
+                        }
+                    }
+                }*/
+            }
+        }
+
+        SubCard(modifier = modifier) {
+            Column(
+                modifier = Modifier.padding(standardPadding),
+                verticalArrangement = Arrangement.spacedBy(standardPadding),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.bmi_index),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+
+                    IconButton(
+                        onClick = {
+                            showBMIInfo = !showBMIInfo
+                        } // Xử lý sự kiện khi người dùng nhấn icon Info
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.info_circle),
+                            contentDescription = stringResource(R.string.bmi_index),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = showBMIInfo,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.large)
+                        .shadow(
+                            elevation = 10.dp,
+                            ambientColor = MaterialTheme.colorScheme.onSurface,
+                            spotColor = MaterialTheme.colorScheme.onSurface
+                        )
+                        .background(MaterialTheme.colorScheme.surfaceContainer),
+                    enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                    exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                ) {
+                    Text(
+                        text = stringResource(R.string.bmi_des),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(standardPadding),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Justify,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+                val textWithIcon = buildAnnotatedString {
+                    append(stringResource(R.string.your_bmi_is) + " ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append("$roundedBmi")
+                    }
+                    append(", ")
+                    /*append(" " + stringResource(R.string.with_a_current_weight_of) + " ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append("$latestWeight " + stringResource(R.string.kg) + ", ")
+                    }*/
+                    append(stringResource(R.string.you_are_classified_as) + " ")
+
+                    withStyle(
+                        style = SpanStyle(
+                            color = when (bmiCategory) {
+                                stringResource(R.string.underweight) -> Color(0xFFAEEA00)
+                                stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
+                                stringResource(R.string.overweight) -> Color(0xFFFFAB00)
+                                else -> Color(0xFFDD2C00)
+                            },
+                            fontWeight = FontWeight.Bold,
+                            shadow = Shadow(
+                                color = when (bmiCategory) {
+                                    stringResource(R.string.underweight) -> Color(0xFFAEEA00)
+                                    stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
+                                    stringResource(R.string.overweight) -> Color(0xFFFFAB00)
+                                    else -> Color(0xFFDD2C00)
+                                },
+                                blurRadius = standardPadding.value / 2
+                            )
+                        )
+                    ) {
+                        append(bmiCategory.uppercase())
+                    }
+
+                    append(" ") // Thêm khoảng trắng
+                    appendInlineContent("fireIcon", "[icon]")
+                }
+
+                val inlineContent = mapOf(
+                    "fireIcon" to InlineTextContent(
+                        placeholder = Placeholder(
+                            width = 16.sp,
+                            height = 16.sp,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.flame_fill),
+                            contentDescription = stringResource(R.string.bmi_index),
+                            modifier = Modifier.size(standardPadding * 2f),
+                            tint = Color(0xFFDD2C00)
+                        )
+                    }
+                )
+
+                Text(
+                    text = textWithIcon,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.outline,
+                    inlineContent = inlineContent,
+                    textAlign = TextAlign.Justify,
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                BMIBar(
+                    bmi = roundedBmi,
+                    standardPadding = standardPadding
+                )
+
+                MainCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = standardPadding)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(standardPadding),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.checkmark_circle_fill),
+                                contentDescription = "Check Circle Icon",
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.inversePrimary,
+                            )
+
+                            Text(
+                                text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
+                                        estimatedWeight + " " +
+                                        stringResource(R.string.kg),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.labelSmall
+                            )
                         }
                     }
                 }
@@ -1715,9 +1900,17 @@ fun BMIBar(
             )
 
             Icon(
-                imageVector = Icons.Default.ArrowDropDown,
+                painter = painterResource(R.drawable.arrowtriangle_down_fill),
                 contentDescription = stringResource(R.string.bmi_index),
-                tint = Color.Red
+                modifier = Modifier
+                    .size(standardPadding)
+                    .padding(bottom = standardPadding / 4),
+                tint = when (bmi) {
+                    in 0f..18.5f -> Color(0xFFAEEA00)
+                    in 18.5f..24.9f -> Color(0xFF00C853)
+                    in 24.9f..29.9f -> Color(0xFFFFAB00)
+                    else -> Color(0xFFDD2C00)
+                }
             )
 
             Spacer(
@@ -1733,7 +1926,7 @@ fun BMIBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = standardPadding),
+                .padding(horizontal = standardPadding / 4),
             verticalAlignment = Alignment.CenterVertically
         ) {
             var accumulatedWeight = 0f

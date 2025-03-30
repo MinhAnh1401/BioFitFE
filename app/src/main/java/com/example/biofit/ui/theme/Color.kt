@@ -19,7 +19,7 @@ val LightOnErrorContainer = Color(0xFF93000A)
 val LightOnError = Color(0xFFFFFFFF)
 
 val DarkPrimary = Color(0xFF1E6E3A)
-val DarkOnPrimary = Color(0xFFB8E6C0)
+val DarkOnPrimary = Color(0xFFFFFFFF)
 val DarkPrimaryContainer = Color(0xFF144D29)
 val DarkOnPrimaryContainer = Color(0xFFB0F2C2)
 val DarkInversePrimary = Color(0xFF34A853)

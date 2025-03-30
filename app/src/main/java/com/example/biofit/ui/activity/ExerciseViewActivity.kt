@@ -27,7 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -88,6 +87,7 @@ data class Exercise(
     val effect: String,
     val state: Boolean
 )
+
 @Composable
 fun ExerciseViewScreen(
     exerciseDTO: ExerciseDTO,
@@ -327,7 +327,7 @@ fun ExerciseViewContent(
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -339,31 +339,31 @@ fun ExerciseViewContent(
 
                     Text(
                         text = "${stringResource(R.string.level)}: ${exercise.level}",
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = Color(0xFFFFAB00),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
-                        contentDescription = stringResource(R.string.level),
+                        contentDescription = stringResource(R.string.intensity),
                         modifier = Modifier.size(standardPadding * 1.5f),
                         tint = Color(0xFFDD2C00)
                     )
 
                     Text(
                         text = "${stringResource(R.string.intensity)}: ${exercise.intensity}",
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = Color(0xFFDD2C00),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -385,18 +385,18 @@ fun ExerciseViewContent(
                                 } else {
                                     ""
                                 },
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = Color(0xFF00C853),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_loaded_cal),
-                        contentDescription = stringResource(R.string.level),
+                        contentDescription = stringResource(R.string.calories),
                         modifier = Modifier.size(standardPadding * 1.5f),
                         tint = Color(0xFFFF6D00)
                     )
@@ -407,7 +407,7 @@ fun ExerciseViewContent(
                                 R.string.kcal
                             )
                         }",
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = Color(0xFFFF6D00),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }

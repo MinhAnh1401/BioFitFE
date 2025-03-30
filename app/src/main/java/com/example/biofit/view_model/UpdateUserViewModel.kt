@@ -7,8 +7,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.request.UpdateUserRequest
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.model.request.UpdateUserRequest
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.ui.screen.base64ToBitmap
 import com.google.gson.Gson
@@ -28,6 +28,7 @@ class UpdateUserViewModel : ViewModel() {
     var height = mutableStateOf<Float?>(null)
     var weight = mutableStateOf<Float?>(null)
     var targetWeight = mutableStateOf<Float?>(null)
+
     /*var avatar = mutableStateOf<String?>(null)*/
     var avatarBitmap = mutableStateOf<Bitmap?>(null) // Thay vì String, lưu Bitmap
     var updatedState = mutableStateOf<Boolean?>(null)
@@ -85,42 +86,47 @@ class UpdateUserViewModel : ViewModel() {
         val userRequestBody = Gson().toJson(updateUserRequest)
             .toRequestBody("application/json".toMediaTypeOrNull())
 
-        apiService.updateUser(userId, avatarPart, /*updateUserRequest*/ userRequestBody).enqueue(object : Callback<UserDTO> {
-            override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
-                if (response.isSuccessful) {
-                    val user = response.body()
-                    updatedState.value = true
+        apiService.updateUser(userId, avatarPart, /*updateUserRequest*/ userRequestBody)
+            .enqueue(object : Callback<UserDTO> {
+                override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
+                    if (response.isSuccessful) {
+                        val user = response.body()
+                        updatedState.value = true
 
-                    user?.let { updatedUser ->
-                        fullName.value = updatedUser.fullName
-                        email.value = updatedUser.email
-                        gender.value = updatedUser.gender
-                        dateOfBirth.value = updatedUser.dateOfBirth
-                        height.value = updatedUser.height
-                        weight.value = updatedUser.weight
-                        targetWeight.value = updatedUser.targetWeight
-                        /*avatar.value = updatedUser.avatar*/
-                        avatarBitmap.value = base64ToBitmap(updatedUser.avatar)
-                        Log.d("UpdateUser", "Updated avatar Base64: ${updatedUser.avatar?.take(100)}...")
+                        user?.let { updatedUser ->
+                            fullName.value = updatedUser.fullName
+                            email.value = updatedUser.email
+                            gender.value = updatedUser.gender
+                            dateOfBirth.value = updatedUser.dateOfBirth
+                            height.value = updatedUser.height
+                            weight.value = updatedUser.weight
+                            targetWeight.value = updatedUser.targetWeight
+                            /*avatar.value = updatedUser.avatar*/
+                            avatarBitmap.value = base64ToBitmap(updatedUser.avatar)
+                            Log.d(
+                                "UpdateUser",
+                                "Updated avatar Base64: ${updatedUser.avatar?.take(100)}..."
+                            )
 
-                        loginViewModel.saveUserData(context, updatedUser)
+                            loginViewModel.saveUserData(context, updatedUser)
 
-                        onSuccess()
+                            onSuccess()
+                        }
+                    } else if (response.code() == 403) {
+                        updatedState.value = false
+                        updatedMessage.value = context.getString(R.string.email_already_exists)
+                    } else {
+                        updatedState.value = false
+                        updatedMessage.value = "Failed to update user"
                     }
-                } else if (response.code() == 403) {
-                    updatedState.value = false
-                    updatedMessage.value = context.getString(R.string.email_already_exists)
-                } else {
-                    updatedState.value = false
-                    updatedMessage.value = "Failed to update user"
                 }
-            }
 
-            override fun onFailure(call: Call<UserDTO>, t: Throwable) {
-                updatedState.value = false
-                updatedMessage.value = context.getString(R.string.connection_error_please_try_again)
-            }
-        })
+                override fun onFailure(call: Call<UserDTO>, t: Throwable) {
+                    updatedState.value = false
+                    updatedMessage.value =
+                        context.getString(R.string.connection_error_please_try_again)
+                }
+            })
     }
 
     private fun validateEmail(context: Context, email: String): String? {

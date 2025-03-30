@@ -1,7 +1,6 @@
 package com.example.biofit.ui.screen
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +43,6 @@ import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
-import com.example.biofit.view_model.LoginViewModel
 import java.math.RoundingMode
 
 @Composable
@@ -99,10 +96,12 @@ fun OverviewDayContent(
             in 0..45 -> 2000f
             else -> 1500f
         }
+
         1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..30 -> 1500f
             else -> 1000f
         }
+
         else -> 0f
     }
     val dailyCaloriesStatistics = listOf(

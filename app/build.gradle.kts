@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.generativeai)
     implementation (libs.bcrypt)
+    implementation ("com.google.accompanist:accompanist-pager:0.31.1-alpha")
 
     // Google
     implementation("com.google.firebase:firebase-auth-ktx:23.2.0")

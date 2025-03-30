@@ -84,13 +84,16 @@ fun OverviewWeekContent(
             in 0..45 -> 2000f
             else -> 1500f
         }
+
         1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..30 -> 1500f
             else -> 1000f
         }
+
         else -> 0f
     }
-    val targetCaloriesWeek = targetCalories * 7 // Lấy tổng lượng calo mục tiêu từ thứ 2 đến chủ nhật
+    val targetCaloriesWeek =
+        targetCalories * 7 // Lấy tổng lượng calo mục tiêu từ thứ 2 đến chủ nhật
     val targetCaloriesDay = targetCalories // Tính lượng calo mục tiêu trung bình của 1 ngày
     val actualCaloriesWeek =
         weeklyData.sumOf { it.calories } // Lấy tổng lượng calo thực tế từ thứ 2 đến chủ nhật

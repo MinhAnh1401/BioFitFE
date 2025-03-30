@@ -21,18 +21,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -195,7 +189,10 @@ fun InfoUserBirthdayContent(
                             stringResource(R.string.select_date_of_birth)
                         } else {
                             try {
-                                val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateOfBirth)
+                                val parsedDate =
+                                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(
+                                        dateOfBirth
+                                    )
                                 parsedDate?.let {
                                     dateFormat.format(it)
                                 } ?: dateOfBirth
@@ -230,7 +227,8 @@ fun InfoUserBirthdayContent(
 
                 val initialDate = if (dateOfBirth.isNotEmpty()) {
                     try {
-                        val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateOfBirth)
+                        val parsedDate =
+                            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateOfBirth)
                         parsedDate?.let {
                             val cal = Calendar.getInstance()
                             cal.time = it
@@ -246,7 +244,12 @@ fun InfoUserBirthdayContent(
                 DatePickerDialog(
                     context,
                     { _, selectedYear, selectedMonth, selectedDay ->
-                        val selectedDate = "$selectedYear-${String.format("%02d", selectedMonth + 1)}-${String.format("%02d", selectedDay)}"
+                        val selectedDate = "$selectedYear-${
+                            String.format(
+                                "%02d",
+                                selectedMonth + 1
+                            )
+                        }-${String.format("%02d", selectedDay)}"
                         viewModel.dateOfBirth.value = selectedDate // Lưu vào ViewModel
                         showDatePicker = false
                     },

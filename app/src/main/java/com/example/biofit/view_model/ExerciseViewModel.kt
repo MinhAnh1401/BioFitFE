@@ -13,7 +13,6 @@ import com.example.biofit.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,7 +41,10 @@ class ExerciseViewModel : ViewModel() {
         val apiService = RetrofitClient.instance
 
         apiService.getExercises(userId).enqueue(object : Callback<List<ExerciseDTO>> {
-            override fun onResponse(call: Call<List<ExerciseDTO>>, response: Response<List<ExerciseDTO>>) {
+            override fun onResponse(
+                call: Call<List<ExerciseDTO>>,
+                response: Response<List<ExerciseDTO>>
+            ) {
                 if (response.isSuccessful) {
                     _exerciseList.value = response.body() ?: emptyList()
                     Log.d("ExerciseViewModel", "API Response: ${response.body()}")
@@ -62,7 +64,10 @@ class ExerciseViewModel : ViewModel() {
     val exerciseDetail: StateFlow<ExerciseDetailDTO?> = _exerciseDetail.asStateFlow()
 
     fun fetchExerciseDetails(exerciseId: Long, exerciseGoal: Int, intensity: Int) {
-        Log.d("ExerciseViewModel", "Fetching details for exerciseId: $exerciseId, exerciseGoal: $exerciseGoal, intensity: $intensity")
+        Log.d(
+            "ExerciseViewModel",
+            "Fetching details for exerciseId: $exerciseId, exerciseGoal: $exerciseGoal, intensity: $intensity"
+        )
         val apiService = RetrofitClient.instance
 
         apiService.getExerciseByGoalAndIntensity(exerciseId, exerciseGoal, intensity)
@@ -70,7 +75,8 @@ class ExerciseViewModel : ViewModel() {
                 override fun onResponse(call: Call<ExerciseDTO>, response: Response<ExerciseDTO>) {
                     if (response.isSuccessful) {
                         response.body()?.let { exercise ->
-                            val detail = exercise.detailList.firstOrNull() // ✅ Lấy detail đầu tiên nếu có
+                            val detail =
+                                exercise.detailList.firstOrNull() // ✅ Lấy detail đầu tiên nếu có
                             _exerciseDetail.value = detail // ✅ Cập nhật dữ liệu
                         }
                     } else {
@@ -169,7 +175,10 @@ class ExerciseViewModel : ViewModel() {
         val apiService = RetrofitClient.instance
 
         apiService.createExerciseDone(exerciseDoneDTO).enqueue(object : Callback<ExerciseDoneDTO> {
-            override fun onResponse(call: Call<ExerciseDoneDTO>, response: Response<ExerciseDoneDTO>) {
+            override fun onResponse(
+                call: Call<ExerciseDoneDTO>,
+                response: Response<ExerciseDoneDTO>
+            ) {
                 if (response.isSuccessful) {
                     /*_createdExercise.value = response.body()
                     Log.d("ExerciseViewModel", "Exercise created: ${response.body()}")*/
@@ -212,7 +221,8 @@ class ExerciseViewModel : ViewModel() {
     }*/
 
     private val _overviewExerciseList = MutableStateFlow<List<OverviewExerciseDTO>>(emptyList())
-    val overviewExerciseList: StateFlow<List<OverviewExerciseDTO>> = _overviewExerciseList.asStateFlow()
+    val overviewExerciseList: StateFlow<List<OverviewExerciseDTO>> =
+        _overviewExerciseList.asStateFlow()
 
     fun fetchOverviewExercises(userId: Long, startDate: String, endDate: String) {
         RetrofitClient.instance.getOverviewExercises(userId, startDate, endDate)
@@ -247,7 +257,10 @@ class ExerciseViewModel : ViewModel() {
                     _burnedCalories.postValue(calories)
                     Log.d("ExerciseViewModel", "Burned calories today: $calories")
                 } else {
-                    Log.e("ExerciseViewModel", "API Error: ${response.code()} - ${response.message()}")
+                    Log.e(
+                        "ExerciseViewModel",
+                        "API Error: ${response.code()} - ${response.message()}"
+                    )
                 }
             }
 

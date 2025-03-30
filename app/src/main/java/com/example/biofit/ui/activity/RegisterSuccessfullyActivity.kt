@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,12 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,9 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.dto.ExerciseDTO
-import com.example.biofit.data.model.dto.ExerciseDetailDTO
-import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
@@ -76,7 +66,7 @@ fun RegisterSuccessfullyContent(
     standardPadding: Dp,
     exerciseViewModel: ExerciseViewModel = viewModel()
 ) {
-    val context = LocalContext.current
+    /*val context = LocalContext.current
     val userId = UserSharedPrefsHelper.getUserId(context)
     val baseExercise = listOf(
         ExerciseDTO(0L, userId, "Pull-ups", listOf(ExerciseDetailDTO(0L, 0L, 0, 0, 5f, 30f))),
@@ -116,7 +106,7 @@ fun RegisterSuccessfullyContent(
     )
     baseExercise.forEach { exercise ->
         exerciseViewModel.createExercise(exercise)
-    }
+    }*/
 
     Column(
         modifier = Modifier

@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ExerciseDoneDTO (
+data class ExerciseDoneDTO(
     val exerciseDoneId: Long,
     val exerciseDetailId: Long,
     val date: String,

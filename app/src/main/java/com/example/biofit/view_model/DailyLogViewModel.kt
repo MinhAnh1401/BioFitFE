@@ -251,7 +251,10 @@ class DailyLogViewModel : ViewModel() {
         if (cachedLog != null && cachedLog.userId == userId) {
             memoryWeight.value = cachedLog.weight
             memoryWater.value = cachedLog.water
-            Log.d("Memory Water Loaded", "Loaded from SharedPrefs: ${memoryWater.value}") // 🛠 Kiểm tra lại giá trị
+            Log.d(
+                "Memory Water Loaded",
+                "Loaded from SharedPrefs: ${memoryWater.value}"
+            ) // 🛠 Kiểm tra lại giá trị
         }
 
         val apiService = RetrofitClient.instance
@@ -264,7 +267,10 @@ class DailyLogViewModel : ViewModel() {
                     memoryWeight.value = dailyLog?.weight ?: 0f
                     memoryWater.value = dailyLog?.water ?: 0f
 
-                    Log.d("Memory Water API", "Loaded from API: ${memoryWater.value}") // 🛠 Kiểm tra giá trị từ API
+                    Log.d(
+                        "Memory Water API",
+                        "Loaded from API: ${memoryWater.value}"
+                    ) // 🛠 Kiểm tra giá trị từ API
 
                     dailyLog?.let {
                         DailyLogSharedPrefsHelper.saveDailyLog(context, it)
