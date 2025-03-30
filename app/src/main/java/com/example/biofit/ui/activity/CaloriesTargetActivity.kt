@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -95,8 +96,7 @@ fun CaloriesTargetScreen() {
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -131,30 +131,24 @@ fun CaloriesTargetContent(
                 Text(
                     text = stringResource(R.string.daily_calorie_intake),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 OutlinedTextField(
                     value = calorieIntake,
                     onValueChange = { calorieIntake = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
+                    textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.End
                     ),
                     placeholder = {
                         Text(
                             text = stringResource(R.string.enter_calorie_intake),
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.bodySmall
+                            textAlign = TextAlign.End
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.calorie_intake),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.calorie_intake)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next
@@ -185,7 +179,7 @@ fun CaloriesTargetContent(
                 Text(
                     text = stringResource(R.string.macronutrient_balance),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 listMacronutrientBalanceTextFields.forEach { (percentage, title) ->
@@ -193,21 +187,11 @@ fun CaloriesTargetContent(
                         value = percentage.value,
                         onValueChange = { percentage.value = it },
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
+                        textStyle = LocalTextStyle.current.copy(
                             textAlign = TextAlign.End
                         ),
-                        prefix = {
-                            Text(
-                                text = stringResource(title),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = stringResource(R.string.percentage),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        prefix = { Text(text = stringResource(title)) },
+                        suffix = { Text(text = stringResource(R.string.percentage)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = if (title == R.string.fat) {
@@ -235,7 +219,7 @@ fun CaloriesTargetContent(
                 Text(
                     text = stringResource(R.string.total_macro_percentage),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Row(
@@ -245,13 +229,13 @@ fun CaloriesTargetContent(
                         text = stringResource(R.string.macro_ratio_will_always_be_100),
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.outline,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.titleSmall
                     )
 
                     Text(
                         text = "100%",
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
             }

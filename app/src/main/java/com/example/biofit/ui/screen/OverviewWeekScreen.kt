@@ -125,7 +125,7 @@ fun OverviewWeekContent(
             Text(
                 text = stringResource(R.string.average_calorie_count),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
 
             BarChart(
@@ -170,7 +170,7 @@ fun OverviewWeekContent(
             Text(
                 text = stringResource(R.string.average_macro_count),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
 
             StackedBarChart(
@@ -204,7 +204,7 @@ fun OverviewWeekContent(
                             Text(
                                 text = "$title ($value g / $targetValue g)",
                                 color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
 

@@ -195,18 +195,8 @@ fun InfoUserTargetContent(
                         modifier = Modifier.size(standardPadding * 1.5f)
                     )
                 },
-                prefix = {
-                    Text(
-                        text = stringResource(R.string.target),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }, // tiền tố văn bản (mặc định null)
-                suffix = {
-                    Text(
-                        text = stringResource(R.string.kg),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }, // hậu tố văn bản
+                prefix = { Text(text = stringResource(R.string.target)) }, // tiền tố văn bản (mặc định null)
+                suffix = { Text(text = stringResource(R.string.kg)) }, // hậu tố văn bản
                 supportingText = {
                     Text(
                         text = stringResource(R.string.your_best_weight_is_estimated_to_be) +

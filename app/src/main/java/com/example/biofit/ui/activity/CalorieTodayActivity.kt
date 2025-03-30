@@ -118,7 +118,7 @@ fun CalorieTodayContent(
                 Text(
                     text = "dd/mm",
                     color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.titleSmall
                 )
 
                 Row(
@@ -135,7 +135,7 @@ fun CalorieTodayContent(
                                 Text(
                                     text = stringResource(title),
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleSmall
+                                    style = MaterialTheme.typography.headlineSmall
                                 )
 
                                 Text(
@@ -147,7 +147,7 @@ fun CalorieTodayContent(
                                 Text(
                                     text = stringResource(R.string.kcal),
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodySmall
+                                    style = MaterialTheme.typography.titleSmall
                                 )
                             }
                         }
@@ -164,7 +164,7 @@ fun CalorieTodayContent(
                         Text(
                             text = stringResource(R.string.workout),
                             color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.headlineSmall
                         )
 
                         Text(
@@ -176,7 +176,7 @@ fun CalorieTodayContent(
                         Text(
                             text = stringResource(R.string.min),
                             color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                 }

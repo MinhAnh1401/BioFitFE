@@ -123,9 +123,7 @@ fun BottomBar(
                             } else {
                                 MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                             },
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = standardPadding.value.sp / 1.4f
-                            )
+                            style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }

@@ -194,14 +194,14 @@ fun UpdateWeightContent(
             Text(
                 text = stringResource(R.string.current_weight),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.displaySmall
             )
 
             Text(
                 text = stringResource(R.string.target_weight) + " $targetWeight" +
                         stringResource(R.string.kg),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.titleSmall
             )
         }
 

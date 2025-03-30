@@ -248,15 +248,14 @@ fun ExerciseViewContent(
                             if (!startButtonState) R.string.start
                             else if (!pauseButtonState) R.string.pause
                             else R.string.resume
-                        ),
-                        style = MaterialTheme.typography.labelLarge
+                        )
                     )
                 }
             } else {
                 Text(
                     text = stringResource(R.string.congratulations_you_have_completed),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 val exerciseDone = ExerciseDoneDTO.default().copy(
@@ -284,10 +283,7 @@ fun ExerciseViewContent(
                         contentColor = MaterialTheme.colorScheme.onError
                     )
                 ) {
-                    Text(
-                        text = stringResource(R.string.stop),
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                    Text(text = stringResource(R.string.stop))
                 }
             }
         }
@@ -304,13 +300,13 @@ fun ExerciseViewContent(
                 Text(
                     text = stringResource(R.string.guide),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 Text(
                     text = exercise.guide,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -323,7 +319,7 @@ fun ExerciseViewContent(
                 Text(
                     text = stringResource(R.string.detail),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 Row(
@@ -333,14 +329,14 @@ fun ExerciseViewContent(
                     Icon(
                         painter = painterResource(R.drawable.decrease_quotelevel),
                         contentDescription = stringResource(R.string.level),
-                        modifier = Modifier.size(standardPadding * 1.5f),
+                        modifier = Modifier.size(standardPadding),
                         tint = Color(0xFFFFAB00)
                     )
 
                     Text(
                         text = "${stringResource(R.string.level)}: ${exercise.level}",
                         color = Color(0xFFFFAB00),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
@@ -351,14 +347,14 @@ fun ExerciseViewContent(
                     Icon(
                         painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
                         contentDescription = stringResource(R.string.intensity),
-                        modifier = Modifier.size(standardPadding * 1.5f),
+                        modifier = Modifier.size(standardPadding),
                         tint = Color(0xFFDD2C00)
                     )
 
                     Text(
                         text = "${stringResource(R.string.intensity)}: ${exercise.intensity}",
                         color = Color(0xFFDD2C00),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
@@ -369,7 +365,7 @@ fun ExerciseViewContent(
                     Icon(
                         painter = painterResource(R.drawable.timer),
                         contentDescription = stringResource(R.string.level),
-                        modifier = Modifier.size(standardPadding * 1.5f),
+                        modifier = Modifier.size(standardPadding),
                         tint = Color(0xFF00C853)
                     )
 
@@ -386,7 +382,7 @@ fun ExerciseViewContent(
                                     ""
                                 },
                         color = Color(0xFF00C853),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
@@ -397,7 +393,7 @@ fun ExerciseViewContent(
                     Icon(
                         painter = painterResource(R.drawable.ic_loaded_cal),
                         contentDescription = stringResource(R.string.calories),
-                        modifier = Modifier.size(standardPadding * 1.5f),
+                        modifier = Modifier.size(standardPadding),
                         tint = Color(0xFFFF6D00)
                     )
 
@@ -408,7 +404,7 @@ fun ExerciseViewContent(
                             )
                         }",
                         color = Color(0xFFFF6D00),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
@@ -422,13 +418,13 @@ fun ExerciseViewContent(
                 Text(
                     text = stringResource(R.string.effect),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 Text(
                     text = exercise.effect,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

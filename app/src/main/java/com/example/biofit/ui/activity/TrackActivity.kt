@@ -238,8 +238,7 @@ fun TrackContent(
         ) {
             Text(
                 text = stringResource(R.string.add_food),
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.labelLarge
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
 
@@ -328,7 +327,7 @@ fun NutritionalComposition(
         Text(
             text = stringResource(R.string.nutritional_composition),
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleMedium
         )
 
         Row(
@@ -416,7 +415,7 @@ fun MenuForSession(
         Text(
             text = "${stringResource(R.string.menu_for)} ${stringResource(meal).lowercase()}",
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleMedium
         )
 
         Column(

@@ -80,7 +80,7 @@ fun KnowledgeScreen() {
                     text = stringResource(R.string.nutritional_knowledge),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 IconButton(
@@ -141,7 +141,7 @@ fun KnowledgeContent(
                     Text(
                         text = stringResource(R.string.nutrition_and_care),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
 
@@ -207,7 +207,7 @@ fun KnowledgeContent(
                     Text(
                         text = stringResource(R.string.exercise),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
 
@@ -260,7 +260,7 @@ fun KnowledgeContent(
                     Text(
                         text = stringResource(R.string.article),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
 

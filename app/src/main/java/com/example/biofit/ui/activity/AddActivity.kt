@@ -136,7 +136,17 @@ fun AddScreen(initialSelectedOption: Int) {
                         ) {
                             filteredOptions.forEach { selection ->
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(selection)) },
+                                    text = {
+                                        Text(
+                                            text = stringResource(id = selection),
+                                            color = when (selection) {
+                                                R.string.morning -> Color(0xFFFFAB00)
+                                                R.string.afternoon -> Color(0xFFDD2C00)
+                                                R.string.evening -> Color(0xFF2962FF)
+                                                else -> Color(0xFF00BFA5)
+                                            }
+                                        )
+                                    },
                                     onClick = {
                                         selectedOption = selection
                                         expanded = false
@@ -215,13 +225,7 @@ fun AddContent(
                 elevation = 6.dp,
                 shape = MaterialTheme.shapes.large
             ),
-        textStyle = MaterialTheme.typography.bodySmall,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.search),
-                style = MaterialTheme.typography.bodySmall
-            )
-        },
+        placeholder = { Text(text = stringResource(id = R.string.search)) },
         trailingIcon = {
             IconButton(
                 onClick = { TODO() }
@@ -442,8 +446,7 @@ fun EmptyAddScreen(
 
                     Text(
                         text = stringResource(R.string.create_new),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodySmall
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }

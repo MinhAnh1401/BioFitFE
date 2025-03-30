@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -166,7 +167,7 @@ fun TargetContent(
                 Text(
                     text = stringResource(R.string.weight),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 ItemCard(
@@ -193,8 +194,7 @@ fun TargetContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showGoalDialog = true }) {
@@ -231,21 +231,9 @@ fun TargetContent(
                     value = protein,
                     onValueChange = { protein = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.protein),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.percentage),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                    prefix = { Text(text = stringResource(R.string.protein)) },
+                    suffix = { Text(text = stringResource(R.string.percentage)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next
@@ -261,21 +249,9 @@ fun TargetContent(
                     value = carb,
                     onValueChange = { carb = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.carbohydrate),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.percentage),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                    prefix = { Text(text = stringResource(R.string.carbohydrate)) },
+                    suffix = { Text(text = stringResource(R.string.percentage)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next
@@ -317,8 +293,7 @@ fun TargetContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showWeeklyGoalDialog = true }) {
@@ -397,8 +372,7 @@ fun TargetContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showIntensityOfExerciseDialog = true }) {
@@ -442,7 +416,7 @@ fun TargetContent(
                 Text(
                     text = stringResource(R.string.nutrition_target),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 nutritionTargetList.forEach { title ->
@@ -455,8 +429,7 @@ fun TargetContent(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = standardPadding),
-                            color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.bodySmall
+                            color = MaterialTheme.colorScheme.outline
                         )
 
                         IconButton(
@@ -500,28 +473,16 @@ fun TargetContent(
                 Text(
                     text = stringResource(R.string.exercise) + "*",
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 OutlinedTextField(
                     value = caloriesDuringExercise,
                     onValueChange = { caloriesDuringExercise = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.calories_during_exercise),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.kcal),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                    prefix = { Text(text = stringResource(R.string.calories_during_exercise)) },
+                    suffix = { Text(text = stringResource(R.string.kcal)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next

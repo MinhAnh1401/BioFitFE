@@ -100,7 +100,7 @@ fun CalendarSelector(
                         } else {
                             MaterialTheme.colorScheme.outline
                         },
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.titleSmall
                     )
 
                     Text(
@@ -110,7 +110,7 @@ fun CalendarSelector(
                         } else {
                             MaterialTheme.colorScheme.outline
                         },
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
             }

@@ -157,10 +157,10 @@ fun MainScreen(userData: UserDTO) {
     val navController = rememberNavController()
     var showPopup by remember { mutableStateOf(false) }
 
-    val home = stringResource(R.string.home)
-    val plan = stringResource(R.string.plan)
-    val knowledge = stringResource(R.string.knowledge)
-    val profile = stringResource(R.string.profile)
+    val home = stringResource(id = R.string.home)
+    val plan = stringResource(id = R.string.plan)
+    val knowledge = stringResource(id = R.string.knowledge)
+    val profile = stringResource(id = R.string.profile)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -258,7 +258,7 @@ fun CongratulationsDialog(onDismiss: () -> Unit, onLogin: () -> Unit) {
         )
     ) {
         Surface(
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
@@ -281,7 +281,7 @@ fun CongratulationsDialog(onDismiss: () -> Unit, onLogin: () -> Unit) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Text(
-                    text = stringResource(R.string.congratulations_dialog),
+                    text = stringResource(id = R.string.congratulations_dialog),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -291,7 +291,7 @@ fun CongratulationsDialog(onDismiss: () -> Unit, onLogin: () -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = stringResource(R.string.content_dialog),
+                    text = stringResource(id = R.string.content_dialog),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center

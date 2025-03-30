@@ -63,8 +63,7 @@ fun ActionPopup(
 
     val itemPopupList = listOf(
         Pair(R.drawable.figure_strengthtraining_traditional, R.string.exercise),
-        Pair(R.drawable.scalemass, R.string.weight),
-        /*Pair(R.drawable.ic_drink_water, R.string.drinking_water)*/
+        Pair(R.drawable.scalemass, R.string.weight)
     )
     val sessionPopupList = listOf(
         Triple(R.drawable.cloud_sun_fill, R.string.morning, Color(0xFFFFAB00)),
@@ -72,8 +71,6 @@ fun ActionPopup(
         Triple(R.drawable.cloud_moon_fill, R.string.evening, Color(0xFF2962FF)),
         Triple(R.drawable.circle_hexagongrid_fill, R.string.snack, Color(0xFF00BFA5))
     )
-
-    /*var drinkWaterPopupState by rememberSaveable { mutableStateOf(false) }*/
 
     Row(
         modifier = Modifier
@@ -89,7 +86,6 @@ fun ActionPopup(
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            /*if (!drinkWaterPopupState) {*/
             Row(
                 modifier = Modifier.padding(
                     top = standardPadding,
@@ -117,33 +113,11 @@ fun ActionPopup(
                                                 Intent(it, UpdateWeightActivity::class.java)
                                             it.startActivity(intent)
                                         }
-
-                                    /*R.string.drinking_water ->
-                                        drinkWaterPopupState = true*/
                                 }
-
-                                /*if (title != R.string.drinking_water) {
-                                    onDismissPopup()
-                                }*/
-
                                 onDismissPopup()
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        /*Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(standardPadding / 2)
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                    shape = MaterialTheme.shapes.large
-                                ),
-                            shape = MaterialTheme.shapes.large,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            )
-                        )*/
                         MainCard(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -175,7 +149,7 @@ fun ActionPopup(
                                 ),
                             color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
@@ -231,7 +205,7 @@ fun ActionPopup(
                             text = stringResource(R.string.ai_assistant_bionix),
                             color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
@@ -267,20 +241,6 @@ fun ActionPopup(
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        /*Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(standardPadding / 2)
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                    shape = MaterialTheme.shapes.large
-                                ),
-                            shape = MaterialTheme.shapes.large,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            )
-                        )*/
                         SubCard(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -312,197 +272,11 @@ fun ActionPopup(
                                 ),
                             color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
             }
-            /*} else {
-                val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                val targetWater = 2f
-                dailyLogViewModel.getLatestDailyLog(context, userData.userId)
-                val memoryWater by produceState(
-                    initialValue = 0f,
-                    key1 = dailyLogViewModel.memoryWater
-                ) {
-                    value = dailyLogViewModel.memoryWater.value
-                }
-                val needWater = targetWater - memoryWater
-                LaunchedEffect(Unit) {
-                    if (dailyLogViewModel.water.value == null) {
-                        dailyLogViewModel.water.value = memoryWater
-                    }
-                }
-
-                var currentWater by rememberSaveable { mutableFloatStateOf(0f) }
-
-                Column(
-                    modifier = Modifier.padding(
-                        top = standardPadding / 2,
-                        start = standardPadding / 2,
-                        end = standardPadding / 2
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.drinking_water),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(standardPadding),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-
-                    Text(
-                        text = if (DailyLogSharedPrefsHelper.getDailyLog(context)?.date != today) {
-                            stringResource(R.string.you_need_to_drink_another) +
-                                    " $targetWater " +
-                                    stringResource(R.string.l_of_water_to_complete_your_goal)
-                        } else {
-                            if (memoryWater < targetWater) {
-                                stringResource(R.string.you_need_to_drink_another) +
-                                        " $needWater " +
-                                        stringResource(R.string.l_of_water_to_complete_your_goal)
-                            } else {
-                                stringResource(R.string.congratulations_on_completing_your_water_drinking_goal_today)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                start = standardPadding,
-                                end = standardPadding,
-                                bottom = standardPadding
-                            ),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
-
-                Column(
-                    modifier = Modifier.padding(
-                        start = standardPadding / 2,
-                        end = standardPadding / 2,
-                        bottom = standardPadding / 2
-                    ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = {
-                                val waterQuantity = currentWater
-                                if (waterQuantity > 0) {
-                                    currentWater = BigDecimal(currentWater.toDouble())
-                                        .subtract(BigDecimal(0.1))
-                                        .setScale(1, RoundingMode.HALF_UP)
-                                        .toFloat()
-                                }
-                            },
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_less_update_weight),
-                                contentDescription = stringResource(R.string.drinking_water),
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-
-                        OutlinedTextField(
-                            value = currentWater.toString(),
-                            onValueChange = { input ->
-                                currentWater = input.toFloat()
-                            },
-                            modifier = Modifier
-                                .widthIn(min = 10.dp, max = standardPadding * 10)
-                                .width(IntrinsicSize.Min),
-                            textStyle = MaterialTheme.typography.displaySmall,
-                            suffix = {
-                                Text(
-                                    text = "L",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.displaySmall
-                                )
-                            },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            keyboardActions = KeyboardActions(
-                                onDone = { TODO() },
-                                onGo = { TODO() },
-                                onNext = { TODO() },
-                                onPrevious = { TODO() },
-                                onSearch = { TODO() },
-                                onSend = { TODO() }
-                            ),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent
-                            )
-                        )
-
-                        IconButton(
-                            onClick = {
-                                currentWater = BigDecimal(currentWater.toDouble())
-                                    .add(BigDecimal(0.1))
-                                    .setScale(1, RoundingMode.HALF_UP)
-                                    .toFloat()
-                            },
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_add_update_weight),
-                                contentDescription = stringResource(R.string.drinking_water),
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
-
-                    var showDrinkingWaterFailed by rememberSaveable { mutableStateOf(false) }
-                    if (showDrinkingWaterFailed) {
-                        DefaultDialog(
-                            title = R.string.you_have_not_drank_water,
-                            description = R.string.because_the_amount_of_water_you_just_entered_is_0_l,
-                            actionTextButton = R.string.ok,
-                            actionTextButtonColor = MaterialTheme.colorScheme.primary,
-                            onClickActionButton = { showDrinkingWaterFailed = false },
-                            onDismissRequest = { showDrinkingWaterFailed = false },
-                            standardPadding = standardPadding
-                        )
-                    }
-
-                    val oldDatePrefs = DailyLogSharedPrefsHelper.getDailyLog(context)?.date
-
-                    Button(
-                        onClick = {
-                            if (currentWater > 0) {
-                                dailyLogViewModel.water.value = if (oldDatePrefs == today) {
-                                    memoryWater + currentWater
-                                } else {
-                                    currentWater
-                                }
-                                dailyLogViewModel.saveDailyLog(context, userData.userId)
-                                Toast.makeText(context, R.string.well_done, Toast.LENGTH_SHORT)
-                                    .show()
-                                onDismissPopup()
-                            } else {
-                                showDrinkingWaterFailed = true
-                            }
-                        },
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                }
-            }*/
         }
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
@@ -201,6 +202,7 @@ fun AppTitleAndDescription() {
                 // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
                 // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
                 style = MaterialTheme.typography.displaySmall.copy(
+                    fontWeight = FontWeight.Bold,
                     shadow = Shadow(
                         color = MaterialTheme.colorScheme.primary,
                         blurRadius = 10f
@@ -211,6 +213,7 @@ fun AppTitleAndDescription() {
                 text = "FIT",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.displaySmall.copy(
+                    fontWeight = FontWeight.Bold,
                     shadow = Shadow(
                         color = MaterialTheme.colorScheme.onPrimary,
                         blurRadius = 10f
@@ -221,7 +224,7 @@ fun AppTitleAndDescription() {
         Text(
             text = stringResource(R.string.des_app_name),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodySmall.copy(
+            style = MaterialTheme.typography.labelSmall.copy(
                 shadow = Shadow(
                     color = MaterialTheme.colorScheme.onPrimary,
                     blurRadius = 10f
@@ -249,17 +252,24 @@ fun WelcomeSection(
         Text(
             text = stringResource(R.string.welcome_to_app),
             color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.displaySmall.copy(
+                fontWeight = FontWeight.Bold
+            )
         )
         Text(
             text = stringResource(R.string.start_title_1),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.headlineSmall
         )
         Text(
             text = stringResource(R.string.start_title_2),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.titleSmall.copy(
+                shadow = Shadow(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    blurRadius = 10f
+                )
+            )
         )
     }
 }
@@ -281,8 +291,7 @@ fun ActionButtons(standardPadding: Dp) {
                     it.startActivity(intent)
                     it.finish()
                 }
-            },
-            standardPadding = standardPadding
+            }
         )
         Spacer(modifier = Modifier.height(standardPadding))
     }
@@ -290,8 +299,7 @@ fun ActionButtons(standardPadding: Dp) {
 
 @Composable
 fun GetStartedButton(
-    onCLick: () -> Unit = {},
-    standardPadding: Dp
+    onCLick: () -> Unit = {}
 ) {
     // GET STARTED button
     ElevatedButton(
@@ -317,7 +325,7 @@ fun GetStartedButton(
         // contentPadding = PaddingValues(), // quy định khoảng cách giữa nội dung và viền của nút
         // interactionSource = MutableInteractionSource(), // đối tượng lưu trữ trạng thái tương tác của nút
     ) {
-        Text(text = stringResource(R.string.get_started))
+        Text(text = stringResource(id = R.string.get_started))
     } // nội dung bên trong nút thường là Text hoặc Icon
 }
 

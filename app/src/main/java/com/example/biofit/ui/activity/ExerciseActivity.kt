@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -55,7 +54,6 @@ import androidx.compose.ui.node.Ref
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -173,13 +171,7 @@ fun ExerciseContent(
                 elevation = 6.dp,
                 shape = MaterialTheme.shapes.large
             ),
-            textStyle = MaterialTheme.typography.bodySmall,
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.search),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            placeholder = { Text(text = stringResource(R.string.search)) },
             trailingIcon = {
                 if (search.isEmpty()) {
                     Icon(
@@ -199,13 +191,7 @@ fun ExerciseContent(
                     }
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = { /*TODO*/ }
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true,
             shape = MaterialTheme.shapes.large,
             colors = OutlinedTextFieldDefaults.colors(
@@ -253,7 +239,7 @@ fun ExerciseContent(
                         text = letter.toString(),
                         modifier = modifier.padding(top = standardPadding * 2),
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.displaySmall,
                     )
                 }
 
@@ -291,7 +277,12 @@ fun ExerciseContent(
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.edit_exercise)) },
+                                text = {
+                                    Text(
+                                        text = stringResource(R.string.edit_exercise),
+                                        color = Color(0xFFFF6D00)
+                                    )
+                                },
                                 onClick = {
                                     activity?.let {
                                         val intent =
@@ -314,7 +305,12 @@ fun ExerciseContent(
                             )
 
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.delete_exercise)) },
+                                text = {
+                                    Text(
+                                        text = stringResource(R.string.delete_exercise),
+                                        color = Color(0xFFDD2C00)
+                                    )
+                                },
                                 onClick = {
                                     Log.d(
                                         "ExerciseListScreen",
@@ -354,59 +350,6 @@ fun ExerciseContent(
         }
     }
 }
-
-/*val exerciseList = listOf(
-    "Push-ups",
-    "Pull-ups",
-    "Squats",
-    "Lunges",
-    "Plank",
-    "Deadlifts",
-    "Bench Press",
-    "Overhead Press",
-    "Bicep Curls",
-    "Triceps Dips",
-    "Jump Rope",
-    "Burpees",
-    "Mountain Climbers",
-    "Sit-ups",
-    "Crunches",
-    "Russian Twists",
-    "Leg Raises",
-    "Jump Squats",
-    "Box Jumps",
-    "Calf Raises",
-    "Kettlebell Swings",
-    "Medicine Ball Slams",
-    "Dumbbell Rows",
-    "Lat Pulldown",
-    "Face Pulls",
-    "Side Plank",
-    "Flutter Kicks",
-    "Bicycle Crunches",
-    "Superman Exercise",
-    "Reverse Crunches",
-    "Glute Bridges",
-    "Hip Thrusts",
-    "Wall Sit",
-    "Farmers Walk",
-    "Arnold Press",
-    "Seated Cable Rows",
-    "Chest Fly",
-    "Incline Bench Press",
-    "Hamstring Curls",
-    "Step-ups",
-    "Bear Crawls",
-    "Skater Jumps",
-    "High Knees",
-    "Toe Taps",
-    "Battle Ropes",
-    "Sled Push",
-    "Turkish Get-Up",
-    "Hanging Leg Raises",
-    "Hollow Body Hold",
-    "Jumping Jacks"
-)*/
 
 @Preview(
     device = "id:pixel",

@@ -80,7 +80,7 @@ fun DefaultDialog(
                         modifier = Modifier.padding(standardPadding * 2),
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.headlineSmall
                     )
                     if (description != null) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
@@ -90,7 +90,7 @@ fun DefaultDialog(
                             modifier = Modifier.padding(standardPadding * 2),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                     HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
@@ -108,8 +108,7 @@ fun DefaultDialog(
                                         onClick = onCancelClick
                                     ),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.labelLarge
+                                textAlign = TextAlign.Center
                             )
 
                             VerticalDivider(
@@ -132,8 +131,7 @@ fun DefaultDialog(
                                     onClick = onClickActionButton
                                 ),
                             color = actionTextButtonColor,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelLarge
+                            textAlign = TextAlign.Center
                         )
                     }
                 }

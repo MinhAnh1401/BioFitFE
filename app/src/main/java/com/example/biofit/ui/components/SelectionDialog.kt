@@ -90,7 +90,7 @@ fun SelectionDialog(
                     modifier = Modifier.padding(standardPadding * 2),
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
@@ -120,7 +120,7 @@ fun SelectionDialog(
                                     MaterialTheme.colorScheme.onBackground
                                 },
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }

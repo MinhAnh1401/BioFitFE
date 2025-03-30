@@ -221,14 +221,10 @@ fun GenderOption(
                         } else {
                             MaterialTheme.colorScheme.onSurface
                         }
-                    ),
-                    content = {
-                        Text(
-                            text = option,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                )
+                    )
+                ) {
+                    Text(text = option)
+                }
             }
         }
     )

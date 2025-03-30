@@ -112,9 +112,6 @@ fun MealsDetailScreen() {
                     ),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 10.dp
                     )
                 ) {
                     Column(
@@ -197,9 +194,7 @@ fun MealsDetailContent(
                             vertical = standardPadding
                         ),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold
-                    )
+                    style = MaterialTheme.typography.titleSmall
                 )
 
                 Text(
@@ -212,9 +207,7 @@ fun MealsDetailContent(
                             vertical = standardPadding
                         ),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold
-                    )
+                    style = MaterialTheme.typography.titleSmall
                 )
 
                 Column(
@@ -240,11 +233,9 @@ fun MealsDetailContent(
                         )
 
                         Text(
-                            text = "$value${stringResource(R.string.kcal)}",
+                            text = "$value ${stringResource(R.string.kcal)}",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                fontWeight = FontWeight.Bold
-                            )
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                 }
@@ -261,7 +252,7 @@ fun MealsDetailContent(
                 text = "Food name",
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.headlineSmall
 
             )
 
@@ -271,7 +262,7 @@ fun MealsDetailContent(
             )
 
             Text(
-                text = "$protein${stringResource(R.string.gam)}",
+                text = "$protein ${stringResource(R.string.gam)}",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -282,7 +273,7 @@ fun MealsDetailContent(
             )
 
             Text(
-                text = "$carbohydrate${stringResource(R.string.gam)}",
+                text = "$carbohydrate ${stringResource(R.string.gam)}",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -293,7 +284,7 @@ fun MealsDetailContent(
             )
 
             Text(
-                text = "$fat${stringResource(R.string.gam)}",
+                text = "$fat ${stringResource(R.string.gam)}",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -307,7 +298,7 @@ fun MealsDetailContent(
                 Text(
                     text = "${stringResource(R.string.serving_size)}: ",
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodySmall.copy(
+                    style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
@@ -315,14 +306,14 @@ fun MealsDetailContent(
                 Text(
                     text = servingSize.toString(),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
             Text(
                 text = stringResource(R.string.detail),
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.bodySmall.copy(
+                style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -330,7 +321,7 @@ fun MealsDetailContent(
             Text(
                 text = detail,
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
         }
 

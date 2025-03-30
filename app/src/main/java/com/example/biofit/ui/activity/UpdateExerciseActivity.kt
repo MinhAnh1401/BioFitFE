@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -174,8 +175,7 @@ fun UpdateExerciseScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -245,29 +245,16 @@ fun UpdateExerciseContent(
             value = exerciseName,
             onValueChange = onExerciseNameChange,
             modifier = modifier,
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                textAlign = TextAlign.End
-            ),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             placeholder = {
                 Text(
                     text = stringResource(R.string.exercise_name),
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.bodySmall
+                    textAlign = TextAlign.End
                 )
             },
-            prefix = {
-                Text(
-                    text = stringResource(R.string.exercise),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            },
-            supportingText = {
-                Text(
-                    text = stringResource(R.string.des_update_exercise),
-                    textAlign = TextAlign.Justify,
-                )
-            },
+            prefix = { Text(text = stringResource(R.string.exercise)) },
+            supportingText = { Text(text = stringResource(R.string.des_update_exercise)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -303,8 +290,7 @@ fun UpdateExerciseContent(
                         MaterialTheme.colorScheme.outline
                     } else {
                         MaterialTheme.colorScheme.onBackground
-                    },
-                    style = MaterialTheme.typography.bodySmall
+                    }
                 )
 
                 IconButton(onClick = { showLevelDialog = true }) {
@@ -366,8 +352,7 @@ fun UpdateExerciseContent(
                         MaterialTheme.colorScheme.outline
                     } else {
                         MaterialTheme.colorScheme.onBackground
-                    },
-                    style = MaterialTheme.typography.bodySmall
+                    }
                 )
 
                 IconButton(onClick = { showIntensityDialog = true }) {
@@ -412,21 +397,9 @@ fun UpdateExerciseContent(
             modifier = modifier,
             enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                textAlign = TextAlign.End
-            ),
-            prefix = {
-                Text(
-                    text = stringResource(R.string.time),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            },
-            suffix = {
-                Text(
-                    text = stringResource(R.string.min),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+            prefix = { Text(text = stringResource(R.string.time)) },
+            suffix = { Text(text = stringResource(R.string.min)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
@@ -444,21 +417,9 @@ fun UpdateExerciseContent(
             modifier = modifier,
             enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                textAlign = TextAlign.End
-            ),
-            prefix = {
-                Text(
-                    text = stringResource(R.string.calories_consumed),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            suffix = {
-                Text(
-                    text = stringResource(R.string.kcal),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+            prefix = { Text(text = stringResource(R.string.calories_consumed)) },
+            suffix = { Text(text = stringResource(R.string.kcal)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Go
@@ -492,8 +453,7 @@ fun UpdateExerciseContent(
         ) {
             Text(
                 text = stringResource(R.string.do_exercise),
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.labelLarge
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
 

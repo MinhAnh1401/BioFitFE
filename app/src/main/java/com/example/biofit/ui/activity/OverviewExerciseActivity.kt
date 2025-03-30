@@ -164,66 +164,6 @@ fun OverviewExerciseContent(
         )
 
         LazyColumn {
-            /*item {
-                Column(
-                    modifier = Modifier.padding(top = standardPadding),
-                    verticalArrangement = Arrangement.spacedBy(standardPadding)
-                ) {
-                    *//*listOverviewExercise.forEach { (exerciseName, time, calories) ->
-                        OverviewExerciseCard(
-                            exerciseName = exerciseName,
-                            time = time,
-                            calories = calories,
-                            onClick = {
-                                activity?.let {
-                                    val intent =
-                                        Intent(it, UpdateExerciseActivity::class.java)
-                                    intent.putExtra("EXERCISE", exerciseName)
-                                    it.startActivity(intent)
-                                }
-                            },
-                            standardPadding = standardPadding
-
-                        )
-                    }*//*
-
-                    val groupedExercises = overviewList
-                        .sortedBy { it.date }
-                        .groupBy { it.date }
-
-                    groupedExercises.forEach { (date, exerciseDone) ->
-                        item {
-                            Text(
-                                text = date,
-                                modifier = modifier.padding(top = standardPadding * 2),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        }
-
-                        items(exerciseDone) { exerciseDone ->
-                            OverviewExerciseCard(
-                                exerciseName = exerciseDone.exerciseName,
-                                time = exerciseDone.time.toInt(),
-                                calories = exerciseDone.burnedCalories,
-                                date = exerciseDone.date,
-                                session = exerciseDone.session,
-                                onClick = {
-                                    activity?.let {
-                                        val intent =
-                                            Intent(it, UpdateExerciseActivity::class.java)
-                                        intent.putExtra("EXERCISE", exerciseDone.exerciseName)
-                                        it.startActivity(intent)
-                                    }
-                                },
-                                standardPadding = standardPadding
-
-                            )
-                        }
-                    }
-                }
-            }*/
-
             val groupedExercises = overviewList
                 .sortedByDescending { it.date }
                 .groupBy { it.date }
@@ -234,7 +174,7 @@ fun OverviewExerciseContent(
                         text = date,
                         modifier = modifier.padding(top = standardPadding * 2),
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.headlineSmall,
                     )
                 }
 
