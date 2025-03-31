@@ -100,6 +100,11 @@ interface ApiService {
         @Query("userId") userId: Long
     ): Call<Float>
 
+    @GET("api/exercise-done/time/today")
+    fun getExerciseDoneTimeToday(
+        @Query("userId") userId: Long
+    ): Call<Float>
+
     // Google API
 //    @POST("api/auth/google")
 //    suspend fun googleSignIn(@Body request: GoogleAuthDTO): Response<SocialAccountDTO>

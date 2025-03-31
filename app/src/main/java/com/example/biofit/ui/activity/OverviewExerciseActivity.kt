@@ -183,6 +183,8 @@ fun OverviewExerciseContent(
 
                     OverviewExerciseCard(
                         exerciseName = exerciseDone.exerciseName,
+                        level = exerciseDone.level,
+                        intensity = exerciseDone.intensity,
                         time = exerciseDone.time.toInt(),
                         calories = exerciseDone.burnedCalories,
                         session = exerciseDone.session,

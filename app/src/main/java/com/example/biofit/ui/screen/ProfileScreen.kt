@@ -33,11 +33,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -59,11 +62,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
@@ -183,6 +192,7 @@ fun ProfileContent(
         item {
             Row(
                 modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
@@ -193,7 +203,7 @@ fun ProfileContent(
                     },
                     contentDescription = "Avatar",
                     modifier = Modifier
-                        .size(standardPadding * 5)
+                        .size(standardPadding * 4.5f)
                         .clip(CircleShape)
                         .clickable { showAvatarDialog = true },
                     contentScale = ContentScale.Crop
@@ -225,75 +235,41 @@ fun ProfileContent(
                 }
 
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = standardPadding)
-                )
-                {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = userData.fullName ?: "N/A",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.headlineSmall
-                        )
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(
+                        text = userData.fullName ?: "N/A",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
 
-                        // cập nhật pro sau khi thanh toán thành công
-                        Text(
-                            text = userData.getSubscriptionStatus(context),
-                            color = if (userData.getSubscriptionStatus(context) == "PRO")
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                shadow = Shadow(
-                                    color = if (userData.getSubscriptionStatus(context) == "PRO")
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                    else
-                                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                                    blurRadius = 8f
-                                )
-                            ),
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .background(
-                                    color = if (userData.getSubscriptionStatus(context) == "PRO")
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                    else
-                                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
-
-
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Row {
-                        Text(
-                            text = userData.getGenderString(context, userData.gender),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            text = " | ",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            text = userData.getAge(context, userData.dateOfBirth),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+                    Text(
+                        text = userData.getGenderString(context, userData.gender) + " | " +
+                                userData.getAge(context, userData.dateOfBirth),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
+
+                // cập nhật pro sau khi thanh toán thành công
+                Text(
+                    text = userData.getSubscriptionStatus(context),
+                    color = if (userData.getSubscriptionStatus(context) == "PRO")
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .background(
+                            color = if (userData.getSubscriptionStatus(context) == "PRO")
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                            else
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                )
 
                 IconButton(
                     onClick = {
@@ -305,7 +281,7 @@ fun ProfileContent(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.gear),
-                        contentDescription = stringResource(R.string.profile),
+                        contentDescription = stringResource(R.string.setting),
                         modifier = Modifier.size(standardPadding * 2),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
@@ -321,7 +297,7 @@ fun ProfileContent(
                 Text(
                     text = stringResource(R.string.target),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 SubCard(modifier = Modifier) {
@@ -360,7 +336,7 @@ fun ProfileContent(
                                     .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.headlineSmall
+                                style = MaterialTheme.typography.titleLarge
                             )
                         }
 
@@ -399,7 +375,7 @@ fun ProfileContent(
                                     .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.headlineSmall
+                                style = MaterialTheme.typography.titleLarge
                             )
                         }
                     }
@@ -436,7 +412,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
 
                             Icon(
@@ -482,7 +458,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
 
                             Icon(
@@ -509,7 +485,7 @@ fun ProfileContent(
                             + " " + stringResource(R.string.and)
                             + " " + stringResource(R.string.privacy_policy),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 SubCard(modifier = Modifier) {
@@ -544,7 +520,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
 
                             Icon(
@@ -591,7 +567,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
 
                             Icon(
@@ -616,7 +592,7 @@ fun ProfileContent(
                 Text(
                     text = stringResource(R.string.account),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 SubCard(modifier = Modifier) {
@@ -645,7 +621,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
@@ -694,7 +670,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
@@ -730,7 +706,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }

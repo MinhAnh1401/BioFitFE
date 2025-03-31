@@ -229,9 +229,6 @@ fun ExerciseContent(
 
         LazyColumn {
             Log.d("ExerciseListScreen", "exerciseList size: ${exerciseList.size}")
-            /*val groupedExercises = exerciseList
-                .sortedBy { it.exerciseName }
-                .groupBy { it.exerciseName.first().uppercaseChar() }*/
 
             groupedExercises.forEach { (letter, exercises) ->
                 item {
@@ -252,8 +249,6 @@ fun ExerciseContent(
                             exercise = exercise.exerciseName,
                             onClick = {
                                 activity?.let {
-                                    /*val intent = Intent(it, CreateAndUpdateExerciseActivity::class.java)
-                                it.startActivity(intent)*/
                                     val intent =
                                         Intent(it, UpdateExerciseActivity::class.java).apply {
                                             putExtra("exerciseId", exercise.exerciseId)

@@ -1,6 +1,13 @@
 package com.example.biofit.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -71,12 +80,29 @@ fun ExerciseItem(
 @Composable
 fun OverviewExerciseCard(
     exerciseName: String,
+    level: Int,
+    intensity: Int,
     time: Int,
     calories: Float,
     session: Int,
     standardPadding: Dp
 ) {
+    val levelString = when (level) {
+        0 -> stringResource(R.string.amateur)
+        1 -> stringResource(R.string.professional)
+        else -> stringResource(R.string.unknown)
+    }
+    val intensityString = when (intensity) {
+        0 -> stringResource(R.string.low)
+        1 -> stringResource(R.string.medium)
+        2 -> stringResource(R.string.high)
+        else -> stringResource(R.string.unknown)
+    }
+
+    val showMore = remember { mutableStateOf(false) }
+
     ItemCard(
+        onClick = { showMore.value = !showMore.value },
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -105,7 +131,9 @@ fun OverviewExerciseCard(
                 text = exerciseName,
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
 
             Column(
@@ -147,7 +175,63 @@ fun OverviewExerciseCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
+
+                AnimatedVisibility(
+                    visible = showMore.value,
+                    enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                    exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.decrease_quotelevel),
+                                contentDescription = stringResource(R.string.level),
+                                modifier = Modifier.size(standardPadding),
+                                tint = Color(0xFFFFAB00)
+                            )
+
+                            Text(
+                                text = levelString,
+                                color = Color(0xFFFFAB00),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
+                                contentDescription = stringResource(R.string.intensity),
+                                modifier = Modifier.size(standardPadding),
+                                tint = Color(0xFFDD2C00)
+                            )
+
+                            Text(
+                                text = intensityString,
+                                color = Color(0xFFDD2C00),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
             }
+
+            Icon(
+                painter = painterResource(R.drawable.ic_back),
+                contentDescription = "Add button",
+                modifier = Modifier
+                    .size(standardPadding)
+                    .rotate(if (showMore.value) 90f else 270f),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
         }
     }
 }
@@ -173,6 +257,8 @@ private fun ExerciseItemDarkModePreview() {
 
             OverviewExerciseCard(
                 exerciseName = "Exercise 1",
+                level = 0,
+                intensity = 0,
                 time = 30,
                 calories = 100f,
                 session = 1,
@@ -200,6 +286,8 @@ private fun ExerciseItemPreview() {
 
             OverviewExerciseCard(
                 exerciseName = "Exercise 1",
+                level = 0,
+                intensity = 0,
                 time = 30,
                 calories = 100f,
                 session = 1,

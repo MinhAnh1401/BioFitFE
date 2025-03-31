@@ -188,7 +188,7 @@ fun CreateFoodContent(
                 Text(
                     text = stringResource(R.string.nutrition_information),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 Column(

@@ -201,25 +201,6 @@ class ExerciseViewModel : ViewModel() {
         })
     }
 
-    /*fun fetchExerciseDoneList(userId: Long, startDate: String, endDate: String) {
-        val apiService = RetrofitClient.instance
-
-        apiService.getExerciseDone(userId, startDate, endDate)
-            .enqueue(object : Callback<List<ExerciseDoneDTO>> {
-                override fun onResponse(call: Call<List<ExerciseDoneDTO>>, response: Response<List<ExerciseDoneDTO>>) {
-                    if (response.isSuccessful) {
-                        _exerciseDoneList.value = response.body() ?: emptyList()
-                    } else {
-                        Log.e("ExerciseViewModel", "API Error: ${response.code()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<List<ExerciseDoneDTO>>, t: Throwable) {
-                    Log.e("ExerciseViewModel", "Network Error", t)
-                }
-            })
-    }*/
-
     private val _overviewExerciseList = MutableStateFlow<List<OverviewExerciseDTO>>(emptyList())
     val overviewExerciseList: StateFlow<List<OverviewExerciseDTO>> =
         _overviewExerciseList.asStateFlow()
@@ -256,6 +237,31 @@ class ExerciseViewModel : ViewModel() {
                     val calories = response.body() ?: 0f  // Xử lý trường hợp null
                     _burnedCalories.postValue(calories)
                     Log.d("ExerciseViewModel", "Burned calories today: $calories")
+                } else {
+                    Log.e(
+                        "ExerciseViewModel",
+                        "API Error: ${response.code()} - ${response.message()}"
+                    )
+                }
+            }
+
+            override fun onFailure(call: Call<Float>, t: Throwable) {
+                Log.e("ExerciseViewModel", "Network Error: ${t.message}", t)
+            }
+        })
+    }
+
+    private val _exerciseDoneTime = MutableLiveData<Float>()
+    val exerciseDoneTime: LiveData<Float> get() = _exerciseDoneTime
+
+    fun getExerciseDoneTimeToday(userId: Long) {
+        val apiService = RetrofitClient.instance
+        apiService.getExerciseDoneTimeToday(userId).enqueue(object : Callback<Float> {
+            override fun onResponse(call: Call<Float>, response: Response<Float>) {
+                if (response.isSuccessful) {
+                    val exerciseDoneTime = response.body() ?: 0f  // Xử lý trường hợp null
+                    _exerciseDoneTime.postValue(exerciseDoneTime)
+                    Log.d("ExerciseViewModel", "Exercise done time: $exerciseDoneTime")
                 } else {
                     Log.e(
                         "ExerciseViewModel",

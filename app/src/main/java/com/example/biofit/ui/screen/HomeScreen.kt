@@ -181,8 +181,7 @@ fun HeaderBar(
     }
 
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.weight(1f)
@@ -196,7 +195,7 @@ fun HeaderBar(
             Text(
                 text = "${stringResource(R.string.today)}, ${currentDate.format(formatter)}",
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
         }
 
@@ -359,7 +358,7 @@ fun OverviewAndSearchBar(
                     text = stringResource(id = R.string.overview),
                     modifier = Modifier.weight(weight = 1f),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 ElevatedButton(
@@ -498,58 +497,6 @@ fun OverviewAndSearchBar(
 
     Spacer(modifier = Modifier.height(height = standardPadding))
 
-    /*OutlinedTextField(
-        value = search,
-        onValueChange = { search = it },
-        modifier = modifier.shadow(
-            elevation = 6.dp,
-            shape = MaterialTheme.shapes.large
-        ),
-        textStyle = MaterialTheme.typography.bodySmall,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.search),
-                style = MaterialTheme.typography.bodySmall
-            )
-        },
-        leadingIcon = {
-            IconButton(
-                onClick = { TODO() }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(R.string.search),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        trailingIcon = {
-            IconButton(
-                onClick = { TODO() },
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_scan),
-                    contentDescription = "Scan",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = { *//*TODO*//* }
-        ),
-        singleLine = true,
-        shape = MaterialTheme.shapes.large,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            unfocusedBorderColor = Color.Transparent
-        )
-    )*/
-
     BlinkingGradientBox(
         onClick = {
             activity?.let {
@@ -568,7 +515,7 @@ fun OverviewAndSearchBar(
             Icon(
                 painter = painterResource(id = R.drawable.ic_chatbot_ai),
                 contentDescription = stringResource(id = R.string.ai_assistant_bionix),
-                modifier = Modifier.size(size = standardPadding * 4),
+                modifier = Modifier.size(size = standardPadding * 3.5f),
                 tint = if (isSystemInDarkTheme()) {
                     Color(0xFFB388FF)
                 } else {
@@ -584,7 +531,7 @@ fun OverviewAndSearchBar(
                 Text(
                     text = stringResource(R.string.ai_assistant_bionix),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
 
@@ -741,7 +688,7 @@ fun DailyMenu(
             Text(
                 text = stringResource(R.string.track_your_daily_menu),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
@@ -894,13 +841,6 @@ fun DailyCard(
     }
 }
 
-/*fun getBurnedCalories(exerciseViewModel: ExerciseViewModel): Float {
-    val userData = UserSharedPrefsHelper.getUserData(this).
-    exerciseViewModel.getBurnedCaloriesToday(userData.userId)
-    val burnedCalories = exerciseViewModel.burnedCalories.value ?: 0f
-    return burnedCalories
-}*/
-
 @Composable
 fun DailyGoals(
     userData: UserDTO,
@@ -982,10 +922,6 @@ fun DailyGoals(
         .setScale(1, RoundingMode.HALF_UP)
         .toFloat()
 
-    /*val estimatedWeight by rememberSaveable {
-        mutableStateOf(value = "__")
-    } // Thay estimatedWeight từ database vào value*/
-
     var showBMIInfo by remember { mutableStateOf(false) }
 
     Column(
@@ -1006,7 +942,7 @@ fun DailyGoals(
             Text(
                 text = stringResource(R.string.daily_goals),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
@@ -1038,7 +974,7 @@ fun DailyGoals(
                         Text(
                             text = stringResource(R.string.drinking_water),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
 
@@ -1175,7 +1111,7 @@ fun DailyGoals(
                         Text(
                             text = stringResource(R.string.activity),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
 
@@ -1245,7 +1181,7 @@ fun DailyGoals(
                             Text(
                                 text = stringResource(R.string.latest_weight),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.headlineSmall
+                                style = MaterialTheme.typography.titleLarge
                             )
                         }
 
@@ -1327,7 +1263,7 @@ fun DailyGoals(
                     Text(
                         text = stringResource(R.string.bmi_index),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleLarge
                     )
 
                     IconButton(
@@ -1365,7 +1301,7 @@ fun DailyGoals(
                             .padding(standardPadding),
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Justify,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
 
@@ -1390,16 +1326,7 @@ fun DailyGoals(
                                 stringResource(R.string.overweight) -> Color(0xFFFFAB00)
                                 else -> Color(0xFFDD2C00)
                             },
-                            fontWeight = FontWeight.Bold,
-                            shadow = Shadow(
-                                color = when (bmiCategory) {
-                                    stringResource(R.string.underweight) -> Color(0xFFAEEA00)
-                                    stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
-                                    stringResource(R.string.overweight) -> Color(0xFFFFAB00)
-                                    else -> Color(0xFFDD2C00)
-                                },
-                                blurRadius = standardPadding.value / 2
-                            )
+                            fontWeight = FontWeight.Bold
                         )
                     ) {
                         append(bmiCategory.uppercase())

@@ -4,7 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.widget.NumberPicker
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +51,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -373,7 +383,7 @@ fun PlanningScreenContent(
                             text = stringResource(R.string.suggested_meals),
                             modifier = Modifier.weight(1f),
                             color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.headlineSmall
+                            style = MaterialTheme.typography.titleLarge
                         )
 
                         IconButton(
@@ -507,14 +517,14 @@ fun PlanningScreenContent(
                         Text(
                             text = stringResource(R.string.workout_suggestion),
                             color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.headlineSmall
+                            style = MaterialTheme.typography.titleLarge
                         )
                     }
 
                     val workoutSuggestion = listOf(
-                        Pair(Pair(0, "Exercise 1"), Triple(15, 120f, 0)),
-                        Pair(Pair(1, "Exercise 2"), Triple(30, 150f, 1)),
-                        Pair(Pair(2, "Exercise 3"), Triple(45, 200f, 2))
+                        Triple(Pair(0, "Exercise 1"), Triple(15, 120f, 0), 0),
+                        Triple(Pair(1, "Exercise 2"), Triple(30, 150f, 1), 1),
+                        Triple(Pair(2, "Exercise 3"), Triple(45, 200f, 0), 2)
                     )
 
                     workoutSuggestion.forEach { aiExercise ->
@@ -525,27 +535,10 @@ fun PlanningScreenContent(
                                 else -> R.string.evening
                             },
                             exerciseName = aiExercise.first.second,
+                            level = aiExercise.second.third,
+                            intensity = aiExercise.third,
                             time = aiExercise.second.first,
                             calories = aiExercise.second.second,
-                            intensity = when (aiExercise.second.third) {
-                                0 -> R.string.low
-                                1 -> R.string.medium
-                                else -> R.string.high
-                            },
-                            onClickCard = {
-                                activity?.let {
-                                    val intent = Intent(it, EditExerciseActivity::class.java)
-                                    intent.putExtra(
-                                        "SESSION_TITLE",
-                                        when (aiExercise.first.first) {
-                                            0 -> R.string.morning
-                                            1 -> R.string.afternoon
-                                            else -> R.string.evening
-                                        }
-                                    )
-                                    it.startActivity(intent)
-                                }
-                            },
                             onClickButton = {
                                 activity?.let {
                                     val intent = Intent(it, ExerciseViewActivity::class.java)
@@ -668,13 +661,13 @@ fun CaloriesLineChart(
             Text(
                 text = stringResource(R.string.today) + " ",
                 color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
 
             Text(
                 text = "+10%",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
         }
 
@@ -724,7 +717,7 @@ fun WellnessTrackerCard(
             Text(
                 text = details,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.displaySmall
+                style = MaterialTheme.typography.headlineSmall
             )
         }
     }
@@ -785,7 +778,7 @@ fun SuggestedMeals(
             Text(
                 text = stringResource(suggestedMealsSession),
                 color = suggestedMealsSessionColor,
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -797,7 +790,7 @@ fun SuggestedMeals(
             color = MaterialTheme.colorScheme.onBackground,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
@@ -806,54 +799,120 @@ fun SuggestedMeals(
 fun WorkoutSuggestion(
     session: Int,
     exerciseName: String,
+    level: Int,
+    intensity: Int,
     time: Int,
     calories: Float,
-    intensity: Int,
-    onClickCard: () -> Unit,
     onClickButton: () -> Unit,
     standardPadding: Dp
 ) {
+    val levelString = when (level) {
+        0 -> stringResource(R.string.amateur)
+        1 -> stringResource(R.string.professional)
+        else -> stringResource(R.string.unknown)
+    }
+    val intensityString = when (intensity) {
+        0 -> stringResource(R.string.low)
+        1 -> stringResource(R.string.medium)
+        2 -> stringResource(R.string.high)
+        else -> stringResource(R.string.unknown)
+    }
+
+    var showExerciseDetail = remember { mutableStateOf(false) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(standardPadding)
     ) {
-        Text(
-            text = stringResource(session),
-            color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
-
         Row(
             modifier = Modifier.height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ItemCard(
-                onClick = onClickCard,
+                onClick = { showExerciseDetail.value = !showExerciseDetail.value },
                 modifier = Modifier.weight(1f)
             ) {
                 Row(
+                    modifier = Modifier.padding(start = standardPadding),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(
+                        painter = painterResource(
+                            when (session) {
+                                R.string.morning -> R.drawable.cloud_sun_fill
+                                R.string.afternoon -> R.drawable.sun_max_fill
+                                else -> R.drawable.cloud_moon_fill
+                            }
+                        ),
+                        contentDescription = stringResource(R.string.session),
+                        modifier = Modifier.size(standardPadding * 2f),
+                        tint = when (session) {
+                            R.string.morning -> Color(0xFFFFAB00)
+                            R.string.afternoon -> Color(0xFFDD2C00)
+                            else -> Color(0xFF2962FF)
+                        }
+                    )
+
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .padding(standardPadding),
                         verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
                     ) {
-                        Text(
-                            text = exerciseName,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = exerciseName,
+                                modifier = Modifier.weight(1f),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
 
-                        Text(
-                            text = "${time} ${stringResource(R.string.min)}, ${calories} ${stringResource(R.string.kcal)}, ${stringResource(R.string.intensity)}" +
-                                    ": ${stringResource(intensity)}",
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.timer),
+                                        contentDescription = stringResource(R.string.time),
+                                        modifier = Modifier.size(standardPadding),
+                                        tint = Color(0xFF00C853)
+                                    )
+
+                                    Text(
+                                        text = "$time ${stringResource(R.string.min)}",
+                                        color = Color(0xFF00C853),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_loaded_cal),
+                                        contentDescription = stringResource(R.string.loaded),
+                                        modifier = Modifier.size(standardPadding),
+                                        tint = Color(0xFFFF6D00)
+                                    )
+
+                                    Text(
+                                        text = "$calories ${stringResource(R.string.kcal)}",
+                                        color = Color(0xFFFF6D00),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     ElevatedButton(
@@ -874,8 +933,6 @@ fun WorkoutSuggestion(
                     }
                 }
             }
-
-
         }
     }
 }

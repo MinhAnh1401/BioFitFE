@@ -141,7 +141,7 @@ fun KnowledgeContent(
                     Text(
                         text = stringResource(R.string.nutrition_and_care),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
 
@@ -207,7 +207,7 @@ fun KnowledgeContent(
                     Text(
                         text = stringResource(R.string.exercise),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
 
@@ -260,7 +260,7 @@ fun KnowledgeContent(
                     Text(
                         text = stringResource(R.string.article),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
 
