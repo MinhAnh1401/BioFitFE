@@ -52,7 +52,7 @@ import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.PaymentViewModel
 
 @Composable
-fun PaymentMethodDialogScreen () {
+fun PaymentMethodDialogScreen() {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -60,6 +60,7 @@ fun PaymentMethodDialogScreen () {
         PaymentMethodDialog()
     }
 }
+
 // Dialog chọn phương thức thanh toán hiển thị từ dưới lên
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

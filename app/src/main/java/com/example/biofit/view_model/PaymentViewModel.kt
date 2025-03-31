@@ -65,7 +65,10 @@ class PaymentViewModel : ViewModel() {
                 )
 
                 apiService.createPayment(request).enqueue(object : Callback<PaymentResponse> {
-                    override fun onResponse(call: Call<PaymentResponse>, response: Response<PaymentResponse>) {
+                    override fun onResponse(
+                        call: Call<PaymentResponse>,
+                        response: Response<PaymentResponse>
+                    ) {
                         _loading.value = false
 
                         if (response.isSuccessful && response.body() != null) {
@@ -77,7 +80,10 @@ class PaymentViewModel : ViewModel() {
                                 _paymentUrl.value = paymentResponse.paymentUrl ?: ""
 
                                 // Open the payment URL in browser
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentResponse.paymentUrl))
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(paymentResponse.paymentUrl)
+                                )
                                 context.startActivity(intent)
                             } else {
                                 _error.value = paymentResponse.message
@@ -124,7 +130,10 @@ class PaymentViewModel : ViewModel() {
                         } else {
                             if (!isIPv4) {
                                 val delim = sAddr.indexOf('%') // drop ip6 zone suffix
-                                return if (delim < 0) sAddr.uppercase(Locale.getDefault()) else sAddr.substring(0, delim).uppercase(Locale.getDefault())
+                                return if (delim < 0) sAddr.uppercase(Locale.getDefault()) else sAddr.substring(
+                                    0,
+                                    delim
+                                ).uppercase(Locale.getDefault())
                             }
                         }
                     }
@@ -162,7 +171,10 @@ class PaymentViewModel : ViewModel() {
         UserSharedPrefsHelper.setPremiumStatus(context, true)
 
         apiService.getSubscriptionStatus(userId).enqueue(object : Callback<SubscriptionResponse> {
-            override fun onResponse(call: Call<SubscriptionResponse>, response: Response<SubscriptionResponse>) {
+            override fun onResponse(
+                call: Call<SubscriptionResponse>,
+                response: Response<SubscriptionResponse>
+            ) {
                 _loading.value = false
 
                 if (response.isSuccessful && response.body() != null) {

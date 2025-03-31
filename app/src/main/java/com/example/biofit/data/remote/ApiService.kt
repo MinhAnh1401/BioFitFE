@@ -1,9 +1,7 @@
 package com.example.biofit.data.remote
 
-import android.util.Log
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.ExerciseDTO
-import com.example.biofit.data.model.dto.ExerciseDetailDTO
 import com.example.biofit.data.model.dto.ExerciseDoneDTO
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.PasswordResetDTO
@@ -12,18 +10,15 @@ import com.example.biofit.data.model.request.LoginRequest
 import com.example.biofit.data.model.request.PasswordResetRequest
 import com.example.biofit.data.model.request.PaymentRequest
 import com.example.biofit.data.model.request.RegisterRequest
-import com.example.biofit.data.model.request.UpdateUserRequest
 import com.example.biofit.data.model.response.PasswordResetResponse
 import com.example.biofit.data.model.response.PaymentResponse
 import com.example.biofit.data.model.response.SubscriptionResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -38,12 +33,6 @@ interface ApiService {
 
     @POST("api/user/register")
     fun register(@Body request: RegisterRequest): Call<UserDTO>
-
-    /*@PUT("api/user/update/{userId}")
-    fun updateUser(
-        @Path("userId") userId: Long,
-        @Body request: UpdateUserRequest
-    ): Call<UserDTO>*/
 
     @PUT("api/user/update/{userId}")
     @Multipart
@@ -69,9 +58,9 @@ interface ApiService {
     @GET("/api/daily-log/user/{userId}/history")
     fun getWeightHistory(@Path("userId") userId: Long): Call<List<DailyLogDTO>>
 
-/*
-----------------------------------------------------------------------------------------------------
-*/
+    /*
+    ----------------------------------------------------------------------------------------------------
+    */
     // Exercise API
     @GET("api/exercise/user/{userId}")
     fun getExercises(@Path("userId") userId: Long): Call<List<ExerciseDTO>>
@@ -90,11 +79,14 @@ interface ApiService {
     fun deleteExercise(@Path("exerciseId") exerciseId: Long): Call<Void>
 
     @PUT("api/exercise/{exerciseId}")
-    fun updateExercise(@Path("exerciseId") exerciseId: Long, @Body exercise: ExerciseDTO): Call<Void>
+    fun updateExercise(
+        @Path("exerciseId") exerciseId: Long,
+        @Body exercise: ExerciseDTO
+    ): Call<Void>
 
-/*
-----------------------------------------------------------------------------------------------------
-*/
+    /*
+    ----------------------------------------------------------------------------------------------------
+    */
     // Exercise Done API
     @POST("api/exercise-done/create")
     fun createExerciseDone(@Body exerciseDoneDTO: ExerciseDoneDTO): Call<ExerciseDoneDTO>

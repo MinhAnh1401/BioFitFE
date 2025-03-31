@@ -1,11 +1,8 @@
 package com.example.biofit.data.remote
 
-import com.google.android.gms.cast.CastStatusCodes.TIMEOUT
-import okhttp3.OkHttpClient
 /*import okhttp3.logging.HttpLoggingInterceptor*/
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     const val BASE_URL = "http://192.168.1.17:8080/"

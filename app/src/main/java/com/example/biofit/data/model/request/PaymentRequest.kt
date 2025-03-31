@@ -1,6 +1,6 @@
 package com.example.biofit.data.model.request
 
-data class PaymentRequest (
+data class PaymentRequest(
     val userId: Long,
     val planType: String,
     val paymentMethod: String,

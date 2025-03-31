@@ -87,7 +87,8 @@ class PaymentWebViewActivity : ComponentActivity() {
             setContent {
                 BioFitTheme {
                     val loading = viewModel.loading.observeAsState(false).value
-                    val subscriptionActive = viewModel.subscriptionActive.observeAsState(false).value
+                    val subscriptionActive =
+                        viewModel.subscriptionActive.observeAsState(false).value
 
                     PaymentResultScreen(
                         responseCode = responseCode,
@@ -97,7 +98,8 @@ class PaymentWebViewActivity : ComponentActivity() {
                         onClose = {
                             // Chuyển hướng tới trang Home
                             val intent = Intent(this, MainActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                                flags =
+                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                             }
                             startActivity(intent)
                             finish()
@@ -212,8 +214,10 @@ fun PaymentResultScreen(
                     text = when {
                         success && isPremium ->
                             stringResource(R.string.congratulations)
+
                         success ->
                             stringResource(R.string.processing)
+
                         else ->
                             stringResource(R.string.unsuccess)
                     },
@@ -226,7 +230,7 @@ fun PaymentResultScreen(
                 if (orderId != null) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = stringResource(R.string.order_id) + " "+ orderId,
+                        text = stringResource(R.string.order_id) + " " + orderId,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

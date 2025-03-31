@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -497,7 +496,7 @@ fun UpdateExerciseContent(
                 style = MaterialTheme.typography.labelLarge
             )
         }
-        
+
         if (showDoExerciseDialog) {
             DefaultDialog(
                 title = R.string.can_t_do_the_exercise,

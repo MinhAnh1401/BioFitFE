@@ -2,7 +2,6 @@ package com.example.biofit.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,10 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
@@ -77,7 +76,7 @@ fun OverviewExerciseCard(
     session: Int,
     standardPadding: Dp
 ) {
-    SubCard(
+    ItemCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -85,24 +84,6 @@ fun OverviewExerciseCard(
             horizontalArrangement = Arrangement.spacedBy(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
-            ) {
-                Text(
-                    text = exerciseName,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleSmall
-                )
-
-                Text(
-                    text = "$time ${stringResource(R.string.min)}, " +
-                            "$calories ${stringResource(R.string.kcal)}",
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-
             Icon(
                 painter = painterResource(
                     when (session) {
@@ -112,13 +93,63 @@ fun OverviewExerciseCard(
                     }
                 ),
                 contentDescription = stringResource(R.string.session),
-                modifier = Modifier.size(standardPadding * 3f),
+                modifier = Modifier.size(standardPadding * 2f),
                 tint = when (session) {
                     0 -> Color(0xFFFFAB00)
                     1 -> Color(0xFFDD2C00)
                     else -> Color(0xFF2962FF)
                 }
             )
+
+            Text(
+                text = exerciseName,
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                horizontalAlignment = Alignment.End
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.timer),
+                        contentDescription = stringResource(R.string.time),
+                        modifier = Modifier.size(standardPadding),
+                        tint = Color(0xFF00C853)
+                    )
+
+                    Text(
+                        text = "$time ${stringResource(R.string.min)}",
+                        color = Color(0xFF00C853),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_loaded_cal),
+                        contentDescription = stringResource(R.string.calories),
+                        modifier = Modifier.size(standardPadding),
+                        tint = Color(0xFFFF6D00)
+                    )
+
+                    Text(
+                        text = "$calories ${stringResource(R.string.kcal)}",
+                        color = Color(0xFFFF6D00),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
         }
     }
 }

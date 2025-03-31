@@ -1,7 +1,6 @@
 package com.example.biofit.navigation
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
@@ -54,7 +53,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
-import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.ui.components.ToggleButtonBar
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -486,7 +484,7 @@ fun BarChart(
         val maxHeight = size.height - 20.dp.toPx()
         val textPaint = Paint().apply {
             color = colorValue.toArgb()
-            textSize = 25f
+            textSize = standardPadding.value * 1.5f
         }
 
         val yAxisPadding = 50f
@@ -559,7 +557,7 @@ fun StackedBarChart(
         val maxHeight = size.height - 20.dp.toPx()
         val textPaint = Paint().apply {
             color = colorValue.toArgb()
-            textSize = 25f
+            textSize = standardPadding.value * 1.5f
         }
         val yAxisPadding = 50f
 

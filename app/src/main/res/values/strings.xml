@@ -374,4 +374,8 @@
     <string name="enter_valid_email">Please enter a valid email address</string>
     <string name="check_your_email">Check your email for the reset code</string>
     <string name="exit">Exit</string>
+    <string name="bmr_des">BMR (Basal Metabolic Rate) is the amount of calories your body burns to maintain basic life functions such as breathing, blood circulation, body temperature regulation, and organ function while at complete rest.</string>
+    <string name="tdee_des">TDEE (Total Daily Energy Expenditure) is the total amount of calories your body burns in a day, including energy used for basic metabolic functions (BMR), physical activities, work, exercise, and digestion.</string>
+    <string name="calorie_intake_target_des">Calorie Intake Target is the number of calories you need to consume daily to achieve your health goals, such as maintaining, losing, or gaining weight. This number is typically calculated based on TDEE and adjusted according to personal objectives.</string>
+    <string name="bmi_des">BMI (Body Mass Index) is a measure calculated based on a person\'s weight and height to assess whether they are underweight, healthy weight, overweight, or obese.</string>
 </resources>

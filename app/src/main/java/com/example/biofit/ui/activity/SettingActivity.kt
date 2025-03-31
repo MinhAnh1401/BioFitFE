@@ -9,6 +9,14 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,10 +47,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
@@ -254,6 +264,10 @@ fun SettingContent(
         .setScale(2, RoundingMode.HALF_UP)
         .toFloat()
 
+    var showBMRPopup by remember { mutableStateOf(false) }
+    var showTDEEPopup by remember { mutableStateOf(false) }
+    var showCalorieIntakePopup by remember { mutableStateOf(false) }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
@@ -376,19 +390,22 @@ fun SettingContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = standardPadding,
                                 vertical = standardPadding / 4
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.figure_stand_dress_line_vertical_figure),
-                            contentDescription = stringResource(R.string.gender),
-                            modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = Color(0xFFC51162)
-                        )
+                        IconButton(
+                            onClick = { showGenderDialog = true }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.figure_stand_dress_line_vertical_figure),
+                                contentDescription = stringResource(R.string.gender),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFFC51162)
+                            )
+                        }
 
-                        Spacer(modifier = Modifier.width(standardPadding))
+                        Spacer(modifier = Modifier.width(standardPadding / 2))
 
                         Text(
                             text = stringResource(R.string.gender),
@@ -470,7 +487,7 @@ fun SettingContent(
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(standardPadding))
+                        Spacer(modifier = Modifier.width(standardPadding / 2))
 
                         Text(
                             text = stringResource(R.string.date_of_birth),
@@ -676,7 +693,7 @@ fun SettingContent(
                     prefix = {
                         Text(
                             text = stringResource(R.string.account_creation_date),
-                            color = MaterialTheme.colorScheme.primary,
+                            color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
@@ -687,8 +704,6 @@ fun SettingContent(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         unfocusedBorderColor = Color.Transparent,
                         focusedBorderColor = Color.Transparent,
-                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                        focusedTextColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -718,7 +733,9 @@ fun SettingContent(
                             )
 
                             IconButton(
-                                onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon Info
+                                onClick = {
+                                    showCalorieIntakePopup = !showCalorieIntakePopup
+                                } // Xử lý sự kiện khi người dùng nhấn icon Info
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.info_circle),
@@ -727,6 +744,31 @@ fun SettingContent(
                                     tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
+                        }
+
+                        AnimatedVisibility(
+                            visible = showCalorieIntakePopup,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.large)
+                                .shadow(
+                                    elevation = 10.dp,
+                                    ambientColor = MaterialTheme.colorScheme.onSurface,
+                                    spotColor = MaterialTheme.colorScheme.onSurface
+                                )
+                                .background(MaterialTheme.colorScheme.surfaceContainer),
+                            enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                            exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.calorie_intake_target_des),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(standardPadding),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Justify,
+                                style = MaterialTheme.typography.labelSmall
+                            )
                         }
 
                         val textWithIcon = buildAnnotatedString {
@@ -774,14 +816,29 @@ fun SettingContent(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(standardPadding),
+                                        .padding(
+                                            horizontal = standardPadding,
+                                            vertical = standardPadding * 2
+                                        ),
+                                    verticalArrangement = Arrangement.spacedBy(standardPadding),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(
-                                        text = caloOfDaily.toString(),
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_loaded_cal),
+                                            contentDescription = stringResource(R.string.calorie_intake_target),
+                                            modifier = Modifier.size(standardPadding * 1.5f),
+                                        )
+
+                                        Text(
+                                            text = caloOfDaily.toInt().toString(),
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                    }
 
                                     Text(
                                         text = stringResource(R.string.kcal_day),
@@ -797,14 +854,29 @@ fun SettingContent(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(standardPadding),
+                                        .padding(
+                                            horizontal = standardPadding,
+                                            vertical = standardPadding * 2
+                                        ),
+                                    verticalArrangement = Arrangement.spacedBy(standardPadding),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(
-                                        text = caloOfWeekly.toString(),
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.bolt_fill),
+                                            contentDescription = stringResource(R.string.calorie_intake_target),
+                                            modifier = Modifier.size(standardPadding * 1.5f),
+                                        )
+
+                                        Text(
+                                            text = caloOfWeekly.toInt().toString(),
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                    }
 
                                     Text(
                                         text = stringResource(R.string.kcal_week),
@@ -820,17 +892,20 @@ fun SettingContent(
                         ) {
                             Text(
                                 text = stringResource(R.string.basal_metabolic_rate_bmr),
+                                modifier = Modifier.weight(0.5f),
                                 color = MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.labelSmall
                             )
 
                             TextButton(
-                                onClick = { TODO() },
+                                onClick = { showBMRPopup = !showBMRPopup },
+                                modifier = Modifier.weight(0.25f),
                             ) {
                                 Text(
                                     text = stringResource(R.string.learn_more),
                                     color = MaterialTheme.colorScheme.primary,
                                     textDecoration = TextDecoration.Underline,
+                                    textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
@@ -838,9 +913,32 @@ fun SettingContent(
                             Text(
                                 text = caloOfDailyBMR.toString() + " " +
                                         stringResource(R.string.kcal_day),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(0.25f),
                                 color = MaterialTheme.colorScheme.outline,
                                 textAlign = TextAlign.End,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+
+                        AnimatedVisibility(
+                            visible = showBMRPopup,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.large)
+                                .shadow(
+                                    elevation = 10.dp,
+                                    ambientColor = MaterialTheme.colorScheme.onSurface,
+                                    spotColor = MaterialTheme.colorScheme.onSurface
+                                )
+                                .background(MaterialTheme.colorScheme.surfaceContainer),
+                            enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                            exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.bmr_des),
+                                modifier = Modifier.padding(standardPadding),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Justify,
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
@@ -850,17 +948,20 @@ fun SettingContent(
                         ) {
                             Text(
                                 text = stringResource(R.string.total_energy_expenditure_tdee),
+                                modifier = Modifier.weight(0.5f),
                                 color = MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.labelSmall
                             )
 
                             TextButton(
-                                onClick = { TODO() },
+                                onClick = { showTDEEPopup = !showTDEEPopup },
+                                modifier = Modifier.weight(0.25f),
                             ) {
                                 Text(
                                     text = stringResource(R.string.learn_more),
                                     color = MaterialTheme.colorScheme.primary,
                                     textDecoration = TextDecoration.Underline,
+                                    textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
@@ -868,9 +969,32 @@ fun SettingContent(
                             Text(
                                 text = caloOfWeeklyTDEE.toString() + " " +
                                         stringResource(R.string.kcal_week),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(0.25f),
                                 color = MaterialTheme.colorScheme.outline,
                                 textAlign = TextAlign.End,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+
+                        AnimatedVisibility(
+                            visible = showTDEEPopup,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.large)
+                                .shadow(
+                                    elevation = 10.dp,
+                                    ambientColor = MaterialTheme.colorScheme.onSurface,
+                                    spotColor = MaterialTheme.colorScheme.onSurface
+                                )
+                                .background(MaterialTheme.colorScheme.surfaceContainer),
+                            enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                            exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.tdee_des),
+                                modifier = Modifier.padding(standardPadding),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Justify,
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }

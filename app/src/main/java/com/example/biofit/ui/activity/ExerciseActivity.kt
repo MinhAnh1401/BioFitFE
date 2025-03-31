@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
@@ -254,7 +253,7 @@ fun ExerciseContent(
                         text = letter.toString(),
                         modifier = modifier.padding(top = standardPadding * 2),
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleSmall,
                     )
                 }
 
@@ -282,9 +281,9 @@ fun ExerciseContent(
                             modifier = modifier
                                 .padding(top = standardPadding)
                                 .onGloballyPositioned { coordinates ->
-                                menuAnchor.value =
-                                    coordinates.boundsInRoot() // Lưu vị trí của ExerciseItem
-                            }
+                                    menuAnchor.value =
+                                        coordinates.boundsInRoot() // Lưu vị trí của ExerciseItem
+                                }
                         )
 
                         DropdownMenu(

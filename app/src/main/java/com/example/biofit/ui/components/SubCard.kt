@@ -105,6 +105,23 @@ fun ItemCard(
     }
 }
 
+@Composable
+fun ItemCard(
+    modifier: Modifier,
+    content: @Composable () -> Unit = {}
+) {
+    ElevatedCard(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+        )
+    ) {
+        content()
+    }
+}
+
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_UNDEFINED,
     showBackground = true
