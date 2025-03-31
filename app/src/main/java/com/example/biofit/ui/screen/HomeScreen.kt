@@ -174,11 +174,12 @@ fun HeaderBar(
     }
 
     val currentDate = LocalDate.now()
-    val formatter = if (Locale.current.language == "vi") {
-        DateTimeFormatter.ofPattern("dd MMMM yyyy")
-    } else {
-        DateTimeFormatter.ofPattern("MMMM dd yyyy")
-    }
+    val formatter = DateTimeFormatter.ofPattern(
+        if (java.util.Locale.getDefault().language == "vi")
+            "EEEE, 'ngày' dd 'tháng' MM 'năm' yyyy"
+        else
+            "EEEE, MMMM d, yyyy"
+    )
 
     Row(
         modifier = modifier
@@ -193,7 +194,7 @@ fun HeaderBar(
             )
 
             Text(
-                text = "${stringResource(R.string.today)}, ${currentDate.format(formatter)}",
+                text = currentDate.format(formatter),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleMedium
             )

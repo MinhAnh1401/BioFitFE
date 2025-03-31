@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
+import java.time.LocalDate
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -79,6 +81,7 @@ fun ExerciseItem(
 
 @Composable
 fun OverviewExerciseCard(
+    startOfWeek: LocalDate,
     exerciseName: String,
     level: Int,
     intensity: Int,
@@ -100,6 +103,7 @@ fun OverviewExerciseCard(
     }
 
     val showMore = remember { mutableStateOf(false) }
+    LaunchedEffect(startOfWeek) { showMore.value = false }
 
     ItemCard(
         onClick = { showMore.value = !showMore.value },
@@ -163,15 +167,15 @@ fun OverviewExerciseCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_loaded_cal),
+                        painter = painterResource(R.drawable.flame),
                         contentDescription = stringResource(R.string.calories),
                         modifier = Modifier.size(standardPadding),
-                        tint = Color(0xFFFF6D00)
+                        tint = Color(0xFFDD2C00)
                     )
 
                     Text(
                         text = "$calories ${stringResource(R.string.kcal)}",
-                        color = Color(0xFFFF6D00),
+                        color = Color(0xFFDD2C00),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -211,12 +215,12 @@ fun OverviewExerciseCard(
                                 painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
                                 contentDescription = stringResource(R.string.intensity),
                                 modifier = Modifier.size(standardPadding),
-                                tint = Color(0xFFDD2C00)
+                                tint = Color(0xFF2962FF)
                             )
 
                             Text(
                                 text = intensityString,
-                                color = Color(0xFFDD2C00),
+                                color = Color(0xFF2962FF),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -256,6 +260,7 @@ private fun ExerciseItemDarkModePreview() {
             )
 
             OverviewExerciseCard(
+                startOfWeek = LocalDate.now(),
                 exerciseName = "Exercise 1",
                 level = 0,
                 intensity = 0,
@@ -285,6 +290,7 @@ private fun ExerciseItemPreview() {
             )
 
             OverviewExerciseCard(
+                startOfWeek = LocalDate.now(),
                 exerciseName = "Exercise 1",
                 level = 0,
                 intensity = 0,

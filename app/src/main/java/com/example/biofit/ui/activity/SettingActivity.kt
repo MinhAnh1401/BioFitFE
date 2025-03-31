@@ -18,6 +18,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -207,7 +209,17 @@ fun SettingContent(
     updateViewModel: UpdateUserViewModel = viewModel(),
     dailyLogViewModel: DailyLogViewModel = viewModel()
 ) {
+    // Lấy dữ liệu thông tin người dùng
     val context = LocalContext.current
+    var gender by rememberSaveable {
+        mutableStateOf(
+            userData.getGenderString(
+                context,
+                updateViewModel.gender.value
+            )
+        )
+    }
+    var dateOfBirth by rememberSaveable { mutableStateOf(updateViewModel.dateOfBirth.value) }
     val height = (userData.height ?: UserDTO.default().height) ?: 0f
     dailyLogViewModel.getLatestDailyLog(context, userData.userId)
     val memoryWeight by produceState(initialValue = 0f, key1 = dailyLogViewModel.memoryWeight) {
@@ -217,10 +229,12 @@ fun SettingContent(
             userData.weight!!
         }
     }
-
-    var createdAccount by rememberSaveable { mutableStateOf(userData.createdAccount ?: "") }
+    var createdAccount by rememberSaveable { mutableStateOf(userData.createdAccount) }
     Log.d("createdAccount", createdAccount)
-
+/*
+****************************************************************************************************
+*/
+    // Lấy dữ liệu calo tiêu thụ
     val caloOfDaily = when (userData.gender) {
         0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..45 -> 2000f
@@ -248,11 +262,46 @@ fun SettingContent(
     val caloOfWeeklyTDEE = BigDecimal(caloOfDailyBMR.toDouble() * 1.55)
         .setScale(2, RoundingMode.HALF_UP)
         .toFloat()
-
+/*
+***************************************************************************************************
+*/
+    // Đặt các trạng thái cho các trường dữ liệu
+    val focusManager = LocalFocusManager.current
+    var showGenderDialog by rememberSaveable { mutableStateOf(false) }
+    var showDatePicker by rememberSaveable { mutableStateOf(false) }
+    val interactionSources = remember { List(5) { MutableInteractionSource() } }
+    interactionSources.forEach { source ->
+        val isPressed by source.collectIsPressedAsState()
+        if (isPressed) {
+            showGenderDialog = false
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (updateViewModel.fullName.value == null) {
+            updateViewModel.fullName.value = userData.fullName
+        }
+        if (updateViewModel.gender.value == null) {
+            updateViewModel.gender.value = userData.gender
+        }
+        if (updateViewModel.dateOfBirth.value == null) {
+            updateViewModel.dateOfBirth.value = userData.dateOfBirth
+        }
+        if (updateViewModel.height.value == null) {
+            updateViewModel.height.value = userData.height
+        }
+        if (updateViewModel.weight.value == null) {
+            updateViewModel.weight.value = userData.weight
+        }
+        if (updateViewModel.email.value == null) {
+            updateViewModel.email.value = userData.email
+        }
+    }
     var showBMRPopup by remember { mutableStateOf(false) }
     var showTDEEPopup by remember { mutableStateOf(false) }
     var showCalorieIntakePopup by remember { mutableStateOf(false) }
-
+/*
+***************************************************************************************************
+*/
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
@@ -282,42 +331,6 @@ fun SettingContent(
                 verticalArrangement = Arrangement.spacedBy(standardPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var gender by rememberSaveable {
-                    mutableStateOf(
-                        userData.getGenderString(
-                            context,
-                            updateViewModel.gender.value
-                        )
-                    )
-                }
-                var showGenderDialog by rememberSaveable { mutableStateOf(false) }
-                var dateOfBirth by rememberSaveable { mutableStateOf(updateViewModel.dateOfBirth.value) }
-                var showDatePicker by rememberSaveable { mutableStateOf(false) }
-
-                LaunchedEffect(Unit) {
-                    if (updateViewModel.fullName.value == null) {
-                        updateViewModel.fullName.value = userData.fullName
-                    }
-                    if (updateViewModel.gender.value == null) {
-                        updateViewModel.gender.value = userData.gender
-                    }
-                    if (updateViewModel.dateOfBirth.value == null) {
-                        updateViewModel.dateOfBirth.value = userData.dateOfBirth
-                    }
-                    if (updateViewModel.height.value == null) {
-                        updateViewModel.height.value = userData.height
-                    }
-                    if (updateViewModel.weight.value == null) {
-                        updateViewModel.weight.value = userData.weight
-                    }
-                    if (updateViewModel.email.value == null) {
-                        updateViewModel.email.value = userData.email
-                    }
-                }
-
-
-                val focusManager = LocalFocusManager.current
-
                 OutlinedTextField(
                     value = updateViewModel.fullName.value ?: "",
                     onValueChange = { updateViewModel.fullName.value = it },
@@ -352,6 +365,7 @@ fun SettingContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
+                    interactionSource = interactionSources[0],
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -362,7 +376,10 @@ fun SettingContent(
                 )
 
                 ItemCard(
-                    onClick = { showGenderDialog = !showGenderDialog },
+                    onClick = {
+                        showGenderDialog = !showGenderDialog
+                        focusManager.clearFocus()
+                    },
                     modifier = modifier
                 ) {
                     Row(
@@ -374,7 +391,10 @@ fun SettingContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { showGenderDialog = !showGenderDialog }
+                            onClick = {
+                                showGenderDialog = !showGenderDialog
+                                focusManager.clearFocus()
+                            }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.figure_stand_dress_line_vertical_figure),
@@ -406,7 +426,12 @@ fun SettingContent(
                             textAlign = TextAlign.End
                         )
 
-                        IconButton(onClick = { showGenderDialog = !showGenderDialog }) {
+                        IconButton(
+                            onClick = {
+                                showGenderDialog = !showGenderDialog
+                                focusManager.clearFocus()
+                            }
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.gender),
@@ -430,7 +455,11 @@ fun SettingContent(
 
                         Column {
                             listOptions.forEach { selectGender ->
-                                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f))
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.1f
+                                    )
+                                )
 
                                 Column(
                                     modifier = Modifier
@@ -458,7 +487,11 @@ fun SettingContent(
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
                 ItemCard(
-                    onClick = { showDatePicker = true },
+                    onClick = {
+                        showDatePicker = true
+                        showGenderDialog = false
+                        focusManager.clearFocus()
+                    },
                     modifier = modifier
                 ) {
                     Row(
@@ -469,7 +502,11 @@ fun SettingContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { showDatePicker = true }
+                            onClick = {
+                                showDatePicker = true
+                                showGenderDialog = false
+                                focusManager.clearFocus()
+                            }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.birthday_cake_fill),
@@ -509,22 +546,21 @@ fun SettingContent(
 
                 if (showDatePicker) {
                     val calendar = Calendar.getInstance()
-                    LaunchedEffect(Unit) {
-                        DatePickerDialog(
-                            context,
-                            { _, selectedYear, selectedMonth, selectedDay ->
-                                calendar.set(selectedYear, selectedMonth, selectedDay)
+                    DatePickerDialog(
+                        context,
+                        { _, selectedYear, selectedMonth, selectedDay ->
+                            calendar.set(selectedYear, selectedMonth, selectedDay)
 
-                                dateOfBirth = dateFormat.format(calendar.time)
+                            dateOfBirth = dateFormat.format(calendar.time)
 
-                                updateViewModel.dateOfBirth.value = dateOfBirth
-                                showDatePicker = false
-                            },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH)
-                        ).show()
-                    }
+                            updateViewModel.dateOfBirth.value = dateOfBirth
+                            showDatePicker = false
+                        },
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                    ).show()
+                    showDatePicker = false
                 }
 
                 OutlinedTextField(
@@ -553,6 +589,7 @@ fun SettingContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
+                    interactionSource = interactionSources[1],
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -588,6 +625,7 @@ fun SettingContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
+                    interactionSource = interactionSources[2],
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -621,6 +659,7 @@ fun SettingContent(
                     ),
                     keyboardActions = KeyboardActions(onGo = { TODO() }),
                     singleLine = true,
+                    interactionSource = interactionSources[3],
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -649,6 +688,7 @@ fun SettingContent(
                     },
                     prefix = { Text(text = stringResource(R.string.account_creation_date)) },
                     singleLine = true,
+                    interactionSource = interactionSources[4],
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -686,7 +726,8 @@ fun SettingContent(
                             IconButton(
                                 onClick = {
                                     showCalorieIntakePopup = !showCalorieIntakePopup
-                                } // Xử lý sự kiện khi người dùng nhấn icon Info
+                                    showGenderDialog = false
+                                }
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.info_circle),
@@ -839,7 +880,10 @@ fun SettingContent(
                             )
 
                             TextButton(
-                                onClick = { showBMRPopup = !showBMRPopup },
+                                onClick = {
+                                    showBMRPopup = !showBMRPopup
+                                    showGenderDialog = false
+                                },
                                 modifier = Modifier.weight(0.3f),
                             ) {
                                 Text(
@@ -895,7 +939,10 @@ fun SettingContent(
                             )
 
                             TextButton(
-                                onClick = { showTDEEPopup = !showTDEEPopup },
+                                onClick = {
+                                    showTDEEPopup = !showTDEEPopup
+                                    showGenderDialog = false
+                                },
                                 modifier = Modifier.weight(0.3f),
                             ) {
                                 Text(

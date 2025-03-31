@@ -7,6 +7,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -34,12 +46,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -107,8 +121,7 @@ fun TargetScreen() {
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -155,6 +168,15 @@ fun TargetContent(
     var healthyDiet by rememberSaveable { mutableStateOf("0") }
 
     val focusManager = LocalFocusManager.current
+    val interactionSources = remember { List(3) { MutableInteractionSource() } }
+    interactionSources.forEach { source ->
+        val isPressed by source.collectIsPressedAsState()
+        if (isPressed) {
+            showGoalDialog = false
+            showWeeklyGoalDialog = false
+            showIntensityOfExerciseDialog = false
+        }
+    }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
@@ -167,22 +189,49 @@ fun TargetContent(
                 Text(
                     text = stringResource(R.string.weight),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 ItemCard(
-                    onClick = { showGoalDialog = true },
+                    onClick = {
+                        showGoalDialog = !showGoalDialog
+                        showWeeklyGoalDialog = false
+                        showIntensityOfExerciseDialog = false
+                        focusManager.clearFocus()
+                    },
                     modifier = modifier
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = standardPadding,
                                 vertical = standardPadding / 4
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(
+                            onClick = {
+                                showGoalDialog = !showGoalDialog
+                                showWeeklyGoalDialog = false
+                                showIntensityOfExerciseDialog = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_target),
+                                contentDescription = stringResource(R.string.level),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(standardPadding / 2))
+
+                        Text(
+                            text = stringResource(R.string.goals),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+
                         Text(
                             text = if (goal == "") {
                                 stringResource(R.string.select_goal)
@@ -194,37 +243,64 @@ fun TargetContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            }
+                            },
+                            textAlign = TextAlign.End
                         )
 
-                        IconButton(onClick = { showGoalDialog = true }) {
+                        IconButton(
+                            onClick = {
+                                showGoalDialog = !showGoalDialog
+                                showWeeklyGoalDialog = false
+                                showIntensityOfExerciseDialog = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.goals),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(270f),
+                                    .rotate(if (showGoalDialog) 90f else 270f),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
-                }
 
-                if (showGoalDialog) {
-                    SelectionDialog(
-                        selectedOption = goal,
-                        onOptionSelected = { selectedGoal ->
-                            goal = selectedGoal
-                            showGoalDialog = false
-                        },
-                        onDismissRequest = { showGoalDialog = false },
-                        title = R.string.select_goal,
-                        listOptions = listOf(
+                    AnimatedVisibility(
+                        visible = showGoalDialog,
+                        enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                        exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                    ) {
+                        val listOptions = listOf(
                             stringResource(R.string.weight_loss),
                             stringResource(R.string.muscle_gain)
-                        ),
-                        standardPadding = standardPadding
-                    )
+                        )
+
+                        Column {
+                            listOptions.forEach { selectedGoal ->
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.1f
+                                    )
+                                )
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            goal = selectedGoal
+                                            showGoalDialog = false
+                                        },
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Text(
+                                        text = selectedGoal,
+                                        modifier = Modifier.padding(standardPadding),
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 OutlinedTextField(
@@ -232,6 +308,13 @@ fun TargetContent(
                     onValueChange = { protein = it },
                     modifier = modifier,
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(R.drawable.ic_protein),
+                            contentDescription = stringResource(R.string.protein),
+                            modifier = Modifier.size(standardPadding * 1.5f)
+                        )
+                    },
                     prefix = { Text(text = stringResource(R.string.protein)) },
                     suffix = { Text(text = stringResource(R.string.percentage)) },
                     keyboardOptions = KeyboardOptions(
@@ -242,6 +325,7 @@ fun TargetContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
+                    interactionSource = interactionSources[0],
                     shape = MaterialTheme.shapes.large
                 )
 
@@ -250,6 +334,13 @@ fun TargetContent(
                     onValueChange = { carb = it },
                     modifier = modifier,
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(R.drawable.ic_carbohydrate),
+                            contentDescription = stringResource(R.string.carbohydrate),
+                            modifier = Modifier.size(standardPadding * 1.5f)
+                        )
+                    },
                     prefix = { Text(text = stringResource(R.string.carbohydrate)) },
                     suffix = { Text(text = stringResource(R.string.percentage)) },
                     keyboardOptions = KeyboardOptions(
@@ -260,6 +351,7 @@ fun TargetContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
                     singleLine = true,
+                    interactionSource = interactionSources[1],
                     shape = MaterialTheme.shapes.large
                 )
 
@@ -268,7 +360,10 @@ fun TargetContent(
                         if (goal == "") {
                             showErrorWeeklyDialog = true
                         } else {
-                            showWeeklyGoalDialog = true
+                            showWeeklyGoalDialog = !showWeeklyGoalDialog
+                            showGoalDialog = false
+                            showIntensityOfExerciseDialog = false
+                            focusManager.clearFocus()
                         }
                     },
                     modifier = modifier
@@ -277,11 +372,33 @@ fun TargetContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = standardPadding,
                                 vertical = standardPadding / 4
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(
+                            onClick = {
+                                showWeeklyGoalDialog = !showWeeklyGoalDialog
+                                showGoalDialog = false
+                                showIntensityOfExerciseDialog = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_target),
+                                contentDescription = stringResource(R.string.level),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFF0091EA)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(standardPadding / 2))
+
+                        Text(
+                            text = stringResource(R.string.weekly_goal),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+
                         Text(
                             text = if (weeklyGoal == "") {
                                 stringResource(R.string.select_weekly_goal)
@@ -293,32 +410,35 @@ fun TargetContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            }
+                            },
+                            textAlign = TextAlign.End
                         )
 
-                        IconButton(onClick = { showWeeklyGoalDialog = true }) {
+                        IconButton(
+                            onClick = {
+                                showWeeklyGoalDialog = !showWeeklyGoalDialog
+                                showGoalDialog = false
+                                showIntensityOfExerciseDialog = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.weekly_goal),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(270f),
+                                    .rotate(if (showWeeklyGoalDialog) 90f else 270f),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
-                }
 
-                if (showWeeklyGoalDialog) {
-                    SelectionDialog(
-                        selectedOption = weeklyGoal,
-                        onOptionSelected = { selectedWeeklyGoal ->
-                            weeklyGoal = selectedWeeklyGoal
-                            showWeeklyGoalDialog = false
-                        },
-                        onDismissRequest = { showWeeklyGoalDialog = false },
-                        title = R.string.select_weekly_goal,
-                        listOptions = if (goal == stringResource(R.string.muscle_gain)) {
+                    AnimatedVisibility(
+                        visible = showWeeklyGoalDialog,
+                        enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                        exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                    ) {
+                        val listOptions = if (goal == stringResource(R.string.muscle_gain)) {
                             listOf(
                                 stringResource(R.string.gain_025_kg_week),
                                 stringResource(R.string.gain_05_kg_week),
@@ -332,9 +452,33 @@ fun TargetContent(
                                 stringResource(R.string.lose_075_kg_week),
                                 stringResource(R.string.lose_1_kg_week)
                             )
-                        },
-                        standardPadding = standardPadding
-                    )
+                        }
+
+                        Column {
+                            listOptions.forEach { selectedWeeklyGoal ->
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.1f
+                                    )
+                                )
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            weeklyGoal = selectedWeeklyGoal
+                                            showWeeklyGoalDialog = false
+                                        },
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Text(
+                                        text = selectedWeeklyGoal,
+                                        modifier = Modifier.padding(standardPadding),
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (showErrorWeeklyDialog) {
@@ -349,18 +493,45 @@ fun TargetContent(
                 }
 
                 ItemCard(
-                    onClick = { showIntensityOfExerciseDialog = true },
+                    onClick = {
+                        showIntensityOfExerciseDialog = !showIntensityOfExerciseDialog
+                        showGoalDialog = false
+                        showWeeklyGoalDialog = false
+                        focusManager.clearFocus()
+                    },
                     modifier = modifier
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = standardPadding,
                                 vertical = standardPadding / 4
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(
+                            onClick = {
+                                showIntensityOfExerciseDialog = !showIntensityOfExerciseDialog
+                                showGoalDialog = false
+                                showWeeklyGoalDialog = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
+                                contentDescription = stringResource(R.string.level),
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = Color(0xFF2962FF)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(standardPadding / 2))
+
+                        Text(
+                            text = stringResource(R.string.intensity),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+
                         Text(
                             text = if (intensityOfExercise == "") {
                                 stringResource(R.string.select_intensity)
@@ -372,39 +543,66 @@ fun TargetContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            }
+                            },
+                            textAlign = TextAlign.End
                         )
 
-                        IconButton(onClick = { showIntensityOfExerciseDialog = true }) {
+                        IconButton(
+                            onClick = {
+                                showIntensityOfExerciseDialog = !showIntensityOfExerciseDialog
+                                showGoalDialog = false
+                                showWeeklyGoalDialog = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_back),
                                 contentDescription = stringResource(R.string.intensity_of_exercise),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(270f),
+                                    .rotate(if (showIntensityOfExerciseDialog) 90f else 270f),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
-                }
 
-                if (showIntensityOfExerciseDialog) {
-                    SelectionDialog(
-                        selectedOption = intensityOfExercise,
-                        onOptionSelected = { selectedIntensityOfExercise ->
-                            intensityOfExercise = selectedIntensityOfExercise
-                            showIntensityOfExerciseDialog = false
-                        },
-                        onDismissRequest = { showIntensityOfExerciseDialog = false },
-                        title = R.string.select_intensity,
-                        listOptions = listOf(
+                    AnimatedVisibility(
+                        visible = showIntensityOfExerciseDialog,
+                        enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                        exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                    ) {
+                        val listOptions = listOf(
                             stringResource(R.string.sedentary),
                             stringResource(R.string.gentle),
                             stringResource(R.string.hard_working),
                             stringResource(R.string.very_good)
-                        ),
-                        standardPadding = standardPadding
-                    )
+                        )
+
+                        Column {
+                            listOptions.forEach { selectedIntensityOfExercise ->
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.1f
+                                    )
+                                )
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            intensityOfExercise = selectedIntensityOfExercise
+                                            showIntensityOfExerciseDialog = false
+                                        },
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Text(
+                                        text = selectedIntensityOfExercise,
+                                        modifier = Modifier.padding(standardPadding),
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -416,7 +614,7 @@ fun TargetContent(
                 Text(
                     text = stringResource(R.string.nutrition_target),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 nutritionTargetList.forEach { title ->
@@ -473,7 +671,7 @@ fun TargetContent(
                 Text(
                     text = stringResource(R.string.exercise) + "*",
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
 
                 OutlinedTextField(
@@ -491,6 +689,7 @@ fun TargetContent(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) },
                     ),
                     singleLine = true,
+                    interactionSource = interactionSources[2],
                     shape = MaterialTheme.shapes.large
                 )
             }

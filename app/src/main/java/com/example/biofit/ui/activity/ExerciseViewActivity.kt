@@ -348,12 +348,12 @@ fun ExerciseViewContent(
                         painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
                         contentDescription = stringResource(R.string.intensity),
                         modifier = Modifier.size(standardPadding),
-                        tint = Color(0xFFDD2C00)
+                        tint = Color(0xFF2962FF)
                     )
 
                     Text(
                         text = "${stringResource(R.string.intensity)}: ${exercise.intensity}",
-                        color = Color(0xFFDD2C00),
+                        color = Color(0xFF2962FF),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -391,10 +391,10 @@ fun ExerciseViewContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_loaded_cal),
+                        painter = painterResource(R.drawable.flame),
                         contentDescription = stringResource(R.string.calories),
                         modifier = Modifier.size(standardPadding),
-                        tint = Color(0xFFFF6D00)
+                        tint = Color(0xFFDD2C00)
                     )
 
                     Text(
@@ -403,7 +403,7 @@ fun ExerciseViewContent(
                                 R.string.kcal
                             )
                         }",
-                        color = Color(0xFFFF6D00),
+                        color = Color(0xFFDD2C00),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

@@ -48,8 +48,10 @@ import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 
@@ -140,7 +142,17 @@ fun OverviewExerciseContent(
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val startOfWeek = selectedDate.with(WeekFields.of(Locale.getDefault()).firstDayOfWeek)
+    val formatterForShow = DateTimeFormatter.ofPattern(
+        if (Locale.getDefault().language == "vi")
+            "EEEE, 'ngày' dd 'tháng' MM 'năm' yyyy"
+        else
+            "EEEE, MMMM d, yyyy"
+    )
+    val startOfWeek = selectedDate.with(
+        TemporalAdjusters.previousOrSame(
+            if (Locale.getDefault().language == "vi") DayOfWeek.MONDAY else DayOfWeek.SUNDAY
+        )
+    )
     val startOfWeekFormatted = startOfWeek.format(formatter)
     val endOfWeek = startOfWeek.plusDays(6)
     val endOfWeekFormatted = endOfWeek.format(formatter)
@@ -155,7 +167,6 @@ fun OverviewExerciseContent(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(standardPadding)
     ) {
         WeekNavigationBar(
             selectedDate = selectedDate,
@@ -169,12 +180,14 @@ fun OverviewExerciseContent(
                 .groupBy { it.date }
 
             groupedExercises.forEach { (date, exerciseDones) ->
+                val localeDate = LocalDate.parse(date, formatter)
+                val showDate = localeDate.format(formatterForShow)
                 item {
                     Text(
-                        text = date,
+                        text = showDate,
                         modifier = modifier.padding(top = standardPadding * 2),
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleLarge,
                     )
                 }
 
@@ -182,6 +195,7 @@ fun OverviewExerciseContent(
                     Spacer(modifier = Modifier.padding(top = standardPadding))
 
                     OverviewExerciseCard(
+                        startOfWeek = startOfWeek,
                         exerciseName = exerciseDone.exerciseName,
                         level = exerciseDone.level,
                         intensity = exerciseDone.intensity,
@@ -205,19 +219,6 @@ fun OverviewExerciseContent(
         }
     }
 }
-
-val listOverviewExercise = listOf(
-    Triple("Jumping Jacks", 10, 100f),
-    Triple("Push-ups", 15, 150f),
-    Triple("Squats", 12, 120f),
-    Triple("Lunges", 10, 90f),
-    Triple("Burpees", 8, 140f),
-    Triple("Plank", 5, 50f),
-    Triple("Mountain Climbers", 7, 110f),
-    Triple("High Knees", 6, 95f),
-    Triple("Jump Rope", 10, 130f),
-    Triple("Bicycle Crunches", 12, 105f)
-)
 
 @Preview(
     device = "id:pixel",

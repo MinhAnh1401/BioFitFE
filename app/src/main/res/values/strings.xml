@@ -381,4 +381,6 @@
     <string name="weak_password">Weak password</string>
     <string name="medium_password">Medium password</string>
     <string name="strong_password">Strong password</string>
+    <string name="burned_calories">Burned calories</string>
+    <string name="back_to_current_week">Back to current week</string>
 </resources>

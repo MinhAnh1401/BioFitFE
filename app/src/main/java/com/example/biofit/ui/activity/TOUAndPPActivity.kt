@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.components.TopBar
+import com.example.biofit.ui.components.TopBar2
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -35,11 +36,14 @@ class TOUAndPPActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         val title = intent.getStringExtra("title") ?: ""
+        val getFrom = intent.getStringExtra("from") ?: ""
         setContent {
             BioFitTheme {
-                TOUAndPPScreen(title)
+                TOUAndPPScreen(
+                    title,
+                    getFrom
+                )
             }
         }
     }
@@ -51,7 +55,10 @@ class TOUAndPPActivity : ComponentActivity() {
 }
 
 @Composable
-fun TOUAndPPScreen(title: String) {
+fun TOUAndPPScreen(
+    title: String,
+    getFrom: String
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -72,16 +79,28 @@ fun TOUAndPPScreen(title: String) {
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBar(
-                onBackClick = { activity?.finish() },
-                title = when (title) {
-                    stringResource(R.string.term_of_use) -> stringResource(R.string.term_of_use)
-                    else -> stringResource(R.string.privacy_policy)
-                },
-                middleButton = null,
-                rightButton = null,
-                standardPadding = standardPadding
-            )
+            when (getFrom) {
+                "profile_screen" -> TopBar(
+                    onBackClick = { activity?.finish() },
+                    title = when (title) {
+                        stringResource(R.string.term_of_use) -> stringResource(R.string.term_of_use)
+                        else -> stringResource(R.string.privacy_policy)
+                    },
+                    middleButton = null,
+                    rightButton = null,
+                    standardPadding = standardPadding
+                )
+                else -> TopBar2(
+                    onBackClick = { activity?.finish() },
+                    title = when (title) {
+                        stringResource(R.string.term_of_use) -> stringResource(R.string.term_of_use)
+                        else -> stringResource(R.string.privacy_policy)
+                    },
+                    middleButton = null,
+                    rightButton = null,
+                    standardPadding = standardPadding
+                )
+            }
 
             TOUAndPPContent(
                 title = title,
@@ -141,7 +160,10 @@ fun TOUAndPPContent(
 @Composable
 private fun TOUAndPPScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        TOUAndPPScreen(stringResource(R.string.term_of_use))
+        TOUAndPPScreen(
+            stringResource(R.string.term_of_use),
+            "profile_screen"
+        )
     }
 }
 
@@ -154,7 +176,10 @@ private fun TOUAndPPScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun TOUAndPPScreenPreviewInLargePhone() {
     BioFitTheme {
-        TOUAndPPScreen(stringResource(R.string.term_of_use))
+        TOUAndPPScreen(
+            stringResource(R.string.term_of_use),
+            "profile_screen"
+        )
     }
 }
 
@@ -168,7 +193,10 @@ private fun TOUAndPPScreenPreviewInLargePhone() {
 @Composable
 private fun TOUAndPPScreenPreviewInTablet() {
     BioFitTheme {
-        TOUAndPPScreen(stringResource(R.string.term_of_use))
+        TOUAndPPScreen(
+            stringResource(R.string.term_of_use),
+            "profile_screen"
+        )
     }
 }
 
@@ -182,7 +210,10 @@ private fun TOUAndPPScreenPreviewInTablet() {
 @Composable
 private fun TOUAndPPLandscapeScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        TOUAndPPScreen(stringResource(R.string.term_of_use))
+        TOUAndPPScreen(
+            stringResource(R.string.term_of_use),
+            "profile_screen"
+        )
     }
 }
 
@@ -195,7 +226,10 @@ private fun TOUAndPPLandscapeScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun TOUAndPPLandscapeScreenPreviewInLargePhone() {
     BioFitTheme {
-        TOUAndPPScreen(stringResource(R.string.term_of_use))
+        TOUAndPPScreen(
+            stringResource(R.string.term_of_use),
+            "profile_screen"
+        )
     }
 }
 
@@ -209,6 +243,9 @@ private fun TOUAndPPLandscapeScreenPreviewInLargePhone() {
 @Composable
 private fun TOUAndPPLandscapeScreenPreviewInTablet() {
     BioFitTheme {
-        TOUAndPPScreen(stringResource(R.string.term_of_use))
+        TOUAndPPScreen(
+            stringResource(R.string.term_of_use),
+            "profile_screen"
+        )
     }
 }

@@ -256,6 +256,7 @@ fun InfoUserBirthdayContent(
                     initialDate.get(Calendar.MONTH),
                     initialDate.get(Calendar.DAY_OF_MONTH)
                 ).show()
+                showDatePicker = false
             }
         }
 

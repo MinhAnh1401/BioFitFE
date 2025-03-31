@@ -899,15 +899,15 @@ fun WorkoutSuggestion(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        painter = painterResource(R.drawable.ic_loaded_cal),
+                                        painter = painterResource(R.drawable.flame),
                                         contentDescription = stringResource(R.string.loaded),
                                         modifier = Modifier.size(standardPadding),
-                                        tint = Color(0xFFFF6D00)
+                                        tint = Color(0xFFDD2C00)
                                     )
 
                                     Text(
                                         text = "$calories ${stringResource(R.string.kcal)}",
-                                        color = Color(0xFFFF6D00),
+                                        color = Color(0xFFDD2C00),
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }

@@ -120,6 +120,61 @@ fun TopBar(
 }
 
 @Composable
+fun TopBar2(
+    onBackClick: (() -> Unit)? = null,
+    title: String? = null,
+    middleButton: (@Composable () -> Unit)? = null,
+    rightButton: (@Composable () -> Unit)? = null,
+    standardPadding: Dp
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.weight(0.5f),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Row {
+                if (onBackClick != null) {
+                    BackButton(
+                        onBackClick = onBackClick,
+                        standardPadding = standardPadding
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(standardPadding))
+            }
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                title?.let {
+                    Text(
+                        text = title,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+
+                middleButton?.invoke()
+            }
+        }
+
+        Column(
+            modifier = Modifier.weight(0.5f),
+            horizontalAlignment = Alignment.End
+        ) {
+            rightButton?.invoke()
+        }
+    }
+}
+
+@Composable
 fun HomeButton(standardPadding: Dp) {
     val context = LocalContext.current
     val activity = context as? Activity

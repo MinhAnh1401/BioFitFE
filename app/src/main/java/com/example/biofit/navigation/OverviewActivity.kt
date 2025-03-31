@@ -28,9 +28,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -39,8 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
@@ -64,6 +68,7 @@ import java.math.RoundingMode
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 import kotlin.math.ceil
@@ -412,9 +417,15 @@ fun WeekNavigationBar(
     onDateChange: (LocalDate) -> Unit,
     standardPadding: Dp
 ) {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM")
+    val formatter = DateTimeFormatter.ofPattern(
+        if (Locale.getDefault().language == "vi") "dd/MM" else "MM/dd"
+    )
 
-    val startOfWeek = selectedDate.with(WeekFields.of(Locale.getDefault()).firstDayOfWeek)
+    val startOfWeek = selectedDate.with(
+        TemporalAdjusters.previousOrSame(
+            if (Locale.getDefault().language == "vi") DayOfWeek.MONDAY else DayOfWeek.SUNDAY
+        )
+    )
     val endOfWeek = startOfWeek.plusDays(6)
 
     val currentWeek = "${startOfWeek.format(formatter)} - ${endOfWeek.format(formatter)}"
@@ -430,34 +441,45 @@ fun WeekNavigationBar(
             onClick = { onDateChange(selectedDate.minusWeeks(1)) },
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                painter = painterResource(R.drawable.arrow_left),
                 contentDescription = "Previous Week",
-                modifier = Modifier
-                    .size(standardPadding * 2)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.outline),
-                tint = MaterialTheme.colorScheme.onPrimary
+                modifier = Modifier.size(standardPadding),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        Text(
-            text = currentWeek,
-            color = MaterialTheme.colorScheme.outline,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodySmall
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = currentWeek,
+                color = MaterialTheme.colorScheme.outline,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            if (selectedDate != LocalDate.now()) {
+                TextButton(
+                    onClick = { onDateChange(LocalDate.now()) }
+                ) {
+                    Text(
+                        text = stringResource(R.string.back_to_current_week),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
 
         IconButton(
             onClick = { onDateChange(selectedDate.plusWeeks(1)) }
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                painter = painterResource(R.drawable.arrow_left),
                 contentDescription = "Next Week",
                 modifier = Modifier
-                    .size(standardPadding * 2)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.outline),
-                tint = MaterialTheme.colorScheme.onPrimary
+                    .size(standardPadding)
+                    .rotate(180f),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }

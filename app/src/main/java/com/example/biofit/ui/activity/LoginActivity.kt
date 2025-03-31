@@ -452,6 +452,7 @@ fun TermsAndPrivacy(standardPadding: Dp) {
                     activity?.let {
                         val intent = Intent(it, TOUAndPPActivity::class.java)
                         intent.putExtra("title", context.getString(R.string.term_of_use))
+                        intent.putExtra("from", "login_screen")
                         it.startActivity(intent)
                     }
                 },
@@ -473,6 +474,7 @@ fun TermsAndPrivacy(standardPadding: Dp) {
                     activity?.let {
                         val intent = Intent(it, TOUAndPPActivity::class.java)
                         intent.putExtra("title", context.getString(R.string.privacy_policy))
+                        intent.putExtra("from", "login_screen")
                         it.startActivity(intent)
                     }
                 },

@@ -247,7 +247,7 @@ fun ProfileContent(
                         text = userData.getGenderString(context, userData.gender) + " | " +
                                 userData.getAge(context, userData.dateOfBirth),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
 
@@ -494,6 +494,7 @@ fun ProfileContent(
                             activity?.let {
                                 val intent = Intent(it, TOUAndPPActivity::class.java)
                                 intent.putExtra("title", context.getString(R.string.term_of_use))
+                                intent.putExtra("from", "profile_screen")
                                 it.startActivity(intent)
                             }
                         }
@@ -541,6 +542,7 @@ fun ProfileContent(
                             activity?.let {
                                 val intent = Intent(it, TOUAndPPActivity::class.java)
                                 intent.putExtra("title", context.getString(R.string.privacy_policy))
+                                intent.putExtra("from", "profile_screen")
                                 it.startActivity(intent)
                             }
                         }

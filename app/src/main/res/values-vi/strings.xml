@@ -379,4 +379,6 @@
     <string name="weak_password">Mật khẩu yếu</string>
     <string name="medium_password">Mật khẩu trung bình</string>
     <string name="strong_password">Mật khẩu mạnh</string>
+    <string name="burned_calories">Lượng calo đốt cháy</string>
+    <string name="back_to_current_week">Trở về tuần hiện tại</string>
 </resources>
