@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -183,7 +184,7 @@ fun InfoUserTargetContent(
                 modifier = modifier, // kích thước và vị trí của trường nhập liệu
                 // enabled = true, // trạng thái kích hoạt của trường nhập liệu (mặc định true)
                 // readOnly = false, // trạng thái chỉ đọc của trường nhập liệu (mặc định false)
-                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End), // kiểu chữ và kích thước của văn bản trong trường nhập liệu
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End), // kiểu chữ và kích thước của văn bản trong trường nhập liệu
                 //label = { Text(text = stringResource(R.string.target_weight)) }, // nhãn cho trường nhập liệu
                 // placeholder = null, // văn bản gợi ý bên trong trường nhập liệu (mặc định null)
                 // leadingIcon = null, // biểu tượng trước văn bản (mặc định null)

@@ -32,6 +32,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -225,9 +227,18 @@ fun LoginForm(
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
         val focusManager = LocalFocusManager.current
 
+        var emailError by remember { mutableStateOf<Int?>(null) }
+
         OutlinedTextField(
             value = viewModel.email.value,
-            onValueChange = { viewModel.email.value = it },
+            onValueChange = {
+                viewModel.email.value = it
+                emailError = if (!it.isValidEmail() && it.isNotEmpty()) {
+                    R.string.enter_valid_email
+                } else {
+                    null
+                }
+            },
             modifier = modifier2.padding(top = standardPadding),
             label = { Text(text = stringResource(id = R.string.email)) },
             placeholder = { Text(text = stringResource(id = R.string.biofit_example_com)) },
@@ -238,6 +249,8 @@ fun LoginForm(
                     modifier = Modifier.size(size = standardPadding * 1.5f)
                 )
             },
+            isError = emailError != null,
+            supportingText = { emailError?.let { Text(stringResource(it)) } },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -247,6 +260,11 @@ fun LoginForm(
                 onDone = { focusManager.clearFocus() },
             ),
             singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                errorLabelColor = Color(0xFFDD2C00),
+                errorSupportingTextColor = Color(0xFFDD2C00),
+                errorBorderColor = Color(0xFFDD2C00)
+            ),
             shape = MaterialTheme.shapes.large
         )
 
@@ -259,7 +277,7 @@ fun LoginForm(
                 Icon(
                     painter = painterResource(id = R.drawable.ellipsis_rectangle),
                     contentDescription = stringResource(id = R.string.password),
-                    modifier = Modifier.size(size = standardPadding * 1.5f)
+                    modifier = Modifier.size(size = standardPadding * 1.5f),
                 )
             },
             trailingIcon = {
@@ -269,7 +287,6 @@ fun LoginForm(
                     modifier = Modifier.padding(end = standardPadding / 2)
                 )
             },
-            supportingText = { Text(text = stringResource(id = R.string.min_8_chars_upper_lower_numbers)) },
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
             } else {

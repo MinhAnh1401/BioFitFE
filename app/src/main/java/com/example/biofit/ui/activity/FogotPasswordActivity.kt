@@ -5,14 +5,33 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,15 +43,32 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,13 +80,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import com.example.biofit.R
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.PasswordResetViewModel
 import com.example.biofit.view_model.ViewModelFactory
-
-private val primaryGreen = Color(0xFF34A853)
-private val lightGreen = Color(0xFF66BB6A)
-private val darkGreen = Color(0xFF1B5E20)
 
 class ForgotPasswordActivity : ComponentActivity() {
 
@@ -66,15 +99,7 @@ class ForgotPasswordActivity : ComponentActivity() {
 
         setContent {
             BioFitTheme {
-                // Ghi đè màu chủ đề bằng bảng màu xanh lá cây
-                val customColorScheme = MaterialTheme.colorScheme.copy(
-                    primary = primaryGreen,
-                    primaryContainer = lightGreen,
-                    secondary = darkGreen,
-                    background = Color(0xFFF5F8F5)
-                )
-
-                MaterialTheme(colorScheme = customColorScheme) {
+                MaterialTheme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -122,7 +147,8 @@ fun ForgotPasswordScreen(
     LaunchedEffect(confirmState) {
         if (confirmState is PasswordResetViewModel.ConfirmResetState.Success) {
             // animation thành công
-            val successMessage = (confirmState as PasswordResetViewModel.ConfirmResetState.Success).message
+            val successMessage =
+                (confirmState as PasswordResetViewModel.ConfirmResetState.Success).message
             Toast.makeText(context, successMessage, Toast.LENGTH_LONG).show()
             onResetComplete()
         }
@@ -172,7 +198,7 @@ fun ForgotPasswordScreen(
                 },
 
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = primaryGreen
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             )
         }
@@ -181,14 +207,14 @@ fun ForgotPasswordScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFF5F8F5),
-                            Color(0xFFE8F5E9)
-                        )
+            /*.background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFFF5F8F5),
+                        Color(0xFFE8F5E9)
                     )
                 )
+            )*/
         ) {
             // Animation nâng cao với slide và fade
             AnimatedVisibility(
@@ -240,8 +266,8 @@ fun ForgotPasswordScreen(
                         modifier = Modifier
                             .size(60.dp)
                             .scale(scale),
-                        color = primaryGreen,
-                        trackColor = lightGreen.copy(alpha = 0.3f),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                         strokeWidth = 5.dp
                     )
                 }
@@ -268,19 +294,8 @@ fun RequestResetScreen(
         verticalArrangement = Arrangement.Center
     ) {
         // Thẻ có bóng đổ và góc bo tròn
-        Card(
+        SubCard(
             modifier = Modifier
-                .fillMaxWidth()
-                .shadow(
-                    elevation = 6.dp,
-                    shape = RoundedCornerShape(16.dp),
-                    spotColor = primaryGreen.copy(alpha = 0.2f)
-                )
-                .clip(RoundedCornerShape(16.dp))
-                .animateContentSize(),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
         ) {
             Column(
                 modifier = Modifier
@@ -291,7 +306,7 @@ fun RequestResetScreen(
                 Icon(
                     imageVector = Icons.Rounded.CheckCircle,
                     contentDescription = null,
-                    tint = primaryGreen,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(72.dp)
                         .padding(bottom = 16.dp)
@@ -301,7 +316,8 @@ fun RequestResetScreen(
                     text = stringResource(R.string.forgot_password_description),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 10.dp)
+                    modifier = Modifier.padding(bottom = 10.dp),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 val emailFocused = remember { mutableStateOf(false) }
@@ -315,16 +331,11 @@ fun RequestResetScreen(
                             null
                         }
                     },
-                    label = {
-                        Text(
-                            stringResource(R.string.email),
-                            color = if (emailFocused.value) primaryGreen else Color.Gray)
-                    },
+                    label = { Text(stringResource(R.string.email)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
-                            contentDescription = null,
-                            tint = if (emailFocused.value) primaryGreen else Color.Gray
+                            contentDescription = stringResource(R.string.email)
                         )
                     },
                     isError = emailError != null,
@@ -335,11 +346,11 @@ fun RequestResetScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = primaryGreen,
-                        focusedLabelColor = primaryGreen,
-                        cursorColor = primaryGreen
+                        errorLabelColor = Color(0xFFDD2C00),
+                        errorSupportingTextColor = Color(0xFFDD2C00),
+                        errorBorderColor = Color(0xFFDD2C00)
                     ),
-                    shape = RoundedCornerShape(15.dp)
+                    shape = MaterialTheme.shapes.large
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -362,10 +373,10 @@ fun RequestResetScreen(
                         .fillMaxWidth()
                         .height(52.dp)
                         .scale(if (isPressed) 0.98f else 1f),
-                    shape = RoundedCornerShape(15.dp),
+                    shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = primaryGreen,
-                        disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     ),
                     interactionSource = interactionSource,
                     elevation = ButtonDefaults.buttonElevation(
@@ -374,6 +385,13 @@ fun RequestResetScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.send_reset_code),
+                        color = if (email.isNotEmpty() && emailError == null &&
+                            requestState !is PasswordResetViewModel.RequestResetState.Loading
+                        ) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.outline
+                        },
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Bold
                         )
@@ -421,6 +439,7 @@ fun ConfirmResetScreen(
                     Toast.LENGTH_LONG
                 ).show()
             }
+
             is PasswordResetViewModel.RequestResetState.Error -> {
                 Toast.makeText(
                     context,
@@ -428,7 +447,9 @@ fun ConfirmResetScreen(
                     Toast.LENGTH_LONG
                 ).show()
             }
-            else -> { /* Do nothing */ }
+
+            else -> { /* Do nothing */
+            }
         }
     }
 
@@ -441,6 +462,7 @@ fun ConfirmResetScreen(
             newPassword.length >= 8 &&
                     newPassword.any { it.isDigit() } &&
                     newPassword.any { it.isUpperCase() } -> 3
+
             else -> 2
         }
     }
@@ -453,18 +475,8 @@ fun ConfirmResetScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Card(
+        SubCard(
             modifier = Modifier
-                .fillMaxWidth()
-                .shadow(
-                    elevation = 6.dp,
-                    shape = RoundedCornerShape(16.dp),
-                    spotColor = primaryGreen.copy(alpha = 0.2f)
-                )
-                .clip(RoundedCornerShape(16.dp)),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
         ) {
             Column(
                 modifier = Modifier
@@ -479,15 +491,17 @@ fun ConfirmResetScreen(
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
-                        .padding(bottom = 16.dp)
                 )
+
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = stringResource(R.string.check_your_email),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    color = primaryGreen,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -496,7 +510,7 @@ fun ConfirmResetScreen(
                     Icon(
                         imageVector = Icons.Default.Email,
                         contentDescription = null,
-                        tint = primaryGreen,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(end = 8.dp)
                     )
 
@@ -504,7 +518,6 @@ fun ConfirmResetScreen(
                         text = email,
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
@@ -523,17 +536,13 @@ fun ConfirmResetScreen(
                             }
                         }
                     },
-                    label = {
-                        Text(
-                            stringResource(R.string.reset_code),
-                            color = if (codeFocused.value) primaryGreen else Color.Gray)
-                    },
+                    label = { Text(stringResource(R.string.reset_code)) },
                     placeholder = { Text(stringResource(R.string.reset_code_hint)) },
                     leadingIcon = {
                         Icon(
                             Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = primaryGreen
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     isError = resetCodeError != null,
@@ -544,9 +553,9 @@ fun ConfirmResetScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = primaryGreen,
-                        focusedLabelColor = primaryGreen,
-                        cursorColor = primaryGreen
+                        errorLabelColor = Color(0xFFDD2C00),
+                        errorSupportingTextColor = Color(0xFFDD2C00),
+                        errorBorderColor = Color(0xFFDD2C00)
                     ),
                     shape = RoundedCornerShape(15.dp)
                 )
@@ -560,23 +569,20 @@ fun ConfirmResetScreen(
                         } else {
                             null
                         }
-                        confirmPasswordError = if (confirmPassword.isNotEmpty() && confirmPassword != it) {
-                            R.string.passwords_do_not_match
-                        } else {
-                            null
-                        }
+                        confirmPasswordError =
+                            if (confirmPassword.isNotEmpty() && confirmPassword != it) {
+                                R.string.passwords_do_not_match
+                            } else {
+                                null
+                            }
                     },
-                    label = {
-                        Text(
-                            stringResource(R.string.new_password),
-                            color = if (codeFocused.value) primaryGreen else Color.Gray)
-                    },
+                    label = { Text(stringResource(R.string.new_password)) },
                     placeholder = { Text(stringResource(R.string.new_password_hint)) },
                     leadingIcon = {
                         Icon(
                             Icons.Default.Lock,
                             contentDescription = null,
-                            tint = primaryGreen
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     isError = passwordError != null,
@@ -596,7 +602,12 @@ fun ConfirmResetScreen(
                                             .clip(RoundedCornerShape(2.dp))
                                             .background(
                                                 if (passwordStrength >= 1)
-                                                    if (passwordStrength == 1) Color.Red else primaryGreen
+                                                    when (passwordStrength) {
+                                                        1 -> Color(0xFFDD2C00)
+                                                        2 -> Color(0xFFFFAB00)
+                                                        3 -> MaterialTheme.colorScheme.primary
+                                                        else -> Color.Transparent
+                                                    }
                                                 else Color.Gray.copy(alpha = 0.3f)
                                             )
                                     )
@@ -608,7 +619,11 @@ fun ConfirmResetScreen(
                                             .clip(RoundedCornerShape(2.dp))
                                             .background(
                                                 if (passwordStrength >= 2)
-                                                    if (passwordStrength == 2) Color(0xFFFFA000) else primaryGreen
+                                                    when (passwordStrength) {
+                                                        2 -> Color(0xFFFFAB00)
+                                                        3 -> MaterialTheme.colorScheme.primary
+                                                        else -> Color.Transparent
+                                                    }
                                                 else Color.Gray.copy(alpha = 0.3f)
                                             )
                                     )
@@ -619,22 +634,22 @@ fun ConfirmResetScreen(
                                             .height(4.dp)
                                             .clip(RoundedCornerShape(2.dp))
                                             .background(
-                                                if (passwordStrength >= 3) primaryGreen
+                                                if (passwordStrength >= 3) MaterialTheme.colorScheme.primary
                                                 else Color.Gray.copy(alpha = 0.3f)
                                             )
                                     )
                                 }
                                 Text(
                                     text = when (passwordStrength) {
-                                        1 -> "Mật khẩu yếu"
-                                        2 -> "Mật khẩu trung bình"
-                                        3 -> "Mật khẩu mạnh"
+                                        1 -> stringResource(R.string.weak_password)
+                                        2 -> stringResource(R.string.medium_password)
+                                        3 -> stringResource(R.string.strong_password)
                                         else -> ""
                                     },
                                     color = when (passwordStrength) {
-                                        1 -> Color.Red
-                                        2 -> Color(0xFFFFA000)
-                                        3 -> primaryGreen
+                                        1 -> Color(0xFFDD2C00)
+                                        2 -> Color(0xFFFFAB00)
+                                        3 -> MaterialTheme.colorScheme.primary
                                         else -> Color.Transparent
                                     },
                                     style = MaterialTheme.typography.bodySmall,
@@ -650,9 +665,9 @@ fun ConfirmResetScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = primaryGreen,
-                        focusedLabelColor = primaryGreen,
-                        cursorColor = primaryGreen
+                        errorLabelColor = Color(0xFFDD2C00),
+                        errorSupportingTextColor = Color(0xFFDD2C00),
+                        errorBorderColor = Color(0xFFDD2C00)
                     ),
                     shape = RoundedCornerShape(15.dp)
                 )
@@ -668,17 +683,13 @@ fun ConfirmResetScreen(
                             null
                         }
                     },
-                    label = {
-                        Text(
-                            stringResource(R.string.confirm_password),
-                            color = if (codeFocused.value) primaryGreen else Color.Gray)
-                    },
+                    label = { Text(stringResource(R.string.confirm_password)) },
                     placeholder = { Text(stringResource(R.string.confirm_password_hint)) },
                     leadingIcon = {
                         Icon(
                             Icons.Default.Lock,
                             contentDescription = null,
-                            tint = primaryGreen
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     isError = confirmPasswordError != null,
@@ -690,9 +701,9 @@ fun ConfirmResetScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = primaryGreen,
-                        focusedLabelColor = primaryGreen,
-                        cursorColor = primaryGreen
+                        errorLabelColor = Color(0xFFDD2C00),
+                        errorSupportingTextColor = Color(0xFFDD2C00),
+                        errorBorderColor = Color(0xFFDD2C00)
                     ),
                     shape = RoundedCornerShape(15.dp)
                 )
@@ -707,7 +718,9 @@ fun ConfirmResetScreen(
                         when {
                             resetCode.length != 6 -> resetCodeError = "Mã phải có 6 chữ số"
                             newPassword.length < 6 -> passwordError = R.string.password_too_short
-                            newPassword != confirmPassword -> confirmPasswordError = R.string.passwords_do_not_match
+                            newPassword != confirmPassword -> confirmPasswordError =
+                                R.string.passwords_do_not_match
+
                             else -> viewModel.confirmPasswordReset(email, resetCode, newPassword)
                         }
                     },
@@ -720,8 +733,8 @@ fun ConfirmResetScreen(
                         .scale(if (isPressed) 0.98f else 1f),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = primaryGreen,
-                        disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     ),
                     elevation = ButtonDefaults.buttonElevation(
                         defaultElevation = 4.dp
@@ -740,13 +753,10 @@ fun ConfirmResetScreen(
                     onClick = { viewModel.requestPasswordReset(email) },
                     modifier = Modifier.padding(top = 8.dp),
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = primaryGreen
+                        contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Text(
-                        text = stringResource(R.string.reset_code),
-                        fontWeight = FontWeight.Medium
-                    )
+                    Text(text = stringResource(R.string.reset_code))
                 }
             }
         }

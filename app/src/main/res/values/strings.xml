@@ -378,4 +378,7 @@
     <string name="tdee_des">TDEE (Total Daily Energy Expenditure) is the total amount of calories your body burns in a day, including energy used for basic metabolic functions (BMR), physical activities, work, exercise, and digestion.</string>
     <string name="calorie_intake_target_des">Calorie Intake Target is the number of calories you need to consume daily to achieve your health goals, such as maintaining, losing, or gaining weight. This number is typically calculated based on TDEE and adjusted according to personal objectives.</string>
     <string name="bmi_des">BMI (Body Mass Index) is a measure calculated based on a person\'s weight and height to assess whether they are underweight, healthy weight, overweight, or obese.</string>
+    <string name="weak_password">Weak password</string>
+    <string name="medium_password">Medium password</string>
+    <string name="strong_password">Strong password</string>
 </resources>

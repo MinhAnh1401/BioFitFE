@@ -376,4 +376,7 @@
     <string name="enter_valid_email">Vui lòng nhập địa chỉ email hợp lệ</string>
     <string name="check_your_email">Kiểm tra email của bạn để biết mã đặt lại</string>
     <string name="exit">Thoát</string>
+    <string name="weak_password">Mật khẩu yếu</string>
+    <string name="medium_password">Mật khẩu trung bình</string>
+    <string name="strong_password">Mật khẩu mạnh</string>
 </resources>
