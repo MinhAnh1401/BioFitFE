@@ -63,6 +63,7 @@
         <activity android:name=".ui.activity.CreateExerciseActivity" />
         <activity android:name=".ui.activity.UpgradeActivity" />
         <activity android:name=".ui.activity.TOUAndPPActivity" />
+        <activity android:name=".ui.activity.ForgotPasswordActivity"/>
         <activity android:name=".ui.activity.PaymentWebViewActivity"
             android:exported="true">
             <intent-filter>

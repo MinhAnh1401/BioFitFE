@@ -315,7 +315,10 @@ fun LoginForm(
             },
         ) {
             TextButton(
-                onClick = { /* TODO */ },
+                onClick = {
+                    val intent = Intent(context, ForgotPasswordActivity::class.java)
+                    context.startActivity(intent)
+                },
             ) {
                 Text(
                     text = stringResource(R.string.forgot_password),
