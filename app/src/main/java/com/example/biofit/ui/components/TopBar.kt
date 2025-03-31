@@ -20,8 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
@@ -51,6 +53,7 @@ fun TopBarScreen() {
                 Icon(
                     painter = painterResource(R.drawable.ic_plus),
                     contentDescription = "Add button",
+                    modifier = Modifier.size(getStandardPadding().first * 1.5f),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
@@ -78,8 +81,8 @@ fun TopBar(
             Row {
                 if (onBackClick != null) {
                     BackButton(
-                        onBackClick,
-                        standardPadding
+                        onBackClick = onBackClick,
+                        standardPadding = standardPadding
                     )
                 }
 
@@ -99,7 +102,7 @@ fun TopBar(
                     Text(
                         text = title,
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
 

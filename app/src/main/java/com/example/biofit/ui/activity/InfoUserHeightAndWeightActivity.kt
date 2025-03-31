@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -174,7 +175,7 @@ fun InfoUserHeightAndWeightContent(
                 value = height,
                 onValueChange = { viewModel.height.value = it.toFloatOrNull() },
                 modifier = modifier,
-                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                 leadingIcon = {
                     Icon(
                         painter = painterResource(R.drawable.figure_stand),
@@ -182,18 +183,8 @@ fun InfoUserHeightAndWeightContent(
                         modifier = Modifier.size(standardPadding * 1.5f)
                     )
                 },
-                prefix = {
-                    Text(
-                        text = stringResource(R.string.height),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                suffix = {
-                    Text(
-                        text = stringResource(R.string.cm),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
+                prefix = { Text(text = stringResource(R.string.height)) },
+                suffix = { Text(text = stringResource(R.string.cm)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Next
@@ -209,7 +200,7 @@ fun InfoUserHeightAndWeightContent(
                 value = weight,
                 onValueChange = { viewModel.weight.value = it.toFloatOrNull() },
                 modifier = modifier.padding(top = standardPadding),
-                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                 leadingIcon = {
                     Icon(
                         painter = painterResource(R.drawable.scalemass),
@@ -217,18 +208,8 @@ fun InfoUserHeightAndWeightContent(
                         modifier = Modifier.size(standardPadding * 1.5f)
                     )
                 },
-                prefix = {
-                    Text(
-                        text = stringResource(R.string.weight),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                suffix = {
-                    Text(
-                        text = stringResource(R.string.kg),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
+                prefix = { Text(text = stringResource(R.string.weight)) },
+                suffix = { Text(text = stringResource(R.string.kg)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Go

@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -104,8 +105,7 @@ fun EditExerciseScreen(initialSelectedOption: Int) {
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -166,23 +166,15 @@ fun EditExerciseScreenContent(
                     value = exerciseName,
                     onValueChange = { exerciseName = it },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                     placeholder = {
                         Text(
                             text = stringResource(R.string.enter_exercise_name),
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.bodySmall
+                            textAlign = TextAlign.End
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.exercise_name),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.exercise_name)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -218,8 +210,7 @@ fun EditExerciseScreenContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showLevelDialog = true }) {
@@ -256,19 +247,9 @@ fun EditExerciseScreenContent(
                     value = time,
                     onValueChange = { time = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.End),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.time),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.min),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                    prefix = { Text(text = stringResource(R.string.time)) },
+                    suffix = { Text(text = stringResource(R.string.min)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next
@@ -304,8 +285,7 @@ fun EditExerciseScreenContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showSessionDialog = true }) {
@@ -343,21 +323,11 @@ fun EditExerciseScreenContent(
                     value = calories,
                     onValueChange = { calories = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
+                    textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.End
                     ),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.calories) + "*",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.kcal),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.calories) + "*") },
+                    suffix = { Text(text = stringResource(R.string.kcal)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next
@@ -393,8 +363,7 @@ fun EditExerciseScreenContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showIntensityDialog = true }) {

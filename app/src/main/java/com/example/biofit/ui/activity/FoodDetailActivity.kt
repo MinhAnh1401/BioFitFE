@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -179,13 +180,15 @@ fun FoodNutritionalComposition(
             Image(
                 painter = painterResource(food1.foodImage),
                 contentDescription = "Food image",
-                modifier = Modifier.size(standardPadding * 10)
+                modifier = Modifier
+                    .size(standardPadding * 8)
+                    .clip(MaterialTheme.shapes.large)
             )
 
             Text(
                 text = food1.foodName,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
         }
 
@@ -197,7 +200,7 @@ fun FoodNutritionalComposition(
             Text(
                 text = stringResource(R.string.nutritional_composition),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
 
             FoodCalorieChart(
@@ -303,11 +306,10 @@ fun FoodNutritionalValue(
         Text(
             text = stringResource(R.string.nutritional_value),
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleMedium
         )
 
         Column(
-            modifier = Modifier.padding(standardPadding),
             verticalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
             nutrients.forEach { (name, value) ->
@@ -328,7 +330,7 @@ fun FoodNutritionalValue(
 
                 if (name != nutrients.last().first) {
                     HorizontalDivider(
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
                     )
                 }
             }

@@ -237,7 +237,7 @@ fun ProfileContent(
                         Text(
                             text = userData.fullName ?: "N/A",
                             color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.headlineSmall
                         )
 
                         // cập nhật pro sau khi thanh toán thành công
@@ -247,7 +247,7 @@ fun ProfileContent(
                                 MaterialTheme.colorScheme.primary
                             else
                                 MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.labelSmall.copy(
+                            style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 shadow = Shadow(
                                     color = if (userData.getSubscriptionStatus(context) == "PRO")
@@ -321,7 +321,7 @@ fun ProfileContent(
                 Text(
                     text = stringResource(R.string.target),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 SubCard(modifier = Modifier) {
@@ -350,7 +350,7 @@ fun ProfileContent(
                                     .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
 
                             Text(
@@ -360,7 +360,7 @@ fun ProfileContent(
                                     .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.headlineSmall
                             )
                         }
 
@@ -389,7 +389,7 @@ fun ProfileContent(
                                     .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
 
                             Text(
@@ -399,7 +399,7 @@ fun ProfileContent(
                                     .padding(top = standardPadding),
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.headlineSmall
                             )
                         }
                     }
@@ -436,7 +436,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
 
                             Icon(
@@ -482,7 +482,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
 
                             Icon(
@@ -544,7 +544,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
 
                             Icon(
@@ -591,7 +591,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
 
                             Icon(
@@ -645,7 +645,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }
@@ -694,7 +694,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }
@@ -730,7 +730,7 @@ fun ProfileContent(
                                     .weight(1f)
                                     .padding(start = standardPadding),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }

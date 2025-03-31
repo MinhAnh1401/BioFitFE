@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -95,8 +96,7 @@ fun CalorieDistributionScreen() {
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -146,22 +146,17 @@ fun CalorieDistributionContent(
                 Text(
                     text = stringResource(R.string.set_a_goal_for_your_meal),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 OutlinedTextField(
                     value = dailyCalorieIntake,
                     onValueChange = { dailyCalorieIntake = it },
                     modifier = modifier,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
+                    textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.End
                     ),
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.daily_calorie_intake),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.daily_calorie_intake)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next
@@ -183,7 +178,7 @@ fun CalorieDistributionContent(
                 Text(
                     text = stringResource(R.string.macronutrient_balance),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 listMacronutrientBalanceTextFields.forEach { (percentageCal, title, calories) ->
@@ -191,21 +186,11 @@ fun CalorieDistributionContent(
                         value = percentageCal.value,
                         onValueChange = { percentageCal.value = it },
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
+                        textStyle = LocalTextStyle.current.copy(
                             textAlign = TextAlign.End
                         ),
-                        prefix = {
-                            Text(
-                                text = "${stringResource(title)} ${calories.value}${stringResource(R.string.cal)}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = stringResource(R.string.percentage),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        prefix = { Text(text = "${stringResource(title)} ${calories.value} ${stringResource(R.string.cal)}") },
+                        suffix = { Text(text = stringResource(R.string.percentage)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = if (title == R.string.snack) {
@@ -233,7 +218,7 @@ fun CalorieDistributionContent(
                 Text(
                     text = stringResource(R.string.total_calories_distributed),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Row(
@@ -243,13 +228,13 @@ fun CalorieDistributionContent(
                         text = stringResource(R.string.the_rate_will_always_be_100),
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.outline,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.titleSmall
                     )
 
                     Text(
                         text = "100%",
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
             }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -128,8 +129,7 @@ fun CreateExerciseScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -172,23 +172,15 @@ fun CreateExerciseContent(
             value = exerciseName,
             onValueChange = onExerciseNameChange,
             modifier = modifier,
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                textAlign = TextAlign.End
-            ),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             placeholder = {
                 Text(
                     text = stringResource(R.string.exercise_name),
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.bodySmall
+                    textAlign = TextAlign.End
                 )
             },
-            prefix = {
-                Text(
-                    text = stringResource(R.string.exercise),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            },
+            prefix = { Text(text = stringResource(R.string.exercise)) },
             supportingText = {
                 Text(
                     text = stringResource(R.string.des_create_exercise),
@@ -210,21 +202,9 @@ fun CreateExerciseContent(
             value = time,
             onValueChange = onTimeChange,
             modifier = modifier,
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                textAlign = TextAlign.End
-            ),
-            prefix = {
-                Text(
-                    text = stringResource(R.string.time),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            suffix = {
-                Text(
-                    text = stringResource(R.string.min),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+            prefix = { Text(text = stringResource(R.string.time)) },
+            suffix = { Text(text = stringResource(R.string.min)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
@@ -240,21 +220,9 @@ fun CreateExerciseContent(
             value = burnedCalories,
             onValueChange = onBurnedCaloriesChange,
             modifier = modifier,
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                textAlign = TextAlign.End
-            ),
-            prefix = {
-                Text(
-                    text = stringResource(R.string.calories_consumed),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            suffix = {
-                Text(
-                    text = stringResource(R.string.kcal),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+            prefix = { Text(text = stringResource(R.string.calories_consumed)) },
+            suffix = { Text(text = stringResource(R.string.kcal)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Go

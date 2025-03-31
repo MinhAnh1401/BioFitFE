@@ -57,7 +57,7 @@ fun ToggleButtonBar(
                         } else {
                             MaterialTheme.colorScheme.outline
                         },
-                        style = MaterialTheme.typography.labelSmall.copy(
+                        style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Bold.takeIf { isSelected }
                         )
                     )

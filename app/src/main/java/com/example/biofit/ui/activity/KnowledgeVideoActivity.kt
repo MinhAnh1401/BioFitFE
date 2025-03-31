@@ -188,7 +188,7 @@ fun KnowledgeVideoContent(
                 text = videoItem.title,
                 modifier = Modifier.padding(standardPadding),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
         }
     }

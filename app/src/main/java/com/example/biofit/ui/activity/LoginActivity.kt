@@ -229,24 +229,13 @@ fun LoginForm(
             value = viewModel.email.value,
             onValueChange = { viewModel.email.value = it },
             modifier = modifier2.padding(top = standardPadding),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    text = stringResource(R.string.email),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.biofit_example_com),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            label = { Text(text = stringResource(id = R.string.email)) },
+            placeholder = { Text(text = stringResource(id = R.string.biofit_example_com)) },
             leadingIcon = {
                 Icon(
-                    painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
-                    contentDescription = stringResource(R.string.email),
-                    modifier = Modifier.size(standardPadding * 1.5f)
+                    painter = painterResource(id = R.drawable.person_crop_square_filled_and_at_rectangle_fill),
+                    contentDescription = stringResource(id = R.string.email),
+                    modifier = Modifier.size(size = standardPadding * 1.5f)
                 )
             },
             keyboardOptions = KeyboardOptions(
@@ -265,18 +254,12 @@ fun LoginForm(
             value = viewModel.password.value,
             onValueChange = { viewModel.password.value = it },
             modifier = modifier2.padding(top = standardPadding),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    text = stringResource(R.string.password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            label = { Text(text = stringResource(id = R.string.password)) },
             leadingIcon = {
                 Icon(
-                    painter = painterResource(R.drawable.ellipsis_rectangle),
-                    contentDescription = stringResource(R.string.password),
-                    modifier = Modifier.size(standardPadding * 1.5f)
+                    painter = painterResource(id = R.drawable.ellipsis_rectangle),
+                    contentDescription = stringResource(id = R.string.password),
+                    modifier = Modifier.size(size = standardPadding * 1.5f)
                 )
             },
             trailingIcon = {
@@ -286,12 +269,7 @@ fun LoginForm(
                     modifier = Modifier.padding(end = standardPadding / 2)
                 )
             },
-            supportingText = {
-                Text(
-                    text = stringResource(R.string.min_8_chars_upper_lower_numbers),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            supportingText = { Text(text = stringResource(id = R.string.min_8_chars_upper_lower_numbers)) },
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
             } else {
@@ -321,7 +299,7 @@ fun LoginForm(
                 },
             ) {
                 Text(
-                    text = stringResource(R.string.forgot_password),
+                    text = stringResource(id = R.string.forgot_password),
                     color = MaterialTheme.colorScheme.inversePrimary
                 )
             }
@@ -335,7 +313,7 @@ fun LoginForm(
             )
         ) {
             Text(
-                text = stringResource(R.string.sign_in_uppercase),
+                text = stringResource(id = R.string.sign_in_uppercase),
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
@@ -364,8 +342,9 @@ fun SignUpPrompt() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.don_t_have_an_account),
-            style = MaterialTheme.typography.bodySmall
+            text = stringResource(id = R.string.don_t_have_an_account),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleSmall
         )
         TextButton(
             onClick = {
@@ -377,7 +356,7 @@ fun SignUpPrompt() {
             },
         ) {
             Text(
-                text = stringResource(R.string.create_account),
+                text = stringResource(id = R.string.create_account),
                 color = MaterialTheme.colorScheme.inversePrimary
             )
         }
@@ -396,7 +375,7 @@ fun SocialLoginButtons(
     ) {
         SocialLoginContent(
             iconId = R.drawable.ic_google,
-            text = stringResource(R.string.sign_in_with_google)
+            text = stringResource(id = R.string.sign_in_with_google)
         )
     }
 
@@ -407,7 +386,7 @@ fun SocialLoginButtons(
     ) {
         SocialLoginContent(
             iconId = R.drawable.ic_facebook,
-            text = stringResource(R.string.sign_in_with_facebook)
+            text = stringResource(id = R.string.sign_in_with_facebook)
         )
     }
 }
@@ -424,13 +403,13 @@ fun SocialLoginContent(
         Icon(
             painter = painterResource(id = iconId), // tuỳ chỉnh nguồn ảnh
             contentDescription = null, // tuỳ chỉnh mô tả nội dung của ảnh
-            // modifier = , // tuỳ chỉnh kích thước và vị trí của Icon
+            modifier = Modifier.size(size = getStandardPadding().first * 1.5f), // tuỳ chỉnh kích thước và vị trí của Icon
             tint = Color.Unspecified // tuỳ chỉnh màu sắc của Icon
         )
+
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -461,15 +440,15 @@ fun TermsAndPrivacy(standardPadding: Dp) {
                 },
             ) {
                 Text(
-                    text = stringResource(R.string.term_of_use),
+                    text = stringResource(id = R.string.term_of_use),
                     color = MaterialTheme.colorScheme.inversePrimary
                 )
             }
 
             Text(
-                text = stringResource(R.string.and),
+                text = stringResource(id = R.string.and),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.titleSmall
             )
 
             TextButton(
@@ -482,7 +461,7 @@ fun TermsAndPrivacy(standardPadding: Dp) {
                 },
             ) {
                 Text(
-                    text = stringResource(R.string.privacy_policy),
+                    text = stringResource(id = R.string.privacy_policy),
                     color = MaterialTheme.colorScheme.inversePrimary
                 )
             }

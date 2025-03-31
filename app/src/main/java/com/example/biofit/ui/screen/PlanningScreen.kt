@@ -264,8 +264,10 @@ fun PlanningScreenContent(
                                     title = {
                                         Text(
                                             text = "Select Duration",
+                                            modifier = Modifier.fillMaxWidth(),
                                             color = MaterialTheme.colorScheme.onBackground,
-                                            style = MaterialTheme.typography.titleSmall
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.headlineSmall
                                         )
                                     },
                                     text = {
@@ -282,8 +284,7 @@ fun PlanningScreenContent(
                                         ) {
                                             Text(
                                                 text = "OK",
-                                                color = MaterialTheme.colorScheme.primary,
-                                                style = MaterialTheme.typography.bodySmall
+                                                color = MaterialTheme.colorScheme.primary
                                             )
                                         }
                                     }
@@ -372,7 +373,7 @@ fun PlanningScreenContent(
                             text = stringResource(R.string.suggested_meals),
                             modifier = Modifier.weight(1f),
                             color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.headlineSmall
                         )
 
                         IconButton(
@@ -506,7 +507,7 @@ fun PlanningScreenContent(
                         Text(
                             text = stringResource(R.string.workout_suggestion),
                             color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.headlineSmall
                         )
                     }
 
@@ -590,7 +591,7 @@ fun PlanningHeaderBar(
             text = stringResource(R.string.nutrition_planning),
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.headlineSmall
         )
 
         rightButton?.invoke()
@@ -717,7 +718,7 @@ fun WellnessTrackerCard(
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
 
             Text(
@@ -774,19 +775,19 @@ fun SuggestedMeals(
             horizontalArrangement = Arrangement.spacedBy(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(suggestedMealsSession),
-                color = suggestedMealsSessionColor,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.Bold
-                )
-            )
-
             Icon(
                 painter = painterResource(suggestedMealsSessionIcon),
                 contentDescription = stringResource(R.string.session),
                 modifier = Modifier.size(standardPadding * 1.5f),
                 tint = suggestedMealsSessionColor
+            )
+
+            Text(
+                text = stringResource(suggestedMealsSession),
+                color = suggestedMealsSessionColor,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
 
@@ -796,7 +797,7 @@ fun SuggestedMeals(
             color = MaterialTheme.colorScheme.onBackground,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.titleMedium
         )
     }
 }
@@ -818,7 +819,7 @@ fun WorkoutSuggestion(
         Text(
             text = stringResource(session),
             color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.bodySmall.copy(
+            style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             )
         )
@@ -844,11 +845,11 @@ fun WorkoutSuggestion(
                         Text(
                             text = exerciseName,
                             color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleLarge
                         )
 
                         Text(
-                            text = "${time}min, ${calories}kcal, ${stringResource(R.string.intensity)}" +
+                            text = "${time} ${stringResource(R.string.min)}, ${calories} ${stringResource(R.string.kcal)}, ${stringResource(R.string.intensity)}" +
                                     ": ${stringResource(intensity)}",
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                             style = MaterialTheme.typography.bodySmall
@@ -868,8 +869,7 @@ fun WorkoutSuggestion(
                     ) {
                         Text(
                             text = stringResource(R.string.start),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }

@@ -30,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -274,7 +275,7 @@ fun ProgressIndicatorTopBarInfoScreen(
 @Composable
 fun InfoUserNameContent(
     standardPadding: Dp,
-    viewModel: UpdateUserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    viewModel: UpdateUserViewModel = viewModel(),
 ) {
     val fullNameState = remember { mutableStateOf(viewModel.fullName.value ?: "") }
 
@@ -303,7 +304,7 @@ fun InfoUserNameContent(
                     viewModel.fullName.value = it
                     Log.d("InfoUserNameScreen", "Updated fullName: ${viewModel.fullName.value}")
                 },
-                textStyle = MaterialTheme.typography.bodySmall.copy(textAlign = TextAlign.Center),
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Go

@@ -149,19 +149,8 @@ fun RegisterForm(
             value = viewModel.email.value,
             onValueChange = { viewModel.email.value = it },
             modifier = modifier2.padding(top = standardPadding),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    text = stringResource(R.string.email),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.biofit_example_com),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            label = { Text(text = stringResource(R.string.email)) },
+            placeholder = { Text(text = stringResource(R.string.biofit_example_com)) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
@@ -185,13 +174,7 @@ fun RegisterForm(
             value = viewModel.password.value,
             onValueChange = { viewModel.password.value = it },
             modifier = modifier2.padding(top = standardPadding),
-            label = {
-                Text(
-                    text = stringResource(R.string.password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
-            textStyle = MaterialTheme.typography.bodySmall,
+            label = { Text(text = stringResource(R.string.password)) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.ellipsis_rectangle),
@@ -206,12 +189,7 @@ fun RegisterForm(
                     modifier = Modifier.padding(end = standardPadding / 2)
                 )
             },
-            supportingText = {
-                Text(
-                    text = stringResource(R.string.min_8_chars_upper_lower_numbers),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            supportingText = { Text(text = stringResource(R.string.min_8_chars_upper_lower_numbers)) },
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
             } else {
@@ -233,13 +211,7 @@ fun RegisterForm(
             value = viewModel.confirmPassword.value,
             onValueChange = { viewModel.confirmPassword.value = it },
             modifier = modifier2.padding(top = standardPadding),
-            textStyle = MaterialTheme.typography.bodySmall,
-            label = {
-                Text(
-                    text = stringResource(R.string.confirm_password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            label = { Text(text = stringResource(R.string.confirm_password)) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(R.drawable.ellipsis_rectangle_fill),
@@ -254,12 +226,7 @@ fun RegisterForm(
                     modifier = Modifier.padding(end = standardPadding / 2)
                 )
             },
-            supportingText = {
-                Text(
-                    stringResource(R.string.re_enter_password),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            },
+            supportingText = { Text(stringResource(R.string.re_enter_password)) },
             visualTransformation = if (confirmPasswordVisible) {
                 VisualTransformation.None
             } else {
@@ -315,7 +282,7 @@ fun SignInPrompt() {
     ) {
         Text(
             text = stringResource(R.string.have_an_account),
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.titleSmall
         )
         TextButton(
             onClick = {

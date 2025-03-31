@@ -134,7 +134,7 @@ fun OverviewDayContent(
                 Text(
                     text = stringResource(R.string.daily_calorie_count),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 Row(
@@ -184,7 +184,7 @@ fun OverviewDayContent(
                                     Text(
                                         text = session,
                                         color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.titleSmall
                                     )
                                 }
 
@@ -194,7 +194,7 @@ fun OverviewDayContent(
                                         .fillMaxWidth()
                                         .padding(start = standardPadding * 4),
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.titleSmall
                                 )
                             }
                         }
@@ -246,7 +246,7 @@ fun OverviewDayContent(
                         end = standardPadding * 2
                     ),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 Column(
@@ -283,7 +283,7 @@ fun OverviewDayContent(
                         modifier = Modifier.weight(0.25f),
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.titleSmall
                     )
 
                     Text(
@@ -291,7 +291,7 @@ fun OverviewDayContent(
                         modifier = Modifier.weight(0.25f),
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
 
@@ -319,7 +319,7 @@ fun OverviewDayContent(
                                 Text(
                                     text = "$title (${value}g / ${targetValue}g)",
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
 

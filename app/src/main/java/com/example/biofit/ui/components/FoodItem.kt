@@ -72,7 +72,7 @@ fun FoodItem(
             painter = painterResource(foodImg),
             contentDescription = "Food image",
             modifier = Modifier
-                .size(standardPadding * 5)
+                .size(standardPadding * 5f)
                 .clip(MaterialTheme.shapes.large)
         )
 
@@ -82,25 +82,25 @@ fun FoodItem(
             Text(
                 text = foodName,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.titleSmall
             )
 
             Text(
-                text = "${servingSize.first}${servingSize.second}, " +
+                text = "${servingSize.first} ${servingSize.second}, " +
                         "${
                             mass.toBigDecimal().setScale(
                                 1,
                                 RoundingMode.HALF_UP
                             )
-                        }${stringResource(R.string.gam)}, " +
+                        } ${stringResource(R.string.gam)}, " +
                         "${
                             calories.toBigDecimal().setScale(
                                 1,
                                 RoundingMode.HALF_UP
                             )
-                        }${stringResource(R.string.kcal)}",
+                        } ${stringResource(R.string.kcal)}",
                 color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.bodySmall
             )
 
             Row(
@@ -121,9 +121,9 @@ fun FoodItem(
                                     1,
                                     RoundingMode.HALF_UP
                                 )
-                            }${stringResource(R.string.gam)}",
+                            } ${stringResource(R.string.gam)}",
                             color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }

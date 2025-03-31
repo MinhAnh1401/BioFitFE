@@ -36,6 +36,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -218,24 +219,6 @@ fun SettingContent(
     var createdAccount by rememberSaveable { mutableStateOf(userData.createdAccount ?: "") }
     Log.d("createdAccount", createdAccount)
 
-    /*val bmiIndex: Float? = if (height > 0.001f) {
-        memoryWeight.div(height * height)
-    } else {
-        null
-    }*/
-
-    /*val roundedBmi = bmiIndex?.let {
-        BigDecimal(it.toDouble()).setScale(1, RoundingMode.HALF_UP).toFloat()
-    } ?: 0f
-
-    val bmiCategory = when {
-        bmiIndex == null -> stringResource(R.string.unknown)
-        bmiIndex < 18.5f -> stringResource(R.string.underweight)
-        bmiIndex >= 18.5f && bmiIndex < 25f -> stringResource(R.string.healthy_weight)
-        bmiIndex >= 25f && bmiIndex < 30f -> stringResource(R.string.overweight)
-        else -> stringResource(R.string.obese)
-    }*/
-
     val caloOfDaily = when (userData.gender) {
         0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
             in 0..45 -> 2000f
@@ -285,7 +268,7 @@ fun SettingContent(
                 Text(
                     text = stringResource(R.string.my_profile),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.headlineSmall,
                 )
             }
         }
@@ -340,15 +323,14 @@ fun SettingContent(
                         elevation = 6.dp,
                         shape = MaterialTheme.shapes.large
                     ),
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
+                    textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.End
                     ),
                     placeholder = {
                         Text(
                             text = stringResource(R.string.enter_your_full_name),
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.bodySmall
+                            textAlign = TextAlign.End
                         )
                     },
                     leadingIcon = {
@@ -359,12 +341,7 @@ fun SettingContent(
                             tint = Color(0xFF2962FF)
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.name),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.name)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -409,8 +386,7 @@ fun SettingContent(
 
                         Text(
                             text = stringResource(R.string.gender),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                            style = MaterialTheme.typography.bodySmall
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                         )
 
                         Text(
@@ -425,8 +401,7 @@ fun SettingContent(
                             } else {
                                 MaterialTheme.colorScheme.onBackground
                             },
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.bodySmall
+                            textAlign = TextAlign.End
                         )
 
                         IconButton(onClick = { showGenderDialog = true }) {
@@ -491,8 +466,7 @@ fun SettingContent(
 
                         Text(
                             text = stringResource(R.string.date_of_birth),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                            style = MaterialTheme.typography.bodySmall
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                         )
 
                         Text(
@@ -511,8 +485,7 @@ fun SettingContent(
                             } else {
                                 MaterialTheme.colorScheme.onBackground
                             },
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.bodySmall
+                            textAlign = TextAlign.End
                         )
                     }
                 }
@@ -544,9 +517,7 @@ fun SettingContent(
                         elevation = 6.dp,
                         shape = MaterialTheme.shapes.large
                     ),
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                     leadingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.figure_stand),
@@ -555,18 +526,8 @@ fun SettingContent(
                             tint = Color(0xFF00C853)
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.height),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.cm),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.height)) },
+                    suffix = { Text(text = stringResource(R.string.cm)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next
@@ -591,9 +552,7 @@ fun SettingContent(
                         elevation = 6.dp,
                         shape = MaterialTheme.shapes.large
                     ),
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                     leadingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.scalemass),
@@ -602,18 +561,8 @@ fun SettingContent(
                             tint = Color(0xFFFF6D00)
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.starting_weight),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    suffix = {
-                        Text(
-                            text = stringResource(R.string.kg),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.starting_weight)) },
+                    suffix = { Text(text = stringResource(R.string.kg)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next
@@ -639,9 +588,7 @@ fun SettingContent(
                         shape = MaterialTheme.shapes.large
                     ),
                     readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                     leadingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.person_crop_square_filled_and_at_rectangle_fill),
@@ -650,12 +597,7 @@ fun SettingContent(
                             tint = Color(0xFF00BFA5)
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.email),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.email)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Go
@@ -679,9 +621,7 @@ fun SettingContent(
                         shape = MaterialTheme.shapes.large
                     ),
                     readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall.copy(
-                        textAlign = TextAlign.End
-                    ),
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                     leadingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.calendar),
@@ -690,13 +630,7 @@ fun SettingContent(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     },
-                    prefix = {
-                        Text(
-                            text = stringResource(R.string.account_creation_date),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    prefix = { Text(text = stringResource(R.string.account_creation_date)) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.large,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -729,7 +663,7 @@ fun SettingContent(
                             Text(
                                 text = stringResource(R.string.calorie_intake_target),
                                 color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.headlineSmall
                             )
 
                             IconButton(
@@ -802,7 +736,7 @@ fun SettingContent(
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.outline,
                             inlineContent = inlineContent,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleMedium
                         )
 
                         Row(
@@ -836,14 +770,14 @@ fun SettingContent(
                                         Text(
                                             text = caloOfDaily.toInt().toString(),
                                             color = MaterialTheme.colorScheme.onPrimary,
-                                            style = MaterialTheme.typography.titleMedium
+                                            style = MaterialTheme.typography.displaySmall
                                         )
                                     }
 
                                     Text(
                                         text = stringResource(R.string.kcal_day),
                                         color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.titleSmall
                                     )
                                 }
                             }
@@ -874,14 +808,14 @@ fun SettingContent(
                                         Text(
                                             text = caloOfWeekly.toInt().toString(),
                                             color = MaterialTheme.colorScheme.onPrimary,
-                                            style = MaterialTheme.typography.titleMedium
+                                            style = MaterialTheme.typography.displaySmall
                                         )
                                     }
 
                                     Text(
                                         text = stringResource(R.string.kcal_week),
                                         color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.titleSmall
                                     )
                                 }
                             }
@@ -892,14 +826,14 @@ fun SettingContent(
                         ) {
                             Text(
                                 text = stringResource(R.string.basal_metabolic_rate_bmr),
-                                modifier = Modifier.weight(0.5f),
+                                modifier = Modifier.weight(0.4f),
                                 color = MaterialTheme.colorScheme.outline,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
 
                             TextButton(
                                 onClick = { showBMRPopup = !showBMRPopup },
-                                modifier = Modifier.weight(0.25f),
+                                modifier = Modifier.weight(0.3f),
                             ) {
                                 Text(
                                     text = stringResource(R.string.learn_more),
@@ -913,10 +847,10 @@ fun SettingContent(
                             Text(
                                 text = caloOfDailyBMR.toString() + " " +
                                         stringResource(R.string.kcal_day),
-                                modifier = Modifier.weight(0.25f),
+                                modifier = Modifier.weight(0.3f),
                                 color = MaterialTheme.colorScheme.outline,
                                 textAlign = TextAlign.End,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
 
@@ -948,14 +882,14 @@ fun SettingContent(
                         ) {
                             Text(
                                 text = stringResource(R.string.total_energy_expenditure_tdee),
-                                modifier = Modifier.weight(0.5f),
+                                modifier = Modifier.weight(0.4f),
                                 color = MaterialTheme.colorScheme.outline,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
 
                             TextButton(
                                 onClick = { showTDEEPopup = !showTDEEPopup },
-                                modifier = Modifier.weight(0.25f),
+                                modifier = Modifier.weight(0.3f),
                             ) {
                                 Text(
                                     text = stringResource(R.string.learn_more),
@@ -969,10 +903,10 @@ fun SettingContent(
                             Text(
                                 text = caloOfWeeklyTDEE.toString() + " " +
                                         stringResource(R.string.kcal_week),
-                                modifier = Modifier.weight(0.25f),
+                                modifier = Modifier.weight(0.3f),
                                 color = MaterialTheme.colorScheme.outline,
                                 textAlign = TextAlign.End,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
 

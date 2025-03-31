@@ -116,7 +116,7 @@ fun TOUAndPPContent(
                 modifier = modifier,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Justify,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
 

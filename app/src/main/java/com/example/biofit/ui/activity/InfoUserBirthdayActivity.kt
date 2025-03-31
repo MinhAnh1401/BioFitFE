@@ -206,8 +206,7 @@ fun InfoUserBirthdayContent(
                         } else {
                             MaterialTheme.colorScheme.onBackground
                         },
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall
+                        textAlign = TextAlign.Center
                     )
 
                     IconButton(onClick = { showDatePicker = true }) {

@@ -211,12 +211,10 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                         value = userInput,
                         onValueChange = { userInput = it },
                         modifier = Modifier.focusRequester(focusRequester),
-                        textStyle = MaterialTheme.typography.bodySmall,
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.enter_message),
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodySmall
+                                textAlign = TextAlign.Center
                             )
                         },
                         trailingIcon = {
@@ -309,7 +307,7 @@ fun ChatBubble(
                 Text(
                     text = text,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyLarge
                 )
             } else {
                 if (!isAnimationFinished) {
@@ -319,7 +317,7 @@ fun ChatBubble(
                             textBodyColor1 = MaterialTheme.colorScheme.primary,
                             textBodyColor2 = MaterialTheme.colorScheme.primary,
                             text = text,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     } else {
                         OneTimeAnimatedGradientText(
@@ -327,7 +325,7 @@ fun ChatBubble(
                             baseColor = MaterialTheme.colorScheme.onBackground,
                             hideColor = Color.Transparent,
                             text = text,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyLarge,
                             onAnimationEnd = {
                                 isAnimationFinished = true
                             }
@@ -337,7 +335,7 @@ fun ChatBubble(
                     Text(
                         text = text,
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }

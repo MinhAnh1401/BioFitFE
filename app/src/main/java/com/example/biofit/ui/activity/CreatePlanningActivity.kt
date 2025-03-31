@@ -137,7 +137,7 @@ fun CreatePlanningScreenContent(
                 Text(
                     text = stringResource(R.string.my_plan),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
         }
@@ -150,7 +150,7 @@ fun CreatePlanningScreenContent(
                 Text(
                     text = stringResource(R.string.goals),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 ItemCard(
@@ -177,8 +177,7 @@ fun CreatePlanningScreenContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showGoalDialog = true }) {
@@ -222,28 +221,21 @@ fun CreatePlanningScreenContent(
                 Text(
                     text = stringResource(R.string.plan_duration),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 OutlinedTextField(
                     value = numberOfDays,
                     onValueChange = { numberOfDays = it },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.enter_number_of_days),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
+                    placeholder = { Text(text = stringResource(R.string.enter_number_of_days)) },
                     suffix = {
                         Text(
                             text = if (numberOfDays == "1") {
                                 stringResource(R.string.day).lowercase()
                             } else {
                                 stringResource(R.string.days).lowercase()
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -266,7 +258,7 @@ fun CreatePlanningScreenContent(
                 Text(
                     text = stringResource(R.string.diet),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 ItemCard(
@@ -293,8 +285,7 @@ fun CreatePlanningScreenContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showDietDialog = true }) {
@@ -352,7 +343,7 @@ fun CreatePlanningScreenContent(
                 Text(
                     text = stringResource(R.string.workout),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 /*Card(
@@ -439,8 +430,7 @@ fun CreatePlanningScreenContent(
                                 MaterialTheme.colorScheme.outline
                             } else {
                                 MaterialTheme.colorScheme.onBackground
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            }
                         )
 
                         IconButton(onClick = { showIntensityDialog = true }) {

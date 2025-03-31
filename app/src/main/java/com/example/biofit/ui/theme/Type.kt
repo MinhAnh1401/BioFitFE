@@ -1,6 +1,8 @@
 package com.example.biofit.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -10,6 +12,7 @@ import com.example.biofit.R
 
 val SFProDisplay = FontFamily(Font(R.font.sf_pro_rounded_regular))
 
+/*
 val Typography = Typography(
     // Body Text Styles
     bodyLarge = TextStyle(
@@ -125,4 +128,26 @@ val Typography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     )
+)*/
+
+val Typography = Typography().copy(
+    displayLarge = Typography().displayLarge.copy(fontFamily = SFProDisplay),
+    displayMedium = Typography().displayMedium.copy(fontFamily = SFProDisplay),
+    displaySmall = Typography().displaySmall.copy(fontFamily = SFProDisplay),
+
+    headlineLarge = Typography().headlineLarge.copy(fontFamily = SFProDisplay),
+    headlineMedium = Typography().headlineMedium.copy(fontFamily = SFProDisplay),
+    headlineSmall = Typography().headlineSmall.copy(fontFamily = SFProDisplay),
+
+    titleLarge = Typography().titleLarge.copy(fontFamily = SFProDisplay),
+    titleMedium = Typography().titleMedium.copy(fontFamily = SFProDisplay),
+    titleSmall = Typography().titleSmall.copy(fontFamily = SFProDisplay),
+
+    bodyLarge = Typography().bodyLarge.copy(fontFamily = SFProDisplay),
+    bodyMedium = Typography().bodyMedium.copy(fontFamily = SFProDisplay),
+    bodySmall = Typography().bodySmall.copy(fontFamily = SFProDisplay),
+
+    labelLarge = Typography().labelLarge.copy(fontFamily = SFProDisplay),
+    labelMedium = Typography().labelMedium.copy(fontFamily = SFProDisplay),
+    labelSmall = Typography().labelSmall.copy(fontFamily = SFProDisplay)
 )

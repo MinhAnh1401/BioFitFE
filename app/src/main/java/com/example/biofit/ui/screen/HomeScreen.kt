@@ -190,13 +190,13 @@ fun HeaderBar(
             Text(
                 text = stringResource(R.string.hello) + "$userName!",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
 
             Text(
                 text = "${stringResource(R.string.today)}, ${currentDate.format(formatter)}",
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.titleSmall
             )
         }
 
@@ -206,12 +206,12 @@ fun HeaderBar(
                     val intent = Intent(it, NotificationActivity::class.java)
                     it.startActivity(intent)
                 }
-            },
+            }
         ) {
             Icon(
-                painter = painterResource(R.drawable.bell_fill),
-                contentDescription = stringResource(R.string.notification),
-                modifier = Modifier.size(standardPadding * 2f),
+                painter = painterResource(id = R.drawable.bell_fill),
+                contentDescription = stringResource(id = R.string.notification),
+                modifier = Modifier.size(size = standardPadding * 2f),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -220,12 +220,12 @@ fun HeaderBar(
         var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
         IconButton(
-            onClick = { showDatePicker = true },
+            onClick = { showDatePicker = true }
         ) {
             Icon(
-                painter = painterResource(R.drawable.calendar),
-                contentDescription = stringResource(R.string.calendar),
-                modifier = Modifier.size(standardPadding * 2f),
+                painter = painterResource(id = R.drawable.calendar),
+                contentDescription = stringResource(id = R.string.calendar),
+                modifier = Modifier.size(size = standardPadding * 2f),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -255,11 +255,11 @@ fun HomeContent(
     modifier: Modifier
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
+        verticalArrangement = Arrangement.spacedBy(space = standardPadding * 2f)
     ) {
         item {
             HeaderBar(
-                userData,
+                userData = userData,
                 modifier = modifier,
                 standardPadding = standardPadding
             )
@@ -281,9 +281,9 @@ fun HomeContent(
 
         item {
             DailyGoals(
-                userData,
-                standardPadding,
-                modifier
+                userData = userData,
+                standardPadding = standardPadding,
+                modifier = modifier
             )
         }
 
@@ -341,25 +341,25 @@ fun OverviewAndSearchBar(
         modifier = modifier
     ) {
         Column(
-            modifier = Modifier.padding(standardPadding),
-            verticalArrangement = Arrangement.spacedBy(standardPadding)
+            modifier = Modifier.padding(all = standardPadding),
+            verticalArrangement = Arrangement.spacedBy(space = standardPadding)
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                horizontalArrangement = Arrangement.spacedBy(space = standardPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.apple_meditate),
-                    contentDescription = stringResource(R.string.overview),
-                    modifier = Modifier.size(standardPadding * 2),
+                    painter = painterResource(id = R.drawable.apple_meditate),
+                    contentDescription = stringResource(id = R.string.overview),
+                    modifier = Modifier.size(size = standardPadding * 2),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
 
                 Text(
-                    text = stringResource(R.string.overview),
-                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.overview),
+                    modifier = Modifier.weight(weight = 1f),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 ElevatedButton(
@@ -369,26 +369,24 @@ fun OverviewAndSearchBar(
                             it.startActivity(intent)
                         }
                     },
-                    modifier = Modifier.widthIn(
-                        min = standardPadding * 10
-                    ),
+                    modifier = Modifier.widthIn(min = standardPadding * 10),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.edit),
+                        text = stringResource(id = R.string.edit),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                horizontalArrangement = Arrangement.spacedBy(space = standardPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(weight = 1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     RemainingCaloriesChart(
@@ -398,51 +396,51 @@ fun OverviewAndSearchBar(
                         progressColor = MaterialTheme.colorScheme.inversePrimary,
                         exceededColor = MaterialTheme.colorScheme.error,
                         remainingCaloriesColor = MaterialTheme.colorScheme.onPrimary,
-                        exceededCaloriesText = stringResource(R.string.exceeded_calories),
-                        remainingCaloriesText = stringResource(R.string.remaining_calories),
+                        exceededCaloriesText = stringResource(id = R.string.exceeded_calories),
+                        remainingCaloriesText = stringResource(id = R.string.remaining_calories),
                         standardPadding = standardPadding
                     )
                 }
 
                 Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(standardPadding),
+                    modifier = Modifier.weight(weight = 1f),
+                    verticalArrangement = Arrangement.spacedBy(space = standardPadding),
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                        horizontalArrangement = Arrangement.spacedBy(space = standardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_loaded_cal),
-                            contentDescription = "Loaded Calories",
-                            modifier = Modifier.size(standardPadding),
+                            painter = painterResource(id = R.drawable.ic_loaded_cal),
+                            contentDescription = stringResource(id = R.string.loaded),
+                            modifier = Modifier.size(size = standardPadding),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
 
                         Text(
-                            text = stringResource(R.string.loaded) + " $loadedCalories " +
-                                    stringResource(R.string.kcal),
+                            text = stringResource(id = R.string.loaded) + " $loadedCalories " +
+                                    stringResource(id = R.string.kcal),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                        horizontalArrangement = Arrangement.spacedBy(space = standardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.target),
-                            contentDescription = "Target Calories",
-                            modifier = Modifier.size(standardPadding),
+                            painter = painterResource(id = R.drawable.target),
+                            contentDescription = stringResource(id = R.string.target),
+                            modifier = Modifier.size(size = standardPadding),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
 
                         Text(
-                            text = stringResource(R.string.target) + " $targetCalories " +
-                                    stringResource(R.string.kcal),
+                            text = stringResource(id = R.string.target) + " $targetCalories " +
+                                    stringResource(id = R.string.kcal),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                 }
@@ -457,48 +455,48 @@ fun OverviewAndSearchBar(
             ) {
                 nutrients.forEach { (nameRes, loaded, target) ->
                     item {
-                        Spacer(modifier = Modifier.width(standardPadding))
+                        Spacer(modifier = Modifier.width(width = standardPadding))
 
                         CircularProgressIndicator(
                             progress = { loaded.toFloat() / target.toFloat() },
-                            modifier = Modifier.size(standardPadding * 4),
+                            modifier = Modifier.size(size = standardPadding * 4f),
                             color = MaterialTheme.colorScheme.inversePrimary,
                             strokeWidth = standardPadding / 1.5f,
                             trackColor = MaterialTheme.colorScheme.primaryContainer
                         )
 
-                        Spacer(modifier = Modifier.width(standardPadding))
+                        Spacer(modifier = Modifier.width(width = standardPadding))
 
                         Column {
                             Text(
-                                text = stringResource(nameRes),
+                                text = stringResource(id = nameRes),
                                 color = if (loaded > target) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
                                 },
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
 
                             Text(
-                                text = "$loaded / $target" + stringResource(R.string.gam),
+                                text = "$loaded / $target" + stringResource(id = R.string.gam),
                                 color = if (loaded > target) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
                                 },
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(standardPadding))
+                        Spacer(modifier = Modifier.width(width = standardPadding))
                     }
                 }
             }
         }
     }
 
-    Spacer(modifier = Modifier.height(standardPadding))
+    Spacer(modifier = Modifier.height(height = standardPadding))
 
     /*OutlinedTextField(
         value = search,
@@ -563,14 +561,14 @@ fun OverviewAndSearchBar(
         shape = MaterialTheme.shapes.extraLarge
     ) {
         Row(
-            modifier = modifier.padding(standardPadding),
-            horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+            modifier = modifier.padding(all = standardPadding),
+            horizontalArrangement = Arrangement.spacedBy(space = standardPadding / 2f),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_chatbot_ai),
-                contentDescription = stringResource(R.string.ai_assistant_bionix),
-                modifier = Modifier.size(standardPadding * 4),
+                painter = painterResource(id = R.drawable.ic_chatbot_ai),
+                contentDescription = stringResource(id = R.string.ai_assistant_bionix),
+                modifier = Modifier.size(size = standardPadding * 4),
                 tint = if (isSystemInDarkTheme()) {
                     Color(0xFFB388FF)
                 } else {
@@ -586,7 +584,7 @@ fun OverviewAndSearchBar(
                 Text(
                     text = stringResource(R.string.ai_assistant_bionix),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
 
@@ -743,7 +741,7 @@ fun DailyMenu(
             Text(
                 text = stringResource(R.string.track_your_daily_menu),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
         }
 
@@ -874,13 +872,13 @@ fun DailyCard(
             Text(
                 text = stringResource(title),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.titleSmall
             )
 
             Text(
                 text = "$loaded / $target" + stringResource(R.string.gam),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.bodySmall
             )
 
             Spacer(modifier = Modifier.height(standardPadding))
@@ -1008,7 +1006,7 @@ fun DailyGoals(
             Text(
                 text = stringResource(R.string.daily_goals),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.headlineSmall
             )
         }
 
@@ -1040,7 +1038,7 @@ fun DailyGoals(
                         Text(
                             text = stringResource(R.string.drinking_water),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
 
@@ -1177,7 +1175,7 @@ fun DailyGoals(
                         Text(
                             text = stringResource(R.string.activity),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
 
@@ -1215,8 +1213,7 @@ fun DailyGoals(
                         ) {
                             Text(
                                 text = stringResource(R.string.exercise),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                style = MaterialTheme.typography.bodySmall
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -1248,7 +1245,7 @@ fun DailyGoals(
                             Text(
                                 text = stringResource(R.string.latest_weight),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.headlineSmall
                             )
                         }
 
@@ -1260,7 +1257,7 @@ fun DailyGoals(
                                 text = "$latestWeight" + stringResource(R.string.kg) +
                                         " | $today",
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
 
                             var isRotating by remember { mutableStateOf(false) }
@@ -1315,145 +1312,6 @@ fun DailyGoals(
                 }
 
                 WeightLineChart(weightDataState)
-
-                /*Column(
-                    verticalArrangement = Arrangement.spacedBy(standardPadding),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.bmi_index),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-
-                        IconButton(
-                            onClick = { TODO() } // Xử lý sự kiện khi người dùng nhấn icon Info
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.info_circle),
-                                contentDescription = stringResource(R.string.bmi_index),
-                                modifier = Modifier.size(standardPadding * 1.5f),
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
-
-                    val textWithIcon = buildAnnotatedString {
-                        append(stringResource(R.string.your_bmi_is) + " ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("$roundedBmi")
-                        }
-                        append(", ")
-                        *//*append(" " + stringResource(R.string.with_a_current_weight_of) + " ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("$latestWeight " + stringResource(R.string.kg) + ", ")
-                        }*//*
-                        append(stringResource(R.string.you_are_classified_as) + " ")
-
-                        withStyle(
-                            style = SpanStyle(
-                                color = when (bmiCategory) {
-                                    stringResource(R.string.underweight) -> Color(0xFFAEEA00)
-                                    stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
-                                    stringResource(R.string.overweight) -> Color(0xFFFFAB00)
-                                    else -> Color(0xFFDD2C00)
-                                },
-                                fontWeight = FontWeight.Bold,
-                                shadow = Shadow(
-                                    color = when (bmiCategory) {
-                                        stringResource(R.string.underweight) -> Color(0xFFAEEA00)
-                                        stringResource(R.string.healthy_weight) -> Color(0xFF00C853)
-                                        stringResource(R.string.overweight) -> Color(0xFFFFAB00)
-                                        else -> Color(0xFFDD2C00)
-                                    },
-                                    blurRadius = standardPadding.value / 2
-                                )
-                            )
-                        ) {
-                            append(bmiCategory.uppercase())
-                        }
-
-                        append(" ") // Thêm khoảng trắng
-                        appendInlineContent("fireIcon", "[icon]")
-                    }
-
-                    val inlineContent = mapOf(
-                        "fireIcon" to InlineTextContent(
-                            placeholder = Placeholder(
-                                width = 16.sp,
-                                height = 16.sp,
-                                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-                            )
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.flame_fill),
-                                contentDescription = stringResource(R.string.bmi_index),
-                                modifier = Modifier.size(standardPadding * 2f),
-                                tint = Color(0xFFDD2C00)
-                            )
-                        }
-                    )
-
-                    Text(
-                        text = textWithIcon,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.outline,
-                        inlineContent = inlineContent,
-                        textAlign = TextAlign.Justify,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    BMIBar(
-                        bmi = roundedBmi,
-                        standardPadding = standardPadding
-                    )
-
-                    MainCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = standardPadding)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(standardPadding),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(standardPadding),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.checkmark_circle_fill),
-                                    contentDescription = "Check Circle Icon",
-                                    modifier = Modifier.size(standardPadding * 1.5f),
-                                    tint = MaterialTheme.colorScheme.inversePrimary,
-                                )
-
-                                Text(
-                                    text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
-                                            estimatedWeight + " " +
-                                            stringResource(R.string.kg),
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                        }
-                    }
-                }*/
             }
         }
 
@@ -1469,7 +1327,7 @@ fun DailyGoals(
                     Text(
                         text = stringResource(R.string.bmi_index),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.headlineSmall
                     )
 
                     IconButton(
@@ -1522,15 +1380,6 @@ fun DailyGoals(
                         append("$roundedBmi")
                     }
                     append(", ")
-                    /*append(" " + stringResource(R.string.with_a_current_weight_of) + " ")
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append("$latestWeight " + stringResource(R.string.kg) + ", ")
-                    }*/
                     append(stringResource(R.string.you_are_classified_as) + " ")
 
                     withStyle(
@@ -1582,8 +1431,7 @@ fun DailyGoals(
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.outline,
                     inlineContent = inlineContent,
-                    textAlign = TextAlign.Justify,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 BMIBar(
@@ -1618,7 +1466,7 @@ fun DailyGoals(
                                         estimatedWeight + " " +
                                         stringResource(R.string.kg),
                                 color = MaterialTheme.colorScheme.onPrimary,
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }

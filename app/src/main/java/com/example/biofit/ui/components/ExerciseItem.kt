@@ -50,7 +50,7 @@ fun ExerciseItem(
                 text = exercise,
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.titleMedium
             )
 
             Icon(
@@ -105,9 +105,7 @@ fun OverviewExerciseCard(
                 text = exerciseName,
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.Bold
-                )
+                style = MaterialTheme.typography.titleLarge
             )
 
             Column(
@@ -128,7 +126,7 @@ fun OverviewExerciseCard(
                     Text(
                         text = "$time ${stringResource(R.string.min)}",
                         color = Color(0xFF00C853),
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
 
@@ -146,7 +144,7 @@ fun OverviewExerciseCard(
                     Text(
                         text = "$calories ${stringResource(R.string.kcal)}",
                         color = Color(0xFFFF6D00),
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
