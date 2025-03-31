@@ -4,10 +4,13 @@ import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDoneDTO
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
+import com.example.biofit.data.model.dto.PasswordResetDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.model.request.LoginRequest
+import com.example.biofit.data.model.request.PasswordResetRequest
 import com.example.biofit.data.model.request.PaymentRequest
 import com.example.biofit.data.model.request.RegisterRequest
+import com.example.biofit.data.model.response.PasswordResetResponse
 import com.example.biofit.data.model.response.PaymentResponse
 import com.example.biofit.data.model.response.SubscriptionResponse
 import okhttp3.MultipartBody
@@ -88,6 +91,13 @@ interface ApiService {
     @POST("api/exercise-done/create")
     fun createExerciseDone(@Body exerciseDoneDTO: ExerciseDoneDTO): Call<ExerciseDoneDTO>
 
+    /*@GET("api/exercise-done/user/{userId}")
+    fun getExerciseDone(
+        @Path("userId") userId: Long,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
+    ): Call<List<ExerciseDoneDTO>>*/
+
     @GET("api/exercise-done/overview")
     fun getOverviewExercises(
         @Query("userId") userId: Long,
@@ -117,4 +127,11 @@ interface ApiService {
 
     @GET("subscription/status_sub/{userId}")
     suspend fun checkSubscription(@Path("userId") userId: Long): Boolean
+
+    // reset password API
+    @POST("api/user/forgot-password")
+    suspend fun requestPasswordReset(@Body request: PasswordResetRequest): Response<PasswordResetResponse>
+
+    @POST("api/user/reset-password")
+    suspend fun resetPassword(@Body request: PasswordResetDTO): Response<PasswordResetResponse>
 }

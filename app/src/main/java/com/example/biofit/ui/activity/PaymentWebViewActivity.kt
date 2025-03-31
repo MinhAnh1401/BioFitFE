@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -127,8 +128,8 @@ fun PaymentResultScreen(
     val success = responseCode == "00"
     val animatedProgress = remember { Animatable(0f) }
 
-// Cách 1: Sử dụng Int trong mutableStateOf
-    val countdownState = remember { mutableStateOf(3) }
+    // Sử dụng Int trong mutableStateOf
+    val countdownState = remember { mutableIntStateOf(3) }
     val countdown = countdownState.value
 
     // Tự động đếm ngược và chuyển về trang chính
@@ -243,7 +244,7 @@ fun PaymentResultScreen(
                     onClick = onClose,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp),
+                        .height(60.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (success)
                             MaterialTheme.colorScheme.primary
@@ -275,7 +276,7 @@ fun PaymentResultScreen(
                             // Hình tròn chứa số đếm ngược
                             Box(
                                 modifier = Modifier
-                                    .size(4.dp)
+                                    .size(40.dp)
                                     .background(
                                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
                                         shape = CircleShape

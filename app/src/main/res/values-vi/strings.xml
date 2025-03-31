@@ -359,4 +359,21 @@
     <string name="tdee_des">TDEE (Tổng năng lượng tiêu hao hàng ngày - Total Daily Energy Expenditure) là tổng lượng calo mà cơ thể đốt cháy trong một ngày, bao gồm cả năng lượng tiêu thụ khi nghỉ ngơi (BMR) và năng lượng từ các hoạt động thể chất, làm việc, luyện tập và tiêu hóa thức ăn.</string>
     <string name="calorie_intake_target_des">Mục tiêu lượng calo nạp vào là số calo bạn cần tiêu thụ mỗi ngày để đạt được mục tiêu sức khỏe của mình, chẳng hạn như duy trì cân nặng, giảm cân hoặc tăng cân. Con số này thường được tính dựa trên TDEE và điều chỉnh theo mục tiêu cá nhân.</string>
     <string name="bmi_des">BMI (Chỉ số khối cơ thể - Body Mass Index) là một chỉ số được tính dựa trên cân nặng và chiều cao của một người để đánh giá xem họ có đang ở mức cân nặng bình thường, thiếu cân, thừa cân hay béo phì hay không.</string>
+    <string name="forgot_password_w">Quên mật khẩu</string>
+    <string name="forgot_password_description">Nhập địa chỉ email của bạn để nhận mã đặt lại</string>
+    <string name="email_w">Địa chỉ email</string>
+    <string name="send_reset_code">Gửi mã đặt lại</string>
+    <string name="reset_code">Nhập mã đặt lại</string>
+    <string name="reset_code_hint">Mã gồm 6 chữ số</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="new_password_hint">Nhập mật khẩu mới</string>
+    <string name="confirm_password_w">Xác nhận mật khẩu</string>
+    <string name="confirm_password_hint">Nhập lại mật khẩu mới</string>
+    <string name="reset_password">Đặt lại mật khẩu</string>
+    <string name="back_to_login">Quay lại Đăng nhập</string>
+    <string name="passwords_do_not_match_w">Mật khẩu không match</string>
+    <string name="password_too_short">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="enter_valid_email">Vui lòng nhập địa chỉ email hợp lệ</string>
+    <string name="check_your_email">Kiểm tra email của bạn để biết mã đặt lại</string>
+    <string name="exit">Thoát</string>
 </resources>
