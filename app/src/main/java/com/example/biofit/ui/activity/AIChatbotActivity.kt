@@ -83,13 +83,17 @@ class AIChatbotActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val apiKey = BuildConfig.GOOGLE_API_KEY
+        /*val googleApiKey = BuildConfig.GOOGLE_SEARCH_API_KEY
+        val searchEngineId = BuildConfig.SEARCH_ENGINE_ID*/
         userData = UserSharedPrefsHelper.getUserData(this)
         dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
             dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
             context = this,
-            apiKey = apiKey
+            apiKey = apiKey,
+            /*googleApiKey = googleApiKey,
+            searchEngineId = searchEngineId*/
         )
         chatViewModel = AIChatbotViewModel(model, this)
         setContent {
@@ -167,8 +171,8 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                     Spacer(
                         modifier = Modifier.padding(
                             bottom = WindowInsets.safeDrawing.asPaddingValues()
-                                .calculateBottomPadding() * 10
-                                    + standardPadding
+                                .calculateBottomPadding()
+                                    + standardPadding * 10
                         )
                     )
                 }

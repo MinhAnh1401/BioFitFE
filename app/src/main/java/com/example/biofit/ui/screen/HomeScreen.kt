@@ -190,7 +190,7 @@ fun HeaderBar(
             Text(
                 text = stringResource(R.string.hello) + "$userName!",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge
             )
 
             Text(
