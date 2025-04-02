@@ -134,8 +134,14 @@ fun PaymentMethodDialog(
                 name = stringResource(R.string.momo),
                 imageResId = R.drawable.momo_logo,
                 onClick = {
-                    onSelectPayment("MoMo")
-                    Toast.makeText(context, R.string.momo_toast, Toast.LENGTH_SHORT).show()
+//                    onSelectPayment("MOMO")
+                    val userId = UserSharedPrefsHelper.getUserId(context)
+                    if (userId > 0) {
+                        val amount = if (selectedPlan == "YEARLY") 300000L else 100000L
+                        viewModel.createMoMoPayment(userId, selectedPlan, amount, context)
+                    } else {
+                        Toast.makeText(context, R.string.login_first, Toast.LENGTH_SHORT).show()
+                    }
                 }
             )
 

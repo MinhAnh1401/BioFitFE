@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +57,8 @@ class PaymentWebViewActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val uri: Uri? = intent?.data
+        android.util.Log.d("PaymentWebView", "URI received: $uri")
+
         if (uri != null && uri.toString().startsWith("biofit://payment/callback")) {
             // Trích xuất các tham số truy vấn
             val queryParameters = uri.queryParameterNames
@@ -69,14 +70,14 @@ class PaymentWebViewActivity : ComponentActivity() {
                 }
             }
 
-            val responseCode = paramMap["vnp_ResponseCode"]
-            val orderId = paramMap["vnp_TxnRef"]
+            val responseCode = paramMap["resultCode"] ?: paramMap["vnp_ResponseCode"]
+            val orderId = paramMap["orderId"] ?: paramMap["vnp_TxnRef"]
 
             // Nhận ID người dùng từ tùy chọn đăng kí
             val userId = UserSharedPrefsHelper.getUserId(this)
 
             // Kiểm tra trạng thái đăng ký nếu thanh toán thành công
-            if (responseCode == "00" && userId > 0) {
+            if ((responseCode == "0" || responseCode == "00") && userId > 0) {
                 viewModel.checkSubscriptionStatus(userId, this)
                 UserSharedPrefsHelper.setPremiumStatus(this, true)
 
@@ -125,7 +126,7 @@ fun PaymentResultScreen(
     isPremium: Boolean = false,
     onClose: () -> Unit
 ) {
-    val success = responseCode == "00"
+    val success = responseCode == "0" || responseCode == "00"
     val animatedProgress = remember { Animatable(0f) }
 
     // Sử dụng Int trong mutableStateOf

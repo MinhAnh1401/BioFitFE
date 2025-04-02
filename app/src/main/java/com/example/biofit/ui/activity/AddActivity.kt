@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -330,27 +331,74 @@ fun AddContent(
                                 verticalArrangement = Arrangement.spacedBy(standardPadding)
                             ) {
                                 foodListRecent.forEachIndexed { index, _ ->
-                                    FoodItem(
-                                        foodImg = foodListRecent[index].foodImage,
-                                        foodName = foodListRecent[index].foodName,
-                                        servingSize = Pair(
-                                            foodListRecent[index].servingSize.first,
-                                            foodListRecent[index].servingSize.second
-                                        ),
-                                        mass = foodListRecent[index].mass,
-                                        calories = foodListRecent[index].calories,
-                                        macros = listOf(
-                                            Pair(
-                                                foodListRecent[index].protein.first,
-                                                foodListRecent[index].protein.third
+                                    var expanded by remember { mutableStateOf(false) }
+
+                                    Box {
+                                        FoodItem(
+                                            foodImg = foodListRecent[index].foodImage,
+                                            foodName = foodListRecent[index].foodName,
+                                            servingSize = Pair(
+                                                foodListRecent[index].servingSize.first,
+                                                foodListRecent[index].servingSize.second
                                             ),
-                                            Pair(
-                                                foodListRecent[index].carbohydrate.first,
-                                                foodListRecent[index].carbohydrate.third
+                                            mass = foodListRecent[index].mass,
+                                            calories = foodListRecent[index].calories,
+                                            macros = listOf(
+                                                Pair(
+                                                    foodListRecent[index].protein.first,
+                                                    foodListRecent[index].protein.third
+                                                ),
+                                                Pair(
+                                                    foodListRecent[index].carbohydrate.first,
+                                                    foodListRecent[index].carbohydrate.third
+                                                ),
+                                                Pair(
+                                                    foodListRecent[index].fat.first,
+                                                    foodListRecent[index].fat.third
+                                                )
                                             ),
-                                            Pair(
-                                                foodListRecent[index].fat.first,
-                                                foodListRecent[index].fat.third
+                                            onClick = {
+                                                activity?.let {
+                                                    val intent =
+                                                        Intent(it, FoodDetailActivity::class.java)
+                                                    it.startActivity(intent)
+                                                }
+                                            },
+                                            onLongClick = { expanded = true },
+                                            onEatClick = { TODO() },
+                                            standardPadding = standardPadding
+                                        )
+
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        text = stringResource(R.string.edit_food),
+                                                        color = Color(0xFFFF6D00)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    activity?.let {
+                                                        val intent =
+                                                            Intent(it, EditFoodActivity::class.java).apply {
+                                                                /*putExtra("exerciseId", exercise.exerciseId)
+                                                                putExtra("exerciseDTO", exercise)*/
+                                                            }
+                                                        it.startActivity(intent)
+                                                    }
+                                                    expanded = false
+                                                },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.ic_edit),
+                                                        contentDescription = stringResource(R.string.edit_food),
+                                                        modifier = Modifier.size(standardPadding * 1.5f),
+                                                        tint = Color(0xFFFF6D00)
+                                                    )
+                                                }
                                             )
                                         ),
                                         onClick = {
@@ -363,6 +411,38 @@ fun AddContent(
                                         },
                                         standardPadding = standardPadding
                                     )
+
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        text = stringResource(R.string.delete_food),
+                                                        color = Color(0xFFDD2C00)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    /*Log.d(
+                                                        "ExerciseListScreen",
+                                                        "Deleting exercise: ${exercise.exerciseId}"
+                                                    )
+                                                    exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                                    expanded = false
+                                                    Toast.makeText(
+                                                        context,
+                                                        context.getString(R.string.food_deleted_successfully),
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.trash),
+                                                        contentDescription = stringResource(R.string.delete_food),
+                                                        modifier = Modifier.size(standardPadding * 1.5f),
+                                                        tint = Color(0xFFDD2C00)
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
 
@@ -381,27 +461,74 @@ fun AddContent(
                                 verticalArrangement = Arrangement.spacedBy(standardPadding)
                             ) {
                                 foodListCreate.forEachIndexed { index, _ ->
-                                    FoodItem(
-                                        foodImg = foodListCreate[index].foodImage,
-                                        foodName = foodListCreate[index].foodName,
-                                        servingSize = Pair(
-                                            foodListCreate[index].servingSize.first,
-                                            foodListCreate[index].servingSize.second
-                                        ),
-                                        mass = foodListCreate[index].mass,
-                                        calories = foodListCreate[index].calories,
-                                        macros = listOf(
-                                            Pair(
-                                                foodListCreate[index].protein.first,
-                                                foodListCreate[index].protein.third
+                                    var expanded by remember { mutableStateOf(false) }
+
+                                    Box {
+                                        FoodItem(
+                                            foodImg = foodListCreate[index].foodImage,
+                                            foodName = foodListCreate[index].foodName,
+                                            servingSize = Pair(
+                                                foodListCreate[index].servingSize.first,
+                                                foodListCreate[index].servingSize.second
                                             ),
-                                            Pair(
-                                                foodListCreate[index].carbohydrate.first,
-                                                foodListCreate[index].carbohydrate.third
+                                            mass = foodListCreate[index].mass,
+                                            calories = foodListCreate[index].calories,
+                                            macros = listOf(
+                                                Pair(
+                                                    foodListCreate[index].protein.first,
+                                                    foodListCreate[index].protein.third
+                                                ),
+                                                Pair(
+                                                    foodListCreate[index].carbohydrate.first,
+                                                    foodListCreate[index].carbohydrate.third
+                                                ),
+                                                Pair(
+                                                    foodListCreate[index].fat.first,
+                                                    foodListCreate[index].fat.third
+                                                )
                                             ),
-                                            Pair(
-                                                foodListCreate[index].fat.first,
-                                                foodListCreate[index].fat.third
+                                            onClick = {
+                                                activity?.let {
+                                                    val intent =
+                                                        Intent(it, FoodDetailActivity::class.java)
+                                                    it.startActivity(intent)
+                                                }
+                                            },
+                                            onEatClick = { TODO() },
+                                            onLongClick = { expanded = true },
+                                            standardPadding = standardPadding
+                                        )
+
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        text = stringResource(R.string.edit_food),
+                                                        color = Color(0xFFFF6D00)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    activity?.let {
+                                                        val intent =
+                                                            Intent(it, EditFoodActivity::class.java).apply {
+                                                                /*putExtra("exerciseId", exercise.exerciseId)
+                                                                putExtra("exerciseDTO", exercise)*/
+                                                            }
+                                                        it.startActivity(intent)
+                                                    }
+                                                    expanded = false
+                                                },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.ic_edit),
+                                                        contentDescription = stringResource(R.string.edit_food),
+                                                        modifier = Modifier.size(standardPadding * 1.5f),
+                                                        tint = Color(0xFFFF6D00)
+                                                    )
+                                                }
                                             )
                                         ),
                                         onClick = {
@@ -415,6 +542,38 @@ fun AddContent(
                                         },
                                         standardPadding = standardPadding
                                     )
+
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        text = stringResource(R.string.delete_food),
+                                                        color = Color(0xFFDD2C00)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    /*Log.d(
+                                                        "ExerciseListScreen",
+                                                        "Deleting exercise: ${exercise.exerciseId}"
+                                                    )
+                                                    exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                                    expanded = false
+                                                    Toast.makeText(
+                                                        context,
+                                                        context.getString(R.string.food_deleted_successfully),
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.trash),
+                                                        contentDescription = stringResource(R.string.delete_food),
+                                                        modifier = Modifier.size(standardPadding * 1.5f),
+                                                        tint = Color(0xFFDD2C00)
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
 

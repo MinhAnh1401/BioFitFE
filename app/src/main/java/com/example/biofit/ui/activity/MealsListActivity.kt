@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,18 +18,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -135,31 +146,99 @@ fun MealsListContent(
         }
 
         itemsIndexed(foodList) { index, _ ->
+            var expanded by remember { mutableStateOf(false) }
+
             Column(
                 modifier = modifier
             ) {
-                FoodItem(
-                    foodImg = foodList[index].foodImage,
-                    foodName = foodList[index].foodName,
-                    servingSize = foodList[index].servingSize,
-                    mass = foodList[index].mass,
-                    calories = foodList[index].calories,
-                    macros = listOf(
-                        Pair(foodList[index].protein.first, foodList[index].protein.third),
-                        Pair(
-                            foodList[index].carbohydrate.first,
-                            foodList[index].carbohydrate.third
+                Box {
+                    FoodItem(
+                        foodImg = foodList[index].foodImage,
+                        foodName = foodList[index].foodName,
+                        servingSize = foodList[index].servingSize,
+                        mass = foodList[index].mass,
+                        calories = foodList[index].calories,
+                        macros = listOf(
+                            Pair(foodList[index].protein.first, foodList[index].protein.third),
+                            Pair(
+                                foodList[index].carbohydrate.first,
+                                foodList[index].carbohydrate.third
+                            ),
+                            Pair(foodList[index].fat.first, foodList[index].fat.third)
                         ),
-                        Pair(foodList[index].fat.first, foodList[index].fat.third)
-                    ),
-                    onClick = {
-                        activity?.let {
-                            val intent = Intent(it, MealsDetailActivity::class.java)
-                            it.startActivity(intent)
-                        }
-                    },
-                    standardPadding = standardPadding
-                )
+                        onClick = {
+                            activity?.let {
+                                val intent = Intent(it, MealsDetailActivity::class.java)
+                                it.startActivity(intent)
+                            }
+                        },
+                        onLongClick = { expanded = true },
+                        standardPadding = standardPadding
+                    )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.edit_food),
+                                    color = Color(0xFFFF6D00)
+                                )
+                            },
+                            onClick = {
+                                activity?.let {
+                                    val intent =
+                                        Intent(it, EditFoodActivity::class.java).apply {
+                                            /*putExtra("exerciseId", exercise.exerciseId)
+                                            putExtra("exerciseDTO", exercise)*/
+                                        }
+                                    it.startActivity(intent)
+                                }
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_edit),
+                                    contentDescription = stringResource(R.string.edit_food),
+                                    modifier = Modifier.size(standardPadding * 1.5f),
+                                    tint = Color(0xFFFF6D00)
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.delete_food),
+                                    color = Color(0xFFDD2C00)
+                                )
+                            },
+                            onClick = {
+                                /*Log.d(
+                                    "ExerciseListScreen",
+                                    "Deleting exercise: ${exercise.exerciseId}"
+                                )
+                                exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                expanded = false
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.food_deleted_successfully),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.trash),
+                                    contentDescription = stringResource(R.string.delete_food),
+                                    modifier = Modifier.size(standardPadding * 1.5f),
+                                    tint = Color(0xFFDD2C00)
+                                )
+                            }
+                        )
+                    }
+                }
             }
         }
 
