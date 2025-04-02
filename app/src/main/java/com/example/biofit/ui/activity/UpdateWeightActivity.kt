@@ -57,6 +57,7 @@ import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.DailyLogViewModel
+import java.math.BigDecimal
 
 class UpdateWeightActivity : ComponentActivity() {
     private var userData: UserDTO? = null
@@ -212,7 +213,9 @@ fun UpdateWeightContent(
                 onClick = {
                     val weight = dailyLogViewModel.weight.value ?: memoryWeight
                     if (weight > 0) {
-                        dailyLogViewModel.weight.value = weight - 1f
+                        dailyLogViewModel.weight.value = BigDecimal(
+                            weight.minus(0.1f).toDouble()
+                        ).setScale(1, BigDecimal.ROUND_HALF_UP).toFloat()
                     }
                 },
             ) {
@@ -247,7 +250,9 @@ fun UpdateWeightContent(
             IconButton(
                 onClick = {
                     val weight = dailyLogViewModel.weight.value ?: memoryWeight
-                    dailyLogViewModel.weight.value = weight + 1f
+                    dailyLogViewModel.weight.value =  BigDecimal(
+                        weight.plus(0.1f).toDouble()
+                    ).setScale(1, BigDecimal.ROUND_HALF_UP).toFloat()
                 },
             ) {
                 Icon(
