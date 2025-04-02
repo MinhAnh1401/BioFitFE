@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -56,11 +57,13 @@ class KnowledgeVideoActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         val getVideoId = intent.getStringExtra("VIDEO_ID")
+        val getVideoTitle = intent.getStringExtra("VIDEO_TITLE")
         setContent {
             BioFitTheme {
-                if (getVideoId != null) {
+                if (getVideoId != null && getVideoTitle != null) {
                     KnowledgeVideoScreen(
                         getVideoId = getVideoId,
+                        getVideoTitle = getVideoTitle,
                         isFullScreen = isFullScreen,
                         currentTime = currentTime
                     ) { time ->
@@ -76,11 +79,13 @@ class KnowledgeVideoActivity : ComponentActivity() {
         super.onConfigurationChanged(newConfig)
         isFullScreen = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
         val getVideoId = intent.getStringExtra("VIDEO_ID")
+        val getVideoTitle = intent.getStringExtra("VIDEO_TITLE")
         setContent {
             BioFitTheme {
-                if (getVideoId != null) {
+                if (getVideoId != null && getVideoTitle != null) {
                     KnowledgeVideoScreen(
                         getVideoId = getVideoId,
+                        getVideoTitle = getVideoTitle,
                         isFullScreen = isFullScreen,
                         currentTime = currentTime
                     ) { time ->
@@ -105,6 +110,7 @@ val videoItem = VideoItem(
 @Composable
 fun KnowledgeVideoScreen(
     getVideoId: String,
+    getVideoTitle: String,
     isFullScreen: Boolean,
     currentTime: Float,
     onTimeUpdate: (Float) -> Unit
@@ -155,6 +161,7 @@ fun KnowledgeVideoScreen(
 
             KnowledgeVideoContent(
                 getVideoId = getVideoId,
+                getVideoTitle = getVideoTitle,
                 standardPadding = standardPadding,
                 isFullScreen = isFullScreen,
                 currentTime = currentTime,
@@ -167,12 +174,14 @@ fun KnowledgeVideoScreen(
 @Composable
 fun KnowledgeVideoContent(
     getVideoId: String,
+    getVideoTitle: String,
     standardPadding: Dp,
     isFullScreen: Boolean,
     currentTime: Float,
     onTimeUpdate: (Float) -> Unit
 ) {
     val videoId by rememberSaveable { mutableStateOf(getVideoId) }
+    val videoTitle by rememberSaveable { mutableStateOf(getVideoTitle) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         YouTubePlayer(
@@ -185,10 +194,12 @@ fun KnowledgeVideoContent(
 
         if (!isFullScreen) {
             Text(
-                text = videoItem.title,
+                text = videoTitle,
                 modifier = Modifier.padding(standardPadding),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
     }
@@ -237,6 +248,7 @@ private fun KnowledgeVideoScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
         KnowledgeVideoScreen(
             getVideoId = "MHBOOP_eKZE",
+            getVideoTitle = "",
             isFullScreen = false,
             currentTime = 0f,
             onTimeUpdate = { }
@@ -255,6 +267,7 @@ private fun KnowledgeVideoScreenPreviewInLargePhone() {
     BioFitTheme {
         KnowledgeVideoScreen(
             getVideoId = "MHBOOP_eKZE",
+            getVideoTitle = "",
             isFullScreen = false,
             currentTime = 0f,
             onTimeUpdate = { }
@@ -274,6 +287,7 @@ private fun KnowledgeVideoScreenPreviewInTablet() {
     BioFitTheme {
         KnowledgeVideoScreen(
             getVideoId = "MHBOOP_eKZE",
+            getVideoTitle = "",
             isFullScreen = false,
             currentTime = 0f,
             onTimeUpdate = { }
@@ -293,6 +307,7 @@ private fun KnowledgeVideoScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
         KnowledgeVideoScreen(
             getVideoId = "MHBOOP_eKZE",
+            getVideoTitle = "",
             isFullScreen = true,
             currentTime = 0f,
             onTimeUpdate = { }
@@ -311,6 +326,7 @@ private fun KnowledgeVideoScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
         KnowledgeVideoScreen(
             getVideoId = "MHBOOP_eKZE",
+            getVideoTitle = "",
             isFullScreen = true,
             currentTime = 0f,
             onTimeUpdate = { }
@@ -330,6 +346,7 @@ private fun KnowledgeVideoScreenLandscapePreviewInTablet() {
     BioFitTheme {
         KnowledgeVideoScreen(
             getVideoId = "MHBOOP_eKZE",
+            getVideoTitle = "",
             isFullScreen = true,
             currentTime = 0f,
             onTimeUpdate = { }

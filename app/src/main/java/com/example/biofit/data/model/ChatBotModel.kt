@@ -66,6 +66,7 @@ class ChatBotModel(
             val response = chat.sendMessage(fullConversation)
             val botReply = response.text
                 ?.replace("*", " ")
+                /*?.replace(Regex("(https?://\\S+)"), "<a href=\"$1\">$1</a>")*/ // Chuyển link thành HTML
                 ?: context.getString(R.string.sorry_i_don_t_understand)
             chatHistory.add(ChatMessage(userInput, botReply))
             botReply
