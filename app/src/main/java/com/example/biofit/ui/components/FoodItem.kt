@@ -1,15 +1,21 @@
 package com.example.biofit.ui.components
 
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,11 +52,13 @@ fun FoodItemScreen() {
                 Pair(R.drawable.ic_fat, 30f)
             ),
             onClick = {},
+            onLongClick = {},
             standardPadding = getStandardPadding().first
         )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodItem(
     foodImg: Int,
@@ -58,13 +68,20 @@ fun FoodItem(
     calories: Float,
     macros: List<Pair<Int, Float>>,
     onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onEatClick: (() -> Unit)? = null,
     standardPadding: Dp
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
-            .clickable { onClick() },
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { onLongClick() }
+            ),
         horizontalArrangement = Arrangement.spacedBy(standardPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -127,6 +144,26 @@ fun FoodItem(
                         )
                     }
                 }
+            }
+        }
+
+        if (onEatClick != null) {
+            IconButton(
+                onClick = {
+                    onEatClick()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.ate_this_food),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.fork_knife),
+                    contentDescription = stringResource(R.string.eat),
+                    modifier = Modifier.size(standardPadding * 1.5f),
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
 

@@ -381,4 +381,8 @@
     <string name="strong_password">Mật khẩu mạnh</string>
     <string name="burned_calories">Lượng calo đốt cháy</string>
     <string name="back_to_current_week">Trở về tuần hiện tại</string>
+    <string name="edit_food">Chỉnh sửa thức ăn</string>
+    <string name="delete_food">Xoá thức ăn</string>
+    <string name="food_deleted_successfully">Thức ăn đã được xoá thành công</string>
+    <string name="ate_this_food">Đã ăn thức ăn này</string>
 </resources>
