@@ -174,6 +174,67 @@ fun MealsListContent(
     }
 }
 
+
+data class FoodInfo(
+    val foodImage: Int,
+    val foodName: String,
+    val servingSize: Pair<Float, String>,
+    val mass: Float,
+    val calories: Float,
+    val protein: Triple<Int, Int, Float>,
+    val carbohydrate: Triple<Int, Int, Float>,
+    val fat: Triple<Int, Int, Float>,
+    val sodium: Float? = null,
+)
+
+//Dữ liệu giả
+val food1 = FoodInfo(
+    foodImage = R.drawable.img_food_default,
+    foodName = "Pizza",
+    servingSize = Pair(1f, "slice"),
+    mass = 107f,
+    calories = 285f,
+    protein = Triple(R.drawable.ic_protein, R.string.protein, 12f),
+    carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 36f),
+    fat = Triple(R.drawable.ic_fat, R.string.fat, 10f),
+    sodium = 640f
+)
+
+val food2 = FoodInfo(
+    foodImage = R.drawable.img_food_default,
+    foodName = "Hamburger",
+    servingSize = Pair(1f, "sandwich"),
+    mass = 226f,
+    calories = 540f,
+    protein = Triple(R.drawable.ic_protein, R.string.protein, 34f),
+    carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 40f),
+    fat = Triple(R.drawable.ic_fat, R.string.fat, 27f),
+    sodium = 791f
+)
+
+val food3 = FoodInfo(
+    foodImage = R.drawable.img_food_default,
+    foodName = "Beefsteaks",
+    servingSize = Pair(1f, "steak"),
+    mass = 221f,
+    calories = 614f,
+    protein = Triple(R.drawable.ic_protein, R.string.protein, 58f),
+    carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 0f),
+    fat = Triple(R.drawable.ic_fat, R.string.fat, 41f),
+    sodium = 115f
+)
+
+val foodListMorning = listOf<FoodInfo>()
+val foodListAfternoon = listOf(
+    food2, food3
+)
+val foodListEvening = listOf(
+    food3, food1
+)
+val foodListSnack = listOf(
+    food1
+)
+
 @Preview(
     device = "id:pixel",
     showSystemUi = true,

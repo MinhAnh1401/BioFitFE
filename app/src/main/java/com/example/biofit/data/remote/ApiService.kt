@@ -3,6 +3,7 @@ package com.example.biofit.data.remote
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDoneDTO
+import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.PasswordResetDTO
 import com.example.biofit.data.model.dto.UserDTO
@@ -135,4 +136,25 @@ interface ApiService {
 
     @POST("api/user/reset-password")
     suspend fun resetPassword(@Body request: PasswordResetDTO): Response<PasswordResetResponse>
+
+    /*
+        ----------------------------------------------------------------------------------------------------
+        */
+    // API Food
+
+    @GET("api/food/user/{userId}")
+    fun getFood(@Path("userId") userId: Long): Call<List<FoodDTO>>
+
+    @POST("api/food/create")
+    fun createFood(@Body foodDTO: FoodDTO): Call<FoodDTO>
+
+    @DELETE("api/food/{foodId}")
+    fun deleteFood(@Path("foodId") foodId: Long): Call<Void>
+
+    @PUT("api/food/{foodId}")
+    fun updateFood(
+        @Path("foodId") foodId: Long,
+        @Body foodDTO: FoodDTO
+    ): Call<FoodDTO>
+
 }
