@@ -1,13 +1,17 @@
 package com.example.biofit.ui.activity
 
+import android.R.attr.onClick
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,8 +56,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -83,13 +91,17 @@ class AIChatbotActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val apiKey = BuildConfig.GOOGLE_API_KEY
+        /*val googleApiKey = BuildConfig.GOOGLE_SEARCH_API_KEY
+        val searchEngineId = BuildConfig.SEARCH_ENGINE_ID*/
         userData = UserSharedPrefsHelper.getUserData(this)
         dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
             dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
             context = this,
-            apiKey = apiKey
+            apiKey = apiKey,
+            /*googleApiKey = googleApiKey,
+            searchEngineId = searchEngineId*/
         )
         chatViewModel = AIChatbotViewModel(model, this)
         setContent {
@@ -153,13 +165,21 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                     ChatBubble(
                         text = chat.userMessage,
                         isUser = true,
-                        standardPadding = standardPadding
+                        standardPadding = standardPadding,
+                        /*onLinkClicked = { url ->
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                        }*/
                     )
 
                     ChatBubble(
                         text = chat.botResponse,
                         isUser = false,
-                        standardPadding = standardPadding
+                        standardPadding = standardPadding,
+                        /*onLinkClicked = { url ->
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                        }*/
                     )
                 }
 
@@ -167,8 +187,8 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                     Spacer(
                         modifier = Modifier.padding(
                             bottom = WindowInsets.safeDrawing.asPaddingValues()
-                                .calculateBottomPadding() * 10
-                                    + standardPadding
+                                .calculateBottomPadding()
+                                    + standardPadding * 10
                         )
                     )
                 }
@@ -268,9 +288,37 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
 fun ChatBubble(
     text: String,
     isUser: Boolean,
-    standardPadding: Dp
+    standardPadding: Dp,
+    /*onLinkClicked: (String) -> Unit*/
 ) {
     var isAnimationFinished by rememberSaveable { mutableStateOf(false) }
+
+    /*val annotatedText = buildAnnotatedString {
+        val linkPattern = Regex("(https?://\\S+)")
+        var lastIndex = 0
+
+        linkPattern.findAll(text).forEach { matchResult ->
+            val start = matchResult.range.first
+            val end = matchResult.range.last + 1
+
+            // Thêm văn bản trước link
+            append(text.substring(lastIndex, start))
+
+            // Thêm link có thể nhấn
+            pushStringAnnotation(tag = "URL", annotation = matchResult.value)
+            withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
+                append(matchResult.value)
+            }
+            pop()
+
+            lastIndex = end
+        }
+
+        // Thêm phần còn lại của văn bản
+        if (lastIndex < text.length) {
+            append(text.substring(lastIndex))
+        }
+    }*/
 
     Box(
         modifier = Modifier
@@ -337,6 +385,18 @@ fun ChatBubble(
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyLarge
                     )
+
+                    /*Text(
+                        text = annotatedText,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.clickable {
+                            annotatedText.getStringAnnotations(tag = "URL", start = 0, end = text.length)
+                                .firstOrNull()?.let { annotation ->
+                                    onLinkClicked(annotation.item) // Mở link khi nhấn vào
+                                }
+                        }
+                    )*/
                 }
             }
         }

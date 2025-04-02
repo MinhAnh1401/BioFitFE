@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.biofit.R
@@ -70,10 +72,12 @@ fun KnowledgeScreen() {
                     start = standardPadding,
                     end = standardPadding,
                 ),
+            verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = modifier,
+                horizontalArrangement = Arrangement.spacedBy(standardPadding),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -83,16 +87,12 @@ fun KnowledgeScreen() {
                     style = MaterialTheme.typography.headlineSmall
                 )
 
-                IconButton(
-                    onClick = { TODO() }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.brain_filled_head_profile),
-                        contentDescription = "Knowledge",
-                        modifier = Modifier.size(standardPadding * 2f),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Icon(
+                    painter = painterResource(R.drawable.brain_filled_head_profile),
+                    contentDescription = "Knowledge",
+                    modifier = Modifier.size(standardPadding * 2f),
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
 
             KnowledgeContent(
@@ -160,6 +160,7 @@ fun KnowledgeContent(
                                     activity?.let {
                                         val intent = Intent(it, KnowledgeVideoActivity::class.java)
                                         intent.putExtra("VIDEO_ID", videoItem.videoId)
+                                        intent.putExtra("VIDEO_TITLE", videoItem.title)
                                         it.startActivity(intent)
                                     }
                                 },
@@ -224,6 +225,7 @@ fun KnowledgeContent(
                                     activity?.let {
                                         val intent = Intent(it, KnowledgeVideoActivity::class.java)
                                         intent.putExtra("VIDEO_ID", videoItem.videoId)
+                                        intent.putExtra("VIDEO_TITLE", videoItem.title)
                                         it.startActivity(intent)
                                     }
                                 },
@@ -397,14 +399,20 @@ fun ArticleThumbnail(
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
             context.startActivity(intent)
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 0.1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                shape = MaterialTheme.shapes.extraLarge
+            )
     ) {
         AsyncImage(
             model = article.imageUrl,
             contentDescription = "Article Thumbnail",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(standardPadding * 6),
+                .height(standardPadding * 8),
             contentScale = ContentScale.Crop
         )
 

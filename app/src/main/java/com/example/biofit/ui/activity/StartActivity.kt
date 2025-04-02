@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
@@ -164,11 +165,7 @@ fun StartScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
     ) {
         AppTitleAndDescription()
-        WelcomeSection(
-            screenWidth,
-            screenHeight,
-            standardPadding
-        )
+        WelcomeSection(standardPadding)
         ActionButtons(standardPadding)
     } // nội dung bên trong Column
 }
@@ -204,8 +201,8 @@ fun AppTitleAndDescription() {
                 style = MaterialTheme.typography.displaySmall.copy(
                     fontWeight = FontWeight.Bold,
                     shadow = Shadow(
-                        color = MaterialTheme.colorScheme.primary,
-                        blurRadius = 10f
+                        color = MaterialTheme.colorScheme.secondary,
+                        blurRadius = 5f
                     )
                 ) // tuỳ chỉnh kiểu chữ
             )
@@ -216,7 +213,7 @@ fun AppTitleAndDescription() {
                     fontWeight = FontWeight.Bold,
                     shadow = Shadow(
                         color = MaterialTheme.colorScheme.onPrimary,
-                        blurRadius = 10f
+                        blurRadius = 5f
                     )
                 )
             )
@@ -227,7 +224,7 @@ fun AppTitleAndDescription() {
             style = MaterialTheme.typography.labelSmall.copy(
                 shadow = Shadow(
                     color = MaterialTheme.colorScheme.onPrimary,
-                    blurRadius = 10f
+                    blurRadius = 5f
                 )
             )
         )
@@ -235,39 +232,46 @@ fun AppTitleAndDescription() {
 }
 
 @Composable
-fun WelcomeSection(
-    screenWidth: Int,
-    screenHeight: Int,
-    standardPadding: Dp
-) {
+fun WelcomeSection(standardPadding: Dp) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(standardPadding),
-        horizontalAlignment = if (screenWidth > screenHeight || screenWidth > 450) {
-            Alignment.CenterHorizontally
-        } else {
-            Alignment.Start
-        },
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(R.string.welcome_to_app),
             color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.displaySmall.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                shadow = Shadow(
+                    color = MaterialTheme.colorScheme.secondary,
+                    blurRadius = 5f
+                )
             )
         )
+
         Text(
             text = stringResource(R.string.start_title_1),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.headlineSmall
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                shadow = Shadow(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    blurRadius = 5f
+                )
+            )
         )
+
         Text(
             text = stringResource(R.string.start_title_2),
             color = MaterialTheme.colorScheme.onPrimary,
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleSmall.copy(
                 shadow = Shadow(
                     color = MaterialTheme.colorScheme.onPrimary,
-                    blurRadius = 10f
+                    blurRadius = 5f
                 )
             )
         )

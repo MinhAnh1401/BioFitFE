@@ -70,6 +70,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -310,16 +311,14 @@ fun SettingContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = standardPadding),
-                horizontalAlignment = if (screenWidth > screenHeight) {
-                    Alignment.CenterHorizontally
-                } else {
-                    Alignment.Start
-                }
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(R.string.my_profile),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
         }

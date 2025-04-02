@@ -431,7 +431,7 @@ fun UpdateExerciseContent(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.figure_highintensity_intervaltraining),
-                        contentDescription = stringResource(R.string.level),
+                        contentDescription = stringResource(R.string.intensity),
                         modifier = Modifier.size(standardPadding * 1.5f),
                         tint = Color(0xFF2962FF)
                     )

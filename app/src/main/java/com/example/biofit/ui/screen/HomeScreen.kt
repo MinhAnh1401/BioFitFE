@@ -190,7 +190,7 @@ fun HeaderBar(
             Text(
                 text = stringResource(R.string.hello) + "$userName!",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge
             )
 
             Text(
@@ -909,6 +909,11 @@ fun DailyGoals(
     val roundedBmi = bmiIndex?.let {
         BigDecimal(it.toDouble()).setScale(1, RoundingMode.HALF_UP).toFloat()
     } ?: 0f
+    val formatterRoundedBmi = if (roundedBmi % 1 == 0f) {
+        roundedBmi.toInt().toString()
+    } else {
+        String.format(java.util.Locale.US, "%.1f", roundedBmi)
+    }
 
     val bmiCategory = when {
         bmiIndex == null -> stringResource(R.string.unknown)
@@ -922,6 +927,11 @@ fun DailyGoals(
     val estimatedWeight = BigDecimal(oddHeight.toDouble() * 9 / 10)
         .setScale(1, RoundingMode.HALF_UP)
         .toFloat()
+    val formatterEstimatedWeight = if (estimatedWeight % 1 == 0f) {
+        estimatedWeight.toInt().toString()
+    } else {
+        String.format(java.util.Locale.US, "%.1f", estimatedWeight)
+    }
 
     var showBMIInfo by remember { mutableStateOf(false) }
 
@@ -1314,7 +1324,7 @@ fun DailyGoals(
                             fontWeight = FontWeight.Bold
                         )
                     ) {
-                        append("$roundedBmi")
+                        append(formatterRoundedBmi)
                     }
                     append(", ")
                     append(stringResource(R.string.you_are_classified_as) + " ")
@@ -1391,7 +1401,7 @@ fun DailyGoals(
 
                             Text(
                                 text = stringResource(R.string.your_best_weight_is_estimated_to_be) +
-                                        estimatedWeight + " " +
+                                        formatterEstimatedWeight + " " +
                                         stringResource(R.string.kg),
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 style = MaterialTheme.typography.bodySmall
