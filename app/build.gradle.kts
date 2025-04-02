@@ -89,6 +89,7 @@ dependencies {
 
     // AndroidX hỗ trợ LiveData
     implementation ("androidx.compose.runtime:runtime-livedata:1.7.8")
+    implementation ("androidx.browser:browser:1.8.0")
 
     // Koin
     implementation ("io.insert-koin:koin-android:3.4.0")
