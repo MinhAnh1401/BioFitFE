@@ -36,6 +36,57 @@ class PaymentViewModel : ViewModel() {
     private val _subscriptionActive = MutableLiveData<Boolean>()
     val subscriptionActive: LiveData<Boolean> = _subscriptionActive
 
+    fun createMoMoPayment(userId: Long, planType: String, amount: Long, context: Context) {
+        _loading.value = true
+
+        val packageCode = when (planType) {
+            "YEARLY" -> "YEARLY"
+            "MONTHLY" -> "MONTHLY"
+            else -> planType
+        }
+
+        val backendDomain = extractBaseUrl(RetrofitClient.BASE_URL)
+        val ipAddress = getIPAddress(true)
+        val request = PaymentRequest(
+            userId = userId,
+            planType = packageCode,
+            paymentMethod = "MOMO",
+            returnUrl = "$backendDomain/api/payment/momo-return",
+            ipAddress = ipAddress,
+            amount = amount
+        )
+
+        viewModelScope.launch {
+            apiService.createPayment(request).enqueue(object : Callback<PaymentResponse> {
+                override fun onResponse(call: Call<PaymentResponse>, response: Response<PaymentResponse>) {
+                    _loading.value = false
+                    if (response.isSuccessful && response.body() != null) {
+                        val paymentResponse = response.body()!!
+                        if (paymentResponse.success) {
+                            saveOrderId(context, paymentResponse.orderId)
+                            _paymentUrl.value = paymentResponse.paymentUrl ?: ""
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentResponse.paymentUrl))
+                            intent.setPackage("com.mservice.momotransfer.sandbox") // Chỉ định ứng dụng MoMo
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                _error.value = "ứng dụng MoMo đã được kích hoạt!"
+                            }
+                        } else {
+                            _error.value = paymentResponse.message
+                        }
+                    } else {
+                        _error.value = "Error: ${response.errorBody()?.string()}"
+                    }
+                }
+
+                override fun onFailure(call: Call<PaymentResponse>, t: Throwable) {
+                    _loading.value = false
+                    _error.value = "Network error: ${t.message}"
+                }
+            })
+        }
+    }
 
     fun createVnPayPayment(userId: Long, planType: String, amount: Long, context: Context) {
         _loading.value = true
@@ -63,6 +114,7 @@ class PaymentViewModel : ViewModel() {
                     // Sử dụng URL trả về của backend thay vì deep link trực tiếp
                     returnUrl = "${backendDomain}/api/payment/vnPay-return"
                 )
+
 
                 apiService.createPayment(request).enqueue(object : Callback<PaymentResponse> {
                     override fun onResponse(

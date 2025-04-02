@@ -81,11 +81,6 @@ class PasswordResetViewModel(private val repository: UserRepository) : ViewModel
         }
     }
 
-    // Đặt lại trạng thái để tránh hiển thị các tin nhắn cũ
-//    fun resetRequestState() {
-//        _requestResetState.value = RequestResetState.Initial
-//    }
-
     fun resetConfirmState() {
         _confirmResetState.value = ConfirmResetState.Initial
     }
