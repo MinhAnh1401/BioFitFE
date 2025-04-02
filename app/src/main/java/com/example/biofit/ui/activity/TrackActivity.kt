@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,11 +50,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.ui.components.FoodItem
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.FoodViewModel
 import com.patrykandpatrick.vico.core.extension.sumOf
 import java.math.RoundingMode
 
@@ -61,7 +64,6 @@ class TrackActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         val initialSelectedOption = intent.getIntExtra("SESSION_TITLE", R.string.morning)
         setContent {
             BioFitTheme {
@@ -77,9 +79,12 @@ class TrackActivity : ComponentActivity() {
 }
 
 @Composable
-fun TrackScreen(initialSelectedOption: Int) {
+fun TrackScreen(
+    initialSelectedOption: Int,
+) {
     val context = LocalContext.current
     val activity = context as? Activity
+
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
@@ -197,7 +202,8 @@ fun TrackContent(
                 NutritionalComposition(
                     selectedOption = selectedOption,
                     standardPadding = standardPadding,
-                    modifier = modifier
+                    modifier = modifier,
+                    foodId = 0
                 )
             }
 
@@ -255,7 +261,8 @@ fun TrackContent(
 fun NutritionalComposition(
     selectedOption: Int,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    foodId: Long
 ) {
     val morningMacroTable = listOf(
         Triple(
@@ -382,16 +389,6 @@ fun NutritionalComposition(
     }
 }
 
-val foodListMorning = listOf<FoodInfo>()
-val foodListAfternoon = listOf(
-    food2, food3
-)
-val foodListEvening = listOf(
-    food3, food1
-)
-val foodListSnack = listOf(
-    food1
-)
 
 @Composable
 fun MenuForSession(

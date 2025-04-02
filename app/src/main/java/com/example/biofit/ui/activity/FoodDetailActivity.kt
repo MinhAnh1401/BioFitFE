@@ -1,12 +1,15 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import androidx.compose.ui.draw.clip
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,19 +46,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.FoodInfoDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.FoodViewModel
 import java.math.RoundingMode
 
 class FoodDetailActivity : ComponentActivity() {
+    private val foodViewModel: FoodViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val userId = UserSharedPrefsHelper.getUserData(this)?.userId ?: 0L
+        foodViewModel.fetchFood(userId)
         enableEdgeToEdge()
+        val foodId = intent.getLongExtra("FOOD_ID", -1)
+        // Ghi log kiểm tra foodId đã nhận đúng chưa
+        Log.d("FoodDetailActivity", "Received foodId: $foodId")
         setContent {
             BioFitTheme {
-                FoodDetailScreen()
+                FoodDetailScreen(foodId = foodId, foodViewModel = foodViewModel)
             }
         }
     }
@@ -64,9 +80,24 @@ class FoodDetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun FoodDetailScreen() {
+fun FoodDetailScreen(
+    foodId: Long,
+    foodViewModel: FoodViewModel = viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
+
+    // Lấy danh sách thực phẩm từ ViewModel
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    // Tìm thực phẩm có foodId tương ứng
+    val selectedFoodDTO = foodList.find { it.foodId == foodId }
+
+    // Nếu tìm thấy thực phẩm, chuyển đổi thành FoodInfoDTO
+    val selectedFoodInfoDTO = selectedFoodDTO?.toFoodInfoDTO() ?: FoodInfoDTO.default()
+
+    // Ghi log kiểm tra thực phẩm tìm được
+    Log.d("FoodDetailScreen", "Selected food: $selectedFoodInfoDTO")
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
@@ -95,6 +126,7 @@ fun FoodDetailScreen() {
             )
 
             FoodDetailContent(
+                selectedFoodInfoDTO = selectedFoodInfoDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -102,41 +134,19 @@ fun FoodDetailScreen() {
     }
 }
 
-data class FoodInfo(
-    val foodImage: Int,
-    val foodName: String,
-    val servingSize: Pair<Float, String>,
-    val mass: Float,
-    val calories: Float,
-    val protein: Triple<Int, Int, Float>,
-    val carbohydrate: Triple<Int, Int, Float>,
-    val fat: Triple<Int, Int, Float>,
-    val sodium: Float? = null,
-)
-
-//Dữ liệu giả
-val food1 = FoodInfo(
-    foodImage = R.drawable.img_food_default,
-    foodName = "Pizza",
-    servingSize = Pair(1f, "slice"),
-    mass = 107f,
-    calories = 285f,
-    protein = Triple(R.drawable.ic_protein, R.string.protein, 12f),
-    carbohydrate = Triple(R.drawable.ic_carbohydrate, R.string.carbohydrate, 36f),
-    fat = Triple(R.drawable.ic_fat, R.string.fat, 10f),
-    sodium = 640f
-)
-
 @Composable
 fun FoodDetailContent(
+    selectedFoodInfoDTO: FoodInfoDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
         item {
             FoodNutritionalComposition(
+                foodInfo = selectedFoodInfoDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -144,6 +154,7 @@ fun FoodDetailContent(
 
         item {
             FoodNutritionalValue(
+                foodInfo = selectedFoodInfoDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -162,10 +173,11 @@ fun FoodDetailContent(
 
 @Composable
 fun FoodNutritionalComposition(
+    foodInfo: FoodInfoDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
-    val foodMacro = listOf(food1.protein, food1.carbohydrate, food1.fat)
+    val foodMacro = listOf(foodInfo.protein,foodInfo.carbohydrate,foodInfo.fat)
 
     Row(
         modifier = modifier,
@@ -178,7 +190,7 @@ fun FoodNutritionalComposition(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(food1.foodImage),
+                painter = painterResource(foodInfo.foodImage),
                 contentDescription = "Food image",
                 modifier = Modifier
                     .size(standardPadding * 8)
@@ -186,7 +198,7 @@ fun FoodNutritionalComposition(
             )
 
             Text(
-                text = food1.foodName,
+                text = foodInfo.foodName,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -205,7 +217,7 @@ fun FoodNutritionalComposition(
 
             FoodCalorieChart(
                 sizeChart = 5f,
-                value = food1.calories,
+                value = foodInfo.calories,
                 chartColor = MaterialTheme.colorScheme.primary,
                 textColor = MaterialTheme.colorScheme.outline,
                 standardPadding = standardPadding
@@ -283,20 +295,21 @@ fun FoodCalorieChart(
 
 @Composable
 fun FoodNutritionalValue(
+    foodInfo: FoodInfoDTO,
     standardPadding: Dp,
     modifier: Modifier
 ) {
     val nutrients = listOf(
         Pair(
             stringResource(R.string.serving_size),
-            "${food1.servingSize.first} ${food1.servingSize.second}"
+            "${foodInfo.servingSize.first} ${foodInfo.servingSize.second}"
         ),
-        Pair(stringResource(R.string.mass), "${food1.mass} g"),
-        Pair(stringResource(R.string.calories), "${food1.calories} kcal"),
-        Pair(stringResource(food1.fat.second), "${food1.fat.third} g"),
-        Pair(stringResource(R.string.sodium), "${food1.sodium.takeIf { it != null } ?: 0} mg"),
-        Pair(stringResource(food1.carbohydrate.second), "${food1.carbohydrate.third} g"),
-        Pair(stringResource(food1.protein.second), "${food1.protein.third} g")
+        Pair(stringResource(R.string.mass), "${foodInfo.mass} g"),
+        Pair(stringResource(R.string.calories), "${foodInfo.calories} kcal"),
+        Pair(stringResource(foodInfo.fat.second), "${foodInfo.fat.third} g"),
+        Pair(stringResource(R.string.sodium), "${foodInfo.sodium.takeIf { it != null } ?: 0} mg"),
+        Pair(stringResource(foodInfo.carbohydrate.second), "${foodInfo.carbohydrate.third} g"),
+        Pair(stringResource(foodInfo.protein.second), "${foodInfo.protein.third} g")
     )
 
     Column(
@@ -310,6 +323,7 @@ fun FoodNutritionalValue(
         )
 
         Column(
+            modifier = Modifier.padding(standardPadding),
             verticalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
             nutrients.forEach { (name, value) ->
@@ -348,7 +362,7 @@ fun FoodNutritionalValue(
 @Composable
 private fun FoodDetailScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        FoodDetailScreen()
+        FoodDetailScreen(foodId = 0)
     }
 }
 
@@ -361,7 +375,7 @@ private fun FoodDetailScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun FoodDetailScreenPreviewInLargePhone() {
     BioFitTheme {
-        FoodDetailScreen()
+        FoodDetailScreen(foodId = 0)
     }
 }
 
@@ -375,7 +389,7 @@ private fun FoodDetailScreenPreviewInLargePhone() {
 @Composable
 private fun FoodDetailScreenPreviewInTablet() {
     BioFitTheme {
-        FoodDetailScreen()
+        FoodDetailScreen(foodId = 0)
     }
 }
 
@@ -389,7 +403,7 @@ private fun FoodDetailScreenPreviewInTablet() {
 @Composable
 private fun FoodDetailScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        FoodDetailScreen()
+        FoodDetailScreen(foodId = 0)
     }
 }
 
@@ -402,7 +416,7 @@ private fun FoodDetailScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun FoodDetailScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        FoodDetailScreen()
+        FoodDetailScreen(foodId = 0)
     }
 }
 
@@ -416,6 +430,6 @@ private fun FoodDetailScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun FoodDetailScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        FoodDetailScreen()
+        FoodDetailScreen(foodId = 0)
     }
 }
