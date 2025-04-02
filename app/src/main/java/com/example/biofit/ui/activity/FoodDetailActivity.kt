@@ -1,6 +1,7 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import androidx.compose.ui.draw.clip
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
@@ -322,6 +323,7 @@ fun FoodNutritionalValue(
         )
 
         Column(
+            modifier = Modifier.padding(standardPadding),
             verticalArrangement = Arrangement.spacedBy(standardPadding)
         ) {
             nutrients.forEach { (name, value) ->

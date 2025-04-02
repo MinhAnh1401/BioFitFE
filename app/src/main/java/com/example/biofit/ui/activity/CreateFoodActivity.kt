@@ -28,6 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -237,8 +238,7 @@ fun CreateFoodContent(
 
                         Text(
                             text = stringResource(R.string.upload_new_photo),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodySmall
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -252,35 +252,26 @@ fun CreateFoodContent(
             ) {
                 Text(
                     text = stringResource(R.string.nutrition_information),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Column(
-                    modifier = Modifier.padding(standardPadding),
+                    modifier = modifier,
                     verticalArrangement = Arrangement.spacedBy(standardPadding)
                 ) {
                     OutlinedTextField(
                         value = foodName,
                         onValueChange = onFoodNameChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.enter_food_name),
                                 modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.End,
-                                style = MaterialTheme.typography.bodySmall
+                                textAlign = TextAlign.End
                             )
                         },
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.food_name) + "*",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        prefix = { Text(text = stringResource(R.string.food_name) + "*") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
@@ -296,23 +287,15 @@ fun CreateFoodContent(
                         value = servingSize,
                         onValueChange = onServingSizeChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.enter_serving_size),
                                 modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.End,
-                                style = MaterialTheme.typography.bodySmall
+                                textAlign = TextAlign.End
                             )
                         },
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.serving_size),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        prefix = { Text(text = stringResource(R.string.serving_size)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next
@@ -328,30 +311,21 @@ fun CreateFoodContent(
                         value = mass,
                         onValueChange =  onMassChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.mass),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                        prefix = { Text(text = stringResource(R.string.mass)) },
                         trailingIcon = {
                             IconButton(onClick = { onShowUnitDialogChange(true) })  {
-                                Image(
+                                Icon(
                                     painter = painterResource(R.drawable.ic_back),
                                     contentDescription = stringResource(R.string.unit_of_measure),
-                                    modifier = Modifier.rotate(270f)
+                                    modifier = Modifier
+                                        .rotate(270f)
+                                        .size(standardPadding),
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         },
-                        suffix = {
-                            Text(
-                                text = selectedUnitMeasure,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        suffix = { Text(text = selectedUnitMeasure) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next
@@ -383,25 +357,9 @@ fun CreateFoodContent(
                         value = calories,
                         onValueChange = onCaloriesChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.calories) + "*",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = "kcal",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Next
-                        ),
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                        prefix = { Text(text = stringResource(R.string.calories) + "*") },
+                        suffix = { Text(text = stringResource(R.string.kcal)) },
                         keyboardActions = KeyboardActions(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
@@ -413,21 +371,9 @@ fun CreateFoodContent(
                         value = protein,
                         onValueChange =  onProteinChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.protein),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = stringResource(R.string.gram),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                        prefix = { Text(text = stringResource(R.string.protein)) },
+                        suffix = { Text(text = stringResource(R.string.gram)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next
@@ -443,21 +389,9 @@ fun CreateFoodContent(
                         value = carbohydrate,
                         onValueChange = onCarbohydrateChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.carbohydrate),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = stringResource(R.string.gram),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                        prefix = { Text(text = stringResource(R.string.carbohydrate)) },
+                        suffix = { Text(text = stringResource(R.string.gram)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next
@@ -473,21 +407,9 @@ fun CreateFoodContent(
                         value = fat,
                         onValueChange =   onFatChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.fat),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = stringResource(R.string.gram),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                        prefix = { Text(text = stringResource(R.string.fat)) },
+                        suffix = { Text(text = stringResource(R.string.gram)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next
@@ -503,21 +425,9 @@ fun CreateFoodContent(
                         value = sodium,
                         onValueChange =   onSodiumChange,
                         modifier = modifier,
-                        textStyle = MaterialTheme.typography.bodySmall.copy(
-                            textAlign = TextAlign.End
-                        ),
-                        prefix = {
-                            Text(
-                                text = stringResource(R.string.sodium),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        suffix = {
-                            Text(
-                                text = stringResource(R.string.milligram),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                        prefix = { Text(text = stringResource(R.string.sodium)) },
+                        suffix = { Text(text = stringResource(R.string.milligram)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Go
