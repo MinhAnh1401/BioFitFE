@@ -383,4 +383,8 @@
     <string name="strong_password">Strong password</string>
     <string name="burned_calories">Burned calories</string>
     <string name="back_to_current_week">Back to current week</string>
+    <string name="edit_food">Edit food</string>
+    <string name="delete_food">Delete food</string>
+    <string name="food_deleted_successfully">Food deleted successfully</string>
+    <string name="ate_this_food">Ate this food</string>
 </resources>
