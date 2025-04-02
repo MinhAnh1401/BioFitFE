@@ -227,7 +227,7 @@ fun ActionPopup(
                                 activity?.let {
                                     val intent = Intent(it, AddActivity::class.java)
                                     intent.putExtra(
-                                        "SESSION_TITLE", when (title) {
+                                        "SESSION", when (title) {
                                             R.string.morning -> R.string.morning
                                             R.string.afternoon -> R.string.afternoon
                                             R.string.evening -> R.string.evening

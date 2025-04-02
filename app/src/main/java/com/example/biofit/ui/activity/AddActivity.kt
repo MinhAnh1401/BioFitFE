@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.MainActivity
@@ -76,9 +77,10 @@ class AddActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val session = intent.getIntExtra("SESSION", -1)
         setContent {
             BioFitTheme {
-                AddScreen()
+                AddScreen(session)
             }
         }
     }
@@ -95,7 +97,10 @@ class AddActivity : ComponentActivity() {
 }
 
 @Composable
-fun AddScreen(foodViewModel: FoodViewModel = viewModel()) {
+fun AddScreen(
+    session: Int?,
+    foodViewModel: FoodViewModel = viewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -105,8 +110,10 @@ fun AddScreen(foodViewModel: FoodViewModel = viewModel()) {
     var expanded by remember { mutableStateOf(false) }
 
     val foodList by foodViewModel.foodList.collectAsState()
-    val defaultOption = foodList.firstOrNull()?.session?.toIntOrNull() ?: R.string.morning
-    var selectedOption by remember { mutableIntStateOf(defaultOption) }
+    Log.d("Session", "Default option: ${foodList.firstOrNull()?.session}")
+    /*foodList.firstOrNull()?.session?.toIntOrNull() ?: R.string.morning*/
+    val defaultOption = session
+    var selectedOption by remember { mutableIntStateOf(defaultOption ?: -1) }
 
     val options = listOf(
         R.string.morning,
@@ -291,15 +298,15 @@ fun AddContent(
         )
     }
 
-    val foodListCreateMorning = foodListInfoDTO.filter { it.session.equals("Morning", ignoreCase = true) }
-    val foodListCreateAfternoon = foodListInfoDTO.filter { it.session.equals("Afternoon", ignoreCase = true) }
-    val foodListCreateEvening = foodListInfoDTO.filter { it.session.equals("Evening", ignoreCase = true) }
-    val foodListCreateSnack = foodListInfoDTO.filter { it.session.equals("Snack", ignoreCase = true) }
+    val foodListCreateMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
+    val foodListCreateAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
+    val foodListCreateEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
+    val foodListCreateSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
 
-    val foodListRecentMorning = foodListInfoDTO.filter { it.session.equals("Morning", ignoreCase = true) }
-    val foodListRecentAfternoon = foodListInfoDTO.filter { it.session.equals("Afternoon", ignoreCase = true) }
-    val foodListRecentEvening = foodListInfoDTO.filter { it.session.equals("Evening", ignoreCase = true) }
-    val foodListRecentSnack = foodListInfoDTO.filter { it.session.equals("Snack", ignoreCase = true) }
+    val foodListRecentMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
+    val foodListRecentAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
+    val foodListRecentEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
+    val foodListRecentSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
 
 
     val foodListCreate = when (selectedOption) {
@@ -359,8 +366,9 @@ fun AddContent(
                                             ),
                                             onClick = {
                                                 activity?.let {
-                                                    val intent =
-                                                        Intent(it, FoodDetailActivity::class.java)
+                                                    val intent = Intent(it, FoodDetailActivity::class.java)
+                                                    val foodId = foodListRecent[index].foodId
+                                                    intent.putExtra("FOOD_ID", foodId)
                                                     it.startActivity(intent)
                                                 }
                                             },
@@ -400,17 +408,6 @@ fun AddContent(
                                                     )
                                                 }
                                             )
-                                        ),
-                                        onClick = {
-                                            activity?.let {
-                                                val intent = Intent(it, FoodDetailActivity::class.java)
-                                                val foodId = foodListRecent[index].foodId
-                                                intent.putExtra("FOOD_ID", foodId)
-                                                it.startActivity(intent)
-                                            }
-                                        },
-                                        standardPadding = standardPadding
-                                    )
 
                                             DropdownMenuItem(
                                                 text = {
@@ -489,8 +486,10 @@ fun AddContent(
                                             ),
                                             onClick = {
                                                 activity?.let {
-                                                    val intent =
-                                                        Intent(it, FoodDetailActivity::class.java)
+                                                    val intent = Intent(it, FoodDetailActivity::class.java)
+                                                    val foodId = foodListRecent[index].foodId
+                                                    Log.d("FoodItem", "Clicked foodId: $foodId")
+                                                    intent.putExtra("FOOD_ID", foodId)
                                                     it.startActivity(intent)
                                                 }
                                             },
@@ -530,18 +529,6 @@ fun AddContent(
                                                     )
                                                 }
                                             )
-                                        ),
-                                        onClick = {
-                                            activity?.let {
-                                                val intent = Intent(it, FoodDetailActivity::class.java)
-                                                val foodId = foodListRecent[index].foodId
-                                                Log.d("FoodItem", "Clicked foodId: $foodId")
-                                                intent.putExtra("FOOD_ID", foodId)
-                                                it.startActivity(intent)
-                                            }
-                                        },
-                                        standardPadding = standardPadding
-                                    )
 
                                             DropdownMenuItem(
                                                 text = {
@@ -662,7 +649,7 @@ fun EmptyAddScreen(
 @Composable
 private fun AddScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        AddScreen()
+        AddScreen(R.string.morning)
     }
 }
 
@@ -675,7 +662,7 @@ private fun AddScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun AddScreenPreviewInLargePhone() {
     BioFitTheme {
-        AddScreen()
+        AddScreen(R.string.morning)
     }
 }
 
@@ -689,7 +676,7 @@ private fun AddScreenPreviewInLargePhone() {
 @Composable
 private fun AddScreenPreviewInTablet() {
     BioFitTheme {
-        AddScreen()
+        AddScreen(R.string.morning)
     }
 }
 
@@ -703,7 +690,7 @@ private fun AddScreenPreviewInTablet() {
 @Composable
 private fun AddScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        AddScreen()
+        AddScreen(R.string.morning)
     }
 }
 
@@ -716,7 +703,7 @@ private fun AddScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun AddScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        AddScreen()
+        AddScreen(R.string.morning)
     }
 }
 
@@ -730,6 +717,6 @@ private fun AddScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun AddScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        AddScreen()
+        AddScreen(R.string.morning)
     }
 }

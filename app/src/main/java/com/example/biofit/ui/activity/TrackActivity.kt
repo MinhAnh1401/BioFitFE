@@ -228,7 +228,7 @@ fun TrackContent(
                 activity?.let {
                     val intent = Intent(it, AddActivity::class.java)
                     intent.putExtra(
-                        "SESSION_TITLE",
+                        "SESSION",
                         when (selectedOption) {
                             R.string.morning -> R.string.morning
                             R.string.afternoon -> R.string.afternoon

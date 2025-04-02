@@ -1,10 +1,12 @@
 package com.example.biofit.view_model
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.biofit.R
 import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
