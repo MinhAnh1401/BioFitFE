@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,6 +49,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -70,12 +72,14 @@ import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.ChatPreferencesHelper
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
 import com.example.biofit.ui.components.TopBar
+import com.example.biofit.ui.components.TopBar2
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
@@ -126,7 +130,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
 
     val standardPadding = getStandardPadding().first
 
-    val chatHistory by remember { mutableStateOf(viewModel.chatHistory) }
+    var chatHistory by remember { mutableStateOf(viewModel.chatHistory) }
     val scope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
     var userInput by remember { mutableStateOf("") }
@@ -150,11 +154,25 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBar(
+            TopBar2(
                 onBackClick = { activity?.finish() },
                 title = stringResource(R.string.ai_assistant_bionix),
                 middleButton = null,
-                rightButton = null,
+                rightButton = {
+                    IconButton(
+                        onClick = {
+                            viewModel.clearChatHistory()
+                            chatHistory = viewModel.chatHistory
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_clockwise_circle_fill),
+                            contentDescription = "Notification button",
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
                 standardPadding = standardPadding
             )
 
@@ -195,7 +213,9 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
             }
 
             LaunchedEffect(chatHistory.size) {
-                listState.animateScrollToItem(chatHistory.size)
+                if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
+                    listState.animateScrollToItem(chatHistory.size - 1)
+                }
             }
         }
 
@@ -241,9 +261,12 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                             if (userInput != "") {
                                 IconButton(
                                     onClick = {
-                                        viewModel.sendMessage(userInput, scope)
-                                        userInput = ""
-                                        keyboardController?.hide()
+                                        if (userInput.isNotEmpty()) {
+                                            viewModel.sendMessage(userInput, scope)
+                                            chatHistory = viewModel.chatHistory
+                                            userInput = ""
+                                            keyboardController?.hide()
+                                        }
                                     },
                                     modifier = Modifier.padding(end = standardPadding)
                                 ) {
@@ -259,15 +282,13 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                         maxLines = 4,
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                         keyboardActions = KeyboardActions(
-                            onDone = {
-                                viewModel.sendMessage(userInput, scope)
-                                userInput = ""
-                                keyboardController?.hide()
-                            },
                             onSend = {
-                                viewModel.sendMessage(userInput, scope)
-                                userInput = ""
-                                keyboardController?.hide()
+                                if (userInput.isNotEmpty()) {
+                                    viewModel.sendMessage(userInput, scope)
+                                    chatHistory = viewModel.chatHistory
+                                    userInput = ""
+                                    keyboardController?.hide()
+                                }
                             }
                         ),
                         shape = MaterialTheme.shapes.large,
@@ -289,36 +310,9 @@ fun ChatBubble(
     text: String,
     isUser: Boolean,
     standardPadding: Dp,
-    /*onLinkClicked: (String) -> Unit*/
 ) {
-    var isAnimationFinished by rememberSaveable { mutableStateOf(false) }
-
-    /*val annotatedText = buildAnnotatedString {
-        val linkPattern = Regex("(https?://\\S+)")
-        var lastIndex = 0
-
-        linkPattern.findAll(text).forEach { matchResult ->
-            val start = matchResult.range.first
-            val end = matchResult.range.last + 1
-
-            // Thêm văn bản trước link
-            append(text.substring(lastIndex, start))
-
-            // Thêm link có thể nhấn
-            pushStringAnnotation(tag = "URL", annotation = matchResult.value)
-            withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
-                append(matchResult.value)
-            }
-            pop()
-
-            lastIndex = end
-        }
-
-        // Thêm phần còn lại của văn bản
-        if (lastIndex < text.length) {
-            append(text.substring(lastIndex))
-        }
-    }*/
+    val context = LocalContext.current
+    val isAnimationFinished = remember { mutableStateOf(ChatPreferencesHelper.hasMessageBeenAnimated(context, text)) }
 
     Box(
         modifier = Modifier
@@ -358,7 +352,7 @@ fun ChatBubble(
                     style = MaterialTheme.typography.bodyLarge
                 )
             } else {
-                if (!isAnimationFinished) {
+                if (!isAnimationFinished.value) {
                     if (text == stringResource(R.string.thinking)) {
                         AnimatedGradientText(
                             highlightColor = Color(0xFFAEEA00),
@@ -375,7 +369,8 @@ fun ChatBubble(
                             text = text,
                             style = MaterialTheme.typography.bodyLarge,
                             onAnimationEnd = {
-                                isAnimationFinished = true
+                                isAnimationFinished.value = true
+                                ChatPreferencesHelper.markMessageAsAnimated(context, text)
                             }
                         )
                     }
@@ -385,18 +380,6 @@ fun ChatBubble(
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyLarge
                     )
-
-                    /*Text(
-                        text = annotatedText,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.clickable {
-                            annotatedText.getStringAnnotations(tag = "URL", start = 0, end = text.length)
-                                .firstOrNull()?.let { annotation ->
-                                    onLinkClicked(annotation.item) // Mở link khi nhấn vào
-                                }
-                        }
-                    )*/
                 }
             }
         }

@@ -387,4 +387,6 @@
     <string name="delete_food">Delete food</string>
     <string name="food_deleted_successfully">Food deleted successfully</string>
     <string name="ate_this_food">Ate this food</string>
+    <string name="refresh_chat">Refresh chat</string>
+    <string name="bionix">Bionix</string>
 </resources>

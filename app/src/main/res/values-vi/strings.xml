@@ -385,4 +385,6 @@
     <string name="delete_food">Xoá thức ăn</string>
     <string name="food_deleted_successfully">Thức ăn đã được xoá thành công</string>
     <string name="ate_this_food">Đã ăn thức ăn này</string>
+    <string name="refresh_chat">Làm mới đoạn chat</string>
+    <string name="bionix">Bionix</string>
 </resources>
