@@ -78,6 +78,7 @@ import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.activity.BackButton
@@ -85,7 +86,10 @@ import com.example.biofit.ui.activity.ChatBubble
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.view_model.ExerciseViewModel
 import kotlinx.coroutines.delay
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TopBarScreen() {
@@ -205,15 +209,55 @@ fun TopBar(
             val apiKey = BuildConfig.GOOGLE_API_KEY
             val userData = UserSharedPrefsHelper.getUserData(context)
             val dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(context)
+            val exerciseViewModel = ExerciseViewModel()
+            val today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            exerciseViewModel.fetchOverviewExercises(
+                context,
+                userData?.userId ?: UserDTO.default().userId,
+                userData?.createdAccount ?: UserDTO.default().createdAccount,
+                today
+            )
+            val overviewExerciseData = OverviewExerciseSharedPrefsHelper.getListOverviewExercise(context)
+            val mappedExercises = overviewExerciseData?.map { exercise ->
+                val levelStr = when (exercise.level) {
+                    0 -> stringResource(R.string.amateur)
+                    1 -> stringResource(R.string.professional)
+                    else -> stringResource(R.string.unknown)
+                }
+
+                val intensityStr = when (exercise.intensity) {
+                    0 -> stringResource(R.string.low)
+                    1 -> stringResource(R.string.medium)
+                    2 -> stringResource(R.string.high)
+                    else -> stringResource(R.string.unknown)
+                }
+
+                val sessionStr = when (exercise.session) {
+                    0 -> stringResource(R.string.morning)
+                    1 -> stringResource(R.string.afternoon)
+                    2 -> stringResource(R.string.evening)
+                    else -> stringResource(R.string.unknown)
+                }
+
+                "(${stringResource(R.string.exercise)}: ${exercise.exerciseName}, ${stringResource(R.string.level)}: $levelStr, ${stringResource(R.string.intensity)}: $intensityStr, ${stringResource(R.string.time)}: ${exercise.time} ${stringResource(R.string.minutes)}, ${stringResource(R.string.burned_calories)}: ${exercise.burnedCalories} ${stringResource(R.string.kcal)}, ${stringResource(R.string.session)}: $sessionStr, ${stringResource(R.string.day)}: ${exercise.date})"
+            }
             val model = ChatBotModel(
                 userData = userData ?: UserDTO.default(),
                 dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
+                exerciseDone = mappedExercises,
                 context = context,
                 apiKey = apiKey,
             )
             val viewModel = AIChatbotViewModel(model, context)
             var chatHistory by remember { mutableStateOf(viewModel.chatHistory) }
             val scope = rememberCoroutineScope()
+            if (chatHistory.isEmpty()) {
+                viewModel.sendMessage(
+                    userInput = " " + stringResource(R.string.hello) + " ",
+                    scope = scope
+                )
+                chatHistory = viewModel.chatHistory
+            }
             val listState = rememberLazyListState()
             val focusRequester = remember { FocusRequester() }
             var userInput by remember { mutableStateOf("") }
@@ -229,7 +273,7 @@ fun TopBar(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(standardPadding),
+                        .padding(standardPadding / 2),
                     verticalArrangement = Arrangement.spacedBy(standardPadding),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -252,11 +296,13 @@ fun TopBar(
                                     }
 
                                     items(chatHistory) { chat ->
-                                        ChatBubble(
-                                            text = chat.userMessage,
-                                            isUser = true,
-                                            standardPadding = standardPadding,
-                                        )
+                                        if (chat.userMessage != " " + stringResource(R.string.hello) + " ") {
+                                            ChatBubble(
+                                                text = chat.userMessage,
+                                                isUser = true,
+                                                standardPadding = standardPadding,
+                                            )
+                                        }
 
                                         ChatBubble(
                                             text = chat.botResponse,
@@ -277,47 +323,63 @@ fun TopBar(
                                 }
 
                                 Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                        .padding(standardPadding),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(standardPadding)
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.minus_circle_fill),
-                                        contentDescription = "Notification button",
-                                        modifier = Modifier
-                                            .size(standardPadding * 2f)
-                                            .clickable { showChatbot = !showChatbot },
-                                        tint = MaterialTheme.colorScheme.primary
+                                    IconButton(
+                                        onClick = { showChatbot = !showChatbot }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.minus_circle_fill),
+                                            contentDescription = stringResource(R.string.close_chat_box),
+                                            modifier = Modifier
+                                                .size(standardPadding * 2f)
+                                                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                                            tint = MaterialTheme.colorScheme.secondary
+                                        )
+                                    }
+
+                                    var isRotating by remember { mutableStateOf(false) }
+                                    val rotation by animateFloatAsState(
+                                        targetValue = if (isRotating) 360f else 0f,
+                                        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+                                        finishedListener = {
+                                            isRotating = false
+                                        } // Reset trạng thái sau khi xoay xong
                                     )
 
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise_rotate_90_circle_fill),
-                                        contentDescription = "Notification button",
-                                        modifier = Modifier
-                                            .size(standardPadding * 2f)
-                                            .clickable {
-                                                viewModel.clearChatHistory()
-                                                chatHistory = viewModel.chatHistory
-                                            },
-                                        tint = MaterialTheme.colorScheme.secondary
-                                    )
+                                    IconButton(
+                                        onClick = {
+                                            isRotating = true
+                                            viewModel.clearChatHistory()
+                                            chatHistory = viewModel.chatHistory
+                                        },
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise_rotate_90_circle_fill),
+                                            contentDescription = stringResource(R.string.refresh_chat),
+                                            modifier = Modifier
+                                                .size(standardPadding * 2f)
+                                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                .graphicsLayer(rotationZ = rotation),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
 
                                     Spacer(modifier = Modifier.weight(1f))
 
                                     Text(
                                         text = stringResource(R.string.bionix),
                                         color = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.clickable {
-                                            showChatbot = !showChatbot
-                                        },
+                                        modifier = Modifier
+                                            .padding(standardPadding)
+                                            .clickable { showChatbot = !showChatbot }
+                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
                                         style = MaterialTheme.typography.headlineSmall.copy(
-                                            fontWeight = FontWeight.Bold,
+                                            fontWeight = FontWeight.Black,
                                             shadow = Shadow(
                                                 color = MaterialTheme.colorScheme.primary,
-                                                blurRadius = 20f
+                                                blurRadius = 50f
                                             )
                                         )
                                     )

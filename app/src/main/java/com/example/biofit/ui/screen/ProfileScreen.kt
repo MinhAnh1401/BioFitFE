@@ -83,6 +83,7 @@ import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.LoginActivity
@@ -96,8 +97,11 @@ import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.view_model.ExerciseViewModel
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -808,19 +812,56 @@ fun signOut(
     val apiKey = BuildConfig.GOOGLE_API_KEY
     val userData = UserSharedPrefsHelper.getUserData(context)
     val dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(context)
+    val exerciseViewModel = ExerciseViewModel()
+    val today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    exerciseViewModel.fetchOverviewExercises(
+        context,
+        userData?.userId ?: UserDTO.default().userId,
+        userData?.createdAccount ?: UserDTO.default().createdAccount,
+        today
+    )
+    val overviewExerciseData = OverviewExerciseSharedPrefsHelper.getListOverviewExercise(context)
+    val mappedExercises = overviewExerciseData?.map { exercise ->
+        val levelStr = when (exercise.level) {
+            0 -> context.getString(R.string.amateur)
+            1 -> context.getString(R.string.professional)
+            else -> context.getString(R.string.unknown)
+        }
+
+        val intensityStr = when (exercise.intensity) {
+            0 -> context.getString(R.string.low)
+            1 -> context.getString(R.string.medium)
+            2 -> context.getString(R.string.high)
+            else -> context.getString(R.string.unknown)
+        }
+
+        val sessionStr = when (exercise.session) {
+            0 -> context.getString(R.string.morning)
+            1 -> context.getString(R.string.afternoon)
+            2 -> context.getString(R.string.evening)
+            else -> context.getString(R.string.unknown)
+        }
+
+        "(${context.getString(R.string.exercise)}: ${exercise.exerciseName}, ${context.getString(R.string.level)}: $levelStr, ${context.getString(R.string.intensity)}: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${context.getString(R.string.minutes)}, ${context.getString(R.string.burned_calories)}: ${exercise.burnedCalories} ${context.getString(R.string.kcal)}, ${context.getString(R.string.session)}: $sessionStr, ${context.getString(R.string.day)}: ${exercise.date})"
+    }
     val model = ChatBotModel(
         userData = userData ?: UserDTO.default(),
         dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
+        exerciseDone = mappedExercises,
         context = context,
         apiKey = apiKey,
     )
     val viewModel = AIChatbotViewModel(model, context)
     viewModel.clearChatHistory() // Xóa lịch sử chat
 
-    val sharedPreferences = activity.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val userSharedPreferences = activity.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    val dailyLogSharedPreferences = activity.getSharedPreferences("DailyLogPrefs", Context.MODE_PRIVATE)
+    val overviewExerciseSharedPreferences = activity.getSharedPreferences("OverviewExercisePrefs", Context.MODE_PRIVATE)
 
     // Xóa dữ liệu đăng nhập (SharedPreferences)
-    sharedPreferences.edit { clear() }
+    userSharedPreferences.edit { clear() }
+    dailyLogSharedPreferences.edit { clear() }
+    overviewExerciseSharedPreferences.edit { clear() }
 
     // Đăng xuất Firebase (nếu dùng Firebase)
     //FirebaseAuth.getInstance().signOut()

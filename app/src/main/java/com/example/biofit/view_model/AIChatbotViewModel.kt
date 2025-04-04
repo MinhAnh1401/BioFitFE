@@ -34,7 +34,7 @@ class AIChatbotViewModel(
     fun sendMessage(userInput: String, scope: CoroutineScope) {
         if (userInput.isBlank()) return
 
-        _chatHistory.add(ChatMessage(userInput, context.getString(R.string.thinking)))
+        _chatHistory.add(ChatMessage(userInput, context.getString(R.string.composing_a_message)))
         _isLoading.value = true
         saveChatHistory()
 

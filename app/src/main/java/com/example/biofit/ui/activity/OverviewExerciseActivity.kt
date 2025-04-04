@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -25,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,10 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.navigation.WeekNavigationBar
 import com.example.biofit.ui.components.OverviewExerciseCard
@@ -161,7 +165,7 @@ fun OverviewExerciseContent(
 
     Log.d("userId", "$userId")
     LaunchedEffect(userId, startOfWeekFormatted, endOfWeekFormatted) {
-        exerciseViewModel.fetchOverviewExercises(userId, startOfWeekFormatted, endOfWeekFormatted)
+        exerciseViewModel.fetchOverviewExercises(context, userId, startOfWeekFormatted, endOfWeekFormatted)
     }
     Log.d("listOverviewExercise", "$overviewList")
 
@@ -175,35 +179,91 @@ fun OverviewExerciseContent(
         )
 
         LazyColumn {
-            val groupedExercises = overviewList
-                .sortedByDescending { it.date }
-                .groupBy { it.date }
-
-            groupedExercises.forEach { (date, exerciseDones) ->
-                val localeDate = LocalDate.parse(date, formatter)
-                val showDate = localeDate.format(formatterForShow)
+            if (overviewList == emptyList<OverviewExerciseDTO>()) {
                 item {
-                    Text(
-                        text = showDate,
-                        modifier = modifier.padding(top = standardPadding * 2),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (selectedDate != LocalDate.now()) {
+                            Text(
+                                text = stringResource(R.string.you_haven_t_done_any_exercises_during_this_time_period),
+                                color = MaterialTheme.colorScheme.outline,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.you_haven_t_done_any_exercises_this_week),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+
+                            Text(
+                                text = stringResource(R.string.des_do_exercise),
+                                color = MaterialTheme.colorScheme.outline,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
+                            TextButton(
+                                onClick = {
+                                    activity?.let {
+                                        val intent = Intent(it, ExerciseActivity::class.java)
+                                        it.startActivity(intent)
+                                    }
+                                },
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_plus),
+                                        contentDescription = stringResource(R.string.do_exercise),
+                                        modifier = Modifier.size(standardPadding),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+
+                                    Text(
+                                        text = stringResource(R.string.do_exercise),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
+            } else {
+                val groupedExercises = overviewList
+                    .sortedByDescending { it.date }
+                    .groupBy { it.date }
 
-                items(exerciseDones) { exerciseDone ->
-                    Spacer(modifier = Modifier.padding(top = standardPadding))
+                groupedExercises.forEach { (date, exerciseDones) ->
+                    val localeDate = LocalDate.parse(date, formatter)
+                    val showDate = localeDate.format(formatterForShow)
+                    item {
+                        Text(
+                            text = showDate,
+                            modifier = modifier.padding(top = standardPadding * 2),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
 
-                    OverviewExerciseCard(
-                        startOfWeek = startOfWeek,
-                        exerciseName = exerciseDone.exerciseName,
-                        level = exerciseDone.level,
-                        intensity = exerciseDone.intensity,
-                        time = exerciseDone.time.toInt(),
-                        calories = exerciseDone.burnedCalories,
-                        session = exerciseDone.session,
-                        standardPadding = standardPadding
-                    )
+                    items(exerciseDones) { exerciseDone ->
+                        Spacer(modifier = Modifier.padding(top = standardPadding))
+
+                        OverviewExerciseCard(
+                            startOfWeek = startOfWeek,
+                            exerciseName = exerciseDone.exerciseName,
+                            level = exerciseDone.level,
+                            intensity = exerciseDone.intensity,
+                            time = exerciseDone.time.toInt(),
+                            calories = exerciseDone.burnedCalories,
+                            session = exerciseDone.session,
+                            standardPadding = standardPadding
+                        )
+                    }
                 }
             }
 
