@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,8 +56,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.biofit.BuildConfig
 import com.example.biofit.R
+import com.example.biofit.data.model.ChatBotModel
+import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper.getUserId
 import com.example.biofit.ui.activity.LoginActivity
@@ -68,6 +73,7 @@ import com.example.biofit.ui.screen.KnowledgeScreen
 import com.example.biofit.ui.screen.PlanningScreen
 import com.example.biofit.ui.screen.ProfileScreen
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.SubscriptionViewModel
 
 
@@ -108,6 +114,7 @@ class MainActivity : ComponentActivity() {
             BioFitTheme {
                 MainScreen(userData ?: UserDTO.default())
 
+                val context = LocalContext.current
                 var showCongratulationsDialog by remember { mutableStateOf(shouldShowDialog) }
 
                 // Hiển thị dialog nếu cần
@@ -120,6 +127,19 @@ class MainActivity : ComponentActivity() {
                         },
                         onLogin = {
                             showCongratulationsDialog = false
+
+                            val apiKey = BuildConfig.GOOGLE_API_KEY
+                            val userData = UserSharedPrefsHelper.getUserData(context)
+                            val dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(context)
+                            val model = ChatBotModel(
+                                userData = userData ?: UserDTO.default(),
+                                dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
+                                context = context,
+                                apiKey = apiKey,
+                            )
+                            val viewModel = AIChatbotViewModel(model, context)
+                            viewModel.clearChatHistory() // Xóa lịch sử chat
+
                             // Xóa trạng thái để không hiển thị lại dialog
                             UserSharedPrefsHelper.clearShowCongratulationsDialog(this@MainActivity)
 
