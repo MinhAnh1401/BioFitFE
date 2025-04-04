@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -14,7 +14,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -26,10 +25,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -42,8 +38,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,24 +45,22 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -80,13 +72,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
-import com.example.biofit.data.model.ChatMessage
 import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
@@ -98,7 +86,6 @@ import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun TopBarScreen() {
@@ -197,11 +184,7 @@ fun TopBar(
                                 painter = painterResource(R.drawable.ic_chatbot_ai),
                                 contentDescription = stringResource(R.string.ai_assistant_bionix),
                                 modifier = Modifier.size(standardPadding * 4f),
-                                tint = if (isSystemInDarkTheme()) {
-                                    Color(0xFFB388FF)
-                                } else {
-                                    Color(0xFF6200EA)
-                                }
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
 
@@ -296,30 +279,30 @@ fun TopBar(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                                         .padding(standardPadding),
+                                    verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(standardPadding)
                                 ) {
                                     Icon(
-                                        painter = painterResource(R.drawable.xmark_circle_fill),
+                                        painter = painterResource(R.drawable.minus_circle_fill),
                                         contentDescription = "Notification button",
                                         modifier = Modifier
-                                            .size(standardPadding * 2.5f)
-                                            .shadow(6.dp, shape = CircleShape)
+                                            .size(standardPadding * 2f)
                                             .clickable { showChatbot = !showChatbot },
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
 
                                     Icon(
-                                        painter = painterResource(R.drawable.arrow_clockwise_circle_fill),
+                                        painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise_rotate_90_circle_fill),
                                         contentDescription = "Notification button",
                                         modifier = Modifier
-                                            .size(standardPadding * 2.5f)
-                                            .shadow(6.dp, shape = CircleShape)
+                                            .size(standardPadding * 2f)
                                             .clickable {
                                                 viewModel.clearChatHistory()
                                                 chatHistory = viewModel.chatHistory
                                             },
-                                        tint = MaterialTheme.colorScheme.primary
+                                        tint = MaterialTheme.colorScheme.secondary
                                     )
 
                                     Spacer(modifier = Modifier.weight(1f))
@@ -327,7 +310,10 @@ fun TopBar(
                                     Text(
                                         text = stringResource(R.string.bionix),
                                         color = MaterialTheme.colorScheme.primary,
-                                        style = MaterialTheme.typography.displaySmall.copy(
+                                        modifier = Modifier.clickable {
+                                            showChatbot = !showChatbot
+                                        },
+                                        style = MaterialTheme.typography.headlineSmall.copy(
                                             fontWeight = FontWeight.Bold,
                                             shadow = Shadow(
                                                 color = MaterialTheme.colorScheme.primary,
@@ -340,7 +326,7 @@ fun TopBar(
 
                             LaunchedEffect(chatHistory.size) {
                                 if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
-                                    listState.animateScrollToItem(chatHistory.size - 1)
+                                    listState.animateScrollToItem(chatHistory.size)
                                 }
                             }
                         }

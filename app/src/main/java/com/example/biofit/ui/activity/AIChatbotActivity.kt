@@ -214,7 +214,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
 
             LaunchedEffect(chatHistory.size) {
                 if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
-                    listState.animateScrollToItem(chatHistory.size - 1)
+                    listState.animateScrollToItem(chatHistory.size)
                 }
             }
         }
