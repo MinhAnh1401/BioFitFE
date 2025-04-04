@@ -74,8 +74,16 @@ fun PaymentMethodDialog(
     val paymentUrl = viewModel.paymentUrl.observeAsState()
     val loading = viewModel.loading.observeAsState(false)
     val error = viewModel.error.observeAsState()
+    var success = viewModel.success.observeAsState()
 
     // Xử lí lỗi
+    LaunchedEffect(success.value) {
+        success.value?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // xử lí thành công
     LaunchedEffect(error.value) {
         error.value?.let {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
