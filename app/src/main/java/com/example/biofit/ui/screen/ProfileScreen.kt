@@ -48,6 +48,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -99,6 +101,7 @@ import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.ExerciseViewModel
 import com.example.biofit.view_model.LoginViewModel
+import com.example.biofit.view_model.SubscriptionViewModel
 import com.example.biofit.view_model.UpdateUserViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -148,7 +151,8 @@ fun ProfileContent(
     userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier,
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = viewModel(),
+    subscriptionViewModel: SubscriptionViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -158,6 +162,7 @@ fun ProfileContent(
     var showDeleteDataDialog by rememberSaveable { mutableStateOf(false) }
     var showAvatarDialog by rememberSaveable { mutableStateOf(false) }
     val viewModel: UpdateUserViewModel = viewModel()
+    val subscription by subscriptionViewModel.subscription.collectAsState()
 
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -196,6 +201,10 @@ fun ProfileContent(
 
     val avatarBitmap = viewModel.avatarBitmap.value ?: userData.avatar?.let { base64ToBitmap(it) }
 
+    // Gọi API khi màn hình được hiển thị
+    LaunchedEffect(Unit) {
+        subscriptionViewModel.fetchSubscription(userData.userId)
+    }
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -289,8 +298,46 @@ fun ProfileContent(
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleSmall
                     )
-                }
 
+                    // Xử lý hiển thị thông tin subscription
+                    when {
+                        subscription?.active == true -> {
+                            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                            val endDate = LocalDateTime.parse(subscription!!.endDate).format(formatter)
+
+                            val annotatedString = buildAnnotatedString {
+                                withStyle(style = SpanStyle(color = Color.Black)) {
+                                    append(stringResource(R.string.expires) + " ")
+                                }
+                                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                                    append(endDate)
+                                }
+                            }
+
+                            Text(
+                                text = annotatedString,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = standardPadding / 2)
+                            )
+                        }
+                        else -> {
+                            // Subscription không active hoặc không tồn tại
+                            Text(
+                                text = stringResource(R.string.upgrade_pro),
+                                color = MaterialTheme.colorScheme.secondary,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier
+                                    .padding(top = standardPadding / 2)
+                                    .clickable {
+                                        val intent = Intent(context, UpgradeActivity::class.java).apply {
+                                            putExtra("source", "ProfileScreen")
+                                        }
+                                        context.startActivity(intent)
+                                    }
+                            )
+                        }
+                    }
+                }
                 IconButton(
                     onClick = {
                         activity?.let {

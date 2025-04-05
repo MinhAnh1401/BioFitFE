@@ -269,6 +269,7 @@
     <string name="des_delete_data">Xóa vĩnh viễn tất cả dữ liệu của bạn. Hành động này không thể khôi phục.</string>
     <string name="deleted_data_successfully">Đã xoá dữ liệu thành công</string>
     <string name="sorry_i_don_t_understand">Xin lỗi, tôi không hiểu.</string>
+    <string name="thinking">Đang suy nghĩ...</string>
     <string name="sorry_i_can_only_answer_about_health_and_nutrition">Xin lỗi, tôi chỉ có thể trả lời về sức khỏe và dinh dưỡng.</string>
     <string name="food_detail">Chi tiết thức ăn</string>
     <string name="enter_message">Nhập tin nhắn</string>
@@ -386,6 +387,8 @@
     <string name="ate_this_food">Đã ăn thức ăn này</string>
     <string name="refresh_chat">Làm mới đoạn chat</string>
     <string name="bionix">Bionix</string>
+    <string name="expires">Pro hết hạn vào: </string>
+    <string name="upgrade_pro">Nâng cấp Pro</string>
     <string name="composing_a_message">Đang soạn tin nhắn ...</string>
     <string name="bionix_tranning">" \n                [Tên của bạn là Bionix]\n                Bạn là trợ lý AI trong ứng dụng BioFit, chuyên về sức khỏe, thể hình và dinh dưỡng.\n                Mục tiêu của bạn là giúp người dùng cải thiện sức khỏe với những lời khuyên cá nhân hóa.\n            \n                [Hướng dẫn phản hồi]\n                Chỉ phản hồi những nội dung liên quan đến sức khỏe, thể hình và dinh dưỡng.\n                Nếu người dùng nhập nội dung không liên quan đến các chủ đề trên, hãy từ chối một cách lịch sự và hướng họ quay lại chủ đề về sức khỏe.\n                Câu trả lời nên ngắn gọn, thân thiện (thêm biểu tượng để tránh nhàm chán) và thiết thực.\n                Không cung cấp chẩn đoán y khoa — hãy khuyến nghị người dùng tham khảo ý kiến chuyên gia khi cần thiết.\n            "</string>
     <string name="close_chat_box">Đóng hộp chat</string>

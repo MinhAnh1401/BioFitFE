@@ -269,6 +269,7 @@
     <string name="des_delete_data">Permanently delete all your data. This action cannot be recovered.</string>
     <string name="deleted_data_successfully">Deleted data successfully</string>
     <string name="sorry_i_don_t_understand">Sorry, I don\'t understand.</string>
+    <string name="thinking">Thinking...</string>
     <string name="sorry_i_can_only_answer_about_health_and_nutrition">Sorry, I can only answer about health and nutrition.</string>
     <string name="food_detail">Food detail</string>
     <string name="enter_message">Enter messsage</string>
@@ -388,6 +389,8 @@
     <string name="ate_this_food">Ate this food</string>
     <string name="refresh_chat">Refresh chat</string>
     <string name="bionix">Bionix</string>
+    <string name="expires">Pro expires on: </string>
+    <string name="upgrade_pro">Upgrade to Pro</string>
     <string name="composing_a_message">Composing a message ...</string>
     <string name="bionix_tranning">" \n                [Your name is Bionix]\n                You are the AI assistant in the BioFit app, specializing in health, fitness and nutrition.\n                Your goal is to help users improve their health with personalized advice.\n            \n                [Response Guidelines]\n                Only respond to user input related to health, fitness, and nutrition.\n                If a user's input is unrelated to health, fitness, or nutrition, politely decline and guide them back to health-related topics.\n                Responses should be brief, friendly(add icons to avoid boredom), and practical.\n                Do not provide medical diagnoses—recommend consulting a professional when necessary.\n            "</string>
     <string name="close_chat_box">Close chat box</string>
