@@ -117,6 +117,10 @@ interface ApiService {
         @Query("userId") userId: Long
     ): Call<Float>
 
+    /*
+        ----------------------------------------------------------------------------------------------------
+        */
+
     // Google API
 //    @POST("api/auth/google")
 //    suspend fun googleSignIn(@Body request: GoogleAuthDTO): Response<SocialAccountDTO>
@@ -129,6 +133,13 @@ interface ApiService {
 
     @GET("subscription/status_sub/{userId}")
     suspend fun checkSubscription(@Path("userId") userId: Long): Boolean
+
+    @GET("/api/subscription/latest/{userId}")
+    fun getLatestSubscription(@Path("userId") userId: Long): Call<SubscriptionResponse>
+
+    /*
+        ----------------------------------------------------------------------------------------------------
+        */
 
     // reset password API
     @POST("api/user/forgot-password")

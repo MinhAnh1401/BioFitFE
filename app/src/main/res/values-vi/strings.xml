@@ -387,4 +387,6 @@
     <string name="ate_this_food">Đã ăn thức ăn này</string>
     <string name="refresh_chat">Làm mới đoạn chat</string>
     <string name="bionix">Bionix</string>
+    <string name="expires">Pro hết hạn vào: </string>
+    <string name="upgrade_pro">Nâng cấp Pro</string>
 </resources>

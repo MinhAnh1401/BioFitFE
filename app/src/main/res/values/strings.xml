@@ -389,4 +389,6 @@
     <string name="ate_this_food">Ate this food</string>
     <string name="refresh_chat">Refresh chat</string>
     <string name="bionix">Bionix</string>
+    <string name="expires">Pro expires on: </string>
+    <string name="upgrade_pro">Upgrade to Pro</string>
 </resources>
