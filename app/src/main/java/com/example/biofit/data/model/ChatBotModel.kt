@@ -1,9 +1,13 @@
 package com.example.biofit.data.model
 
 import android.content.Context
+import android.util.Log
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.DailyLogDTO
+import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
+import com.example.biofit.view_model.ExerciseViewModel
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,6 +23,7 @@ data class ChatMessage(val userMessage: String, val botResponse: String)
 class ChatBotModel(
     private val userData: UserDTO,
     private val dailyLogData: DailyLogDTO,
+    private val exerciseDone: List<String>?,
     private val context: Context,
     apiKey: String,
     /*private val googleApiKey: String,
@@ -54,7 +59,35 @@ class ChatBotModel(
 
         val userData = userData
         val dailyLogData = dailyLogData
-        val enrichedInput = enrichInputWithUserData(userInput, userData, dailyLogData)
+        /*val exerciseViewModel = ExerciseViewModel()
+        val today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        exerciseViewModel.fetchOverviewExercises(context, userData.userId, userData.createdAccount, today)
+        val overviewExerciseData = OverviewExerciseSharedPrefsHelper.getListOverviewExercise(context)
+        val mappedExercises = overviewExerciseData?.map { exercise ->
+            val levelStr = when (exercise.level) {
+                0 -> context.getString(R.string.amateur)
+                1 -> context.getString(R.string.professional)
+                else -> context.getString(R.string.unknown)
+            }
+
+            val intensityStr = when (exercise.intensity) {
+                0 -> context.getString(R.string.low)
+                1 -> context.getString(R.string.medium)
+                2 -> context.getString(R.string.high)
+                else -> context.getString(R.string.unknown)
+            }
+
+            val sessionStr = when (exercise.session) {
+                0 -> context.getString(R.string.morning)
+                1 -> context.getString(R.string.afternoon)
+                2 -> context.getString(R.string.evening)
+                else -> context.getString(R.string.unknown)
+            }
+
+            "(${context.getString(R.string.exercise)}: ${exercise.exerciseName}, ${context.getString(R.string.level)}: $levelStr, ${context.getString(R.string.intensity)}: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${context.getString(R.string.minutes)}, ${context.getString(R.string.burned_calories)}: ${exercise.burnedCalories} ${context.getString(R.string.kcal)}, ${context.getString(R.string.session)}: $sessionStr, ${context.getString(R.string.day)}: ${exercise.date})"
+        }
+        Log.d("Exercise Done List", "exerciseDone: $mappedExercises")*/
+        val enrichedInput = enrichInputWithUserData(userInput, userData, dailyLogData, exerciseDone)
 
         val fullConversation = if (conversationContext.isNotBlank()) {
             "$conversationContext\nUser: $enrichedInput"
@@ -65,7 +98,7 @@ class ChatBotModel(
         return try {
             val response = chat.sendMessage(fullConversation)
             val botReply = response.text
-                ?.replace("*", " ")
+                ?.replace("*", "")
                 /*?.replace(Regex("(https?://\\S+)"), "<a href=\"$1\">$1</a>")*/ // Chuyển link thành HTML
                 ?: context.getString(R.string.sorry_i_don_t_understand)
             chatHistory.add(ChatMessage(userInput, botReply))
@@ -104,20 +137,12 @@ class ChatBotModel(
     private fun enrichInputWithUserData(
         userInput: String,
         userData: UserDTO,
-        dailyLogData: DailyLogDTO
+        dailyLogData: DailyLogDTO,
+        exerciseDone: List<String>?
     ): String {
         val introText = if (isFirstConversation) {
-            """ 
-                [Your name is Bionix]
-                You are the AI assistant in the BioFit app, specializing in health, fitness and nutrition.
-                Your goal is to help users improve their health with personalized advice.
-            
-                [Response Guidelines]
-                Only respond to user input related to health, fitness, and nutrition.
-                If a user's input is unrelated to health, fitness, or nutrition, politely decline and guide them back to health-related topics.
-                Responses should be brief, friendly(add icons to avoid boredom), and practical.
-                Do not provide medical diagnoses—recommend consulting a professional when necessary.
-            """.trimIndent()
+            isFirstConversation = false
+            context.getString(R.string.bionix_tranning).trimIndent()
         } else {
             ""
         }
@@ -125,7 +150,12 @@ class ChatBotModel(
             $introText
             
             Current date time: ${
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern(
+                if (java.util.Locale.getDefault().language == "vi")
+                    "EEEE, 'ngày' dd 'tháng' MM 'năm' yyyy, 'giờ' HH 'phút' mm"
+                else
+                    "EEEE, MMMM d, yyyy, 'at' HH:mm"
+            ))
         }
         
             [User data]:
@@ -137,6 +167,7 @@ class ChatBotModel(
                 - Current Weight: ${dailyLogData.weight} kg
                 - Drank ${dailyLogData.water} L of water today.
                 - Target Weight: ${userData.targetWeight} kg
+                - Completed Exercises: $exerciseDone
                 
             [User input]: $userInput
         """.trimIndent()

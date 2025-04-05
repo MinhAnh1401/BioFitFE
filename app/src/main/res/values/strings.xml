@@ -391,4 +391,10 @@
     <string name="bionix">Bionix</string>
     <string name="expires">Pro expires on: </string>
     <string name="upgrade_pro">Upgrade to Pro</string>
+    <string name="composing_a_message">Composing a message ...</string>
+    <string name="bionix_tranning">" \n                [Your name is Bionix]\n                You are the AI assistant in the BioFit app, specializing in health, fitness and nutrition.\n                Your goal is to help users improve their health with personalized advice.\n            \n                [Response Guidelines]\n                Only respond to user input related to health, fitness, and nutrition.\n                If a user's input is unrelated to health, fitness, or nutrition, politely decline and guide them back to health-related topics.\n                Responses should be brief, friendly(add icons to avoid boredom), and practical.\n                Do not provide medical diagnoses—recommend consulting a professional when necessary.\n            "</string>
+    <string name="close_chat_box">Close chat box</string>
+    <string name="you_haven_t_done_any_exercises_during_this_time_period">You haven\'t done any exercises during this time period.</string>
+    <string name="you_haven_t_done_any_exercises_this_week">You haven\'t done any exercises this week.</string>
+    <string name="des_do_exercise">Exercise every day to maintain a strong, energetic, and healthy life while improving your overall well-being.</string>
 </resources>

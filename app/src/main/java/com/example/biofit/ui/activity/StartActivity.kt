@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -18,8 +19,11 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ButtonDefaults
@@ -32,7 +36,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -42,11 +51,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.example.biofit.R
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 class StartActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +99,7 @@ fun StartScreen() {
             contentAlignment = , // tuỳ chỉnh vị trí của nội dung bên trong Box
             propagateMinConstraints = , // tuỳ chỉnh xem Box có kế thừa các ràng buộc min hay không
         )*/ {
-            StartScreenBackgroundImage()
+            StartScreenBackgroundImage(standardPadding)
             StartScreenContent(
                 screenWidth,
                 screenHeight,
@@ -98,7 +110,7 @@ fun StartScreen() {
 }
 
 @Composable
-fun StartScreenBackgroundImage() {
+fun StartScreenBackgroundImage(standardPadding: Dp) {
     /*Image(
         painter = painterResource(id = R.drawable.bg_start_screen), // nguồn ảnh
         contentDescription = "Start screen background", // mô tả nội dung của ảnh
@@ -134,13 +146,19 @@ fun StartScreenBackgroundImage() {
 
     HorizontalPager(
         state = pagerState,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        userScrollEnabled = false
     ) { page ->
         val index = page % images.size
         Image(
             painter = painterResource(id = images[index]),
             contentDescription = "Background Image $index",
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(
+                    radius = standardPadding * 4,
+                    edgeTreatment = BlurredEdgeTreatment.Rectangle
+                ),
             contentScale = ContentScale.FillBounds
         )
     }
@@ -152,6 +170,31 @@ fun StartScreenContent(
     screenHeight: Int,
     standardPadding: Dp
 ) {
+    val images = listOf(
+        R.drawable.bg_start_screen1,
+        R.drawable.bg_start_screen2,
+        R.drawable.bg_start_screen3
+    )
+
+    val pagerState = rememberPagerState(
+        initialPage = 500,
+        initialPageOffsetFraction = 0f,
+        pageCount = { Int.MAX_VALUE }
+    ) // Bắt đầu từ giữa danh sách
+    val coroutineScope = rememberCoroutineScope()
+
+
+
+    // Auto-scroll effect
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000) // Chuyển ảnh sau mỗi 3 giây
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -165,6 +208,34 @@ fun StartScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
     ) {
         AppTitleAndDescription()
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            pageSpacing = standardPadding * 2,
+            userScrollEnabled = false
+        ) { page ->
+            val index = page % images.size
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(standardPadding * 2),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = images[index]),
+                    contentDescription = "Background Image $index",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .shadow(
+                            elevation = standardPadding,
+                            shape = MaterialTheme.shapes.extraLarge
+                        ),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+        }
         WelcomeSection(standardPadding)
         ActionButtons(standardPadding)
     } // nội dung bên trong Column
@@ -199,34 +270,21 @@ fun AppTitleAndDescription() {
                 // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
                 // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
                 style = MaterialTheme.typography.displaySmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    shadow = Shadow(
-                        color = MaterialTheme.colorScheme.secondary,
-                        blurRadius = 5f
-                    )
+                    fontWeight = FontWeight.Black
                 ) // tuỳ chỉnh kiểu chữ
             )
             Text(
                 text = "FIT",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.displaySmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    shadow = Shadow(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        blurRadius = 5f
-                    )
+                    fontWeight = FontWeight.Black
                 )
             )
         } // nội dung bên trong Row
         Text(
             text = stringResource(R.string.des_app_name),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.labelSmall.copy(
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    blurRadius = 5f
-                )
-            )
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
@@ -243,11 +301,7 @@ fun WelcomeSection(standardPadding: Dp) {
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.displaySmall.copy(
-                fontWeight = FontWeight.Bold,
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.secondary,
-                    blurRadius = 5f
-                )
+                fontWeight = FontWeight.Bold
             )
         )
 
@@ -256,11 +310,7 @@ fun WelcomeSection(standardPadding: Dp) {
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    blurRadius = 5f
-                )
+                fontWeight = FontWeight.Bold
             )
         )
 
@@ -268,12 +318,7 @@ fun WelcomeSection(standardPadding: Dp) {
             text = stringResource(R.string.start_title_2),
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleSmall.copy(
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    blurRadius = 5f
-                )
-            )
+            style = MaterialTheme.typography.titleSmall
         )
     }
 }

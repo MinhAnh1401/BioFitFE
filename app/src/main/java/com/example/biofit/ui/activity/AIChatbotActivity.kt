@@ -9,6 +9,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,6 +56,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -71,9 +75,11 @@ import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
+import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.ChatPreferencesHelper
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
@@ -83,12 +89,16 @@ import com.example.biofit.ui.components.TopBar2
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.view_model.ExerciseViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class AIChatbotActivity : ComponentActivity() {
     private lateinit var chatViewModel: AIChatbotViewModel
     private var userData: UserDTO? = null
     private var dailyWeightData: DailyLogDTO? = null
+    private var overviewExerciseData: List<OverviewExerciseDTO>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,9 +109,42 @@ class AIChatbotActivity : ComponentActivity() {
         val searchEngineId = BuildConfig.SEARCH_ENGINE_ID*/
         userData = UserSharedPrefsHelper.getUserData(this)
         dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
+        val exerciseViewModel = ExerciseViewModel()
+        val today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        exerciseViewModel.fetchOverviewExercises(
+            this,
+            userData?.userId ?: UserDTO.default().userId,
+            userData?.createdAccount ?: UserDTO.default().createdAccount,
+            today
+        )
+        overviewExerciseData = OverviewExerciseSharedPrefsHelper.getListOverviewExercise(this)
+        val mappedExercises = overviewExerciseData?.map { exercise ->
+            val levelStr = when (exercise.level) {
+                0 -> this.getString(R.string.amateur)
+                1 -> this.getString(R.string.professional)
+                else -> this.getString(R.string.unknown)
+            }
+
+            val intensityStr = when (exercise.intensity) {
+                0 -> this.getString(R.string.low)
+                1 -> this.getString(R.string.medium)
+                2 -> this.getString(R.string.high)
+                else -> this.getString(R.string.unknown)
+            }
+
+            val sessionStr = when (exercise.session) {
+                0 -> this.getString(R.string.morning)
+                1 -> this.getString(R.string.afternoon)
+                2 -> this.getString(R.string.evening)
+                else -> this.getString(R.string.unknown)
+            }
+
+            "(${this.getString(R.string.exercise)}: ${exercise.exerciseName}, ${this.getString(R.string.level)}: $levelStr, ${this.getString(R.string.intensity)}: $intensityStr, ${this.getString(R.string.time)}: ${exercise.time} ${this.getString(R.string.minutes)}, ${this.getString(R.string.burned_calories)}: ${exercise.burnedCalories} ${this.getString(R.string.kcal)}, ${this.getString(R.string.session)}: $sessionStr, ${this.getString(R.string.day)}: ${exercise.date})"
+        }
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
             dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
+            exerciseDone = mappedExercises,
             context = this,
             apiKey = apiKey,
             /*googleApiKey = googleApiKey,
@@ -132,6 +175,13 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
 
     var chatHistory by remember { mutableStateOf(viewModel.chatHistory) }
     val scope = rememberCoroutineScope()
+    if (chatHistory.isEmpty()) {
+        viewModel.sendMessage(
+            userInput = " " + stringResource(R.string.hello) + " ",
+            scope = scope
+        )
+        chatHistory = viewModel.chatHistory
+    }
     val focusRequester = remember { FocusRequester() }
     var userInput by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
@@ -159,17 +209,29 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                 title = stringResource(R.string.ai_assistant_bionix),
                 middleButton = null,
                 rightButton = {
+                    var isRotating by remember { mutableStateOf(false) }
+                    val rotation by animateFloatAsState(
+                        targetValue = if (isRotating) 360f else 0f,
+                        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+                        finishedListener = {
+                            isRotating = false
+                        } // Reset trạng thái sau khi xoay xong
+                    )
+
                     IconButton(
                         onClick = {
+                            isRotating = true
                             viewModel.clearChatHistory()
                             chatHistory = viewModel.chatHistory
                         }
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.arrow_clockwise_circle_fill),
-                            contentDescription = "Notification button",
-                            modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = MaterialTheme.colorScheme.primary
+                            painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise_rotate_90_circle_fill),
+                            contentDescription = stringResource(R.string.refresh_chat),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .size(standardPadding * 2f)
+                                .graphicsLayer(rotationZ = rotation)
                         )
                     }
                 },
@@ -180,24 +242,18 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                 state = listState
             ) {
                 items(chatHistory) { chat ->
-                    ChatBubble(
-                        text = chat.userMessage,
-                        isUser = true,
-                        standardPadding = standardPadding,
-                        /*onLinkClicked = { url ->
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(intent)
-                        }*/
-                    )
+                    if (chat.userMessage != " " + stringResource(R.string.hello) + " ") {
+                        ChatBubble(
+                            text = chat.userMessage,
+                            isUser = true,
+                            standardPadding = standardPadding
+                        )
+                    }
 
                     ChatBubble(
                         text = chat.botResponse,
                         isUser = false,
-                        standardPadding = standardPadding,
-                        /*onLinkClicked = { url ->
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(intent)
-                        }*/
+                        standardPadding = standardPadding
                     )
                 }
 
@@ -353,7 +409,7 @@ fun ChatBubble(
                 )
             } else {
                 if (!isAnimationFinished.value) {
-                    if (text == stringResource(R.string.thinking)) {
+                    if (text == stringResource(R.string.composing_a_message)) {
                         AnimatedGradientText(
                             highlightColor = Color(0xFFAEEA00),
                             textBodyColor1 = MaterialTheme.colorScheme.primary,
@@ -400,6 +456,7 @@ private fun BioAIChatbotScreenDarkModePreviewInSmallPhone() {
         val model = ChatBotModel(
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
+            exerciseDone = null,
             context = LocalContext.current,
             apiKey = BuildConfig.GOOGLE_API_KEY
         )
@@ -421,6 +478,7 @@ private fun BioAIChatbotScreenPreviewInLargePhone() {
         val model = ChatBotModel(
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
+            exerciseDone = null,
             context = LocalContext.current,
             apiKey = BuildConfig.GOOGLE_API_KEY
         )
@@ -443,6 +501,7 @@ private fun BioAIChatbotScreenPreviewInTablet() {
         val model = ChatBotModel(
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
+            exerciseDone = null,
             context = LocalContext.current,
             apiKey = BuildConfig.GOOGLE_API_KEY
         )
@@ -465,6 +524,7 @@ private fun BioAIChatbotScreenLandscapeDarkModePreviewInSmallPhone() {
         val model = ChatBotModel(
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
+            exerciseDone = null,
             context = LocalContext.current,
             apiKey = BuildConfig.GOOGLE_API_KEY
         )
@@ -486,6 +546,7 @@ private fun BioAIChatbotScreenLandscapePreviewInLargePhone() {
         val model = ChatBotModel(
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
+            exerciseDone = null,
             context = LocalContext.current,
             apiKey = BuildConfig.GOOGLE_API_KEY
         )
@@ -508,6 +569,7 @@ private fun BioAIChatbotScreenLandscapePreviewInTablet() {
         val model = ChatBotModel(
             userData = UserDTO.default(),
             dailyLogData = DailyLogDTO.default(),
+            exerciseDone = null,
             context = LocalContext.current,
             apiKey = BuildConfig.GOOGLE_API_KEY
         )
