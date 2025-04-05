@@ -17,9 +17,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,13 +28,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
@@ -59,24 +54,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.BuildConfig
@@ -302,14 +294,25 @@ fun ProfileContent(
                     // Xử lý hiển thị thông tin subscription
                     when {
                         subscription?.active == true -> {
-                            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                            val endDate = LocalDateTime.parse(subscription!!.endDate).format(formatter)
+                            val formatter = DateTimeFormatter.ofPattern(
+                                if (Locale.current.language == "vi") "dd/MM/yyyy" else "yyyy/MM/dd"
+                            )
+                            val endDate =
+                                LocalDateTime.parse(subscription!!.endDate).format(formatter)
 
                             val annotatedString = buildAnnotatedString {
-                                withStyle(style = SpanStyle(color = Color.Black)) {
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                ) {
                                     append(stringResource(R.string.expires) + " ")
                                 }
-                                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                ) {
                                     append(endDate)
                                 }
                             }
@@ -320,6 +323,7 @@ fun ProfileContent(
                                 modifier = Modifier.padding(top = standardPadding / 2)
                             )
                         }
+
                         else -> {
                             // Subscription không active hoặc không tồn tại
                             Text(
@@ -329,9 +333,10 @@ fun ProfileContent(
                                 modifier = Modifier
                                     .padding(top = standardPadding / 2)
                                     .clickable {
-                                        val intent = Intent(context, UpgradeActivity::class.java).apply {
-                                            putExtra("source", "ProfileScreen")
-                                        }
+                                        val intent =
+                                            Intent(context, UpgradeActivity::class.java).apply {
+                                                putExtra("source", "ProfileScreen")
+                                            }
                                         context.startActivity(intent)
                                     }
                             )
@@ -889,7 +894,19 @@ fun signOut(
             else -> context.getString(R.string.unknown)
         }
 
-        "(${context.getString(R.string.exercise)}: ${exercise.exerciseName}, ${context.getString(R.string.level)}: $levelStr, ${context.getString(R.string.intensity)}: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${context.getString(R.string.minutes)}, ${context.getString(R.string.burned_calories)}: ${exercise.burnedCalories} ${context.getString(R.string.kcal)}, ${context.getString(R.string.session)}: $sessionStr, ${context.getString(R.string.day)}: ${exercise.date})"
+        "(${context.getString(R.string.exercise)}: ${exercise.exerciseName}, ${context.getString(R.string.level)}: $levelStr, ${
+            context.getString(
+                R.string.intensity
+            )
+        }: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${
+            context.getString(
+                R.string.minutes
+            )
+        }, ${context.getString(R.string.burned_calories)}: ${exercise.burnedCalories} ${
+            context.getString(
+                R.string.kcal
+            )
+        }, ${context.getString(R.string.session)}: $sessionStr, ${context.getString(R.string.day)}: ${exercise.date})"
     }
     val model = ChatBotModel(
         userData = userData ?: UserDTO.default(),
@@ -902,8 +919,10 @@ fun signOut(
     viewModel.clearChatHistory() // Xóa lịch sử chat
 
     val userSharedPreferences = activity.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-    val dailyLogSharedPreferences = activity.getSharedPreferences("DailyLogPrefs", Context.MODE_PRIVATE)
-    val overviewExerciseSharedPreferences = activity.getSharedPreferences("OverviewExercisePrefs", Context.MODE_PRIVATE)
+    val dailyLogSharedPreferences =
+        activity.getSharedPreferences("DailyLogPrefs", Context.MODE_PRIVATE)
+    val overviewExerciseSharedPreferences =
+        activity.getSharedPreferences("OverviewExercisePrefs", Context.MODE_PRIVATE)
 
     // Xóa dữ liệu đăng nhập (SharedPreferences)
     userSharedPreferences.edit { clear() }

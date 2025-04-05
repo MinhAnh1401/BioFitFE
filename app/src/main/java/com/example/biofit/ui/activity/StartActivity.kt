@@ -237,6 +237,7 @@ fun StartScreenContent(
             }
         }
         WelcomeSection(standardPadding)
+        Spacer(modifier = Modifier.height(standardPadding))
         ActionButtons(standardPadding)
     } // nội dung bên trong Column
 }
