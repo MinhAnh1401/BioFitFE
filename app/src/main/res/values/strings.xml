@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BioFit</string>
     <string name="des_app_name">Nutrition and Healthy</string>
-    <string name="welcome_to_app">Welcome to BioFit!</string>
+    <string name="welcome_to_app">Welcome to</string>
     <string name="start_title_1">Health and nutrition management application</string>
     <string name="start_title_2">Track and improve your health the easy way with BioFit</string>
     <string name="get_started">GET STARTED</string>
@@ -398,4 +398,8 @@
     <string name="you_haven_t_done_any_exercises_this_week">You haven\'t done any exercises this week.</string>
     <string name="des_do_exercise">Exercise every day to maintain a strong, energetic, and healthy life while improving your overall well-being.</string>
     <string name="_30_savings">30% SAVINGS</string>
+    <string name="des_delete_exercise">Upon deleting this workout, all associated data and historical records pertaining to it will be irrevocably and permanently removed from the system. Are you certain you wish to proceed with this action?</string>
+    <string name="set_to_amateur_low_to_edit"><![CDATA[Set to Amateur & Low to edit]]></string>
+    <string name="des_no_select_level">You are modifying an exercise; please save it before selecting a level to do.</string>
+    <string name="des_no_select_intensity">You are modifying an exercise; please save it before selecting a intensity to do.</string>
 </resources>

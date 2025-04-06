@@ -3,6 +3,7 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -43,6 +45,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -105,43 +108,12 @@ class UpdateExerciseActivity : ComponentActivity() {
 @Composable
 fun UpdateExerciseScreen(
     exerciseDTO: ExerciseDTO,
-    exerciseViewModel: ExerciseViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
-
-    var exerciseName by rememberSaveable { mutableStateOf(exerciseDTO.exerciseName) }
-    var time by rememberSaveable { mutableStateOf("") }
-    var caloriesConsumed by rememberSaveable { mutableStateOf("") }
-
-    val exerciseDetailList by exerciseViewModel.exerciseDetail.collectAsState()
-
-    val exerciseGoal = exerciseDetailList?.exerciseGoal
-    val intensity = exerciseDetailList?.intensity
-    Log.d("UpdateExerciseScreen", "exerciseGoal: $exerciseGoal, intensity: $intensity")
-
-    LaunchedEffect(exerciseDetailList) {
-        exerciseDetailList?.let {
-            time = it.time.toString()
-            caloriesConsumed = it.burnedCalories.toString()
-        }
-    }
-
-    var showUpdateErrorDialog by rememberSaveable { mutableStateOf(false) }
-    if (showUpdateErrorDialog) {
-        DefaultDialog(
-            title = R.string.exercises_not_updated_yet,
-            description = R.string.des_update_exercise,
-            actionTextButton = R.string.ok,
-            actionTextButtonColor = MaterialTheme.colorScheme.primary,
-            onClickActionButton = { showUpdateErrorDialog = false },
-            onDismissRequest = { showUpdateErrorDialog = false },
-            standardPadding = standardPadding
-        )
-    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -162,51 +134,11 @@ fun UpdateExerciseScreen(
                 onBackClick = { activity?.finish() },
                 title = stringResource(R.string.edit_exercise),
                 middleButton = null,
-                rightButton = {
-                    TextButton(
-                        onClick = {
-                            if (exerciseGoal == 0 && intensity == 0) {
-                                val updatedExercise = exerciseDTO.copy(
-                                    exerciseName = exerciseName,
-                                    detailList = listOf(
-                                        ExerciseDetailDTO(
-                                            exerciseDetailId = 0L,
-                                            exerciseId = exerciseDTO.exerciseId,
-                                            exerciseGoal = 0,
-                                            intensity = 0,
-                                            time = time.toFloatOrNull() ?: 0f,
-                                            burnedCalories = caloriesConsumed.toFloatOrNull() ?: 0f
-                                        )
-                                    )
-                                )
-                                exerciseViewModel.updateExercise(updatedExercise)
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.exercise_updated_successfully),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                activity?.finish()
-                            } else {
-                                showUpdateErrorDialog = true
-                            }
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.save),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
+                rightButton = null,
                 standardPadding = standardPadding
             )
 
             UpdateExerciseContent(
-                exerciseName = exerciseName,
-                onExerciseNameChange = { exerciseName = it },
-                time = time,
-                onTimeChange = { time = it },
-                caloriesConsumed = caloriesConsumed,
-                onCaloriesConsumedChange = { caloriesConsumed = it },
                 exerciseDTO = exerciseDTO,
                 standardPadding = standardPadding,
                 modifier = modifier
@@ -217,12 +149,6 @@ fun UpdateExerciseScreen(
 
 @Composable
 fun UpdateExerciseContent(
-    exerciseName: String,
-    onExerciseNameChange: (String) -> Unit,
-    time: String,
-    onTimeChange: (String) -> Unit,
-    caloriesConsumed: String,
-    onCaloriesConsumedChange: (String) -> Unit,
     exerciseDTO: ExerciseDTO,
     standardPadding: Dp,
     modifier: Modifier,
@@ -235,9 +161,30 @@ fun UpdateExerciseContent(
     val exerciseDetailList by exerciseViewModel.exerciseDetail.collectAsState()
     Log.d("CAUExerciseContent", "exerciseDetail: $exerciseDetailList")
 
-    var level by rememberSaveable { mutableStateOf(value = "") }
+    val exerciseGoal = exerciseDetailList?.exerciseGoal
+    val intensity2 = exerciseDetailList?.intensity
+    Log.d("UpdateExerciseScreen", "exerciseGoal: $exerciseGoal, intensity: $intensity2")
+
+    var exerciseName by rememberSaveable { mutableStateOf(exerciseDTO.exerciseName) }
+    var time by rememberSaveable { mutableStateOf("") }
+    var caloriesConsumed by rememberSaveable { mutableStateOf("") }
+    var level by rememberSaveable {
+        mutableStateOf(
+            value = exerciseDTO.getExerciseGoalString(
+                context,
+                exerciseDTO.detailList[0].exerciseGoal
+            )
+        )
+    }
     var showLevelDialog by rememberSaveable { mutableStateOf(value = false) }
-    var intensity by rememberSaveable { mutableStateOf(value = "") }
+    var intensity by rememberSaveable {
+        mutableStateOf(
+            value = exerciseDTO.getIntensityString(
+                context,
+                exerciseDTO.detailList[0].intensity
+            )
+        )
+    }
     var showIntensityDialog by rememberSaveable { mutableStateOf(value = false) }
 
     LaunchedEffect(Unit) {
@@ -253,6 +200,26 @@ fun UpdateExerciseContent(
         Log.d("CAUExerciseContent", "intensity: ${exerciseDTO.getIntensityInt(context, intensity)}")
     }
 
+    var showUpdateErrorDialog by rememberSaveable { mutableStateOf(false) }
+    if (showUpdateErrorDialog) {
+        DefaultDialog(
+            title = R.string.exercises_not_updated_yet,
+            description = R.string.des_update_exercise,
+            actionTextButton = R.string.ok,
+            actionTextButtonColor = MaterialTheme.colorScheme.primary,
+            onClickActionButton = { showUpdateErrorDialog = false },
+            onDismissRequest = { showUpdateErrorDialog = false },
+            standardPadding = standardPadding
+        )
+    }
+
+    LaunchedEffect(exerciseDetailList) {
+        exerciseDetailList?.let {
+            time = it.time.toString()
+            caloriesConsumed = it.burnedCalories.toString()
+        }
+    }
+
     val focusManager = LocalFocusManager.current
     val interactionSources = remember { List(3) { MutableInteractionSource() } }
     interactionSources.forEach { source ->
@@ -260,6 +227,33 @@ fun UpdateExerciseContent(
         if (isPressed) {
             showLevelDialog = false
             showIntensityDialog = false
+        }
+    }
+
+    var initialName = remember { exerciseDTO.exerciseName }
+    var initialTime = remember { exerciseDTO.detailList[0].time.toString() }
+    var initialCalories = remember { exerciseDTO.detailList[0].burnedCalories.toString() }
+    Log.d(
+        "UpdateExerciseScreen",
+        "initialName: $initialName, initialTime: $initialTime, initialCalories: $initialCalories"
+    )
+
+    val doExerciseText = stringResource(R.string.do_exercise)
+    val saveText = stringResource(R.string.save)
+    var buttonText by remember { mutableStateOf(doExerciseText) }
+    // Kiểm tra thay đổi và cập nhật buttonText
+    LaunchedEffect(exerciseName, time, caloriesConsumed) {
+        val nameChanged = exerciseName.isNotEmpty() && exerciseName != initialName
+        val timeChanged = time.isNotEmpty() && time != initialTime
+        val caloriesChanged = caloriesConsumed.isNotEmpty() && caloriesConsumed != initialCalories
+        buttonText = if (exerciseGoal == 0 && intensity2 == 0) {
+            if (nameChanged || timeChanged || caloriesChanged) {
+                saveText // Hoặc stringResource(R.string.save) nếu bạn định nghĩa
+            } else {
+                doExerciseText
+            }
+        } else {
+            doExerciseText
         }
     }
     /*
@@ -271,8 +265,10 @@ fun UpdateExerciseContent(
     ) {
         OutlinedTextField(
             value = exerciseName,
-            onValueChange = onExerciseNameChange,
+            onValueChange = { exerciseName = it },
             modifier = modifier,
+            enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
+            readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             placeholder = {
                 Text(
@@ -281,8 +277,21 @@ fun UpdateExerciseContent(
                     textAlign = TextAlign.End
                 )
             },
+            trailingIcon = if (exerciseName != initialName) {
+                if (exerciseGoal == 0 && intensity2 == 0) {
+                    {
+                        IconButton(onClick = { exerciseName = initialName }) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_trianglehead_counterclockwise),
+                                contentDescription = "Recover",
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                } else null
+            } else null,
             prefix = { Text(text = stringResource(R.string.exercise)) },
-            supportingText = { Text(text = stringResource(R.string.des_update_exercise)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -295,111 +304,219 @@ fun UpdateExerciseContent(
             shape = MaterialTheme.shapes.large
         )
 
-        ItemCard(
-            onClick = {
-                showLevelDialog = !showLevelDialog
-                showIntensityDialog = false
-                focusManager.clearFocus()
-            },
-            modifier = modifier
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = standardPadding / 4
-                    ),
-                verticalAlignment = Alignment.CenterVertically
+        Column {
+            if (!(level == stringResource(R.string.amateur) &&
+                        intensity == stringResource(R.string.low))
             ) {
-                IconButton(
-                    onClick = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    TextButton(
+                        onClick = {
+                            level = exerciseDTO.getExerciseGoalString(
+                                context,
+                                exerciseDTO.detailList[0].exerciseGoal
+                            )
+                            intensity = exerciseDTO.getIntensityString(
+                                context,
+                                exerciseDTO.detailList[0].intensity
+                            )
+                            exerciseViewModel.fetchExerciseDetails(
+                                exerciseId,
+                                exerciseDTO.getExerciseGoalInt(context, level),
+                                exerciseDTO.getIntensityInt(context, intensity)
+                            )
+                        }
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = stringResource(R.string.set_to_amateur_low_to_edit))
+
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_trianglehead_counterclockwise),
+                                contentDescription = "Recover",
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+
+            ItemCard(
+                onClick = {
+                    if (exerciseName != initialName ||
+                        time != initialTime ||
+                        caloriesConsumed != initialCalories
+                    ) {
+                        if (exerciseGoal == 0 && intensity2 == 0) {
+                            null
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.des_no_select_level),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            showLevelDialog = !showLevelDialog
+                            showIntensityDialog = false
+                            focusManager.clearFocus()
+                        }
+                    } else {
                         showLevelDialog = !showLevelDialog
                         showIntensityDialog = false
                         focusManager.clearFocus()
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.decrease_quotelevel),
-                        contentDescription = stringResource(R.string.level),
-                        modifier = Modifier.size(standardPadding * 1.5f),
-                        tint = Color(0xFFFFAB00)
+
+                    Log.d(
+                        "UpdateExerciseScreen",
+                        "exerciseName: $exerciseName, time: $time, caloriesConsumed: $caloriesConsumed"
                     )
-                }
-
-                Spacer(modifier = Modifier.width(standardPadding / 2))
-
-                Text(
-                    text = stringResource(R.string.level),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-
-                Text(
-                    text = if (level == "") {
-                        stringResource(R.string.select_level)
-                    } else {
-                        level
-                    },
-                    modifier = Modifier.weight(1f),
-                    color = if (level == "") {
-                        MaterialTheme.colorScheme.outline
-                    } else {
-                        MaterialTheme.colorScheme.onBackground
-                    },
-                    textAlign = TextAlign.End
-                )
-
-                IconButton(onClick = {
-                    showLevelDialog = !showLevelDialog
-                    showIntensityDialog = false
-                    focusManager.clearFocus()
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_back),
-                        contentDescription = stringResource(R.string.level),
-                        modifier = Modifier
-                            .size(standardPadding)
-                            .rotate(if (showLevelDialog) 90f else 270f),
-                        tint = MaterialTheme.colorScheme.onSurface
+                    Log.d(
+                        "UpdateExerciseScreen",
+                        "initialName: $initialName, initialTime: $initialTime, initialCalories: $initialCalories"
                     )
-                }
-            }
-
-            AnimatedVisibility(
-                visible = showLevelDialog,
-                enter = slideInVertically { it } + fadeIn() + expandVertically(),
-                exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                },
+                modifier = modifier
             ) {
-                val listOptions = listOf(
-                    stringResource(R.string.amateur),
-                    stringResource(R.string.professional)
-                )
-
-                Column {
-                    listOptions.forEach { selectLevel ->
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onSurface.copy(
-                                alpha = 0.1f
-                            )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = standardPadding / 4
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = {
+                            if (exerciseName != initialName ||
+                                time != initialTime ||
+                                caloriesConsumed != initialCalories
+                            ) {
+                                if (exerciseGoal == 0 && intensity2 == 0) {
+                                    null
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.des_no_select_level),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    showLevelDialog = !showLevelDialog
+                                    showIntensityDialog = false
+                                    focusManager.clearFocus()
+                                }
+                            } else {
+                                showLevelDialog = !showLevelDialog
+                                showIntensityDialog = false
+                                focusManager.clearFocus()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.decrease_quotelevel),
+                            contentDescription = stringResource(R.string.level),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = Color(0xFFFFAB00)
                         )
+                    }
 
-                        Column(
+                    Spacer(modifier = Modifier.width(standardPadding / 2))
+
+                    Text(
+                        text = stringResource(R.string.level),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+
+                    Text(
+                        text = if (level == "") {
+                            stringResource(R.string.select_level)
+                        } else {
+                            level
+                        },
+                        modifier = Modifier.weight(1f),
+                        color = if (level == "") {
+                            MaterialTheme.colorScheme.outline
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        },
+                        textAlign = TextAlign.End
+                    )
+
+                    IconButton(
+                        onClick = {
+                            if (exerciseName != initialName ||
+                                time != initialTime ||
+                                caloriesConsumed != initialCalories
+                            ) {
+                                if (exerciseGoal == 0 && intensity2 == 0) {
+                                    null
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.des_no_select_level),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    showLevelDialog = !showLevelDialog
+                                    showIntensityDialog = false
+                                    focusManager.clearFocus()
+                                }
+                            } else {
+                                showLevelDialog = !showLevelDialog
+                                showIntensityDialog = false
+                                focusManager.clearFocus()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_back),
+                            contentDescription = stringResource(R.string.level),
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    level = selectLevel
-                                    exerciseViewModel.fetchExerciseDetails(
-                                        exerciseId,
-                                        exerciseDTO.getExerciseGoalInt(context, level),
-                                        exerciseDTO.getIntensityInt(context, intensity)
-                                    )
-                                    showLevelDialog = false
-                                },
-                            horizontalAlignment = Alignment.End
-                        ) {
-                            Text(
-                                text = selectLevel,
-                                modifier = Modifier.padding(standardPadding),
+                                .size(standardPadding)
+                                .rotate(if (showLevelDialog) 90f else 270f),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = showLevelDialog,
+                    enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                    exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+                ) {
+                    val listOptions = listOf(
+                        stringResource(R.string.amateur),
+                        stringResource(R.string.professional)
+                    )
+
+                    Column {
+                        listOptions.forEach { selectLevel ->
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = 0.1f
+                                )
                             )
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        level = selectLevel
+                                        exerciseViewModel.fetchExerciseDetails(
+                                            exerciseId,
+                                            exerciseDTO.getExerciseGoalInt(context, level),
+                                            exerciseDTO.getIntensityInt(context, intensity)
+                                        )
+                                        showLevelDialog = false
+                                    },
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Text(
+                                    text = selectLevel,
+                                    modifier = Modifier.padding(standardPadding),
+                                )
+                            }
                         }
                     }
                 }
@@ -408,9 +525,27 @@ fun UpdateExerciseContent(
 
         ItemCard(
             onClick = {
-                showIntensityDialog = !showIntensityDialog
-                showLevelDialog = false
-                focusManager.clearFocus()
+                if (exerciseName != initialName ||
+                    time != initialTime ||
+                    caloriesConsumed != initialCalories
+                ) {
+                    if (exerciseGoal == 0 && intensity2 == 0) {
+                        null
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.des_no_select_intensity),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        showIntensityDialog = !showIntensityDialog
+                        showLevelDialog = false
+                        focusManager.clearFocus()
+                    }
+                } else {
+                    showIntensityDialog = !showIntensityDialog
+                    showLevelDialog = false
+                    focusManager.clearFocus()
+                }
             },
             modifier = modifier
         ) {
@@ -424,9 +559,27 @@ fun UpdateExerciseContent(
             ) {
                 IconButton(
                     onClick = {
-                        showIntensityDialog = !showIntensityDialog
-                        showLevelDialog = false
-                        focusManager.clearFocus()
+                        if (exerciseName != initialName ||
+                            time != initialTime ||
+                            caloriesConsumed != initialCalories
+                        ) {
+                            if (exerciseGoal == 0 && intensity2 == 0) {
+                                null
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.des_no_select_intensity),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                showIntensityDialog = !showIntensityDialog
+                                showLevelDialog = false
+                                focusManager.clearFocus()
+                            }
+                        } else {
+                            showIntensityDialog = !showIntensityDialog
+                            showLevelDialog = false
+                            focusManager.clearFocus()
+                        }
                     }
                 ) {
                     Icon(
@@ -461,9 +614,27 @@ fun UpdateExerciseContent(
 
                 IconButton(
                     onClick = {
-                        showIntensityDialog = !showIntensityDialog
-                        showLevelDialog = false
-                        focusManager.clearFocus()
+                        if (exerciseName != initialName ||
+                            time != initialTime ||
+                            caloriesConsumed != initialCalories
+                        ) {
+                            if (exerciseGoal == 0 && intensity2 == 0) {
+                                null
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.des_no_select_intensity),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                showIntensityDialog = !showIntensityDialog
+                                showLevelDialog = false
+                                focusManager.clearFocus()
+                            }
+                        } else {
+                            showIntensityDialog = !showIntensityDialog
+                            showLevelDialog = false
+                            focusManager.clearFocus()
+                        }
                     }
                 ) {
                     Icon(
@@ -522,7 +693,7 @@ fun UpdateExerciseContent(
 
         OutlinedTextField(
             value = time,
-            onValueChange = onTimeChange,
+            onValueChange = { time = it },
             modifier = modifier,
             enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
@@ -535,6 +706,20 @@ fun UpdateExerciseContent(
                     tint = Color(0xFF00C853)
                 )
             },
+            trailingIcon = if (time != initialTime) {
+                if (exerciseGoal == 0 && intensity2 == 0) {
+                    {
+                        IconButton(onClick = { time = initialTime }) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_trianglehead_counterclockwise),
+                                contentDescription = "Recover",
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                } else null
+            } else null,
             prefix = { Text(text = stringResource(R.string.time)) },
             suffix = { Text(text = stringResource(R.string.min)) },
             keyboardOptions = KeyboardOptions(
@@ -551,7 +736,7 @@ fun UpdateExerciseContent(
 
         OutlinedTextField(
             value = caloriesConsumed,
-            onValueChange = onCaloriesConsumedChange,
+            onValueChange = { caloriesConsumed = it },
             modifier = modifier,
             enabled = (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
             readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
@@ -564,8 +749,28 @@ fun UpdateExerciseContent(
                     tint = Color(0xFFDD2C00)
                 )
             },
+            trailingIcon = if (caloriesConsumed != initialCalories) {
+                if (exerciseGoal == 0 && intensity2 == 0) {
+                    {
+                        IconButton(onClick = { caloriesConsumed = initialCalories }) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_trianglehead_counterclockwise),
+                                contentDescription = "Recover",
+                                modifier = Modifier.size(standardPadding * 1.5f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                } else null
+            } else null,
             prefix = { Text(text = stringResource(R.string.burned_calories)) },
             suffix = { Text(text = stringResource(R.string.kcal)) },
+            supportingText = {
+                if (!(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low))
+                ) {
+                    Text(text = stringResource(R.string.des_update_exercise))
+                }
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Go
@@ -576,22 +781,48 @@ fun UpdateExerciseContent(
             shape = MaterialTheme.shapes.large
         )
 
-        var showDoExerciseDialog by rememberSaveable { mutableStateOf(value = false) }
         val exerciseDetailId = exerciseDetailList?.exerciseDetailId
         Log.d("UpdateExerciseContent", "exerciseDTO: $exerciseDTO")
         Log.d("UpdateExerciseContent", "exerciseDetailDTO: $exerciseDetailList")
 
+        Spacer(modifier = Modifier.weight(1f))
+
         ElevatedButton(
             onClick = {
                 if (exerciseDetailId != null) {
-                    activity?.let {
-                        val intent = Intent(it, ExerciseViewActivity::class.java)
-                        intent.putExtra("exerciseDTO", exerciseDTO)
-                        intent.putExtra("exerciseDetailDTO", exerciseDetailList)
-                        it.startActivity(intent)
+                    if (buttonText == doExerciseText) {
+                        activity?.let {
+                            val intent = Intent(it, ExerciseViewActivity::class.java)
+                            intent.putExtra("exerciseDTO", exerciseDTO)
+                            intent.putExtra("exerciseDetailDTO", exerciseDetailList)
+                            it.startActivity(intent)
+                        }
+                    } else {
+                        if (exerciseGoal == 0 && intensity2 == 0) {
+                            val updatedExercise = exerciseDTO.copy(
+                                exerciseName = exerciseName,
+                                detailList = listOf(
+                                    ExerciseDetailDTO(
+                                        exerciseDetailId = 0L,
+                                        exerciseId = exerciseDTO.exerciseId,
+                                        exerciseGoal = 0,
+                                        intensity = 0,
+                                        time = time.toFloatOrNull() ?: 0f,
+                                        burnedCalories = caloriesConsumed.toFloatOrNull() ?: 0f
+                                    )
+                                )
+                            )
+                            exerciseViewModel.updateExercise(updatedExercise)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.exercise_updated_successfully),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            activity?.finish()
+                        } else {
+                            showUpdateErrorDialog = true
+                        }
                     }
-                } else {
-                    showDoExerciseDialog = true
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -599,23 +830,17 @@ fun UpdateExerciseContent(
             )
         ) {
             Text(
-                text = stringResource(R.string.do_exercise),
+                text = buttonText,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
 
-        if (showDoExerciseDialog) {
-            DefaultDialog(
-                title = R.string.can_t_do_the_exercise,
-                description = R.string.please_select_your_exercise_level_and_intensity_before_performing_the_exercise,
-                actionTextButton = R.string.ok,
-                actionTextButtonColor = MaterialTheme.colorScheme.primary,
-                onClickActionButton = { showDoExerciseDialog = false },
-                onCancelClick = null,
-                onDismissRequest = { showDoExerciseDialog = false },
-                standardPadding = standardPadding
+        Spacer(
+            modifier = Modifier.padding(
+                bottom = WindowInsets.safeDrawing.asPaddingValues()
+                    .calculateBottomPadding()
             )
-        }
+        )
     }
 }
 

@@ -207,7 +207,7 @@ fun StartScreenContent(
         verticalArrangement = Arrangement.SpaceBetween, // sắp xếp các phần tử theo chiều dọc
         horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
     ) {
-        AppTitleAndDescription()
+        /*AppTitleAndDescription()*/
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -242,12 +242,36 @@ fun StartScreenContent(
     } // nội dung bên trong Column
 }
 
-@Composable
+/*@Composable
 fun AppTitleAndDescription() {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Text(
+            text = stringResource(R.string.des_app_name),
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}*/
+
+@Composable
+fun WelcomeSection(standardPadding: Dp) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(standardPadding),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.welcome_to_app),
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+
         Row/*(
             modifier = , // tuỳ chỉnh kích thước và vị trí của Row
             horizontalArrangement = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều ngang
@@ -270,41 +294,18 @@ fun AppTitleAndDescription() {
                 // maxLines = , // tuỳ chỉnh số lượng dòng tối đa
                 // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
                 // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
-                style = MaterialTheme.typography.displaySmall.copy(
+                style = MaterialTheme.typography.displayLarge.copy(
                     fontWeight = FontWeight.Black
                 ) // tuỳ chỉnh kiểu chữ
             )
             Text(
                 text = "FIT",
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.displaySmall.copy(
+                style = MaterialTheme.typography.displayLarge.copy(
                     fontWeight = FontWeight.Black
                 )
             )
         } // nội dung bên trong Row
-        Text(
-            text = stringResource(R.string.des_app_name),
-            color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodySmall
-        )
-    }
-}
-
-@Composable
-fun WelcomeSection(standardPadding: Dp) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(standardPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.welcome_to_app),
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.displaySmall.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
 
         Text(
             text = stringResource(R.string.start_title_1),
