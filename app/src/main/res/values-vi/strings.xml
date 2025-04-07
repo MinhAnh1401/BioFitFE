@@ -91,7 +91,7 @@
     <string name="loaded">Đã nạp</string>
     <string name="cal">cal</string>
     <string name="remaining_calories">Lượng calo còn lại</string>
-    <string name="edit">Chỉnh sửa</string>
+    <string name="edit">Sửa</string>
     <string name="protein">Chất đạm</string>
     <string name="powdered_sugar">Đường</string>
     <string name="fat">Chất béo</string>
@@ -400,4 +400,5 @@
     <string name="set_to_amateur_low_to_edit"><![CDATA[Đặt thành Nghiệp dư & Thấp để sửa]]></string>
     <string name="des_no_select_level">Bạn đang chỉnh sửa bài tập; xin lưu trước khi chọn mức độ để thực hiện.</string>
     <string name="des_no_select_intensity">Bạn đang chỉnh sửa bài tập; xin lưu trước khi chọn cường độ để thực hiện.</string>
+    <string name="exercise_created_successfully">Bài tập đã được tạo tành công</string>
 </resources>

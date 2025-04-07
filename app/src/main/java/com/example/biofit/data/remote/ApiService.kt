@@ -86,6 +86,12 @@ interface ApiService {
         @Body exercise: ExerciseDTO
     ): Call<Void>
 
+    @GET("api/exercise/user/{userId}/{exerciseName}")
+    fun getExerciseByName(
+        @Path("userId") userId: Long,
+        @Path("exerciseName") exerciseName: String
+    ): Call<ExerciseDTO>
+
     /*
     ----------------------------------------------------------------------------------------------------
     */
