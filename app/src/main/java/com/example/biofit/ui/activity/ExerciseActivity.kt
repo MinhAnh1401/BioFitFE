@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -61,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
+import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ExerciseItem
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -158,6 +160,8 @@ fun ExerciseContent(
 
     var search by rememberSaveable { mutableStateOf("") }
 
+    var deleteExerciseDialog by remember { mutableStateOf(false) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -242,7 +246,7 @@ fun ExerciseContent(
 
                 items(exercises) { exercise ->
                     var expanded by remember { mutableStateOf(false) }
-                    val menuAnchor = remember { Ref<androidx.compose.ui.geometry.Rect>() }
+                    val menuAnchor = remember { Ref<Rect>() }
 
                     Box {
                         ExerciseItem(
@@ -306,19 +310,7 @@ fun ExerciseContent(
                                         color = Color(0xFFDD2C00)
                                     )
                                 },
-                                onClick = {
-                                    Log.d(
-                                        "ExerciseListScreen",
-                                        "Deleting exercise: ${exercise.exerciseId}"
-                                    )
-                                    exerciseViewModel.deleteExercise(exercise.exerciseId)
-                                    expanded = false
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.exercise_deleted_successfully),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                },
+                                onClick = { deleteExerciseDialog = true },
                                 leadingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.trash),
@@ -328,6 +320,31 @@ fun ExerciseContent(
                                     )
                                 }
                             )
+
+                            if (deleteExerciseDialog) {
+                                DefaultDialog(
+                                    title = R.string.delete_exercise,
+                                    description = R.string.des_delete_exercise,
+                                    actionTextButton = R.string.delete,
+                                    actionTextButtonColor = Color(0xFFDD2C00),
+                                    onClickActionButton = {
+                                        Log.d(
+                                            "ExerciseListScreen",
+                                            "Deleting exercise: ${exercise.exerciseId}"
+                                        )
+                                        exerciseViewModel.deleteExercise(exercise.exerciseId)
+                                        expanded = false
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.exercise_deleted_successfully),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    },
+                                    onCancelClick = { deleteExerciseDialog = false },
+                                    onDismissRequest = { deleteExerciseDialog = false },
+                                    standardPadding = standardPadding
+                                )
+                            }
                         }
                     }
                 }
