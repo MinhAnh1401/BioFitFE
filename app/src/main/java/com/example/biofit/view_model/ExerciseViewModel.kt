@@ -230,6 +230,11 @@ class ExerciseViewModel : ViewModel() {
             })
     }
 
+    // Hàm làm mới (wrapper)
+    fun refreshOverviewExercises(context: Context, userId: Long, startDate: String, endDate: String) {
+        fetchOverviewExercises(context, userId, startDate, endDate)
+    }
+
     private val _burnedCalories = MutableLiveData<Float>()
     val burnedCalories: LiveData<Float> get() = _burnedCalories
 
@@ -275,6 +280,31 @@ class ExerciseViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<Float>, t: Throwable) {
+                Log.e("ExerciseViewModel", "Network Error: ${t.message}", t)
+            }
+        })
+    }
+
+    private val _exerciseByName = MutableStateFlow<ExerciseDTO?>(null)
+    val exerciseByName: StateFlow<ExerciseDTO?> = _exerciseByName.asStateFlow()
+
+    fun getExerciseByName(userId: Long, exerciseName: String) {
+        val apiService = RetrofitClient.instance
+        apiService.getExerciseByName(userId, exerciseName).enqueue(object : Callback<ExerciseDTO> {
+            override fun onResponse(call: Call<ExerciseDTO>, response: Response<ExerciseDTO>) {
+                if (response.isSuccessful) {
+                    val exercise = response.body()
+                    _exerciseByName.value = exercise
+                    Log.d("ExerciseViewModel", "Exercise found: $exercise")
+                } else {
+                    Log.e(
+                        "ExerciseViewModel",
+                        "API Error: ${response.code()} - ${response.message()}"
+                    )
+                }
+            }
+
+            override fun onFailure(call: Call<ExerciseDTO>, t: Throwable) {
                 Log.e("ExerciseViewModel", "Network Error: ${t.message}", t)
             }
         })

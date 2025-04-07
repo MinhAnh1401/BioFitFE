@@ -402,4 +402,5 @@
     <string name="set_to_amateur_low_to_edit"><![CDATA[Set to Amateur & Low to edit]]></string>
     <string name="des_no_select_level">You are modifying an exercise; please save it before selecting a level to do.</string>
     <string name="des_no_select_intensity">You are modifying an exercise; please save it before selecting a intensity to do.</string>
+    <string name="exercise_created_successfully">Exercise created successfully</string>
 </resources>

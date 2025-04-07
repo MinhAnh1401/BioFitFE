@@ -5,10 +5,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,22 +41,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.navigation.WeekNavigationBar
+import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.OverviewExerciseCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -178,6 +190,9 @@ fun OverviewExerciseContent(
             standardPadding
         )
 
+        // Quản lý trạng thái thẻ đang mở bằng cặp (date, index)
+        val expandedState = remember { mutableStateOf<Pair<String?, Int?>>(null to null) }
+
         LazyColumn {
             if (overviewList == emptyList<OverviewExerciseDTO>()) {
                 item {
@@ -250,10 +265,11 @@ fun OverviewExerciseContent(
                         )
                     }
 
-                    items(exerciseDones) { exerciseDone ->
+                    itemsIndexed(exerciseDones) { index, exerciseDone ->
                         Spacer(modifier = Modifier.padding(top = standardPadding))
 
                         OverviewExerciseCard(
+                            onDeleteClick = {},
                             startOfWeek = startOfWeek,
                             exerciseName = exerciseDone.exerciseName,
                             level = exerciseDone.level,
@@ -261,7 +277,11 @@ fun OverviewExerciseContent(
                             time = exerciseDone.time.toInt(),
                             calories = exerciseDone.burnedCalories,
                             session = exerciseDone.session,
-                            standardPadding = standardPadding
+                            standardPadding = standardPadding,
+                            isExpanded = expandedState.value == (date to index), // So sánh cặp (date, index)
+                            onExpandChange = { isExpanded ->
+                                expandedState.value = if (isExpanded) (date to index) else (null to null)
+                            }
                         )
                     }
                 }
