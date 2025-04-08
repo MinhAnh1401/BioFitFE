@@ -2,6 +2,10 @@ package com.example.biofit.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -26,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,12 +60,17 @@ fun ExerciseItem(
     isExpanded: Boolean, // Nhận trạng thái mở từ bên ngoài
     onExpandChange: (Boolean) -> Unit // Callback để thay đổi trạng thái
 ) {
+    val rotation = animatedRotation(
+        targetRotation = if (isExpanded) 90f else 270f
+    )
+
     Column(
         modifier = modifier.clickable { onExpandChange(!isExpanded) },
         verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
     ) {
         Row(
             modifier = Modifier.padding(top = standardPadding),
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -70,13 +80,59 @@ fun ExerciseItem(
                 style = MaterialTheme.typography.titleMedium
             )
 
+            AnimatedVisibility(
+                visible = !isExpanded,
+                enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.timer),
+                            contentDescription = stringResource(R.string.time),
+                            modifier = Modifier.size(standardPadding),
+                            tint = Color(0xFF00C853)
+                        )
+
+                        Text(
+                            text = exercise.detailList[0].time.toString(),
+                            color = Color(0xFF00C853),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.flame),
+                            contentDescription = stringResource(R.string.burned_calories),
+                            modifier = Modifier.size(standardPadding),
+                            tint = Color(0xFFDD2C00)
+                        )
+
+                        Text(
+                            text = exercise.detailList[0].burnedCalories.toString(),
+                            color = Color(0xFFDD2C00),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+            }
+
             Icon(
                 painter = painterResource(R.drawable.ic_back),
                 contentDescription = "Add button",
                 modifier = Modifier
                     .padding(vertical = standardPadding)
                     .size(standardPadding)
-                    .rotate(if (isExpanded) 90f else 270f),
+                    .rotate(rotation),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -86,385 +142,342 @@ fun ExerciseItem(
 
     AnimatedVisibility(
         visible = isExpanded,
-        modifier = Modifier.padding(vertical = standardPadding),
+        modifier = Modifier.padding(vertical = standardPadding / 2),
         enter = slideInVertically { it } + fadeIn() + expandVertically(),
         exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(standardPadding / 2)
+        Row (
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            SubCard(
+                modifier = Modifier.weight(1f)
             ) {
                 Column(
-                    modifier = Modifier.weight(1f)
-                ) { }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.padding(standardPadding),
+                    verticalArrangement = Arrangement.spacedBy(standardPadding)
                 ) {
-                    Text(
-                        text = stringResource(R.string.low),
-                        color = Color(0xFF0091EA),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.medium),
-                        color = Color(0xFF2962FF),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.high),
-                        color = Color(0xFF304FFE),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) { }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = stringResource(R.string.low),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = stringResource(R.string.medium),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = stringResource(R.string.high),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.amateur),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.timer),
+                                    contentDescription = stringResource(R.string.time),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFF00C853)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[0].time.toString(),
+                                    color = Color(0xFF00C853),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.flame),
+                                    contentDescription = stringResource(R.string.burned_calories),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFFDD2C00)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[0].burnedCalories.toString(),
+                                    color = Color(0xFFDD2C00),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.timer),
+                                    contentDescription = stringResource(R.string.time),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFF00C853)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[1].time.toString(),
+                                    color = Color(0xFF00C853),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.flame),
+                                    contentDescription = stringResource(R.string.burned_calories),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFFDD2C00)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[1].burnedCalories.toString(),
+                                    color = Color(0xFFDD2C00),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.timer),
+                                    contentDescription = stringResource(R.string.time),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFF00C853)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[2].time.toString(),
+                                    color = Color(0xFF00C853),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.flame),
+                                    contentDescription = stringResource(R.string.burned_calories),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFFDD2C00)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[2].burnedCalories.toString(),
+                                    color = Color(0xFFDD2C00),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.professional),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.timer),
+                                    contentDescription = stringResource(R.string.time),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFF00C853)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[3].time.toString(),
+                                    color = Color(0xFF00C853),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.flame),
+                                    contentDescription = stringResource(R.string.burned_calories),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFFDD2C00)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[3].burnedCalories.toString(),
+                                    color = Color(0xFFDD2C00),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.timer),
+                                    contentDescription = stringResource(R.string.time),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFF00C853)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[4].time.toString(),
+                                    color = Color(0xFF00C853),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.flame),
+                                    contentDescription = stringResource(R.string.burned_calories),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFFDD2C00)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[4].burnedCalories.toString(),
+                                    color = Color(0xFFDD2C00),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.timer),
+                                    contentDescription = stringResource(R.string.time),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFF00C853)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[5].time.toString(),
+                                    color = Color(0xFF00C853),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.flame),
+                                    contentDescription = stringResource(R.string.burned_calories),
+                                    modifier = Modifier.size(standardPadding),
+                                    tint = Color(0xFFDD2C00)
+                                )
+
+                                Text(
+                                    text = exercise.detailList[5].burnedCalories.toString(),
+                                    color = Color(0xFFDD2C00),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.amateur),
-                        color = Color(0xFFFFAB00),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = exercise.detailList[0].time.toString() + " " + stringResource(R.string.min),
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.burned_calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = exercise.detailList[0].burnedCalories.toString() + " " + stringResource(R.string.kcal),
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = exercise.detailList[1].time.toString() + " " + stringResource(R.string.min),
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.burned_calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = exercise.detailList[1].burnedCalories.toString() + " " + stringResource(R.string.kcal),
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = exercise.detailList[2].time.toString() + " " + stringResource(R.string.min),
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.burned_calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = exercise.detailList[2].burnedCalories.toString() + " " + stringResource(R.string.kcal),
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.professional),
-                        color = Color(0xFFFF6D00),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = exercise.detailList[3].time.toString() + " " + stringResource(R.string.min),
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.burned_calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = exercise.detailList[3].burnedCalories.toString() + " " + stringResource(R.string.kcal),
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = exercise.detailList[4].time.toString() + " " + stringResource(R.string.min),
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.burned_calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = exercise.detailList[4].burnedCalories.toString() + " " + stringResource(R.string.kcal),
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = exercise.detailList[5].time.toString() + " " + stringResource(R.string.min),
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.burned_calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = exercise.detailList[5].burnedCalories.toString() + " " + stringResource(R.string.kcal),
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ElevatedButton(
-                    onClick = { onDeleteClick() },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = Color(0xFFDD2C00)
-                    )
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.trash),
-                            contentDescription = stringResource(R.string.delete_exercise),
-                            modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-
-                        Text(
-                            text = stringResource(R.string.delete),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-
-                ElevatedButton(
-                    onClick = { onEditClick() },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = Color(0xFFFF6D00)
-                    )
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_edit),
-                            contentDescription = stringResource(R.string.edit_exercise),
-                            modifier = Modifier.size(standardPadding * 1.5f),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-
-                        Text(
-                            text = stringResource(R.string.edit),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-
                 ElevatedButton(
                     onClick = { onDoClick() },
-                    modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.elevatedButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
@@ -479,17 +492,49 @@ fun ExerciseItem(
                             modifier = Modifier.size(standardPadding * 1.5f),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
+                    }
+                }
 
-                        Text(
-                            text = stringResource(R.string.start),
-                            color = MaterialTheme.colorScheme.onPrimary
+                ElevatedButton(
+                    onClick = { onEditClick() },
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = Color(0xFFFF6D00)
+                    )
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_edit),
+                            contentDescription = stringResource(R.string.edit_exercise),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+
+                ElevatedButton(
+                    onClick = { onDeleteClick() },
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = Color(0xFFDD2C00)
+                    )
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.trash),
+                            contentDescription = stringResource(R.string.delete_exercise),
+                            modifier = Modifier.size(standardPadding * 1.5f),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -499,13 +544,17 @@ fun OverviewExerciseCard(
     exerciseName: String,
     level: Int,
     intensity: Int,
-    time: Int,
+    time: Float,
     calories: Float,
     session: Int,
     standardPadding: Dp,
     isExpanded: Boolean, // Nhận trạng thái mở từ bên ngoài
     onExpandChange: (Boolean) -> Unit // Callback để thay đổi trạng thái
 ) {
+    val rotation = animatedRotation(
+        targetRotation = if (isExpanded) 90f else 270f
+    )
+
     val levelString = when (level) {
         0 -> stringResource(R.string.amateur)
         1 -> stringResource(R.string.professional)
@@ -557,54 +606,81 @@ fun OverviewExerciseCard(
                 verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
                 horizontalAlignment = Alignment.End
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.timer),
-                            contentDescription = stringResource(R.string.time),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFF00C853)
-                        )
-
-                        Text(
-                            text = "$time ${stringResource(R.string.min)}",
-                            color = Color(0xFF00C853),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.flame),
-                            contentDescription = stringResource(R.string.calories),
-                            modifier = Modifier.size(standardPadding),
-                            tint = Color(0xFFDD2C00)
-                        )
-
-                        Text(
-                            text = "$calories ${stringResource(R.string.kcal)}",
-                            color = Color(0xFFDD2C00),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-
                 AnimatedVisibility(
-                    visible = isExpanded,
+                    visible = !isExpanded,
                     enter = slideInVertically { it } + fadeIn() + expandVertically(),
                     exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.timer),
+                                contentDescription = stringResource(R.string.time),
+                                modifier = Modifier.size(standardPadding),
+                                tint = Color(0xFF00C853)
+                            )
+
+                            Text(
+                                text = "$time",
+                                color = Color(0xFF00C853),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.flame),
+                                contentDescription = stringResource(R.string.calories),
+                                modifier = Modifier.size(standardPadding),
+                                tint = Color(0xFFDD2C00)
+                            )
+
+                            Text(
+                                text = "$calories",
+                                color = Color(0xFFDD2C00),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
+            }
+
+            Icon(
+                painter = painterResource(R.drawable.ic_back),
+                contentDescription = "Add button",
+                modifier = Modifier
+                    .size(standardPadding)
+                    .rotate(rotation),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = slideInVertically { it } + fadeIn() + expandVertically(),
+            exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+        ) {
+            Column {
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(standardPadding),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
@@ -642,27 +718,46 @@ fun OverviewExerciseCard(
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.timer),
+                                contentDescription = stringResource(R.string.time),
+                                modifier = Modifier.size(standardPadding),
+                                tint = Color(0xFF00C853)
+                            )
+
+                            Text(
+                                text = "$time",
+                                color = Color(0xFF00C853),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 4),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.flame),
+                                contentDescription = stringResource(R.string.calories),
+                                modifier = Modifier.size(standardPadding),
+                                tint = Color(0xFFDD2C00)
+                            )
+
+                            Text(
+                                text = "$calories",
+                                color = Color(0xFFDD2C00),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                 }
-            }
 
-            Icon(
-                painter = painterResource(R.drawable.ic_back),
-                contentDescription = "Add button",
-                modifier = Modifier
-                    .size(standardPadding)
-                    .rotate(if (isExpanded) 90f else 270f),
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-            )
-        }
-
-        AnimatedVisibility(
-            visible = isExpanded,
-            enter = slideInVertically { it } + fadeIn() + expandVertically(),
-            exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
-        ) {
-            Column {
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+                /*HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
                 Column(
                     modifier = Modifier
@@ -670,12 +765,15 @@ fun OverviewExerciseCard(
                         .clickable { onDeleteClick() },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = stringResource(R.string.delete),
-                        modifier = Modifier.padding(standardPadding),
-                        color = Color(0xFFDD2C00)
+                    Icon(
+                        painter = painterResource(R.drawable.trash),
+                        contentDescription = stringResource(R.string.delete_exercise),
+                        modifier = Modifier
+                            .padding(standardPadding)
+                            .size(standardPadding * 1.5f),
+                        tint = Color(0xFFDD2C00)
                     )
-                }
+                }*/
             }
         }
     }
@@ -709,7 +807,7 @@ private fun ExerciseItemDarkModePreview() {
                 exerciseName = "Exercise 1",
                 level = 0,
                 intensity = 0,
-                time = 30,
+                time = 30f,
                 calories = 100f,
                 session = 1,
                 standardPadding = getStandardPadding().first,
@@ -718,6 +816,20 @@ private fun ExerciseItemDarkModePreview() {
             )
         }
     }
+}
+
+@Composable
+fun animatedRotation(
+    targetRotation: Float,
+    duration: Int = 500,
+    easing: Easing = FastOutSlowInEasing
+): Float {
+    val rotation by animateFloatAsState(
+        targetValue = targetRotation,
+        animationSpec = tween(durationMillis = duration, easing = easing),
+        label = "AnimatedRotation"
+    )
+    return rotation
 }
 
 @Preview(showBackground = true)
@@ -745,7 +857,7 @@ private fun ExerciseItemPreview() {
                 exerciseName = "Exercise 1",
                 level = 0,
                 intensity = 0,
-                time = 30,
+                time = 30f,
                 calories = 100f,
                 session = 1,
                 standardPadding = getStandardPadding().first,

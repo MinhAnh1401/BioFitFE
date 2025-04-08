@@ -160,7 +160,7 @@ fun OverviewExerciseContent(
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val formatterForShow = DateTimeFormatter.ofPattern(
         if (Locale.getDefault().language == "vi")
-            "EEEE, 'ngày' dd 'tháng' MM 'năm' yyyy"
+            "EEEE, 'ngày' d 'tháng' M 'năm' yyyy"
         else
             "EEEE, MMMM d, yyyy"
     )
@@ -260,7 +260,7 @@ fun OverviewExerciseContent(
                         Text(
                             text = showDate,
                             modifier = modifier.padding(top = standardPadding * 2),
-                            color = MaterialTheme.colorScheme.primary,
+                            color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.titleLarge,
                         )
                     }
@@ -274,7 +274,7 @@ fun OverviewExerciseContent(
                             exerciseName = exerciseDone.exerciseName,
                             level = exerciseDone.level,
                             intensity = exerciseDone.intensity,
-                            time = exerciseDone.time.toInt(),
+                            time = exerciseDone.time,
                             calories = exerciseDone.burnedCalories,
                             session = exerciseDone.session,
                             standardPadding = standardPadding,

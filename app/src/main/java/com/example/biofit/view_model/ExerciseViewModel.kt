@@ -284,29 +284,4 @@ class ExerciseViewModel : ViewModel() {
             }
         })
     }
-
-    private val _exerciseByName = MutableStateFlow<ExerciseDTO?>(null)
-    val exerciseByName: StateFlow<ExerciseDTO?> = _exerciseByName.asStateFlow()
-
-    fun getExerciseByName(userId: Long, exerciseName: String) {
-        val apiService = RetrofitClient.instance
-        apiService.getExerciseByName(userId, exerciseName).enqueue(object : Callback<ExerciseDTO> {
-            override fun onResponse(call: Call<ExerciseDTO>, response: Response<ExerciseDTO>) {
-                if (response.isSuccessful) {
-                    val exercise = response.body()
-                    _exerciseByName.value = exercise
-                    Log.d("ExerciseViewModel", "Exercise found: $exercise")
-                } else {
-                    Log.e(
-                        "ExerciseViewModel",
-                        "API Error: ${response.code()} - ${response.message()}"
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<ExerciseDTO>, t: Throwable) {
-                Log.e("ExerciseViewModel", "Network Error: ${t.message}", t)
-            }
-        })
-    }
 }

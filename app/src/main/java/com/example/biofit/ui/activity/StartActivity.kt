@@ -1,17 +1,23 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,12 +25,11 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -33,15 +38,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -52,13 +59,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import com.example.biofit.R
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 
 class StartActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,16 +116,6 @@ fun StartScreen() {
 
 @Composable
 fun StartScreenBackgroundImage(standardPadding: Dp) {
-    /*Image(
-        painter = painterResource(id = R.drawable.bg_start_screen), // nguồn ảnh
-        contentDescription = "Start screen background", // mô tả nội dung của ảnh
-        modifier = Modifier.fillMaxSize(), // tuỳ chỉnh kích thước của hình ảnh
-        // alignment = , // tuỳ chỉnh vị trí của hình ảnh trong Box
-        contentScale = ContentScale.FillBounds,
-        // alpha = , // tuỳ chỉnh độ mờ của hình ảnh
-        // colorFilter = , // tuỳ chỉnh màu sắc của hình ảnh
-    )*/
-
     val images = listOf(
         R.drawable.bg_start_screen1,
         R.drawable.bg_start_screen2,
@@ -134,12 +129,32 @@ fun StartScreenBackgroundImage(standardPadding: Dp) {
     ) // Bắt đầu từ giữa danh sách
     val coroutineScope = rememberCoroutineScope()
 
+    var isBlurred by remember { mutableStateOf(false) }
+
+    val blurRadius by animateDpAsState(
+        targetValue = if (isBlurred) standardPadding * 4 else 0.dp,
+        animationSpec = tween(durationMillis = 600), label = "blurAnimation" // Mượt mà
+    )
+
+    LaunchedEffect(Unit) {
+        delay(2000)
+        isBlurred = true
+    }
+
     // Auto-scroll effect
     LaunchedEffect(Unit) {
+        delay(2000)
         while (true) {
-            delay(3000) // Chuyển ảnh sau mỗi 3 giây
+            delay(5000)
+            val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
             coroutineScope.launch {
-                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                pagerState.animateScrollToPage(
+                    page = nextPage,
+                    animationSpec = tween(
+                        durationMillis = 1000,
+                        easing = FastOutSlowInEasing
+                    )
+                )
             }
         }
     }
@@ -156,7 +171,7 @@ fun StartScreenBackgroundImage(standardPadding: Dp) {
             modifier = Modifier
                 .fillMaxSize()
                 .blur(
-                    radius = standardPadding * 4,
+                    radius = blurRadius,
                     edgeTreatment = BlurredEdgeTreatment.Rectangle
                 ),
             contentScale = ContentScale.FillBounds
@@ -183,18 +198,36 @@ fun StartScreenContent(
     ) // Bắt đầu từ giữa danh sách
     val coroutineScope = rememberCoroutineScope()
 
-
-
     // Auto-scroll effect
     LaunchedEffect(Unit) {
+        delay(2000)
         while (true) {
-            delay(3000) // Chuyển ảnh sau mỗi 3 giây
+            delay(5000)
+            val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
             coroutineScope.launch {
-                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                pagerState.animateScrollToPage(
+                    page = nextPage,
+                    animationSpec = tween(
+                        durationMillis = 1000,
+                        easing = FastOutSlowInEasing
+                    )
+                )
             }
         }
     }
+    /*
+    ************************************************************************************************
+    */
+    // Animation hiệu ứng
+    var visible by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        // Delay một chút để bắt đầu hiệu ứng sau khi vào màn
+        visible = true
+    }
+    /*
+    ************************************************************************************************
+    */
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -207,33 +240,49 @@ fun StartScreenContent(
         verticalArrangement = Arrangement.SpaceBetween, // sắp xếp các phần tử theo chiều dọc
         horizontalAlignment = Alignment.CenterHorizontally, // sắp xếp các phần tử theo chiều ngang
     ) {
-        /*AppTitleAndDescription()*/
-        HorizontalPager(
-            state = pagerState,
+        AnimatedVisibility(
+            visible = visible,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            pageSpacing = standardPadding * 2,
-            userScrollEnabled = false
-        ) { page ->
-            val index = page % images.size
-            Column(
+            enter = fadeIn(animationSpec = tween(1500)) + slideInVertically(
+                initialOffsetY = { -it / 4 },
+                animationSpec = tween(1500)
+            )
+        ) {
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(standardPadding * 2),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = images[index]),
-                    contentDescription = "Background Image $index",
+                    .weight(1f),
+                pageSpacing = standardPadding * 2,
+                userScrollEnabled = false,
+                pageSize = PageSize.Fill,
+                flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
+                beyondViewportPageCount = 100
+            ) { page ->
+                val index = page % images.size
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .shadow(
-                            elevation = standardPadding,
-                            shape = MaterialTheme.shapes.extraLarge
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = standardPadding,
+                            horizontal =  standardPadding * 4
                         ),
-                    contentScale = ContentScale.FillBounds
-                )
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = images[index]),
+                        contentDescription = "Background Image $index",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .shadow(
+                                elevation = standardPadding,
+                                shape = MaterialTheme.shapes.extraLarge
+                            ),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
             }
         }
         WelcomeSection(standardPadding)
@@ -242,86 +291,121 @@ fun StartScreenContent(
     } // nội dung bên trong Column
 }
 
-/*@Composable
-fun AppTitleAndDescription() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(R.string.des_app_name),
-            color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodySmall
-        )
-    }
-}*/
-
 @Composable
 fun WelcomeSection(standardPadding: Dp) {
+    val charAppName = listOf<String>("B", "I", "O", "F", "I", "T")
+    /*
+    ************************************************************************************************
+    */
+    // Animation hiệu ứng
+    var visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        visible = true
+    }
+    /*
+    ************************************************************************************************
+    */
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(R.string.welcome_to_app),
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(1000)) + slideInVertically(
+                initialOffsetY = { it / 2 },
+                animationSpec = tween(1000)
             )
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.welcome_to_app),
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+
 
         Row/*(
             modifier = , // tuỳ chỉnh kích thước và vị trí của Row
             horizontalArrangement = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều ngang
             verticalAlignment = , // tuỳ chỉnh cách sắp xếp các phần tử theo chiều dọc
         )*/ {
-            Text(
-                text = "BIO",
-                // modifier = , // tuỳ chỉnh kích thước và vị trí của Text
-                color = MaterialTheme.colorScheme.primary,
-                // fontSize = , // tuỳ chỉnh kích thước chữ
-                // fontStyle = , // tuỳ chỉnh font chữ
-                // fontWeight = , // tuỳ chỉnh độ đậm của chữ
-                // fontFamily = , // tuỳ chỉnh font chữ
-                // letterSpacing = , // tuỳ chỉnh khoảng cách chữ
-                // textDecoration = , // tuỳ chỉnh kiểu chữ
-                // textAlign = , // tuỳ chỉnh căn giữa chữ
-                // lineHeight = , // tuỳ chỉnh chiều cao chữ
-                // overflow = , // tuỳ chỉnh cách xử lý khi chữ vượt quá giới hạn
-                // softWrap = , // tuỳ chỉnh cách xử lý khi chữ vượt quá giới hạn
-                // maxLines = , // tuỳ chỉnh số lượng dòng tối đa
-                // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
-                // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Black
-                ) // tuỳ chỉnh kiểu chữ
-            )
-            Text(
-                text = "FIT",
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Black
+            charAppName.forEachIndexed { index, char ->
+                val delay = 1000 + index * 500
+
+                val isPrimary = index < 3
+                val color = if (isPrimary) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onPrimary
+                val style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    shadow = if (!isPrimary) Shadow(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        blurRadius = 10f
+                    ) else null
                 )
-            )
+
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = fadeIn(tween(delay)) + slideInVertically(
+                        initialOffsetY = { it },
+                        animationSpec = tween(delay)
+                    )
+                ) {
+                    Text(
+                        text = char,
+                        // modifier = , // tuỳ chỉnh kích thước và vị trí của Text
+                        color = color,
+                        // fontSize = , // tuỳ chỉnh kích thước chữ
+                        // fontStyle = , // tuỳ chỉnh font chữ
+                        // fontWeight = , // tuỳ chỉnh độ đậm của chữ
+                        // fontFamily = , // tuỳ chỉnh font chữ
+                        // letterSpacing = , // tuỳ chỉnh khoảng cách chữ
+                        // textDecoration = , // tuỳ chỉnh kiểu chữ
+                        // textAlign = , // tuỳ chỉnh căn giữa chữ
+                        // lineHeight = , // tuỳ chỉnh chiều cao chữ
+                        // overflow = , // tuỳ chỉnh cách xử lý khi chữ vượt quá giới hạn
+                        // softWrap = , // tuỳ chỉnh cách xử lý khi chữ vượt quá giới hạn
+                        // maxLines = , // tuỳ chỉnh số lượng dòng tối đa
+                        // minLines = , // tuỳ chỉnh số lượng dòng tối thiểu
+                        // onTextLayout = , // tuỳ chỉnh hành vi khi layout chữ
+                        style = style // tuỳ chỉnh kiểu chữ
+                    )
+                }
+            }
         } // nội dung bên trong Row
 
-        Text(
-            text = stringResource(R.string.start_title_1),
-            color = MaterialTheme.colorScheme.onPrimary,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(1500)) + slideInVertically(
+                initialOffsetY = { -it / 2 },
+                animationSpec = tween(1500)
             )
-        )
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.start_title_1),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
 
-        Text(
-            text = stringResource(R.string.start_title_2),
-            color = MaterialTheme.colorScheme.onPrimary,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleSmall
-        )
+                Text(
+                    text = stringResource(R.string.start_title_2),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+        }
     }
 }
 
@@ -329,21 +413,43 @@ fun WelcomeSection(standardPadding: Dp) {
 fun ActionButtons(standardPadding: Dp) {
     val context = LocalContext.current
     val activity = context as? Activity
+    /*
+    ************************************************************************************************
+    */
+    // Animation hiệu ứng
+    var visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        // Delay một chút để bắt đầu hiệu ứng sau khi vào màn
+        delay(500)
+        visible = true
+    }
+    /*
+    ************************************************************************************************
+    */
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        GetStartedButton(
-            onCLick = {
-                activity?.let {
-                    val intent = Intent(it, LoginActivity::class.java)
-                    it.startActivity(intent)
-                    it.finish()
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(2000)) + slideInVertically(
+                initialOffsetY = { it / 2 },
+                animationSpec = tween(2000)
+            )
+        ) {
+            GetStartedButton(
+                onCLick = {
+                    activity?.let {
+                        val intent = Intent(it, LoginActivity::class.java)
+                        it.startActivity(intent)
+                        it.finish()
+                    }
                 }
-            }
-        )
+            )
+        }
         Spacer(modifier = Modifier.height(standardPadding))
     }
 }
