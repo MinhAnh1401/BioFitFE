@@ -80,6 +80,7 @@ import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
+import com.example.biofit.ui.components.animatedRotation
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
@@ -261,6 +262,13 @@ fun UpdateExerciseContent(
     /*
     ____________________________________________________________________________________________________
     */
+    val rotation = animatedRotation(
+        targetRotation = if (showLevelDialog) 90f else 270f
+    )
+    val rotation2 = animatedRotation(
+        targetRotation = if (showIntensityDialog) 90f else 270f
+    )
+
     Column(
         verticalArrangement = Arrangement.spacedBy(standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -443,7 +451,7 @@ fun UpdateExerciseContent(
                             contentDescription = stringResource(R.string.level),
                             modifier = Modifier
                                 .size(standardPadding)
-                                .rotate(if (showLevelDialog) 90f else 270f),
+                                .rotate(rotation),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -616,7 +624,7 @@ fun UpdateExerciseContent(
                             contentDescription = stringResource(R.string.intensity),
                             modifier = Modifier
                                 .size(standardPadding)
-                                .rotate(if (showIntensityDialog) 90f else 270f),
+                                .rotate(rotation2),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }

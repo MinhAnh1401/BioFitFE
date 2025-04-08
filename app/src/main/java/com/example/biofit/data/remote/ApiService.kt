@@ -47,7 +47,7 @@ interface ApiService {
 
     /*
     ------------------------------------------------------------------------------------------------
-*/
+    */
     // Daily Log API
     @GET("api/daily-log/user/{userId}/latest")
     fun getLatestDailyLog(
@@ -61,7 +61,7 @@ interface ApiService {
     fun getWeightHistory(@Path("userId") userId: Long): Call<List<DailyLogDTO>>
 
     /*
-    ----------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------
     */
     // Exercise API
     @GET("api/exercise/user/{userId}")
@@ -85,26 +85,12 @@ interface ApiService {
         @Path("exerciseId") exerciseId: Long,
         @Body exercise: ExerciseDTO
     ): Call<Void>
-
-    @GET("api/exercise/user/{userId}/{exerciseName}")
-    fun getExerciseByName(
-        @Path("userId") userId: Long,
-        @Path("exerciseName") exerciseName: String
-    ): Call<ExerciseDTO>
-
     /*
-    ----------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------------
     */
     // Exercise Done API
     @POST("api/exercise-done/create")
     fun createExerciseDone(@Body exerciseDoneDTO: ExerciseDoneDTO): Call<ExerciseDoneDTO>
-
-    /*@GET("api/exercise-done/user/{userId}")
-    fun getExerciseDone(
-        @Path("userId") userId: Long,
-        @Query("startDate") startDate: String,
-        @Query("endDate") endDate: String
-    ): Call<List<ExerciseDoneDTO>>*/
 
     @GET("api/exercise-done/overview")
     fun getOverviewExercises(
@@ -124,12 +110,12 @@ interface ApiService {
     ): Call<Float>
 
     /*
-        ----------------------------------------------------------------------------------------------------
-        */
+    --------------------------------------------------------------------------------------------
+    */
 
     // Google API
-//    @POST("api/auth/google")
-//    suspend fun googleSignIn(@Body request: GoogleAuthDTO): Response<SocialAccountDTO>
+    //    @POST("api/auth/google")
+    //    suspend fun googleSignIn(@Body request: GoogleAuthDTO): Response<SocialAccountDTO>
 
     @POST("api/payment/create-payment")
     fun createPayment(@Body request: PaymentRequest): Call<PaymentResponse>
@@ -144,8 +130,8 @@ interface ApiService {
     fun getLatestSubscription(@Path("userId") userId: Long): Call<SubscriptionResponse>
 
     /*
-        ----------------------------------------------------------------------------------------------------
-        */
+    ------------------------------------------------------------------------------------------------
+    */
 
     // reset password API
     @POST("api/user/forgot-password")
@@ -155,8 +141,8 @@ interface ApiService {
     suspend fun resetPassword(@Body request: PasswordResetDTO): Response<PasswordResetResponse>
 
     /*
-        ----------------------------------------------------------------------------------------------------
-        */
+    ------------------------------------------------------------------------------------------------
+    */
     // API Food
 
     @GET("api/food/user/{userId}")

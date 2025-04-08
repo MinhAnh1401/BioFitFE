@@ -77,6 +77,7 @@ import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ExerciseItem
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
@@ -312,31 +313,31 @@ fun ExerciseContent(
 
                         AnimatedVisibility(
                             visible = expanded.value == (letter.toString() to index),
-                            modifier = Modifier.padding(vertical = standardPadding),
                             enter = slideInVertically { it } + fadeIn() + expandVertically(),
                             exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(standardPadding)
+                            Row (
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = stringResource(R.string.des_delete_exercise),
-                                    color = MaterialTheme.colorScheme.outline,
-                                    textAlign = TextAlign.Justify,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                SubCard(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.des_delete_exercise),
+                                        color = MaterialTheme.colorScheme.outline,
+                                        modifier = Modifier.padding(standardPadding),
+                                        textAlign = TextAlign.Justify,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
-                                    verticalAlignment = Alignment.CenterVertically
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     ElevatedButton(
                                         onClick = {
                                             expanded.value = (null to null)
                                             expandedState.value = (letter.toString() to index)
                                         },
-                                        modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.elevatedButtonColors(
                                             containerColor = MaterialTheme.colorScheme.outline
                                         )
@@ -355,11 +356,6 @@ fun ExerciseContent(
                                                     .rotate(45f),
                                                 tint = MaterialTheme.colorScheme.onPrimary
                                             )
-
-                                            Text(
-                                                text = stringResource(R.string.cancel),
-                                                color = MaterialTheme.colorScheme.onPrimary
-                                            )
                                         }
                                     }
 
@@ -370,13 +366,14 @@ fun ExerciseContent(
                                                 "Deleting exercise: ${exercise.exerciseId}"
                                             )
                                             exerciseViewModel.deleteExercise(exercise.exerciseId)
+                                            expanded.value = (null to null)
+                                            expandedState.value = (null to null)
                                             Toast.makeText(
                                                 context,
                                                 context.getString(R.string.exercise_deleted_successfully),
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         },
-                                        modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.elevatedButtonColors(
                                             containerColor = Color(0xFFDD2C00)
                                         )
@@ -392,11 +389,6 @@ fun ExerciseContent(
                                                 contentDescription = stringResource(R.string.delete_exercise),
                                                 modifier = Modifier.size(standardPadding * 1.5f),
                                                 tint = MaterialTheme.colorScheme.onPrimary
-                                            )
-
-                                            Text(
-                                                text = stringResource(R.string.delete),
-                                                color = MaterialTheme.colorScheme.onPrimary
                                             )
                                         }
                                     }
