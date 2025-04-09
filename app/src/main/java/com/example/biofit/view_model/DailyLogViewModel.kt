@@ -213,6 +213,9 @@ class DailyLogViewModel : ViewModel() {
                 saveMessage.value = context.getString(R.string.connection_error_please_try_again)
             }
         })
+
+        Log.d("VM", "Calling saveDailyLog")
+        DailyLogSharedPrefsHelper.saveDailyLog(context, request)
     }
 
     // Xử lý API response chung để tránh lặp code

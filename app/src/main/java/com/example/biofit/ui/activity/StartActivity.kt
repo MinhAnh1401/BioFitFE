@@ -476,6 +476,9 @@ fun ActionButtons(standardPadding: Dp) {
 fun GetStartedButton(
     onCLick: () -> Unit = {}
 ) {
+
+    Spacer(Modifier.padding(5.dp))
+
     // GET STARTED button
     ElevatedButton(
         onClick = onCLick, // xử lý sự kiện khi nút được nhấn
