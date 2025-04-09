@@ -3,7 +3,6 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -18,11 +17,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +27,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -48,7 +44,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,9 +55,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -72,13 +67,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDetailDTO
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ItemCard
-import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.animatedRotation
 import com.example.biofit.ui.components.getStandardPadding
@@ -276,11 +271,12 @@ fun UpdateExerciseContent(
         OutlinedTextField(
             value = exerciseName,
             onValueChange = { exerciseName = it },
-            modifier = modifier,
-            enabled = if (title == R.string.edit_exercise) {
-                (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low))
-            } else false,
-            readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
+            modifier = modifier
+                .shadow(
+                    elevation = if (title == R.string.do_exercise) 1.dp else 0.dp,
+                    shape = MaterialTheme.shapes.large
+                ),
+            readOnly = title == R.string.do_exercise,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             placeholder = {
                 Text(
@@ -313,7 +309,13 @@ fun UpdateExerciseContent(
             ),
             singleLine = true,
             interactionSource = interactionSources[0],
-            shape = MaterialTheme.shapes.large
+            shape = MaterialTheme.shapes.large,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = if (title == R.string.do_exercise) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                unfocusedContainerColor = if (title == R.string.do_exercise) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                focusedBorderColor = if (title == R.string.do_exercise) Color.Transparent else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (title == R.string.do_exercise) Color.Transparent else MaterialTheme.colorScheme.outline,
+            )
         )
 
         if (title == R.string.do_exercise) {
@@ -469,11 +471,7 @@ fun UpdateExerciseContent(
 
                     Column {
                         listOptions.forEach { selectLevel ->
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = 0.1f
-                                )
-                            )
+                            HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                             Column(
                                 modifier = Modifier
@@ -643,11 +641,7 @@ fun UpdateExerciseContent(
 
                     Column {
                         listOptions.forEach { selectIntensity ->
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = 0.1f
-                                )
-                            )
+                            HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                             Column(
                                 modifier = Modifier
@@ -677,11 +671,12 @@ fun UpdateExerciseContent(
         OutlinedTextField(
             value = time,
             onValueChange = { time = it },
-            modifier = modifier,
-            enabled = if (title == R.string.edit_exercise) {
-                (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low))
-            } else false,
-            readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
+            modifier = modifier
+                .shadow(
+                    elevation = if (title == R.string.do_exercise) 1.dp else 0.dp,
+                    shape = MaterialTheme.shapes.large
+                ),
+            readOnly = title == R.string.do_exercise,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             leadingIcon = {
                 Icon(
@@ -716,17 +711,24 @@ fun UpdateExerciseContent(
             ),
             singleLine = true,
             interactionSource = interactionSources[1],
-            shape = MaterialTheme.shapes.large
+            shape = MaterialTheme.shapes.large,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = if (title == R.string.do_exercise) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                unfocusedContainerColor = if (title == R.string.do_exercise) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                focusedBorderColor = if (title == R.string.do_exercise) Color.Transparent else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (title == R.string.do_exercise) Color.Transparent else MaterialTheme.colorScheme.outline,
+            )
         )
 
         OutlinedTextField(
             value = caloriesConsumed,
             onValueChange = { caloriesConsumed = it },
-            modifier = modifier,
-            enabled = if (title == R.string.edit_exercise) {
-                (level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low))
-            } else false,
-            readOnly = !(level == stringResource(R.string.amateur) && intensity == stringResource(R.string.low)),
+            modifier = modifier
+                .shadow(
+                    elevation = if (title == R.string.do_exercise) 1.dp else 0.dp,
+                    shape = MaterialTheme.shapes.large
+                ),
+            readOnly = title == R.string.do_exercise,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             leadingIcon = {
                 Icon(
@@ -764,7 +766,13 @@ fun UpdateExerciseContent(
             keyboardActions = KeyboardActions(onGo = { TODO() }),
             singleLine = true,
             interactionSource = interactionSources[2],
-            shape = MaterialTheme.shapes.large
+            shape = MaterialTheme.shapes.large,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = if (title == R.string.do_exercise) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                unfocusedContainerColor = if (title == R.string.do_exercise) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                focusedBorderColor = if (title == R.string.do_exercise) Color.Transparent else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (title == R.string.do_exercise) Color.Transparent else MaterialTheme.colorScheme.outline,
+            )
         )
 
         val exerciseDetailId = exerciseDetailList?.exerciseDetailId

@@ -1,6 +1,8 @@
 package com.example.biofit.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.LocalIndication
@@ -16,19 +18,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -70,11 +73,19 @@ fun BottomBar(
         containerColor = MaterialTheme.colorScheme.background
     ) {
         items.forEachIndexed { index, label ->
-            val isSelected = selectedItem.value == label
-            val scale by animateFloatAsState(
-                targetValue = if (isSelected) 1.2f else 1f,
-                animationSpec = tween(durationMillis = 200)
-            )
+            val scale = remember { Animatable(1f) }
+
+            LaunchedEffect(selectedItem.value) {
+                if (selectedItem.value == label) {
+                    scale.snapTo(0.9f) // scale nhỏ lại
+                    scale.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing)
+                    )
+                } else {
+                    scale.animateTo(1f, animationSpec = tween(200))
+                }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
@@ -88,8 +99,8 @@ fun BottomBar(
                 modifier = Modifier
                     .size(standardPadding * 5f)
                     .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
+                        scaleX = scale.value
+                        scaleY = scale.value
                     }
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
@@ -107,7 +118,12 @@ fun BottomBar(
                             .size(if (index != 2) standardPadding * 2f else standardPadding * 3.5f)
                             .graphicsLayer {
                                 rotationZ = if (label == "Add") rotationAngle else 0f
-                            },
+                            }
+                            .shadow(
+                                elevation = if (selectedItem.value == label && label != "Add") 10.dp else 0.dp,
+                                ambientColor = MaterialTheme.colorScheme.primary,
+                                spotColor = MaterialTheme.colorScheme.primary
+                            ),
                         tint = if (selectedItem.value == label && label != "Add") {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -118,12 +134,21 @@ fun BottomBar(
                     if (label != "Add") {
                         Text(
                             text = label,
-                            color = if (selectedItem.value == label && label != "Add") {
+                            color = if (selectedItem.value == label) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                             },
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                shadow = if (selectedItem.value == label) {
+                                    Shadow(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        blurRadius = 10f
+                                    )
+                                } else {
+                                    null
+                                }
+                            )
                         )
                     }
                 }

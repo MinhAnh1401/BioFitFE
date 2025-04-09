@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import com.example.biofit.R
@@ -186,7 +185,7 @@ class DailyLogViewModel : ViewModel() {
         }
 
         // Nếu log cũ đã tồn tại và không có thay đổi nào, không cần gọi API
-        if (oldLog?.date == date && oldLog?.weight == finalWeight && oldLog.water == finalWater) {
+        if (oldLog?.date == date && oldLog.weight == finalWeight && oldLog.water == finalWater) {
             saveState.value = false
             return
         }
@@ -294,7 +293,7 @@ class DailyLogViewModel : ViewModel() {
     var weightDataState = mutableStateOf<List<Pair<String, Float>>>(emptyList())
     var getWeightHistoryState = mutableStateOf<Boolean?>(null)
 
-    fun getWeightHistory(userId: Long) {
+    fun getWeightHistory(context: Context, userId: Long) {
         val apiService = RetrofitClient.instance
 
         val mainHandler = Handler(Looper.getMainLooper())
@@ -325,6 +324,13 @@ class DailyLogViewModel : ViewModel() {
                         }
 
                         getWeightHistoryState.value = true
+                        val dailyLog = DailyLogDTO(
+                            userId = userId,
+                            weight = weightHistory.lastOrNull()?.weight ?: 0f,
+                            water = weightHistory.lastOrNull()?.water ?: 0f,
+                            date = weightHistory.lastOrNull()?.date ?: ""
+                        )
+                        DailyLogSharedPrefsHelper.saveDailyLog(context, dailyLog)
                     } else {
                         getWeightHistoryState.value = false
                     }
