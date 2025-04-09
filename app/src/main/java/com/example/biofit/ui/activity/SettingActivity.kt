@@ -64,7 +64,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -87,9 +86,9 @@ import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.MainCard
-import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.TopBar
+import com.example.biofit.ui.components.animatedRotation
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.DailyLogViewModel
@@ -130,9 +129,6 @@ fun SettingScreen(
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
-
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    val screenHeight = LocalConfiguration.current.screenHeightDp
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
@@ -302,6 +298,12 @@ fun SettingContent(
     /*
     ***************************************************************************************************
     */
+    val rotation = animatedRotation(
+        targetRotation = if (showGenderDialog) 90f else 270f
+    )
+    /*
+    ***************************************************************************************************
+    */
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
@@ -333,7 +335,7 @@ fun SettingContent(
                     value = updateViewModel.fullName.value ?: "",
                     onValueChange = { updateViewModel.fullName.value = it },
                     modifier = modifier.shadow(
-                        elevation = 6.dp,
+                        elevation = 1.dp,
                         shape = MaterialTheme.shapes.large
                     ),
                     textStyle = LocalTextStyle.current.copy(
@@ -435,7 +437,7 @@ fun SettingContent(
                                 contentDescription = stringResource(R.string.gender),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(if (showGenderDialog) 90f else 270f),
+                                    .rotate(rotation),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -453,11 +455,7 @@ fun SettingContent(
 
                         Column {
                             listOptions.forEach { selectGender ->
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.1f
-                                    )
-                                )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                                 Column(
                                     modifier = Modifier
@@ -565,7 +563,7 @@ fun SettingContent(
                     value = updateViewModel.height.value.toString(),
                     onValueChange = { updateViewModel.height.value = it.toFloatOrNull() ?: 0f },
                     modifier = modifier.shadow(
-                        elevation = 6.dp,
+                        elevation = 1.dp,
                         shape = MaterialTheme.shapes.large
                     ),
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
@@ -601,7 +599,7 @@ fun SettingContent(
                     value = updateViewModel.weight.value.toString(),
                     onValueChange = { updateViewModel.weight.value = it.toFloatOrNull() ?: 0f },
                     modifier = modifier.shadow(
-                        elevation = 6.dp,
+                        elevation = 1.dp,
                         shape = MaterialTheme.shapes.large
                     ),
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
@@ -637,7 +635,7 @@ fun SettingContent(
                     value = createdAccount,
                     onValueChange = { createdAccount = it },
                     modifier = modifier.shadow(
-                        elevation = 6.dp,
+                        elevation = 1.dp,
                         shape = MaterialTheme.shapes.large
                     ),
                     readOnly = true,
@@ -704,7 +702,7 @@ fun SettingContent(
                                 .weight(1f)
                                 .padding(end = standardPadding)
                                 .blur(
-                                    radius = if (isEmailVisible) 0.dp else 10.dp,
+                                    radius = if (isEmailVisible) 0.dp else 6.dp,
                                     edgeTreatment = BlurredEdgeTreatment.Unbounded
                                 ),
                             color = MaterialTheme.colorScheme.onSurface,

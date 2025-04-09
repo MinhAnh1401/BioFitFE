@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import kotlinx.coroutines.delay
@@ -70,27 +71,25 @@ fun BlinkingGradientBox(
         )
     )
 
-    Box(
-        modifier = Modifier
-            .shadow(
-                elevation = 6.dp,
-                shape = shape
-            )
-            .clip(shape = shape)
-            .background(
-                brush = Brush.sweepGradient(
-                    colors = listOf(
-                        color1,
-                        color2,
-                        color3
-                    ),
-                    center = Offset.Infinite
+    SubCard(modifier = Modifier) {
+        Box(
+            modifier = Modifier
+                .clip(shape = shape)
+                .background(
+                    brush = Brush.sweepGradient(
+                        colors = listOf(
+                            color1,
+                            color2,
+                            color3
+                        ),
+                        center = Offset.Infinite
+                    )
                 )
-            )
-            .background(MaterialTheme.colorScheme.background.copy(alpha = alpha))
+                .background(MaterialTheme.colorScheme.background.copy(alpha = alpha))
 
-    ) {
-        content()
+        ) {
+            content()
+        }
     }
 }
 
@@ -132,39 +131,41 @@ fun BlinkingGradientBox(
         )
     )
 
-    Box(
-        modifier = Modifier
-            .graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
-            }
-            .shadow(
-                elevation = 6.dp,
-                shape = shape
-            )
-            .clip(shape = shape)
-            .background(
-                brush = Brush.sweepGradient(
-                    colors = listOf(
-                        color1,
-                        color2,
-                        color3
-                    ),
-                    center = Offset.Infinite
-                )
-            )
-            .background(MaterialTheme.colorScheme.background.copy(alpha = alpha))
-            .clickable {
-                coroutineScope.launch {
-                    onClick()
-                    scale.animateTo(0.99f, animationSpec = tween(100))
-                    delay(100)
-                    scale.animateTo(1f, animationSpec = tween(100))
+    SubCard(modifier = Modifier) {
+        Box(
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
                 }
-            }
+                .shadow(
+                    elevation = 6.dp,
+                    shape = shape
+                )
+                .clip(shape = shape)
+                .background(
+                    brush = Brush.sweepGradient(
+                        colors = listOf(
+                            color1,
+                            color2,
+                            color3
+                        ),
+                        center = Offset.Infinite
+                    )
+                )
+                .background(MaterialTheme.colorScheme.background.copy(alpha = alpha))
+                .clickable {
+                    coroutineScope.launch {
+                        onClick()
+                        scale.animateTo(0.99f, animationSpec = tween(100))
+                        delay(100)
+                        scale.animateTo(1f, animationSpec = tween(100))
+                    }
+                }
 
-    ) {
-        content()
+        ) {
+            content()
+        }
     }
 }
 

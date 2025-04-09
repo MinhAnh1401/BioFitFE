@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -43,12 +42,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,13 +55,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
-import com.example.biofit.data.model.dto.FoodDTO
-import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.utils.UserSharedPrefsHelper
-import com.example.biofit.navigation.MainActivity
 import com.example.biofit.ui.components.FoodItem
 import com.example.biofit.ui.components.ToggleButtonBar
 import com.example.biofit.ui.components.TopBar
@@ -89,6 +82,7 @@ class AddActivity : ComponentActivity() {
         super.onConfigurationChanged(newConfig)
         recreate()
     }
+
     override fun onResume() {
         super.onResume()
         val userId = UserSharedPrefsHelper.getUserData(this)?.userId ?: 0L
@@ -162,15 +156,17 @@ fun AddScreen(
                         ) {
                             filteredOptions.forEach { selection ->
                                 DropdownMenuItem(
-                                    text = {  Text(
-                                        text = stringResource(id = selection),
-                                        color = when (selection) {
-                                            R.string.morning -> Color(0xFFFFAB00)
-                                            R.string.afternoon -> Color(0xFFDD2C00)
-                                            R.string.evening -> Color(0xFF2962FF)
-                                            else -> Color(0xFF00BFA5)
-                                        }
-                                    )},
+                                    text = {
+                                        Text(
+                                            text = stringResource(id = selection),
+                                            color = when (selection) {
+                                                R.string.morning -> Color(0xFFFFAB00)
+                                                R.string.afternoon -> Color(0xFFDD2C00)
+                                                R.string.evening -> Color(0xFF2962FF)
+                                                else -> Color(0xFF00BFA5)
+                                            }
+                                        )
+                                    },
                                     onClick = {
                                         selectedOption = selection
                                         expanded = false
@@ -250,12 +246,7 @@ fun AddContent(
     OutlinedTextField(
         value = search,
         onValueChange = { search = it },
-        modifier = modifier
-            .padding(vertical = standardPadding)
-            .shadow(
-                elevation = 6.dp,
-                shape = MaterialTheme.shapes.large
-            ),
+        modifier = modifier.padding(vertical = standardPadding),
         placeholder = { Text(text = stringResource(id = R.string.search)) },
         trailingIcon = {
             IconButton(
@@ -298,15 +289,55 @@ fun AddContent(
         )
     }
 
-    val foodListCreateMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
-    val foodListCreateAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
-    val foodListCreateEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
-    val foodListCreateSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
+    val foodListCreateMorning = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.morning),
+            ignoreCase = true
+        )
+    }
+    val foodListCreateAfternoon = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.afternoon),
+            ignoreCase = true
+        )
+    }
+    val foodListCreateEvening = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.evening),
+            ignoreCase = true
+        )
+    }
+    val foodListCreateSnack = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.snack),
+            ignoreCase = true
+        )
+    }
 
-    val foodListRecentMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
-    val foodListRecentAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
-    val foodListRecentEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
-    val foodListRecentSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
+    val foodListRecentMorning = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.morning),
+            ignoreCase = true
+        )
+    }
+    val foodListRecentAfternoon = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.afternoon),
+            ignoreCase = true
+        )
+    }
+    val foodListRecentEvening = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.evening),
+            ignoreCase = true
+        )
+    }
+    val foodListRecentSnack = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.snack),
+            ignoreCase = true
+        )
+    }
 
 
     val foodListCreate = when (selectedOption) {
@@ -366,7 +397,8 @@ fun AddContent(
                                             ),
                                             onClick = {
                                                 activity?.let {
-                                                    val intent = Intent(it, FoodDetailActivity::class.java)
+                                                    val intent =
+                                                        Intent(it, FoodDetailActivity::class.java)
                                                     val foodId = foodListRecent[index].foodId
                                                     intent.putExtra("FOOD_ID", foodId)
                                                     it.startActivity(intent)
@@ -391,7 +423,10 @@ fun AddContent(
                                                 onClick = {
                                                     activity?.let {
                                                         val intent =
-                                                            Intent(it, EditFoodActivity::class.java).apply {
+                                                            Intent(
+                                                                it,
+                                                                EditFoodActivity::class.java
+                                                            ).apply {
                                                                 /*putExtra("exerciseId", exercise.exerciseId)
                                                                 putExtra("exerciseDTO", exercise)*/
                                                             }
@@ -486,7 +521,8 @@ fun AddContent(
                                             ),
                                             onClick = {
                                                 activity?.let {
-                                                    val intent = Intent(it, FoodDetailActivity::class.java)
+                                                    val intent =
+                                                        Intent(it, FoodDetailActivity::class.java)
                                                     val foodId = foodListRecent[index].foodId
                                                     Log.d("FoodItem", "Clicked foodId: $foodId")
                                                     intent.putExtra("FOOD_ID", foodId)
@@ -512,7 +548,10 @@ fun AddContent(
                                                 onClick = {
                                                     activity?.let {
                                                         val intent =
-                                                            Intent(it, EditFoodActivity::class.java).apply {
+                                                            Intent(
+                                                                it,
+                                                                EditFoodActivity::class.java
+                                                            ).apply {
                                                                 /*putExtra("exerciseId", exercise.exerciseId)
                                                                 putExtra("exerciseDTO", exercise)*/
                                                             }

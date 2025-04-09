@@ -1,7 +1,6 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
-import android.app.Application
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -10,8 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
@@ -106,8 +108,6 @@ fun StartScreen() {
         )*/ {
             StartScreenBackgroundImage(standardPadding)
             StartScreenContent(
-                screenWidth,
-                screenHeight,
                 standardPadding
             )
         } // nội dung bên trong Box
@@ -181,8 +181,6 @@ fun StartScreenBackgroundImage(standardPadding: Dp) {
 
 @Composable
 fun StartScreenContent(
-    screenWidth: Int,
-    screenHeight: Int,
     standardPadding: Dp
 ) {
     val images = listOf(
@@ -225,6 +223,14 @@ fun StartScreenContent(
         // Delay một chút để bắt đầu hiệu ứng sau khi vào màn
         visible = true
     }
+
+    var visible2 by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        // Delay một chút để bắt đầu hiệu ứng sau khi vào màn
+        delay(500)
+        visible2 = true
+    }
     /*
     ************************************************************************************************
     */
@@ -245,9 +251,16 @@ fun StartScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            enter = fadeIn(animationSpec = tween(1500)) + slideInVertically(
+            enter = fadeIn(
+                animationSpec = tween(1500)
+            ) + slideInVertically(
                 initialOffsetY = { -it / 4 },
                 animationSpec = tween(1500)
+            ) + expandVertically(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessVeryLow
+                )
             )
         ) {
             HorizontalPager(
@@ -265,10 +278,7 @@ fun StartScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            vertical = standardPadding,
-                            horizontal =  standardPadding * 4
-                        ),
+                        .padding(standardPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
@@ -287,7 +297,15 @@ fun StartScreenContent(
         }
         WelcomeSection(standardPadding)
         Spacer(modifier = Modifier.height(standardPadding))
-        ActionButtons(standardPadding)
+        AnimatedVisibility(
+            visible = visible2,
+            enter = fadeIn(animationSpec = tween(2000)) + slideInVertically(
+                initialOffsetY = { it / 2 },
+                animationSpec = tween(2000)
+            )
+        ) {
+            ActionButtons(standardPadding)
+        }
     } // nội dung bên trong Column
 }
 
@@ -417,13 +435,13 @@ fun ActionButtons(standardPadding: Dp) {
     ************************************************************************************************
     */
     // Animation hiệu ứng
-    var visible by remember { mutableStateOf(false) }
+    /*var visible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         // Delay một chút để bắt đầu hiệu ứng sau khi vào màn
         delay(500)
         visible = true
-    }
+    }*/
     /*
     ************************************************************************************************
     */
@@ -433,23 +451,23 @@ fun ActionButtons(standardPadding: Dp) {
         verticalArrangement = Arrangement.spacedBy(standardPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AnimatedVisibility(
+        /*AnimatedVisibility(
             visible = visible,
             enter = fadeIn(animationSpec = tween(2000)) + slideInVertically(
                 initialOffsetY = { it / 2 },
                 animationSpec = tween(2000)
             )
-        ) {
-            GetStartedButton(
-                onCLick = {
-                    activity?.let {
-                        val intent = Intent(it, LoginActivity::class.java)
-                        it.startActivity(intent)
-                        it.finish()
-                    }
+        ) {*/
+        GetStartedButton(
+            onCLick = {
+                activity?.let {
+                    val intent = Intent(it, LoginActivity::class.java)
+                    it.startActivity(intent)
+                    it.finish()
                 }
-            )
-        }
+            }
+        )
+        /*}*/
         Spacer(modifier = Modifier.height(standardPadding))
     }
 }
