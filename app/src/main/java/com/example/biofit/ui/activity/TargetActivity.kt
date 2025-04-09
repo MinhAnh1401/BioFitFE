@@ -66,8 +66,8 @@ import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
 import com.example.biofit.ui.components.DefaultDialog
 import com.example.biofit.ui.components.ItemCard
-import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
+import com.example.biofit.ui.components.animatedRotation
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 
@@ -177,7 +177,23 @@ fun TargetContent(
             showIntensityOfExerciseDialog = false
         }
     }
+    /*
+     ***********************************************************************************************
+     */
+    val rotation1 = animatedRotation(
+        targetRotation = if (showGoalDialog) 90f else 270f
+    )
 
+    val rotation2 = animatedRotation(
+        targetRotation = if (showWeeklyGoalDialog) 90f else 270f
+    )
+
+    val rotation3 = animatedRotation(
+        targetRotation = if (showIntensityOfExerciseDialog) 90f else 270f
+    )
+    /*
+     ***********************************************************************************************
+     */
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
     ) {
@@ -260,7 +276,7 @@ fun TargetContent(
                                 contentDescription = stringResource(R.string.goals),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(if (showGoalDialog) 90f else 270f),
+                                    .rotate(rotation1),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -279,9 +295,7 @@ fun TargetContent(
                         Column {
                             listOptions.forEach { selectedGoal ->
                                 HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.1f
-                                    )
+                                    color = MaterialTheme.colorScheme.background
                                 )
 
                                 Column(
@@ -427,7 +441,7 @@ fun TargetContent(
                                 contentDescription = stringResource(R.string.weekly_goal),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(if (showWeeklyGoalDialog) 90f else 270f),
+                                    .rotate(rotation2),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -456,11 +470,7 @@ fun TargetContent(
 
                         Column {
                             listOptions.forEach { selectedWeeklyGoal ->
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.1f
-                                    )
-                                )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                                 Column(
                                     modifier = Modifier
@@ -560,7 +570,7 @@ fun TargetContent(
                                 contentDescription = stringResource(R.string.intensity_of_exercise),
                                 modifier = Modifier
                                     .size(standardPadding)
-                                    .rotate(if (showIntensityOfExerciseDialog) 90f else 270f),
+                                    .rotate(rotation3),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -580,11 +590,7 @@ fun TargetContent(
 
                         Column {
                             listOptions.forEach { selectedIntensityOfExercise ->
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.1f
-                                    )
-                                )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                                 Column(
                                     modifier = Modifier

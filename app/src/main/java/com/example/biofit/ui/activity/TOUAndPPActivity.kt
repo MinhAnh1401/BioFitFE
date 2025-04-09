@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.TopBar2
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
@@ -80,7 +79,7 @@ fun TOUAndPPScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (getFrom) {
-                "profile_screen" -> TopBar(
+                "profile_screen" -> TopBar2(
                     onBackClick = { activity?.finish() },
                     title = when (title) {
                         stringResource(R.string.term_of_use) -> stringResource(R.string.term_of_use)
@@ -90,6 +89,7 @@ fun TOUAndPPScreen(
                     rightButton = null,
                     standardPadding = standardPadding
                 )
+
                 else -> TopBar2(
                     onBackClick = { activity?.finish() },
                     title = when (title) {

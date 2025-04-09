@@ -1,10 +1,7 @@
 package com.example.biofit.ui.activity
 
-import android.R.attr.onClick
 import android.app.Activity
-import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +11,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,15 +40,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -62,12 +55,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -84,7 +73,6 @@ import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
-import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.TopBar2
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
@@ -105,8 +93,6 @@ class AIChatbotActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val apiKey = BuildConfig.GOOGLE_API_KEY
-        /*val googleApiKey = BuildConfig.GOOGLE_SEARCH_API_KEY
-        val searchEngineId = BuildConfig.SEARCH_ENGINE_ID*/
         userData = UserSharedPrefsHelper.getUserData(this)
         dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(this)
         val exerciseViewModel = ExerciseViewModel()
@@ -139,7 +125,19 @@ class AIChatbotActivity : ComponentActivity() {
                 else -> this.getString(R.string.unknown)
             }
 
-            "(${this.getString(R.string.exercise)}: ${exercise.exerciseName}, ${this.getString(R.string.level)}: $levelStr, ${this.getString(R.string.intensity)}: $intensityStr, ${this.getString(R.string.time)}: ${exercise.time} ${this.getString(R.string.minutes)}, ${this.getString(R.string.burned_calories)}: ${exercise.burnedCalories} ${this.getString(R.string.kcal)}, ${this.getString(R.string.session)}: $sessionStr, ${this.getString(R.string.day)}: ${exercise.date})"
+            "(${this.getString(R.string.exercise)}: ${exercise.exerciseName}, ${this.getString(R.string.level)}: $levelStr, ${
+                this.getString(
+                    R.string.intensity
+                )
+            }: $intensityStr, ${this.getString(R.string.time)}: ${exercise.time} ${this.getString(R.string.minutes)}, ${
+                this.getString(
+                    R.string.burned_calories
+                )
+            }: ${exercise.burnedCalories} ${this.getString(R.string.kcal)}, ${this.getString(R.string.session)}: $sessionStr, ${
+                this.getString(
+                    R.string.day
+                )
+            }: ${exercise.date})"
         }
         val model = ChatBotModel(
             userData = userData ?: UserDTO.default(),
@@ -147,8 +145,6 @@ class AIChatbotActivity : ComponentActivity() {
             exerciseDone = mappedExercises,
             context = this,
             apiKey = apiKey,
-            /*googleApiKey = googleApiKey,
-            searchEngineId = searchEngineId*/
         )
         chatViewModel = AIChatbotViewModel(model, this)
         setContent {
@@ -242,7 +238,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                 state = listState
             ) {
                 items(chatHistory) { chat ->
-                    if (chat.userMessage != " " + stringResource(R.string.hello) + " ") {
+                    if (chat.userMessage != " Hello " && chat.userMessage != " Xin chào ") {
                         ChatBubble(
                             text = chat.userMessage,
                             isUser = true,
@@ -368,7 +364,8 @@ fun ChatBubble(
     standardPadding: Dp,
 ) {
     val context = LocalContext.current
-    val isAnimationFinished = remember { mutableStateOf(ChatPreferencesHelper.hasMessageBeenAnimated(context, text)) }
+    val isAnimationFinished =
+        remember { mutableStateOf(ChatPreferencesHelper.hasMessageBeenAnimated(context, text)) }
 
     Box(
         modifier = Modifier
