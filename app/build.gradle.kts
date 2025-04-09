@@ -99,6 +99,18 @@ dependencies {
     implementation (libs.converter.gson)
     implementation( libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.material)
+
+    // unit Test
+    testImplementation ("junit:junit:4.13.2")
+    testImplementation ("org.mockito:mockito-core:5.2.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("io.mockk:mockk:1.13.5")
+    testImplementation ("app.cash.turbine:turbine:1.0.0")
+    testImplementation(kotlin("test"))
+
+//    androidTestImplementation ("org.robolectric:robolectric:4.9")
 }
 
 fun getLocalProperty(key: String): String {
