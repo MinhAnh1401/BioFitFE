@@ -77,6 +77,7 @@ import com.example.biofit.ui.screen.PlanningScreen
 import com.example.biofit.ui.screen.ProfileScreen
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.ExerciseViewModel
 import com.example.biofit.view_model.SubscriptionViewModel
 import java.time.LocalDateTime
@@ -178,6 +179,9 @@ class MainActivity : ComponentActivity() {
                             )
                             val viewModel = AIChatbotViewModel(model, context)
                             viewModel.clearChatHistory() // Xóa lịch sử chat
+
+                            val descriptiveViewModel = AIDescriptiveViewModel(model, context)
+                            descriptiveViewModel.clearChatHistory() // Xóa lịch sử chat
 
                             val activity = context as? Activity
                             val userSharedPreferences = activity?.getSharedPreferences("UserPrefs",
