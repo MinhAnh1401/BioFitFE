@@ -1,9 +1,11 @@
 package com.example.biofit.ui.activity
 
 import android.app.Activity
+import androidx.activity.viewModels
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +35,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,8 +54,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.FoodDTO
+import com.example.biofit.data.model.dto.FoodInfoDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.FoodItem
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -59,15 +69,21 @@ import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.FoodViewModel
 import com.patrykandpatrick.vico.core.extension.sumOf
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class TrackActivity : ComponentActivity() {
+    private val foodViewModel: FoodViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val userId = UserSharedPrefsHelper.getUserData(this)?.userId ?: 0L
+        foodViewModel.fetchFood(userId)
         enableEdgeToEdge()
         val initialSelectedOption = intent.getIntExtra("SESSION_TITLE", R.string.morning)
         setContent {
             BioFitTheme {
-                TrackScreen(initialSelectedOption = initialSelectedOption)
+                TrackScreen(initialSelectedOption = initialSelectedOption,userId = userId)
             }
         }
     }
@@ -76,15 +92,21 @@ class TrackActivity : ComponentActivity() {
         super.onConfigurationChanged(newConfig)
         recreate()
     }
+
+    override fun onResume() {
+        super.onResume()
+        val userId = UserSharedPrefsHelper.getUserData(this)?.userId ?: 0L
+        foodViewModel.fetchFood(userId)
+    }
 }
 
 @Composable
 fun TrackScreen(
     initialSelectedOption: Int,
+    userId: Long
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
-
 
     val standardPadding = getStandardPadding().first
     val modifier = getStandardPadding().second
@@ -185,7 +207,8 @@ fun TrackScreen(
             TrackContent(
                 selectedOption = selectedOption,
                 standardPadding = standardPadding,
-                modifier = modifier
+                modifier = modifier,
+                userId = userId
             )
         }
     }
@@ -195,8 +218,28 @@ fun TrackScreen(
 fun TrackContent(
     selectedOption: Int,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    userId: Long,
+    foodViewModel: FoodViewModel = viewModel()
 ) {
+
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+
+    LaunchedEffect(userId) {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        foodViewModel.fetchFoodDoneList(userId, today)
+    }
+
+    val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+        foodViewModel.foodList.value.find { it.foodId == foodDone.foodId }
+    }
+    val foodListInfoDTO = foodListDTO.map { it.toFoodInfoDTO() }
+
+    val foodListMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
+    val foodListAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
+    val foodListEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
+    val foodListSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
+
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -213,7 +256,11 @@ fun TrackContent(
                     selectedOption = selectedOption,
                     standardPadding = standardPadding,
                     modifier = modifier,
-                    foodId = 0
+                    foodListMorning = foodListMorning,
+                    foodListAfternoon = foodListAfternoon,
+                    foodListEvening = foodListEvening,
+                    foodListSnack = foodListSnack
+
                 )
             }
 
@@ -228,7 +275,8 @@ fun TrackContent(
                 MenuForSession(
                     selectedOption = selectedOption,
                     standardPadding = standardPadding,
-                    modifier = modifier
+                    modifier = modifier,
+                    userId = userId
                 )
             }
         }
@@ -272,8 +320,17 @@ fun NutritionalComposition(
     selectedOption: Int,
     standardPadding: Dp,
     modifier: Modifier,
-    foodId: Long
+    foodListMorning: List<FoodInfoDTO>,
+    foodListAfternoon: List<FoodInfoDTO>,
+    foodListEvening: List<FoodInfoDTO>,
+    foodListSnack: List<FoodInfoDTO>
 ) {
+
+    val food1 = foodListMorning.firstOrNull() ?: FoodDTO.default().toFoodInfoDTO()
+    val food2 = foodListAfternoon.firstOrNull() ?: FoodDTO.default().toFoodInfoDTO()
+    val food3 = foodListEvening.firstOrNull() ?: FoodDTO.default().toFoodInfoDTO()
+    val food4 = foodListSnack.firstOrNull() ?: FoodDTO.default().toFoodInfoDTO()
+
     val morningMacroTable = listOf(
         Triple(
             food1.protein.first,
@@ -311,12 +368,12 @@ fun NutritionalComposition(
     )
 
     val snackMacroTable = listOf(
-        Triple(food1.protein.first, food1.protein.second, foodListSnack.sumOf { it.protein.third }),
+        Triple(food4.protein.first, food4.protein.second, foodListSnack.sumOf { it.protein.third }),
         Triple(
-            food1.carbohydrate.first,
-            food1.carbohydrate.second,
+            food4.carbohydrate.first,
+            food4.carbohydrate.second,
             foodListSnack.sumOf { it.carbohydrate.third }),
-        Triple(food1.fat.first, food1.fat.second, foodListSnack.sumOf { it.fat.third })
+        Triple(food4.fat.first, food4.fat.second, foodListSnack.sumOf { it.fat.third })
     )
 
     val sessionMacroTable = when (selectedOption) {
@@ -404,10 +461,51 @@ fun NutritionalComposition(
 fun MenuForSession(
     selectedOption: Int,
     standardPadding: Dp,
-    modifier: Modifier
-) {
+    modifier: Modifier,
+    userId : Long,
+    foodViewModel: FoodViewModel = viewModel(),
+    ) {
     val context = LocalContext.current
     val activity = context as? Activity
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                foodViewModel.fetchFoodDoneList(userId, today)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // Lấy danh sách món ăn đã ăn từ FoodViewModel
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+
+    LaunchedEffect(userId) {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        foodViewModel.fetchFoodDoneList(userId, today)
+    }
+
+    Log.d("MenuForSession", "Food done list size: ${foodDoneList.size}")
+
+    val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+        foodViewModel.foodList.value.find { it.foodId == foodDone.foodId }
+    }
+    val foodListInfoDTO = foodListDTO.map { it.toFoodInfoDTO() }
+
+    Log.d("MenuForSession", "Food info list size: ${foodListInfoDTO.size}")
+
+    val foodListMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
+    val foodListAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
+    val foodListEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
+    val foodListSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
 
     val meal = when (selectedOption) {
         R.string.morning -> R.string.breakfast
@@ -431,7 +529,7 @@ fun MenuForSession(
         ) {
             when (selectedOption) {
                 R.string.morning ->
-                    foodListMorning.forEachIndexed { index, _ ->
+                    foodListMorning.forEachIndexed { index, food ->
                         var expanded by remember { mutableStateOf(false) }
 
                         Box {
@@ -460,7 +558,10 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        val intent = Intent(it, FoodDetailActivity::class.java)
+                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
+                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
+                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
+                                        }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -483,9 +584,11 @@ fun MenuForSession(
                                     onClick = {
                                         activity?.let {
                                             val intent =
-                                                Intent(it, EditFoodActivity::class.java).apply {
-                                                    /*putExtra("exerciseId", exercise.exerciseId)
-                                                    putExtra("exerciseDTO", exercise)*/
+                                                Intent(
+                                                    it,
+                                                    EditFoodActivity::class.java
+                                                ).apply {
+                                                    putExtra("foodId", food.foodId)
                                                 }
                                             it.startActivity(intent)
                                         }
@@ -509,19 +612,18 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        /*Log.d(
-                                            "ExerciseListScreen",
-                                            "Deleting exercise: ${exercise.exerciseId}"
-                                        )
-                                        exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        matchingFoodDone?.let {
+                                            foodViewModel.deleteFoodDone(it.foodDoneId)
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.food_deleted_successfully),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                         expanded = false
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.food_deleted_successfully),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     },
-                                    leadingIcon = {
+                                            leadingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.trash),
                                             contentDescription = stringResource(R.string.delete_food),
@@ -535,7 +637,7 @@ fun MenuForSession(
                     }
 
                 R.string.afternoon ->
-                    foodListAfternoon.forEachIndexed { index, _ ->
+                    foodListAfternoon.forEachIndexed { index, food ->
                         var expanded by remember { mutableStateOf(false) }
 
                         Box {
@@ -564,7 +666,10 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        val intent = Intent(it, FoodDetailActivity::class.java)
+                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
+                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
+                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
+                                        }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -587,9 +692,11 @@ fun MenuForSession(
                                     onClick = {
                                         activity?.let {
                                             val intent =
-                                                Intent(it, EditFoodActivity::class.java).apply {
-                                                    /*putExtra("exerciseId", exercise.exerciseId)
-                                                    putExtra("exerciseDTO", exercise)*/
+                                                Intent(
+                                                    it,
+                                                    EditFoodActivity::class.java
+                                                ).apply {
+                                                    putExtra("foodId", food.foodId)
                                                 }
                                             it.startActivity(intent)
                                         }
@@ -613,17 +720,16 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        /*Log.d(
-                                            "ExerciseListScreen",
-                                            "Deleting exercise: ${exercise.exerciseId}"
-                                        )
-                                        exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        matchingFoodDone?.let {
+                                            foodViewModel.deleteFoodDone(it.foodDoneId)
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.food_deleted_successfully),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                         expanded = false
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.food_deleted_successfully),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     },
                                     leadingIcon = {
                                         Icon(
@@ -639,7 +745,7 @@ fun MenuForSession(
                     }
 
                 R.string.evening ->
-                    foodListEvening.forEachIndexed { index, _ ->
+                    foodListEvening.forEachIndexed { index, food ->
                         var expanded by remember { mutableStateOf(false) }
 
                         Box {
@@ -668,7 +774,10 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        val intent = Intent(it, FoodDetailActivity::class.java)
+                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
+                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
+                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
+                                        }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -691,9 +800,11 @@ fun MenuForSession(
                                     onClick = {
                                         activity?.let {
                                             val intent =
-                                                Intent(it, EditFoodActivity::class.java).apply {
-                                                    /*putExtra("exerciseId", exercise.exerciseId)
-                                                    putExtra("exerciseDTO", exercise)*/
+                                                Intent(
+                                                    it,
+                                                    EditFoodActivity::class.java
+                                                ).apply {
+                                                    putExtra("foodId", food.foodId)
                                                 }
                                             it.startActivity(intent)
                                         }
@@ -717,17 +828,16 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        /*Log.d(
-                                            "ExerciseListScreen",
-                                            "Deleting exercise: ${exercise.exerciseId}"
-                                        )
-                                        exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        matchingFoodDone?.let {
+                                            foodViewModel.deleteFoodDone(it.foodDoneId)
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.food_deleted_successfully),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                         expanded = false
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.food_deleted_successfully),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     },
                                     leadingIcon = {
                                         Icon(
@@ -743,7 +853,7 @@ fun MenuForSession(
                     }
 
                 else ->
-                    foodListSnack.forEachIndexed { index, _ ->
+                    foodListSnack.forEachIndexed { index, food ->
                         var expanded by remember { mutableStateOf(false) }
 
                         Box {
@@ -772,7 +882,10 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        val intent = Intent(it, FoodDetailActivity::class.java)
+                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
+                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
+                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
+                                        }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -795,9 +908,11 @@ fun MenuForSession(
                                     onClick = {
                                         activity?.let {
                                             val intent =
-                                                Intent(it, EditFoodActivity::class.java).apply {
-                                                    /*putExtra("exerciseId", exercise.exerciseId)
-                                                    putExtra("exerciseDTO", exercise)*/
+                                                Intent(
+                                                    it,
+                                                    EditFoodActivity::class.java
+                                                ).apply {
+                                                    putExtra("foodId", food.foodId)
                                                 }
                                             it.startActivity(intent)
                                         }
@@ -821,17 +936,16 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        /*Log.d(
-                                            "ExerciseListScreen",
-                                            "Deleting exercise: ${exercise.exerciseId}"
-                                        )
-                                        exerciseViewModel.deleteExercise(exercise.exerciseId)*/
+                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        matchingFoodDone?.let {
+                                            foodViewModel.deleteFoodDone(it.foodDoneId)
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.food_deleted_successfully),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                         expanded = false
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.food_deleted_successfully),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     },
                                     leadingIcon = {
                                         Icon(
@@ -860,7 +974,7 @@ fun MenuForSession(
 @Composable
 private fun TrackScreenDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        TrackScreen(initialSelectedOption = R.string.morning)
+        TrackScreen(initialSelectedOption = R.string.morning, userId = 0)
     }
 }
 
@@ -873,7 +987,7 @@ private fun TrackScreenDarkModePreviewInSmallPhone() {
 @Composable
 private fun TrackScreenPreviewInLargePhone() {
     BioFitTheme {
-        TrackScreen(initialSelectedOption = R.string.morning)
+        TrackScreen(initialSelectedOption = R.string.morning,userId = 0)
     }
 }
 
@@ -887,7 +1001,7 @@ private fun TrackScreenPreviewInLargePhone() {
 @Composable
 private fun TrackScreenPreviewInTablet() {
     BioFitTheme {
-        TrackScreen(initialSelectedOption = R.string.morning)
+        TrackScreen(initialSelectedOption = R.string.morning, userId = 0)
     }
 }
 
@@ -901,7 +1015,7 @@ private fun TrackScreenPreviewInTablet() {
 @Composable
 private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
     BioFitTheme {
-        TrackScreen(initialSelectedOption = R.string.morning)
+        TrackScreen(initialSelectedOption = R.string.morning,userId = 0)
     }
 }
 
@@ -914,7 +1028,7 @@ private fun TrackScreenLandscapeDarkModePreviewInSmallPhone() {
 @Composable
 private fun TrackScreenLandscapePreviewInLargePhone() {
     BioFitTheme {
-        TrackScreen(initialSelectedOption = R.string.morning)
+        TrackScreen(initialSelectedOption = R.string.morning,userId = 0)
     }
 }
 
@@ -928,6 +1042,6 @@ private fun TrackScreenLandscapePreviewInLargePhone() {
 @Composable
 private fun TrackScreenLandscapePreviewInTablet() {
     BioFitTheme {
-        TrackScreen(initialSelectedOption = R.string.morning)
+        TrackScreen(initialSelectedOption = R.string.morning,userId = 0)
     }
 }
