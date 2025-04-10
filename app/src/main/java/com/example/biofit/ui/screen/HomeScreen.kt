@@ -1377,24 +1377,24 @@ fun DailyGoals(
                         )
                     }
                 }
+            }
 
-                Row {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_chatbot_ai),
-                        contentDescription = stringResource(R.string.ai_assistant_bionix),
-                        modifier = Modifier.size(standardPadding * 3f),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+            Row {
+                Icon(
+                    painter = painterResource(R.drawable.ic_chatbot_ai),
+                    contentDescription = stringResource(R.string.ai_assistant_bionix),
+                    modifier = Modifier.size(standardPadding * 3.5f),
+                    tint = MaterialTheme.colorScheme.primary
+                )
 
-                    Column {
-                        chatHistory.forEach { chat ->
-                            if (chat == chatHistory.last()) {
-                                ChatBubble2(
-                                    text = chat.botResponse,
-                                    isUser = false,
-                                    standardPadding = standardPadding
-                                )
-                            }
+                Column {
+                    chatHistory.forEach { chat ->
+                        if (chat == chatHistory.last()) {
+                            ChatBubble2(
+                                text = chat.botResponse,
+                                isUser = false,
+                                standardPadding = standardPadding
+                            )
                         }
                     }
                 }
