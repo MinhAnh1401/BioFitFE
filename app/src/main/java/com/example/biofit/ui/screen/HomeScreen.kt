@@ -100,6 +100,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.util.TableInfo
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
@@ -1013,7 +1014,11 @@ fun DailyGoals(
             context.getString(
                 R.string.intensity
             )
-        }: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${context.getString(R.string.minutes)}, ${
+        }: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${
+            context.getString(
+                R.string.minutes
+            )
+        }, ${
             context.getString(
                 R.string.burned_calories
             )
@@ -1034,15 +1039,17 @@ fun DailyGoals(
 
     var chatHistory by remember { mutableStateOf(chatViewModel.chatHistory) }
     val scope = rememberCoroutineScope()
-    if (chatHistory.isEmpty()) {
+    val weightString = weightDataState.joinToString {
+        "${context.getString(R.string.day)}: ${it.first} - ${
+            context.getString(R.string.weight)
+        }: ${it.second} ${context.getString(R.string.kg)}"
+    }
+    Log.d("WeightString", "WeightString: $weightString")
+    LaunchedEffect(weightDataState) {
         chatViewModel.sendMessage(
-            userInput = " ${stringResource(R.string.write_a_descriptive_sentence_about_my_weight_data)} ${weightDataState.forEach { (date, weight) ->
-                "${context.getString(R.string.day)}: $date, ${context.getString(R.string.weight)}: $weight"
-                Log.d("WeightDataState", "${context.getString(R.string.day)}: $date, ${context.getString(R.string.weight)}: $weight")
-            }} ",
+            userInput = " ${context.getString(R.string.write_a_descriptive_sentence_about_my_weight_data)}: $weightString ",
             scope = scope
         )
-        Log.d("User Input", "User Input: ${weightDataState}")
         chatHistory = chatViewModel.chatHistory
     }
     /*
@@ -1371,20 +1378,25 @@ fun DailyGoals(
                     }
                 }
 
-                chatHistory.forEach { chat ->
-                    if (chat.userMessage != " Write a descriptive sentence about my weight data $weightDataState " && chat.userMessage != " Viết một câu cảm cảm về dữ liệu cân nặng của tôi $weightDataState ") {
-                        ChatBubble2(
-                            text = chat.userMessage,
-                            isUser = true,
-                            standardPadding = standardPadding
-                        )
-                    }
-
-                    ChatBubble2(
-                        text = chat.botResponse,
-                        isUser = false,
-                        standardPadding = standardPadding
+                Row {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chatbot_ai),
+                        contentDescription = stringResource(R.string.ai_assistant_bionix),
+                        modifier = Modifier.size(standardPadding * 3f),
+                        tint = MaterialTheme.colorScheme.primary
                     )
+
+                    Column {
+                        chatHistory.forEach { chat ->
+                            if (chat == chatHistory.last()) {
+                                ChatBubble2(
+                                    text = chat.botResponse,
+                                    isUser = false,
+                                    standardPadding = standardPadding
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -1551,7 +1563,14 @@ fun ChatBubble2(
 ) {
     val context = LocalContext.current
     val isAnimationFinished =
-        remember { mutableStateOf(DescriptivePreferencesHelper.hasMessageBeenAnimated(context, text)) }
+        remember {
+            mutableStateOf(
+                DescriptivePreferencesHelper.hasMessageBeenAnimated(
+                    context,
+                    text
+                )
+            )
+        }
 
     Box(
         modifier = Modifier
@@ -1562,27 +1581,19 @@ fun ChatBubble2(
         Box(
             modifier = Modifier
                 .background(
-                    color = if (isUser) {
-                        MaterialTheme.colorScheme.surfaceContainerHighest
-                    } else {
-                        Color.Transparent
-                    },
+                    color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.25f),
                     shape = MaterialTheme.shapes.extraLarge.copy(
-                        bottomEnd = CornerSize(15f)
+                        topStart = CornerSize(15f)
                     )
                 )
                 .border(
                     width = 1.dp,
-                    color = if (isUser) {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
-                    } else {
-                        Color.Transparent
-                    },
+                    color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.extraLarge.copy(
-                        bottomEnd = CornerSize(15f)
+                        topStart = CornerSize(15f)
                     )
                 )
-                .padding(if (isUser) standardPadding else 0.dp)
+                .padding(standardPadding)
         ) {
             if (isUser) {
                 Text(
@@ -1598,7 +1609,7 @@ fun ChatBubble2(
                             textBodyColor1 = MaterialTheme.colorScheme.primary,
                             textBodyColor2 = MaterialTheme.colorScheme.primary,
                             text = text,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     } else {
                         OneTimeAnimatedGradientText(
@@ -1606,7 +1617,7 @@ fun ChatBubble2(
                             baseColor = MaterialTheme.colorScheme.onBackground,
                             hideColor = Color.Transparent,
                             text = text,
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodyMedium,
                             onAnimationEnd = {
                                 isAnimationFinished.value = true
                                 ChatPreferencesHelper.markMessageAsAnimated(context, text)
@@ -1617,7 +1628,7 @@ fun ChatBubble2(
                     Text(
                         text = text,
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
