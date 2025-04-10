@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
+import android.graphics.drawable.Icon
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -23,8 +24,10 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +43,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -61,6 +66,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -94,23 +100,34 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.biofit.BuildConfig
 import com.example.biofit.R
+import com.example.biofit.data.model.ChatBotModel
+import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.ChatPreferencesHelper
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.DescriptivePreferencesHelper
+import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.AIChatbotActivity
 import com.example.biofit.ui.activity.CaloriesTargetActivity
+import com.example.biofit.ui.activity.ChatBubble
 import com.example.biofit.ui.activity.ExerciseActivity
 import com.example.biofit.ui.activity.NotificationActivity
 import com.example.biofit.ui.activity.OverviewExerciseActivity
 import com.example.biofit.ui.activity.TrackActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
+import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
+import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.DailyLogViewModel
 import com.example.biofit.view_model.ExerciseViewModel
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
@@ -134,6 +151,7 @@ import com.patrykandpatrick.vico.core.entry.entryOf
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
@@ -877,6 +895,7 @@ fun DailyGoals(
         )
     )
     val weightDataState by dailyLogViewModel.weightDataState
+    Log.d("WeightDataState", "DailyMenu: $weightDataState")
     LaunchedEffect(userData.userId) {
         dailyLogViewModel.getWeightHistory(context, userData.userId)
     }
@@ -955,7 +974,80 @@ fun DailyGoals(
     }
 
     var showBMIInfo by remember { mutableStateOf(false) }
+    /*
+    ************************************************************************************************
+    */
+    val apiKey = BuildConfig.GOOGLE_API_KEY
+    val dailyWeightData = DailyLogSharedPrefsHelper.getDailyLog(context)
+    val exerciseViewModel = ExerciseViewModel()
+    val todayy = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    exerciseViewModel.fetchOverviewExercises(
+        context,
+        userData.userId,
+        userData.createdAccount,
+        todayy
+    )
+    val overviewExerciseData = OverviewExerciseSharedPrefsHelper.getListOverviewExercise(context)
+    val mappedExercises = overviewExerciseData?.map { exercise ->
+        val levelStr = when (exercise.level) {
+            0 -> context.getString(R.string.amateur)
+            1 -> context.getString(R.string.professional)
+            else -> context.getString(R.string.unknown)
+        }
 
+        val intensityStr = when (exercise.intensity) {
+            0 -> context.getString(R.string.low)
+            1 -> context.getString(R.string.medium)
+            2 -> context.getString(R.string.high)
+            else -> context.getString(R.string.unknown)
+        }
+
+        val sessionStr = when (exercise.session) {
+            0 -> context.getString(R.string.morning)
+            1 -> context.getString(R.string.afternoon)
+            2 -> context.getString(R.string.evening)
+            else -> context.getString(R.string.unknown)
+        }
+
+        "(${context.getString(R.string.exercise)}: ${exercise.exerciseName}, ${context.getString(R.string.level)}: $levelStr, ${
+            context.getString(
+                R.string.intensity
+            )
+        }: $intensityStr, ${context.getString(R.string.time)}: ${exercise.time} ${context.getString(R.string.minutes)}, ${
+            context.getString(
+                R.string.burned_calories
+            )
+        }: ${exercise.burnedCalories} ${context.getString(R.string.kcal)}, ${context.getString(R.string.session)}: $sessionStr, ${
+            context.getString(
+                R.string.day
+            )
+        }: ${exercise.date})"
+    }
+    val model = ChatBotModel(
+        userData = userData,
+        dailyLogData = dailyWeightData ?: DailyLogDTO.default(),
+        exerciseDone = mappedExercises,
+        context = context,
+        apiKey = apiKey,
+    )
+    val chatViewModel = AIDescriptiveViewModel(model, context)
+
+    var chatHistory by remember { mutableStateOf(chatViewModel.chatHistory) }
+    val scope = rememberCoroutineScope()
+    if (chatHistory.isEmpty()) {
+        chatViewModel.sendMessage(
+            userInput = " ${stringResource(R.string.write_a_descriptive_sentence_about_my_weight_data)} ${weightDataState.forEach { (date, weight) ->
+                "${context.getString(R.string.day)}: $date, ${context.getString(R.string.weight)}: $weight"
+                Log.d("WeightDataState", "${context.getString(R.string.day)}: $date, ${context.getString(R.string.weight)}: $weight")
+            }} ",
+            scope = scope
+        )
+        Log.d("User Input", "User Input: ${weightDataState}")
+        chatHistory = chatViewModel.chatHistory
+    }
+    /*
+    ************************************************************************************************
+    */
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(standardPadding)
@@ -1278,6 +1370,22 @@ fun DailyGoals(
                         )
                     }
                 }
+
+                chatHistory.forEach { chat ->
+                    if (chat.userMessage != " Write a descriptive sentence about my weight data $weightDataState " && chat.userMessage != " Viết một câu cảm cảm về dữ liệu cân nặng của tôi $weightDataState ") {
+                        ChatBubble2(
+                            text = chat.userMessage,
+                            isUser = true,
+                            standardPadding = standardPadding
+                        )
+                    }
+
+                    ChatBubble2(
+                        text = chat.botResponse,
+                        isUser = false,
+                        standardPadding = standardPadding
+                    )
+                }
             }
 
             WeightLineChart(weightDataState)
@@ -1429,6 +1537,88 @@ fun DailyGoals(
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ChatBubble2(
+    text: String,
+    isUser: Boolean,
+    standardPadding: Dp,
+) {
+    val context = LocalContext.current
+    val isAnimationFinished =
+        remember { mutableStateOf(DescriptivePreferencesHelper.hasMessageBeenAnimated(context, text)) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(standardPadding),
+        contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    color = if (isUser) {
+                        MaterialTheme.colorScheme.surfaceContainerHighest
+                    } else {
+                        Color.Transparent
+                    },
+                    shape = MaterialTheme.shapes.extraLarge.copy(
+                        bottomEnd = CornerSize(15f)
+                    )
+                )
+                .border(
+                    width = 1.dp,
+                    color = if (isUser) {
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
+                    } else {
+                        Color.Transparent
+                    },
+                    shape = MaterialTheme.shapes.extraLarge.copy(
+                        bottomEnd = CornerSize(15f)
+                    )
+                )
+                .padding(if (isUser) standardPadding else 0.dp)
+        ) {
+            if (isUser) {
+                Text(
+                    text = text,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            } else {
+                if (!isAnimationFinished.value) {
+                    if (text == stringResource(R.string.composing_a_message)) {
+                        AnimatedGradientText(
+                            highlightColor = Color(0xFFAEEA00),
+                            textBodyColor1 = MaterialTheme.colorScheme.primary,
+                            textBodyColor2 = MaterialTheme.colorScheme.primary,
+                            text = text,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    } else {
+                        OneTimeAnimatedGradientText(
+                            highlightColor = MaterialTheme.colorScheme.primary,
+                            baseColor = MaterialTheme.colorScheme.onBackground,
+                            hideColor = Color.Transparent,
+                            text = text,
+                            style = MaterialTheme.typography.bodyLarge,
+                            onAnimationEnd = {
+                                isAnimationFinished.value = true
+                                ChatPreferencesHelper.markMessageAsAnimated(context, text)
+                            }
+                        )
+                    }
+                } else {
+                    Text(
+                        text = text,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
         }

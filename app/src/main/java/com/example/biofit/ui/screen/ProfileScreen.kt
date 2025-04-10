@@ -91,6 +91,7 @@ import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
+import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.ExerciseViewModel
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.SubscriptionViewModel
@@ -917,6 +918,9 @@ fun signOut(
     )
     val viewModel = AIChatbotViewModel(model, context)
     viewModel.clearChatHistory() // Xóa lịch sử chat
+
+    val descriptiveViewModel = AIDescriptiveViewModel(model, context)
+    descriptiveViewModel.clearChatHistory() // Xóa lịch sử chat
 
     val userSharedPreferences = activity.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     val dailyLogSharedPreferences =
