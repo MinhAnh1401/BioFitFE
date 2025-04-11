@@ -150,7 +150,11 @@ interface ApiService {
     fun getFood(@Path("userId") userId: Long): Call<List<FoodDTO>>
 
     @POST("api/food/create")
-    fun createFood(@Body foodDTO: FoodDTO): Call<FoodDTO>
+    @Multipart
+    fun createFood(
+        @Part("food") foodJson: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Call<FoodDTO>
 
     @DELETE("api/food/{foodId}")
     fun deleteFood(@Path("foodId") foodId: Long): Call<Void>
@@ -159,6 +163,14 @@ interface ApiService {
     fun updateFood(
         @Path("foodId") foodId: Long,
         @Body foodDTO: FoodDTO
+    ): Call<FoodDTO>
+
+    @Multipart
+    @PUT("api/food/{foodId}")
+    fun updateFoodWithImage(
+        @Path("foodId") foodId: Long,
+        @Part("food") foodJson: RequestBody,
+        @Part image: MultipartBody.Part?
     ): Call<FoodDTO>
 
     /*

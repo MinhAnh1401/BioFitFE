@@ -404,4 +404,5 @@
     <string name="are_you_sure_you_want_to_delete_this_exercise">Are you sure you want to delete this exercise</string>
     <string name="failed_to_delete_exercise">Failed to delete exercise</string>
     <string name="write_a_descriptive_sentence_about_my_weight_data">Thể hiện cảm xúc đối với dữ liệu cân nặng này của tôi bằng một câu nói</string>
+    <string name="choose_how_to_set_food_image">Chọn cách cài đặt ảnh thức ăn</string>
 </resources>

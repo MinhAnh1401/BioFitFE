@@ -2,14 +2,19 @@ package com.example.biofit.ui.activity
 
 import android.app.Activity
 import android.content.res.Configuration
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +40,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +52,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -55,6 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.FoodDTO
@@ -63,6 +74,7 @@ import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.SelectionDialog
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
+import com.example.biofit.ui.screen.base64ToBitmap
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.FoodViewModel
 import java.time.LocalDate
@@ -97,6 +109,7 @@ fun CreateFoodScreen(
     val context = LocalContext.current
     val activity = context as? Activity
 
+    val foodImage by remember { mutableStateOf<String?>(null) }
     val sessionString = stringResource(session)
     var foodName by remember { mutableStateOf("") }
     var servingSize by remember { mutableStateOf("") }
@@ -137,6 +150,7 @@ fun CreateFoodScreen(
             )
 
             CreateFoodContent(
+                foodImage = foodImage,
                 session = sessionString,
                 FoodViewModel = FoodViewModel,
                 userData = userData,
@@ -168,8 +182,10 @@ fun CreateFoodScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun CreateFoodContent(
+    foodImage: String?,
     session: String,
     FoodViewModel: FoodViewModel,
     userData: UserDTO,
@@ -206,6 +222,49 @@ fun CreateFoodContent(
 
     val focusManager = LocalFocusManager.current
 
+    val foodViewModel: FoodViewModel = viewModel()
+    val foodImage by foodViewModel.foodImageBitmap.collectAsStateWithLifecycle()
+    var showFoodImageDialog by rememberSaveable { mutableStateOf(false) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(),
+        onResult = { bitmap ->
+            bitmap?.let {
+                foodViewModel.setFoodImage(it)
+            }
+        }
+    )
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                val source = ImageDecoder.createSource(context.contentResolver, it)
+                val bitmap = ImageDecoder.decodeBitmap(source)
+                foodViewModel.setFoodImage(bitmap)
+            }
+        }
+    )
+
+    // Lắng nghe kết quả từ createFood
+    val createFoodResult by foodViewModel.createFoodResult.collectAsState()
+
+    LaunchedEffect(createFoodResult) {
+        createFoodResult?.let { result ->
+            when {
+                result.isSuccess -> {
+                    Toast.makeText(context, "Lưu món ăn thành công!", Toast.LENGTH_SHORT).show()
+                    activity?.finish()
+                }
+                result.isFailure -> {
+                    Toast.makeText(context, "Lưu món ăn thất bại: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            // Reset trạng thái
+            foodViewModel.resetCreateFoodResult()
+        }
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2),
     ) {
@@ -215,7 +274,11 @@ fun CreateFoodContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(R.drawable.img_food_default),
+                    painter = if (foodImage != null) {
+                        BitmapPainter(foodImage!!.asImageBitmap())
+                    }else {
+                        painterResource(R.drawable.img_food_default)
+                    },
                     contentDescription = "Food image",
                     modifier = Modifier
                         .size(standardPadding * 15)
@@ -225,10 +288,33 @@ fun CreateFoodContent(
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
                             shape = MaterialTheme.shapes.extraLarge
                         )
+                        .clickable { showFoodImageDialog = true },
+                    contentScale = ContentScale.Crop
                 )
 
+                if (showFoodImageDialog) {
+                    SelectionDialog(
+                        selectedOption = null,
+                        onOptionSelected = { option ->
+                            showFoodImageDialog = false
+                            when (option) {
+                                context.getString(R.string.take_a_photo) -> cameraLauncher.launch(null)
+
+                                context.getString(R.string.choose_from_gallery) -> galleryLauncher.launch("image/*")
+                            }
+                        },
+                        onDismissRequest = { showFoodImageDialog = false },
+                        title = R.string.choose_how_to_set_food_image,
+                        listOptions = listOf(
+                            stringResource(R.string.take_a_photo),
+                            stringResource(R.string.choose_from_gallery),
+                        ),
+                        standardPadding = standardPadding
+                    )
+                }
+
                 TextButton(
-                    onClick = { TODO() }
+                    onClick = { galleryLauncher.launch("image/*") }
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
@@ -512,7 +598,6 @@ fun CreateFoodContent(
                             foodName = foodName,
                             session = session,
                             date = currentDate,
-                            foodImage = "",
                             servingSize = servingSize.toFloatOrNull() ?: 0f,
                             servingSizeUnit = selectedUnitMeasure,
                             mass = mass.toFloatOrNull() ?: 0f,
@@ -522,7 +607,7 @@ fun CreateFoodContent(
                             fat = fat.toFloatOrNull() ?: 0f,
                             sodium = sodium.toFloatOrNull() ?: 0f
                         )
-                        FoodViewModel.createFood(foodDTO)
+                        foodViewModel.createFood(foodDTO, context)
                         activity?.finish() // Đóng màn hình sau khi lưu
                     },
                     colors = ButtonDefaults.buttonColors(

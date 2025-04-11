@@ -11,7 +11,6 @@ data class FoodDTO(
     val foodName: String,
     val session: String,
     val date: String,
-    val foodImage: String,
     val servingSize: Float,
     val servingSizeUnit: String,
     val mass: Float,
@@ -19,7 +18,8 @@ data class FoodDTO(
     val protein: Float,
     val carbohydrate: Float,
     val fat: Float,
-    val sodium: Float
+    val sodium: Float,
+    val foodImage: String? = null
 ) : Parcelable {
 
     companion object {
@@ -30,7 +30,6 @@ data class FoodDTO(
                 foodName = "N/A",
                 session = "morning",
                 date = "",
-                foodImage = "",
                 servingSize = 0f,
                 servingSizeUnit = "g",
                 mass = 0f,
@@ -38,7 +37,8 @@ data class FoodDTO(
                 protein = 0f,
                 carbohydrate = 0f,
                 fat = 0f,
-                sodium = 0f
+                sodium = 0f,
+                foodImage = null
             )
         }
     }
@@ -46,7 +46,7 @@ data class FoodDTO(
     fun toFoodInfoDTO(): FoodInfoDTO {
         return FoodInfoDTO(
             foodId = this.foodId,
-            foodImage = R.drawable.img_food_default,
+            foodImage = this.foodImage,
             foodName = this.foodName,
             servingSize = Pair(this.servingSize, this.servingSizeUnit),
             mass = this.mass,
