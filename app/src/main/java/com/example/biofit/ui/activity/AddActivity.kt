@@ -42,6 +42,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -60,6 +62,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
@@ -72,6 +77,9 @@ import com.example.biofit.view_model.FoodViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.example.biofit.data.model.dto.FoodDoneDTO
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -256,9 +264,34 @@ fun AddContent(
     val context = LocalContext.current
     val activity = context as? Activity
 
+    val userId = UserSharedPrefsHelper.getUserData(context)?.userId ?: 0L
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                foodViewModel.fetchFood(userId)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     val foodListDTO by foodViewModel.foodList.collectAsState()
     // Chuyển đổi danh sách FoodDTO thành FoodInfoDTO
-    val foodListInfoDTO = foodListDTO.map { it.toFoodInfoDTO() }
+
+    val foodListInfoDTO = remember(foodListDTO) {
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
+
+    LaunchedEffect(foodListDTO) {
+        foodViewModel.fetchFood(userId)
+    }
 
     var search by remember { mutableStateOf("") }
 
@@ -323,44 +356,12 @@ fun AddContent(
         )
     }
 
-    val foodListRecentMorning = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.morning),
-            ignoreCase = true
-        )
-    }
-    val foodListRecentAfternoon = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.afternoon),
-            ignoreCase = true
-        )
-    }
-    val foodListRecentEvening = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.evening),
-            ignoreCase = true
-        )
-    }
-    val foodListRecentSnack = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.snack),
-            ignoreCase = true
-        )
-    }
-
 
     val foodListCreate = when (selectedOption) {
         R.string.morning -> foodListCreateMorning
         R.string.afternoon -> foodListCreateAfternoon
         R.string.evening -> foodListCreateEvening
         else -> foodListCreateSnack
-    }
-
-    val foodListRecent = when (selectedOption) {
-        R.string.morning -> foodListRecentMorning
-        R.string.afternoon -> foodListRecentAfternoon
-        R.string.evening -> foodListRecentEvening
-        else -> foodListRecentSnack
     }
 
     val filteredList = if (search.isEmpty()) {
