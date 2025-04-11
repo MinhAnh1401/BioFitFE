@@ -608,6 +608,7 @@ fun CreateFoodContent(
                             sodium = sodium.toFloatOrNull() ?: 0f
                         )
                         foodViewModel.createFood(foodDTO, context)
+                        foodViewModel.fetchFood(userId)
                         activity?.finish() // Đóng màn hình sau khi lưu
                     },
                     colors = ButtonDefaults.buttonColors(

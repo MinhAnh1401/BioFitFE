@@ -224,16 +224,19 @@ fun TrackContent(
 ) {
 
     val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    val foodListInfoDTO = remember(foodDoneList, foodList) {
+        val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+            foodList.find { it.foodId == foodDone.foodId }
+        }
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
 
     LaunchedEffect(userId) {
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         foodViewModel.fetchFoodDoneList(userId, today)
     }
-
-    val foodListDTO = foodDoneList.mapNotNull { foodDone ->
-        foodViewModel.foodList.value.find { it.foodId == foodDone.foodId }
-    }
-    val foodListInfoDTO = foodListDTO.map { it.toFoodInfoDTO() }
 
     val foodListMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
     val foodListAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
@@ -470,6 +473,15 @@ fun MenuForSession(
 
     // Lấy danh sách món ăn đã ăn từ FoodViewModel
     val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    // Tính toán foodListDTO và foodListInfoDTO trong LaunchedEffect để đảm bảo cập nhật khi foodDoneList hoặc foodList thay đổi
+    val foodListInfoDTO = remember(foodDoneList, foodList) {
+        val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+            foodList.find { it.foodId == foodDone.foodId }
+        }
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
 
     LaunchedEffect(userId) {
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
@@ -477,12 +489,6 @@ fun MenuForSession(
     }
 
     Log.d("MenuForSession", "Food done list size: ${foodDoneList.size}")
-
-    val foodListDTO = foodDoneList.mapNotNull { foodDone ->
-        foodViewModel.foodList.value.find { it.foodId == foodDone.foodId }
-    }
-    val foodListInfoDTO = foodListDTO.map { it.toFoodInfoDTO() }
-
     Log.d("MenuForSession", "Food info list size: ${foodListInfoDTO.size}")
 
     val foodListMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }

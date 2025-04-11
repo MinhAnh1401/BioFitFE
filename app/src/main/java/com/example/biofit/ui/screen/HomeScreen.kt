@@ -60,7 +60,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -94,11 +96,15 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.util.TableInfo
 import com.example.biofit.BuildConfig
@@ -131,6 +137,7 @@ import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.DailyLogViewModel
 import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.FoodViewModel
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -149,12 +156,15 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import com.patrykandpatrick.vico.core.extension.sumByFloat
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 
 @Composable
 fun HomeScreen(userData: UserDTO) {
@@ -300,6 +310,7 @@ fun HomeContent(
 
         item {
             DailyMenu(
+                userData = userData,
                 standardPadding = standardPadding,
                 modifier = modifier
             )
@@ -686,24 +697,104 @@ fun RemainingCaloriesChart(
 
 @Composable
 fun DailyMenu(
+    userData: UserDTO,
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    foodViewModel: FoodViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val loadedBreakfast = 100 // Thay đổi thành lượng calo đã nạp
-    val targetBreakfast = 1000 // Thay đổi thành lượng calo mục tiêu
-    val foodBreakfast = "Food name, ..." // Thay đổi thành tên món ăn
-    val loadedLunch = 100 // Thay đổi thành lượng calo đã nạp
-    val targetLunch = 1000 // Thay đổi thành lượng calo mục tiêu
-    val foodLunch = "Food name, ..." // Thay đổi thành tên món ăn
-    val loadedDinner = 100 // Thay đổi thành lượng calo đã nạp
-    val targetDinner = 1000 // Thay đổi thành lượng calo mục tiêu
-    val foodDinner = "Food name, ..." // Thay đổi thành tên món ăn
-    val loadedSnack = 100 // Thay đổi thành lượng calo đã nạp
-    val targetSnack = 1000 // Thay đổi thành lượng calo mục tiêu
-    val foodSnack = "Food name, ..." // Thay đổi thành tên món ăn
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val today =
+                    SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(Date())
+                foodViewModel.fetchFood(userData.userId)
+                foodViewModel.fetchFoodDoneList(userData.userId, today)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // Lấy danh sách món ăn đã ăn từ FoodViewModel
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    // Tính toán foodListDTO và foodListInfoDTO trong LaunchedEffect để đảm bảo cập nhật khi foodDoneList hoặc foodList thay đổi
+    val foodListInfoDTO = remember(foodDoneList, foodList) {
+        val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+            foodList.find { it.foodId == foodDone.foodId }
+        }
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
+
+    LaunchedEffect(userData.userId) {
+        val today = SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(Date())
+        foodViewModel.fetchFoodDoneList(userData.userId, today)
+    }
+
+    Log.d("MenuForSession", "Food done list size: ${foodDoneList.size}")
+    Log.d("MenuForSession", "Food info list size: ${foodListInfoDTO.size}")
+
+    val foodListMorning = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.morning),
+            ignoreCase = true
+        )
+    }
+    val foodListAfternoon = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.afternoon),
+            ignoreCase = true
+        )
+    }
+    val foodListEvening = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.evening),
+            ignoreCase = true
+        )
+    }
+    val foodListSnack = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.snack),
+            ignoreCase = true
+        )
+    }
+
+    val caloOfDaily = when (userData.gender) {
+        0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..45 -> 2000f
+            else -> 1500f
+        }
+
+        1 -> when (userData.getAgeInt(userData.dateOfBirth)) {
+            in 0..30 -> 1500f
+            else -> 1200f
+        }
+
+        else -> 0f
+    }
+
+    val loadedBreakfast = foodListMorning.sumByFloat { it.calories }
+    val targetBreakfast = caloOfDaily.times(0.25f)
+    val foodBreakfast = foodListMorning.joinToString { it.foodName }
+    val loadedLunch = foodListAfternoon.sumByFloat { it.calories }
+    val targetLunch = caloOfDaily.times(0.35f)
+    val foodLunch = foodListAfternoon.joinToString { it.foodName }
+    val loadedDinner = foodListEvening.sumByFloat { it.calories }
+    val targetDinner = caloOfDaily.times(0.25f)
+    val foodDinner = foodListEvening.joinToString { it.foodName }
+    val loadedSnack = foodListSnack.sumByFloat { it.calories }
+    val targetSnack = caloOfDaily.times(0.15f)
+    val foodSnack = foodListSnack.joinToString { it.foodName }
 
     Column(
         modifier = modifier,
@@ -821,8 +912,8 @@ fun DailyCard(
     headIconColor: Color,
     desIcon: Int,
     title: Int,
-    loaded: Int,
-    target: Int,
+    loaded: Float,
+    target: Float,
     foodName: String,
     standardPadding: Dp
 ) {
@@ -831,7 +922,9 @@ fun DailyCard(
         modifier = modifier
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(standardPadding)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -858,7 +951,7 @@ fun DailyCard(
             )
 
             Text(
-                text = "$loaded / $target" + stringResource(R.string.gam),
+                text = "$loaded / $target " + stringResource(R.string.kcal),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -868,6 +961,8 @@ fun DailyCard(
             Text(
                 text = foodName,
                 color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelSmall
             )
 
@@ -1604,13 +1699,7 @@ fun ChatBubble2(
             } else {
                 if (!isAnimationFinished.value) {
                     if (text == stringResource(R.string.composing_a_message)) {
-                        AnimatedGradientText(
-                            highlightColor = Color(0xFFAEEA00),
-                            textBodyColor1 = MaterialTheme.colorScheme.primary,
-                            textBodyColor2 = MaterialTheme.colorScheme.primary,
-                            text = text,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        ""
                     } else {
                         OneTimeAnimatedGradientText(
                             highlightColor = MaterialTheme.colorScheme.primary,
@@ -1626,7 +1715,7 @@ fun ChatBubble2(
                     }
                 } else {
                     Text(
-                        text = text,
+                        text = if (text == stringResource(R.string.composing_a_message)) "" else text,
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyMedium
                     )
