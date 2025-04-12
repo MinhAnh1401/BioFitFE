@@ -379,7 +379,7 @@ fun OverviewAndSearchBar(
     ) {
         Column(
             modifier = Modifier.padding(all = standardPadding),
-            verticalArrangement = Arrangement.spacedBy(space = standardPadding)
+            verticalArrangement = Arrangement.spacedBy(space = standardPadding * 2)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(space = standardPadding),
@@ -399,7 +399,7 @@ fun OverviewAndSearchBar(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                ElevatedButton(
+                /*ElevatedButton(
                     onClick = {
                         activity?.let {
                             val intent = Intent(it, CaloriesTargetActivity::class.java)
@@ -415,7 +415,7 @@ fun OverviewAndSearchBar(
                         text = stringResource(id = R.string.edit),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-                }
+                }*/
             }
 
             Row(
@@ -569,7 +569,7 @@ fun OverviewAndSearchBar(
                 Text(
                     text = stringResource(R.string.ai_assistant_bionix),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
 

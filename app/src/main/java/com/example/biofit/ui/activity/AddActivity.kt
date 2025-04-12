@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
@@ -270,7 +271,7 @@ fun AddContent(
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
+            if (event == Lifecycle.Event.ON_START) {
                 foodViewModel.fetchFood(userId)
             }
         }
@@ -282,15 +283,11 @@ fun AddContent(
         }
     }
 
-    val foodListDTO by foodViewModel.foodList.collectAsState()
+    val foodListDTO by foodViewModel.foodList.collectAsStateWithLifecycle()
     // Chuyển đổi danh sách FoodDTO thành FoodInfoDTO
 
     val foodListInfoDTO = remember(foodListDTO) {
         foodListDTO.map { it.toFoodInfoDTO() }
-    }
-
-    LaunchedEffect(foodListDTO) {
-        foodViewModel.fetchFood(userId)
     }
 
     var search by remember { mutableStateOf("") }
@@ -402,7 +399,7 @@ fun AddContent(
                                         foodName = food.foodName,
                                         servingSize = Pair(
                                             food.servingSize.first,
-                                            food.servingSize.second
+                                            stringResource(R.string.serving_size)
                                         ),
                                         mass = food.mass,
                                         calories = food.calories,

@@ -110,7 +110,7 @@ fun FoodItem(
             )
 
             Text(
-                text = "${servingSize.first} ${servingSize.second}, " +
+                text = "${servingSize.second}: ${servingSize.first}, " +
                         "${
                             mass.toBigDecimal().setScale(
                                 1,
