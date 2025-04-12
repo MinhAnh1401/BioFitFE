@@ -376,169 +376,169 @@ fun AddContent(
         item {
             Log.d("FoodList", "foodListCreate: $foodListCreate")
             when (selectedToggle) {
-                R.string.recently ->
-                    when (foodListRecent.isNotEmpty()) {
-                        true ->
-                            Column(
-                                modifier = modifier,
-                                verticalArrangement = Arrangement.spacedBy(standardPadding)
-                            ) {
-                                foodListRecent.forEachIndexed { index, food ->
-                                    var expanded by remember { mutableStateOf(false) }
-
-                                    Box {
-                                        FoodItem(
-                                            foodImg = foodListRecent[index].foodImage,
-                                            foodName = foodListRecent[index].foodName,
-                                            servingSize = Pair(
-                                                foodListRecent[index].servingSize.first,
-                                                foodListRecent[index].servingSize.second
-                                            ),
-                                            mass = foodListRecent[index].mass,
-                                            calories = foodListRecent[index].calories,
-                                            macros = listOf(
-                                                Pair(
-                                                    foodListRecent[index].protein.first,
-                                                    foodListRecent[index].protein.third
-                                                ),
-                                                Pair(
-                                                    foodListRecent[index].carbohydrate.first,
-                                                    foodListRecent[index].carbohydrate.third
-                                                ),
-                                                Pair(
-                                                    foodListRecent[index].fat.first,
-                                                    foodListRecent[index].fat.third
-                                                )
-                                            ),
-                                            onClick = {
-                                                activity?.let {
-                                                    val intent =
-                                                        Intent(it, FoodDetailActivity::class.java)
-                                                    val foodId = foodListRecent[index].foodId
-                                                    intent.putExtra("FOOD_ID", foodId)
-                                                    it.startActivity(intent)
-                                                }
-                                            },
-
-                                            onLongClick = { expanded = true },
-                                            onEatClick = {
-                                                val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                                                // Lấy đúng currentFood từ danh sách chuẩn foodListRecent
-                                                val selectedFoodId = foodListRecent[index].foodId
-                                                val currentFood = foodListRecent.find { it.foodId == selectedFoodId }
-
-                                                if (currentFood != null) {
-                                                    // Kiểm tra xem món ăn đã được thêm vào ngày hôm nay chưa
-                                                    val existingFood = foodViewModel.foodDoneList.value.any {
-                                                        it.foodId == currentFood.foodId &&
-                                                                it.date == currentDate &&
-                                                                it.session.equals(currentFood.session, ignoreCase = true)
-                                                    }
-
-                                                    if (existingFood) {
-                                                        // Nếu món ăn đã được thêm, không cho phép thêm lại và thông báo
-                                                        Toast.makeText(context, "Món này đã được thêm vào hôm nay rồi!", Toast.LENGTH_SHORT).show()
-                                                    } else {
-                                                        // Nếu món ăn chưa được thêm vào ngày hôm nay, tiến hành thêm món ăn mới vào danh sách
-                                                        val foodDoneDTO = FoodDoneDTO.default().copy(
-                                                            foodDoneId = 0,
-                                                            foodId = currentFood.foodId,
-                                                            date = currentDate,
-                                                            session = currentFood.session
-                                                        )
-
-                                                        // Ghi log thông tin về món ăn mới được thêm vào
-                                                        Log.d("DEBUG", "Creating foodDone: $foodDoneDTO")
-
-                                                        // Thêm món ăn vào danh sách
-                                                        foodViewModel.createFoodDone(foodDoneDTO)
-
-                                                        // Thông báo món ăn đã được thêm vào danh sách hôm nay
-                                                        Toast.makeText(context, "Đã thêm món ăn vào danh sách hôm nay!", Toast.LENGTH_SHORT).show()
-                                                    }
-                                                } else {
-                                                    // Thông báo nếu không tìm thấy món ăn trong danh sách
-                                                    Toast.makeText(context, "Không tìm thấy món ăn!", Toast.LENGTH_SHORT).show()
-                                                }
-                                            }
-                                            ,
-                                            standardPadding = standardPadding
-                                        )
-
-                                        DropdownMenu(
-                                            expanded = expanded,
-                                            onDismissRequest = { expanded = false }
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(R.string.edit_food),
-                                                        color = Color(0xFFFF6D00)
-                                                    )
-                                                },
-                                                onClick = {
-                                                    activity?.let {
-                                                        val intent =
-                                                            Intent(
-                                                                it,
-                                                                EditFoodActivity::class.java
-                                                            ).apply {
-                                                                putExtra("foodId", food.foodId)
-                                                            }
-                                                        it.startActivity(intent)
-                                                    }
-                                                    expanded = false
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.ic_edit),
-                                                        contentDescription = stringResource(R.string.edit_food),
-                                                        modifier = Modifier.size(standardPadding * 1.5f),
-                                                        tint = Color(0xFFFF6D00)
-                                                    )
-                                                }
-                                            )
-
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(R.string.delete_food),
-                                                        color = Color(0xFFDD2C00)
-                                                    )
-                                                },
-                                                onClick = {
-                                                    Log.d(
-                                                        "FoodListScreen",
-                                                        "Deleting food: ${food.foodId}"
-                                                    )
-                                                    foodViewModel.deleteFood(food.foodId)
-                                                    expanded = false
-                                                    Toast.makeText(
-                                                        context,
-                                                        context.getString(R.string.food_deleted_successfully),
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.trash),
-                                                        contentDescription = stringResource(R.string.delete_food),
-                                                        modifier = Modifier.size(standardPadding * 1.5f),
-                                                        tint = Color(0xFFDD2C00)
-                                                    )
-                                                }
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                        else -> EmptyAddScreen(
-                            standardPadding = standardPadding,
-                            modifier = modifier,
-                            selectedOption = selectedOption
-                        )
-                    }
+//                R.string.recently ->
+//                    when (foodListRecent.isNotEmpty()) {
+//                        true ->
+//                            Column(
+//                                modifier = modifier,
+//                                verticalArrangement = Arrangement.spacedBy(standardPadding)
+//                            ) {
+//                                foodListRecent.forEachIndexed { index, food ->
+//                                    var expanded by remember { mutableStateOf(false) }
+//
+//                                    Box {
+//                                        FoodItem(
+//                                            foodImg = foodListRecent[index].foodImage,
+//                                            foodName = foodListRecent[index].foodName,
+//                                            servingSize = Pair(
+//                                                foodListRecent[index].servingSize.first,
+//                                                foodListRecent[index].servingSize.second
+//                                            ),
+//                                            mass = foodListRecent[index].mass,
+//                                            calories = foodListRecent[index].calories,
+//                                            macros = listOf(
+//                                                Pair(
+//                                                    foodListRecent[index].protein.first,
+//                                                    foodListRecent[index].protein.third
+//                                                ),
+//                                                Pair(
+//                                                    foodListRecent[index].carbohydrate.first,
+//                                                    foodListRecent[index].carbohydrate.third
+//                                                ),
+//                                                Pair(
+//                                                    foodListRecent[index].fat.first,
+//                                                    foodListRecent[index].fat.third
+//                                                )
+//                                            ),
+//                                            onClick = {
+//                                                activity?.let {
+//                                                    val intent =
+//                                                        Intent(it, FoodDetailActivity::class.java)
+//                                                    val foodId = foodListRecent[index].foodId
+//                                                    intent.putExtra("FOOD_ID", foodId)
+//                                                    it.startActivity(intent)
+//                                                }
+//                                            },
+//
+//                                            onLongClick = { expanded = true },
+//                                            onEatClick = {
+//                                                val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+//                                                // Lấy đúng currentFood từ danh sách chuẩn foodListRecent
+//                                                val selectedFoodId = foodListRecent[index].foodId
+//                                                val currentFood = foodListRecent.find { it.foodId == selectedFoodId }
+//
+//                                                if (currentFood != null) {
+//                                                    // Kiểm tra xem món ăn đã được thêm vào ngày hôm nay chưa
+//                                                    val existingFood = foodViewModel.foodDoneList.value.any {
+//                                                        it.foodId == currentFood.foodId &&
+//                                                                it.date == currentDate &&
+//                                                                it.session.equals(currentFood.session, ignoreCase = true)
+//                                                    }
+//
+//                                                    if (existingFood) {
+//                                                        // Nếu món ăn đã được thêm, không cho phép thêm lại và thông báo
+//                                                        Toast.makeText(context, "Món này đã được thêm vào hôm nay rồi!", Toast.LENGTH_SHORT).show()
+//                                                    } else {
+//                                                        // Nếu món ăn chưa được thêm vào ngày hôm nay, tiến hành thêm món ăn mới vào danh sách
+//                                                        val foodDoneDTO = FoodDoneDTO.default().copy(
+//                                                            foodDoneId = 0,
+//                                                            foodId = currentFood.foodId,
+//                                                            date = currentDate,
+//                                                            session = currentFood.session
+//                                                        )
+//
+//                                                        // Ghi log thông tin về món ăn mới được thêm vào
+//                                                        Log.d("DEBUG", "Creating foodDone: $foodDoneDTO")
+//
+//                                                        // Thêm món ăn vào danh sách
+//                                                        foodViewModel.createFoodDone(foodDoneDTO)
+//
+//                                                        // Thông báo món ăn đã được thêm vào danh sách hôm nay
+//                                                        Toast.makeText(context, "Đã thêm món ăn vào danh sách hôm nay!", Toast.LENGTH_SHORT).show()
+//                                                    }
+//                                                } else {
+//                                                    // Thông báo nếu không tìm thấy món ăn trong danh sách
+//                                                    Toast.makeText(context, "Không tìm thấy món ăn!", Toast.LENGTH_SHORT).show()
+//                                                }
+//                                            }
+//                                            ,
+//                                            standardPadding = standardPadding
+//                                        )
+//
+//                                        DropdownMenu(
+//                                            expanded = expanded,
+//                                            onDismissRequest = { expanded = false }
+//                                        ) {
+//                                            DropdownMenuItem(
+//                                                text = {
+//                                                    Text(
+//                                                        text = stringResource(R.string.edit_food),
+//                                                        color = Color(0xFFFF6D00)
+//                                                    )
+//                                                },
+//                                                onClick = {
+//                                                    activity?.let {
+//                                                        val intent =
+//                                                            Intent(
+//                                                                it,
+//                                                                EditFoodActivity::class.java
+//                                                            ).apply {
+//                                                                putExtra("foodId", food.foodId)
+//                                                            }
+//                                                        it.startActivity(intent)
+//                                                    }
+//                                                    expanded = false
+//                                                },
+//                                                leadingIcon = {
+//                                                    Icon(
+//                                                        painter = painterResource(R.drawable.ic_edit),
+//                                                        contentDescription = stringResource(R.string.edit_food),
+//                                                        modifier = Modifier.size(standardPadding * 1.5f),
+//                                                        tint = Color(0xFFFF6D00)
+//                                                    )
+//                                                }
+//                                            )
+//
+//                                            DropdownMenuItem(
+//                                                text = {
+//                                                    Text(
+//                                                        text = stringResource(R.string.delete_food),
+//                                                        color = Color(0xFFDD2C00)
+//                                                    )
+//                                                },
+//                                                onClick = {
+//                                                    Log.d(
+//                                                        "FoodListScreen",
+//                                                        "Deleting food: ${food.foodId}"
+//                                                    )
+//                                                    foodViewModel.deleteFood(food.foodId)
+//                                                    expanded = false
+//                                                    Toast.makeText(
+//                                                        context,
+//                                                        context.getString(R.string.food_deleted_successfully),
+//                                                        Toast.LENGTH_SHORT
+//                                                    ).show()
+//                                                },
+//                                                leadingIcon = {
+//                                                    Icon(
+//                                                        painter = painterResource(R.drawable.trash),
+//                                                        contentDescription = stringResource(R.string.delete_food),
+//                                                        modifier = Modifier.size(standardPadding * 1.5f),
+//                                                        tint = Color(0xFFDD2C00)
+//                                                    )
+//                                                }
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                        else -> EmptyAddScreen(
+//                            standardPadding = standardPadding,
+//                            modifier = modifier,
+//                            selectedOption = selectedOption
+//                        )
+//                    }
 
                 else ->
                     when (foodListCreate.isNotEmpty()) {

@@ -360,7 +360,6 @@ fun OverviewAndSearchBar(
         Log.d("OverviewDebug", "Fetching food, foodDoneList, and summary for userId: $userId on $today")
     }
 
-
     val foodListDTO = foodDoneList.mapNotNull { done ->
         foodList.find { it.foodId == done.foodId }
     }.map { it.toFoodInfoDTO() }
@@ -369,10 +368,10 @@ fun OverviewAndSearchBar(
     Log.d("OverviewDebug", "foodList: $foodList")
     Log.d("OverviewDebug", "foodListDTO: $foodListDTO")
 
-    val loadedCalories = foodSummary?.calories ?: 0.0
-    val totalProtein = foodSummary?.protein ?: 0.0
-    val totalCarb = foodSummary?.carbohydrate ?: 0.0
-    val totalFat = foodSummary?.fat ?: 0.0
+    val loadedCalories = foodSummary?.totalCalories ?: 0.0
+    val totalProtein = foodSummary?.totalProtein ?: 0.0
+    val totalCarb = foodSummary?.totalCarb ?: 0.0
+    val totalFat = foodSummary?.totalFat ?: 0.0
 
     Log.d("OverviewDebug", "📊 Summary từ API:")
     Log.d("OverviewDebug", "🔥 Calories: $loadedCalories")

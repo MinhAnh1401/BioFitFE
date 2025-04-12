@@ -1,8 +1,8 @@
 package com.example.biofit.data.model.dto
 
 data class FoodSummaryDTO(
-    val calories: Double,
-    val protein: Double,
-    val carbohydrate: Double,
-    val fat: Double
+    val totalCalories: Double,
+    val totalProtein: Double,
+    val totalCarb: Double,
+    val totalFat: Double
 )
