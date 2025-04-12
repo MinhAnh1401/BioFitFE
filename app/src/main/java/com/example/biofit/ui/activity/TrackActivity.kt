@@ -471,23 +471,6 @@ fun MenuForSession(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                foodViewModel.fetchFoodDoneList(userId, today)
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
     // Lấy danh sách món ăn đã ăn từ FoodViewModel
     val foodDoneList by foodViewModel.foodDoneList.collectAsState()
     val foodList by foodViewModel.foodList.collectAsState()

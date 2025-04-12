@@ -5,6 +5,7 @@ import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDoneDTO
 import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.model.dto.FoodDoneDTO
+import com.example.biofit.data.model.dto.FoodSummaryDTO
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.PasswordResetDTO
 import com.example.biofit.data.model.dto.UserDTO
@@ -173,6 +174,8 @@ interface ApiService {
         @Part image: MultipartBody.Part?
     ): Call<FoodDTO>
 
+
+
     /*
        ----------------------------------------------------------------------------------------------------
        */
@@ -186,11 +189,11 @@ interface ApiService {
         @Query("date") date: String
     ): Call<List<FoodDoneDTO>>
 
-    // Lấy tổng calories đã tiêu thụ trong ngày hôm nay
-    @GET("api/food-done/consumed-calories/today")
-    fun getConsumedCaloriesToday(
-        @Query("userId") userId: Long
-    ): Call<Float>
+    @GET("api/food-done/summary")
+    fun getFoodSummary(
+        @Query("userId") userId: Long,
+        @Query("date") date: String
+    ): Call<FoodSummaryDTO>
 
     // xóa thức ăn đã ăn
     @DELETE("api/food-done/delete/{id}")

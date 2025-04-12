@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
-import com.example.biofit.ui.activity.base64ToBitmap
+import com.example.biofit.ui.screen.base64ToBitmap
 import com.example.biofit.ui.theme.BioFitTheme
 import java.math.RoundingMode
 

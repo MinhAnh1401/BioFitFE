@@ -94,7 +94,6 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -165,6 +164,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+
 
 @Composable
 fun HomeScreen(userData: UserDTO) {
@@ -304,7 +305,8 @@ fun HomeContent(
         item {
             OverviewAndSearchBar(
                 standardPadding = standardPadding,
-                modifier = modifier
+                modifier = modifier,
+                userId = userData.userId
             )
         }
 
@@ -339,12 +341,50 @@ fun HomeContent(
 @Composable
 fun OverviewAndSearchBar(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    userId: Long,
+    foodViewModel: FoodViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val loadedCalories = 430 // Thay đổi thành lượng calo đã nạp
+    val foodSummary by foodViewModel.foodSummary.collectAsState()
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    LaunchedEffect(userId) {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        foodViewModel.fetchFood(userId)
+        foodViewModel.fetchFoodDoneList(userId, today)
+        foodViewModel.getFoodSummary(userId, today) // ✅ THÊM dòng này nè
+        Log.d("OverviewDebug", "Fetching food, foodDoneList, and summary for userId: $userId on $today")
+    }
+
+    val foodListDTO = foodDoneList.mapNotNull { done ->
+        foodList.find { it.foodId == done.foodId }
+    }.map { it.toFoodInfoDTO() }
+
+    Log.d("OverviewDebug", "foodDoneList: $foodDoneList")
+    Log.d("OverviewDebug", "foodList: $foodList")
+    Log.d("OverviewDebug", "foodListDTO: $foodListDTO")
+
+    val loadedCalories = foodSummary?.totalCalories ?: 0.0
+    val totalProtein = foodSummary?.totalProtein ?: 0.0
+    val totalCarb = foodSummary?.totalCarb ?: 0.0
+    val totalFat = foodSummary?.totalFat ?: 0.0
+
+    Log.d("OverviewDebug", "📊 Summary từ API:")
+    Log.d("OverviewDebug", "🔥 Calories: $loadedCalories")
+    Log.d("OverviewDebug", "💪 Protein: $totalProtein")
+    Log.d("OverviewDebug", "🍞 Carbohydrate: $totalCarb")
+    Log.d("OverviewDebug", "🥑 Fat: $totalFat")
+
+    Log.d("OverviewDebug", "Calories: $loadedCalories, Protein: $totalProtein, Carb: $totalCarb, Fat: $totalFat")
+
+    foodListDTO.forEach { dto ->
+        Log.d("OverviewDebug", "Food: Calories: ${dto.calories}, Protein: ${dto.protein.third}, Carb: ${dto.carbohydrate.third}, Fat: ${dto.fat.third}")
+    }
+
     val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
     val targetCalories = when (userData.gender) {
         0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
@@ -359,12 +399,11 @@ fun OverviewAndSearchBar(
 
         else -> 0f
     }
+
     val nutrients = listOf(
-        Triple(R.string.protein, 400, 1000), // Thay đổi thành protein
-        Triple(R.string.powdered_sugar, 1700, 1000), // Thay đổi thành đường
-        Triple(R.string.fat, 700, 1000), // Thay đổi thành chất béo
-        Triple(R.string.salt, 600, 1000), // Thay đổi thành muối
-        Triple(R.string.fiber, 500, 1000) // Thay đổi thành chất xơ
+        Triple(R.string.protein, totalProtein.toInt(), 1000),
+        Triple(R.string.powdered_sugar, totalCarb.toInt(), 1000),
+        Triple(R.string.fat, totalFat.toInt(), 1000),
     )
     /*var search by rememberSaveable { mutableStateOf("") }*/
 
@@ -987,7 +1026,7 @@ fun DailyGoals(
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     val formatterToday = LocalDate.now().format(
         DateTimeFormatter.ofPattern(
-            if (Locale.current.language == "vi") "dd-MM-yyyy" else "yyyy-MM-dd"
+            if (Locale.getDefault().language == "vi") "dd-MM-yyyy" else "yyyy-MM-dd"
         )
     )
     val weightDataState by dailyLogViewModel.weightDataState

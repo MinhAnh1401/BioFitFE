@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.model.dto.FoodDoneDTO
+import com.example.biofit.data.model.dto.FoodSummaryDTO
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.ui.screen.base64ToBitmap
 import com.google.gson.Gson
@@ -297,6 +298,27 @@ class FoodViewModel : ViewModel() {
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("FoodViewModel", "🚨 Lỗi mạng khi xóa FoodDone", t)
+            }
+        })
+    }
+
+    private val _foodSummary = MutableStateFlow<FoodSummaryDTO?>(null)
+    val foodSummary: StateFlow<FoodSummaryDTO?> = _foodSummary.asStateFlow()
+
+    fun getFoodSummary(userId: Long, date: String) {
+        val apiService = RetrofitClient.instance
+        apiService.getFoodSummary(userId, date).enqueue(object : Callback<FoodSummaryDTO> {
+            override fun onResponse(call: Call<FoodSummaryDTO>, response: Response<FoodSummaryDTO>) {
+                if (response.isSuccessful) {
+                    _foodSummary.value = response.body()
+                    Log.d("FoodViewModel", "✅ Tóm tắt thức ăn: ${response.body()}")
+                } else {
+                    Log.e("FoodViewModel", "❌ Lỗi lấy summary: ${response.code()} - ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<FoodSummaryDTO>, t: Throwable) {
+                Log.e("FoodViewModel", "🚨 Lỗi mạng khi lấy summary", t)
             }
         })
     }

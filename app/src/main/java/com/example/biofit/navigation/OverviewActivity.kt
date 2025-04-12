@@ -57,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.FoodSummaryDTO
 import com.example.biofit.ui.components.ToggleButtonBar
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -240,45 +241,30 @@ data class DailyMacro(
 )
 
 // Dữ liệu về macro dinh dưỡng
-val dailyMacroData = listOf(
-    Triple(
-        R.drawable.ic_protein,
-        R.string.protein,
-        Pair(
-            Random.nextInt(150, 300).toFloat()/*Lượng nạp vào (g)*/,
-            300f/*Lượng mục tiêu (g)*/
-        )
-    ),
-    Triple(
-        R.drawable.ic_carbohydrate,
-        R.string.carbohydrate,
-        Pair(
-            Random.nextInt(300, 600).toFloat(),
-            600f
-        )
-    ),
-    Triple(
-        R.drawable.ic_fat,
-        R.string.fat,
-        Pair(
-            Random.nextInt(50, 100).toFloat(),
-            100f
+@Composable
+fun getDailyMacroTable(foodSummary: FoodSummaryDTO?): List<DailyMacro> {
+    return listOf(
+        DailyMacro(
+            icon = painterResource(R.drawable.ic_protein),
+            title = stringResource(R.string.protein),
+            value = foodSummary?.totalProtein?.toFloat() ?: 0f,
+            targetValue = 100f // có thể tính từ giới tính/tuổi nếu muốn
+        ),
+        DailyMacro(
+            icon = painterResource(R.drawable.ic_carbohydrate),
+            title = stringResource(R.string.carbohydrate),
+            value = foodSummary?.totalCarb?.toFloat() ?: 0f,
+            targetValue = 300f
+        ),
+        DailyMacro(
+            icon = painterResource(R.drawable.ic_fat),
+            title = stringResource(R.string.fat),
+            value = foodSummary?.totalFat?.toFloat() ?: 0f,
+            targetValue = 70f
         )
     )
-)
-
-// Chuyển đổi dữ liệu thành danh sách DailyMacro
-@Composable
-fun getDailyMacroTable(): List<DailyMacro> {
-    return dailyMacroData.map { (icon, title, values) ->
-        DailyMacro(
-            painterResource(icon),
-            stringResource(title),
-            values.first,
-            values.second
-        )
-    }
 }
+
 
 @Composable
 fun DailyCountChart(

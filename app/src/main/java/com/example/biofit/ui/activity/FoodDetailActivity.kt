@@ -54,6 +54,7 @@ import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
+import com.example.biofit.ui.screen.base64ToBitmap
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.FoodViewModel
 import java.math.RoundingMode
