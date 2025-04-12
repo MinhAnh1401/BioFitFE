@@ -1,6 +1,7 @@
 package com.example.biofit.ui.screen
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +51,10 @@ import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.FoodViewModel
 import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun OverviewDayScreen() {
@@ -78,12 +89,70 @@ fun OverviewDayScreen() {
 fun OverviewDayContent(
     standardPadding: Dp,
     modifier: Modifier,
-    exerciseViewModel: ExerciseViewModel = viewModel()
+    exerciseViewModel: ExerciseViewModel = viewModel(),
+    foodViewModel: FoodViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
     val userId = UserSharedPrefsHelper.getUserId(context)
-    val dailyCaloriesTable = getDailyCalories()
+
+    // Lưu ngày được chọn
+    var selectedDate by rememberSaveable { mutableStateOf(LocalDate.now()) }
+
+    // Gọi fetchFoodDoneList cho ngày mặc định ngay khi khởi tạo
+    LaunchedEffect(Unit) {
+        val formattedDate = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        foodViewModel.getFoodSummary(userId, formattedDate)
+        foodViewModel.fetchFoodDoneList(userId, formattedDate)
+        foodViewModel.fetchFood(userId)
+    }
+
+    // Lấy danh sách món ăn đã ăn từ FoodViewModel
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    Log.d("FoodDoneList", foodDoneList.toString())
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    // Tính toán foodListDTO và foodListInfoDTO trong LaunchedEffect để đảm bảo cập nhật khi foodDoneList hoặc foodList thay đổi
+    val foodListInfoDTO = remember(foodDoneList, foodList) {
+        val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+            foodList.find { it.foodId == foodDone.foodId }
+        }
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
+
+    val foodListMorning = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.morning),
+            ignoreCase = true
+        )
+    }
+    val foodListAfternoon = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.afternoon),
+            ignoreCase = true
+        )
+    }
+    val foodListEvening = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.evening),
+            ignoreCase = true
+        )
+    }
+    val foodListSnack = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.snack),
+            ignoreCase = true
+        )
+    }
+
+    val listCalories = listOf(
+        foodListMorning,
+        foodListAfternoon,
+        foodListEvening,
+        foodListSnack
+    )
+
+    val dailyCaloriesTable = getDailyCalories(listCalories)
     val dailyCalories = dailyCaloriesTable.map { it.calories }
 
     val foodCaloriesIntake = dailyCalories[0] + dailyCalories[1] +
@@ -111,7 +180,10 @@ fun OverviewDayContent(
         stringResource(R.string.target_calories) to targetCalories
     )
 
-    val dailyMacroTable = getDailyMacroTable()
+    val foodSummary by foodViewModel.foodSummary.collectAsState()
+    Log.d("FoodSummary", foodSummary.toString())
+
+    val dailyMacroTable = getDailyMacroTable(foodSummary)
     val dailyMacroValues = dailyMacroTable.map { it.value }
     val percentagesMacro = getPercentages(dailyMacroTable.map { it.value })
     val percentagesTargetMacro = getPercentages(dailyMacroTable.map { it.targetValue })
@@ -121,7 +193,13 @@ fun OverviewDayContent(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
         CalendarSelector(
-            onDaySelected = { },
+            onDaySelected = {
+                    selectedDate ->
+                val formattedDate = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                foodViewModel.getFoodSummary(userId, formattedDate)
+                foodViewModel.fetchFoodDoneList(userId, formattedDate)
+                foodViewModel.fetchFood(userId)
+            },
             standardPadding = standardPadding,
             modifier = modifier
         )
@@ -158,6 +236,12 @@ fun OverviewDayContent(
                                 ),
                                 MaterialTheme.colorScheme.scrim,
                                 standardPadding
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.no_data),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
 
@@ -269,6 +353,12 @@ fun OverviewDayContent(
                             MaterialTheme.colorScheme.scrim,
                             standardPadding
                         )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.no_data),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.titleSmall
+                        )
                     }
                 }
 
@@ -317,7 +407,7 @@ fun OverviewDayContent(
                                 )
 
                                 Text(
-                                    text = "$title (${value}g / ${targetValue}g)",
+                                    text = "$title $value ${stringResource(R.string.gam)}",
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.bodySmall
                                 )

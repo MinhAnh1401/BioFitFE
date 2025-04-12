@@ -57,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.model.dto.FoodSummaryDTO
 import com.example.biofit.ui.components.ToggleButtonBar
 import com.example.biofit.ui.components.TopBar
@@ -217,12 +218,19 @@ val dailyCaloriesData = listOf(
 
 // Chuyển đổi dữ liệu thành danh sách DailyCalories
 @Composable
-fun getDailyCalories(): List<DailyCalories> {
-    return dailyCaloriesData.map { (icon, session, calories) ->
+fun getDailyCalories(listCalories: List<List<FoodInfoDTO>>): List<DailyCalories> {
+    val sessions = listOf(
+        Triple(R.drawable.ic_morning_chart, R.string.morning, listCalories[0]),
+        Triple(R.drawable.ic_afternoon_chart, R.string.afternoon, listCalories[1]),
+        Triple(R.drawable.ic_evening_chart, R.string.evening, listCalories[2]),
+        Triple(R.drawable.ic_snack_chart, R.string.snack, listCalories[3])
+    )
+
+    return sessions.map { (icon, sessionId, foods) ->
         DailyCalories(
-            painterResource(icon),
-            stringResource(session),
-            calories
+            icon = painterResource(icon),
+            session = stringResource(sessionId),
+            calories = foods.sumOf { it.calories }
         )
     }
 }

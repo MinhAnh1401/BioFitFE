@@ -407,4 +407,5 @@
     <string name="failed_to_delete_exercise">Failed to delete exercise</string>
     <string name="write_a_descriptive_sentence_about_my_weight_data">Express your feelings about this weight data of mine with a quote</string>
     <string name="choose_how_to_set_food_image">Choose how to set food image</string>
+    <string name="no_data">No data</string>
 </resources>

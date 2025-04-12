@@ -222,6 +222,25 @@ fun TrackContent(
     userId: Long,
     foodViewModel: FoodViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                foodViewModel.fetchFoodDoneList(userId, today)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     val foodDoneList by foodViewModel.foodDoneList.collectAsState()
     val foodList by foodViewModel.foodList.collectAsState()
@@ -242,9 +261,6 @@ fun TrackContent(
     val foodListAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
     val foodListEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
     val foodListSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
-
-    val context = LocalContext.current
-    val activity = context as? Activity
 
     Column(
         verticalArrangement = Arrangement.spacedBy(standardPadding),

@@ -402,7 +402,7 @@ fun AddContent(
                                         foodName = food.foodName,
                                         servingSize = Pair(
                                             food.servingSize.first,
-                                            food.servingSize.second
+                                            stringResource(R.string.serving_size)
                                         ),
                                         mass = food.mass,
                                         calories = food.calories,
