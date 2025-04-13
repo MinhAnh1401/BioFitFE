@@ -66,6 +66,7 @@ import com.example.biofit.ui.screen.OverviewDayContent
 import com.example.biofit.ui.screen.OverviewWeekContent
 import com.example.biofit.ui.theme.BioFitTheme
 import com.patrykandpatrick.vico.core.extension.sumOf
+import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -250,25 +251,31 @@ data class DailyMacro(
 
 // Dữ liệu về macro dinh dưỡng
 @Composable
-fun getDailyMacroTable(foodSummary: FoodSummaryDTO?): List<DailyMacro> {
+fun getDailyMacroTable(foodSummary: FoodSummaryDTO?, targetCalories: Float): List<DailyMacro> {
     return listOf(
         DailyMacro(
             icon = painterResource(R.drawable.ic_protein),
             title = stringResource(R.string.protein),
             value = foodSummary?.totalProtein?.toFloat() ?: 0f,
-            targetValue = 100f // có thể tính từ giới tính/tuổi nếu muốn
+            targetValue = BigDecimal((targetCalories.times(0.05f)).toDouble())
+                .setScale(2, RoundingMode.HALF_UP)
+                .toFloat() // có thể tính từ giới tính/tuổi nếu muốn
         ),
         DailyMacro(
             icon = painterResource(R.drawable.ic_carbohydrate),
             title = stringResource(R.string.carbohydrate),
             value = foodSummary?.totalCarb?.toFloat() ?: 0f,
-            targetValue = 300f
+            targetValue = BigDecimal((targetCalories.times(0.125f)).toDouble())
+                .setScale(2, RoundingMode.HALF_UP)
+                .toFloat()
         ),
         DailyMacro(
             icon = painterResource(R.drawable.ic_fat),
             title = stringResource(R.string.fat),
             value = foodSummary?.totalFat?.toFloat() ?: 0f,
-            targetValue = 70f
+            targetValue = BigDecimal((targetCalories.times(0.3f).div(9f)).toDouble())
+                .setScale(2, RoundingMode.HALF_UP)
+                .toFloat()
         )
     )
 }

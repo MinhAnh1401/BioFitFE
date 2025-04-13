@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
-import android.graphics.drawable.Icon
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -43,8 +42,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -105,7 +102,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.util.TableInfo
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
@@ -118,21 +114,17 @@ import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.AIChatbotActivity
-import com.example.biofit.ui.activity.CaloriesTargetActivity
-import com.example.biofit.ui.activity.ChatBubble
 import com.example.biofit.ui.activity.ExerciseActivity
 import com.example.biofit.ui.activity.NotificationActivity
 import com.example.biofit.ui.activity.OverviewExerciseActivity
 import com.example.biofit.ui.activity.TrackActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
-import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.DailyLogViewModel
 import com.example.biofit.view_model.ExerciseViewModel
@@ -348,7 +340,7 @@ fun OverviewAndSearchBar(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val foodSummary by foodViewModel.foodSummary.collectAsState()
+    val foodSummary by foodViewModel.foodSummaryToday.collectAsState()
     val foodDoneList by foodViewModel.foodDoneList.collectAsState()
     val foodList by foodViewModel.foodList.collectAsState()
 
@@ -368,10 +360,18 @@ fun OverviewAndSearchBar(
     Log.d("OverviewDebug", "foodList: $foodList")
     Log.d("OverviewDebug", "foodListDTO: $foodListDTO")
 
-    val loadedCalories = foodSummary?.totalCalories ?: 0.0
-    val totalProtein = foodSummary?.totalProtein ?: 0.0
-    val totalCarb = foodSummary?.totalCarb ?: 0.0
-    val totalFat = foodSummary?.totalFat ?: 0.0
+    val loadedCalories = BigDecimal((foodSummary?.totalCalories ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val totalProtein = BigDecimal((foodSummary?.totalProtein ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val totalCarb = BigDecimal((foodSummary?.totalCarb ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val totalFat = BigDecimal((foodSummary?.totalFat ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
 
     Log.d("OverviewDebug", "📊 Summary từ API:")
     Log.d("OverviewDebug", "🔥 Calories: $loadedCalories")
@@ -400,12 +400,21 @@ fun OverviewAndSearchBar(
         else -> 0f
     }
 
+    val targetProtein = BigDecimal((targetCalories.times(0.05f)).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val targetCarb = BigDecimal((targetCalories.times(0.125f)).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val targetFat = BigDecimal((targetCalories.times(0.3f).div(9f)).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+
     val nutrients = listOf(
-        Triple(R.string.protein, totalProtein.toInt(), 1000),
-        Triple(R.string.powdered_sugar, totalCarb.toInt(), 1000),
-        Triple(R.string.fat, totalFat.toInt(), 1000),
+        Triple(R.string.protein, totalProtein, targetProtein),
+        Triple(R.string.powdered_sugar, totalCarb, targetCarb),
+        Triple(R.string.fat, totalFat, targetFat),
     )
-    /*var search by rememberSaveable { mutableStateOf("") }*/
 
     MainCard(
         onClick = {
@@ -546,7 +555,7 @@ fun OverviewAndSearchBar(
                         Column {
                             Text(
                                 text = stringResource(id = nameRes),
-                                color = if (loaded > target) {
+                                color = if (loaded.toFloat() > target.toFloat()) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
@@ -555,8 +564,8 @@ fun OverviewAndSearchBar(
                             )
 
                             Text(
-                                text = "$loaded / $target" + stringResource(id = R.string.gam),
-                                color = if (loaded > target) {
+                                text = "$loaded / $target " + stringResource(id = R.string.gam),
+                                color = if (loaded.toFloat() > target.toFloat()) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary

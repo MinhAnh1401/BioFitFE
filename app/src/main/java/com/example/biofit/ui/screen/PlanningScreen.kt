@@ -5,15 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
 import android.widget.NumberPicker
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +36,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,8 +46,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -68,10 +60,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.UserDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.activity.CalorieTodayActivity
 import com.example.biofit.ui.activity.CreatePlanningActivity
-import com.example.biofit.ui.activity.EditExerciseActivity
 import com.example.biofit.ui.activity.ExerciseViewActivity
 import com.example.biofit.ui.activity.MealsListActivity
 import com.example.biofit.ui.components.CalendarSelector
@@ -79,10 +73,8 @@ import com.example.biofit.ui.components.ItemCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
+import com.example.biofit.view_model.FoodViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberTopAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
@@ -96,6 +88,10 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun PlanningScreen() {
@@ -143,13 +139,53 @@ fun PlanningScreen() {
 @Composable
 fun PlanningScreenContent(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    foodViewModel: FoodViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-//    val userPlanning = databaseHelper.getUserPlanById(1, 0)
     val userPlanning = 0
+    var selectedDate by rememberSaveable { mutableStateOf(LocalDate.now()) }
+
+    val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
+    val userId = userData.userId
+
+    val foodSummaryToday by foodViewModel.foodSummaryToday.collectAsState()
+    val foodSummaryYesterday by foodViewModel.foodSummaryYesterday.collectAsState()
+
+    LaunchedEffect(selectedDate) {
+        val today = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val yesterday = selectedDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+        foodViewModel.getFoodSummary(userId, today, isYesterday = false)
+        foodViewModel.getFoodSummary(userId, yesterday, isYesterday = true)
+
+        foodViewModel.fetchFoodDoneList(userId, today)
+        foodViewModel.fetchFood(userId)
+    }
+
+    val totalCalories = BigDecimal((foodSummaryToday?.totalCalories ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+
+    val totalCaloriesYesterday = BigDecimal((foodSummaryYesterday?.totalCalories ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+
+    val calorieDifference = totalCalories - totalCaloriesYesterday
+
+    val percentageCalorieChange = if (totalCaloriesYesterday != 0f) {
+        (calorieDifference / totalCaloriesYesterday) * 100
+    } else {
+        0f
+    }
+
+    val calorieChangeText = when {
+        calorieDifference > 0 -> "+ ${String.format("%.1f", calorieDifference)} kcal (${String.format("%.2f", percentageCalorieChange)}%)"
+        calorieDifference < 0 -> "- ${String.format("%.1f", -calorieDifference)} kcal (${String.format("%.2f", percentageCalorieChange)}%)"
+        else -> stringResource(R.string.no_change)
+    }
 
     val selectedIntensityOption = rememberSaveable { mutableIntStateOf(R.string.low) }
     var expandedIntensity by rememberSaveable { mutableStateOf(false) }
@@ -225,7 +261,13 @@ fun PlanningScreenContent(
         } else {
             item {
                 CalendarSelector(
-                    onDaySelected = { },
+                    onDaySelected = {
+                            selectedDate ->
+                        val formattedDate = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        foodViewModel.getFoodSummary(userId, formattedDate)
+                        foodViewModel.fetchFoodDoneList(userId, formattedDate)
+                        foodViewModel.fetchFood(userId)
+                    },
                     standardPadding = standardPadding,
                     modifier = modifier
                 )
@@ -241,6 +283,8 @@ fun PlanningScreenContent(
                 )
 
                 CaloriesLineChart(
+                    totalCalories = totalCalories,
+                    percentageCalorie = calorieChangeText,
                     weightData = caloriesData,
                     standardPadding = standardPadding,
                     modifier = modifier
@@ -606,6 +650,8 @@ fun PlanningHeaderBar(
 
 @Composable
 fun CaloriesLineChart(
+    totalCalories: Float,
+    percentageCalorie: String,
     weightData: List<Pair<String, Float>>,
     standardPadding: Dp,
     modifier: Modifier
@@ -698,7 +744,7 @@ fun CaloriesLineChart(
         }
 
         Text(
-            text = "1200kcal",
+            text = "$totalCalories ${stringResource(R.string.kcal)}",
             modifier = Modifier.padding(horizontal = standardPadding * 2),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.displaySmall
@@ -714,8 +760,12 @@ fun CaloriesLineChart(
             )
 
             Text(
-                text = "+10%",
-                color = MaterialTheme.colorScheme.primary,
+                text = percentageCalorie,
+                color = when (percentageCalorie.first()) {
+                    '-' -> Color(0xFFDD2C00)
+                    '+' -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.onBackground
+                },
                 style = MaterialTheme.typography.titleMedium
             )
         }

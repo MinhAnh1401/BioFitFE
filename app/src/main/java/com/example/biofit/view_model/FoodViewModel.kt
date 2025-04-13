@@ -302,16 +302,23 @@ class FoodViewModel : ViewModel() {
         })
     }
 
-    private val _foodSummary = MutableStateFlow<FoodSummaryDTO?>(null)
-    val foodSummary: StateFlow<FoodSummaryDTO?> = _foodSummary.asStateFlow()
+    private val _foodSummaryToday = MutableStateFlow<FoodSummaryDTO?>(null)
+    val foodSummaryToday: StateFlow<FoodSummaryDTO?> = _foodSummaryToday.asStateFlow()
 
-    fun getFoodSummary(userId: Long, date: String) {
+    private val _foodSummaryYesterday = MutableStateFlow<FoodSummaryDTO?>(null)
+    val foodSummaryYesterday: StateFlow<FoodSummaryDTO?> = _foodSummaryYesterday.asStateFlow()
+
+    fun getFoodSummary(userId: Long, date: String, isYesterday: Boolean = false) {
         val apiService = RetrofitClient.instance
         apiService.getFoodSummary(userId, date).enqueue(object : Callback<FoodSummaryDTO> {
             override fun onResponse(call: Call<FoodSummaryDTO>, response: Response<FoodSummaryDTO>) {
                 if (response.isSuccessful) {
-                    _foodSummary.value = response.body()
-                    Log.d("FoodViewModel", "✅ Tóm tắt thức ăn: ${response.body()}")
+                    if (isYesterday) {
+                        _foodSummaryYesterday.value = response.body()
+                    } else {
+                        _foodSummaryToday.value = response.body()
+                    }
+                    Log.d("FoodViewModel", "✅ Summary ${if (isYesterday) "hôm qua" else "hôm nay"}: ${response.body()}")
                 } else {
                     Log.e("FoodViewModel", "❌ Lỗi lấy summary: ${response.code()} - ${response.message()}")
                 }
@@ -322,5 +329,4 @@ class FoodViewModel : ViewModel() {
             }
         })
     }
-
 }

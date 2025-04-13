@@ -25,6 +25,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +48,9 @@ import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.FoodViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -108,7 +114,8 @@ fun CalorieTodayScreen() {
 fun CalorieTodayContent(
     standardPadding: Dp,
     modifier: Modifier,
-    exerciseViewModel: ExerciseViewModel = viewModel()
+    exerciseViewModel: ExerciseViewModel = viewModel(),
+    foodViewModel: FoodViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -117,9 +124,14 @@ fun CalorieTodayContent(
     /*
     ________________________________________________________________________________________________
     */
-    val consumedCalories = 500f // Calo hấp thụ từ tất cả thức ăn trong ngày hôm nay
+    val foodSummaryToday by foodViewModel.foodSummaryToday.collectAsState()
+    foodViewModel.getFoodSummary(userId, today, isYesterday = false)
+    val totalCalories = BigDecimal((foodSummaryToday?.totalCalories ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val consumedCalories = totalCalories
     val formatterConsumedCalories = if (consumedCalories % 1 == 0f) {
-        consumedCalories.toInt().toString()
+        consumedCalories.toString()
     } else {
         String.format(java.util.Locale.US, "%.1f", consumedCalories)
     }

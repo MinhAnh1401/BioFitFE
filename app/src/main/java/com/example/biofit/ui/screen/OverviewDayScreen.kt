@@ -180,10 +180,10 @@ fun OverviewDayContent(
         stringResource(R.string.target_calories) to targetCalories
     )
 
-    val foodSummary by foodViewModel.foodSummary.collectAsState()
+    val foodSummary by foodViewModel.foodSummaryToday.collectAsState()
     Log.d("FoodSummary", foodSummary.toString())
 
-    val dailyMacroTable = getDailyMacroTable(foodSummary)
+    val dailyMacroTable = getDailyMacroTable(foodSummary, targetCalories)
     val dailyMacroValues = dailyMacroTable.map { it.value }
     val percentagesMacro = getPercentages(dailyMacroTable.map { it.value })
     val percentagesTargetMacro = getPercentages(dailyMacroTable.map { it.targetValue })
@@ -407,7 +407,7 @@ fun OverviewDayContent(
                                 )
 
                                 Text(
-                                    text = "$title $value ${stringResource(R.string.gam)}",
+                                    text = "$title $value/${targetValue} ${stringResource(R.string.gam)}",
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.bodySmall
                                 )
