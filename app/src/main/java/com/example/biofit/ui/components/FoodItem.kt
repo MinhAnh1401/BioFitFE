@@ -25,12 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.biofit.R
+import com.example.biofit.ui.activity.base64ToBitmap
 import com.example.biofit.ui.theme.BioFitTheme
 import java.math.RoundingMode
 
@@ -41,7 +44,7 @@ fun FoodItemScreen() {
         color = MaterialTheme.colorScheme.background,
     ) {
         FoodItem(
-            foodImg = R.drawable.img_food_default,
+            foodImg = null,
             foodName = stringResource(R.string.food_name),
             servingSize = Pair(1f, "sandwich"),
             mass = 100f,
@@ -61,7 +64,7 @@ fun FoodItemScreen() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodItem(
-    foodImg: Int,
+    foodImg: String?,
     foodName: String,
     servingSize: Pair<Float, String>,
     mass: Float,
@@ -73,7 +76,7 @@ fun FoodItem(
     standardPadding: Dp
 ) {
     val context = LocalContext.current
-
+    val bitmap = base64ToBitmap(foodImg)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -86,7 +89,11 @@ fun FoodItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(foodImg),
+            painter = if (bitmap != null) {
+                BitmapPainter(bitmap.asImageBitmap())
+            } else {
+                painterResource(R.drawable.img_food_default)
+            },
             contentDescription = "Food image",
             modifier = Modifier
                 .size(standardPadding * 5f)
@@ -103,7 +110,7 @@ fun FoodItem(
             )
 
             Text(
-                text = "${servingSize.first} ${servingSize.second}, " +
+                text = "${servingSize.second}: ${servingSize.first}, " +
                         "${
                             mass.toBigDecimal().setScale(
                                 1,

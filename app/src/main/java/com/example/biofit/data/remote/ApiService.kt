@@ -4,6 +4,7 @@ import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDoneDTO
 import com.example.biofit.data.model.dto.FoodDTO
+import com.example.biofit.data.model.dto.FoodDoneDTO
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.PasswordResetDTO
 import com.example.biofit.data.model.dto.UserDTO
@@ -149,7 +150,11 @@ interface ApiService {
     fun getFood(@Path("userId") userId: Long): Call<List<FoodDTO>>
 
     @POST("api/food/create")
-    fun createFood(@Body foodDTO: FoodDTO): Call<FoodDTO>
+    @Multipart
+    fun createFood(
+        @Part("food") foodJson: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Call<FoodDTO>
 
     @DELETE("api/food/{foodId}")
     fun deleteFood(@Path("foodId") foodId: Long): Call<Void>
@@ -159,5 +164,36 @@ interface ApiService {
         @Path("foodId") foodId: Long,
         @Body foodDTO: FoodDTO
     ): Call<FoodDTO>
+
+    @Multipart
+    @PUT("api/food/{foodId}")
+    fun updateFoodWithImage(
+        @Path("foodId") foodId: Long,
+        @Part("food") foodJson: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Call<FoodDTO>
+
+    /*
+       ----------------------------------------------------------------------------------------------------
+       */
+    // Food Done API
+    @POST("api/food-done/create")
+    fun createFoodDone(@Body foodDoneDTO: FoodDoneDTO): Call<FoodDoneDTO>
+
+    @GET("api/food-done/list")
+    fun getFoodDoneByDate(
+        @Query("userId") userId: Long,
+        @Query("date") date: String
+    ): Call<List<FoodDoneDTO>>
+
+    // Lấy tổng calories đã tiêu thụ trong ngày hôm nay
+    @GET("api/food-done/consumed-calories/today")
+    fun getConsumedCaloriesToday(
+        @Query("userId") userId: Long
+    ): Call<Float>
+
+    // xóa thức ăn đã ăn
+    @DELETE("api/food-done/delete/{id}")
+    fun deleteFoodDone(@Path("id") foodDoneId: Long): Call<Void>
 
 }

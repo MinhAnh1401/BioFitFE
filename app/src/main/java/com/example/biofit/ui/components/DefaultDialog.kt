@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,7 @@ fun DefaultDialogScreen() {
             actionTextButton = R.string.delete,
             actionTextButtonColor = MaterialTheme.colorScheme.error,
             onClickActionButton = { },
+            onCancelClick = {  },
             onDismissRequest = { },
             standardPadding = getStandardPadding().first
         )
@@ -77,62 +79,91 @@ fun DefaultDialog(
                 ) {
                     Text(
                         text = stringResource(title),
-                        modifier = Modifier.padding(standardPadding * 2),
+                        modifier = Modifier.padding(
+                            top = standardPadding,
+                            start = standardPadding * 2,
+                            end = standardPadding * 2
+                        ),
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.headlineSmall
                     )
                     if (description != null) {
-                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-
                         Text(
                             text = stringResource(description),
-                            modifier = Modifier.padding(standardPadding * 2),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                            modifier = Modifier.padding(
+                                vertical = standardPadding,
+                                horizontal = standardPadding * 2
+                            ),
+                            color = MaterialTheme.colorScheme.outline,
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.titleSmall
                         )
                     }
-                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(standardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         onCancelClick?.let {
-                            Text(
-                                text = stringResource(R.string.cancel),
+                            Column(
                                 modifier = Modifier
+                                    .height(65.dp)
                                     .weight(1f)
-                                    .padding(standardPadding)
                                     .clickable(
                                         onClick = onCancelClick
                                     ),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center
-                            )
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.cancel),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(standardPadding),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
 
                             VerticalDivider(
                                 modifier = Modifier.height(65.dp),
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                color = MaterialTheme.colorScheme.outline
                             )
                         }
 
-                        Text(
-                            text = stringResource(actionTextButton).lowercase()
-                                .replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.ROOT
-                                    ) else it.toString()
-                                },
+
+                        Column(
                             modifier = Modifier
+                                .height(65.dp)
                                 .weight(1f)
-                                .padding(standardPadding)
                                 .clickable(
                                     onClick = onClickActionButton
                                 ),
-                            color = actionTextButtonColor,
-                            textAlign = TextAlign.Center
-                        )
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(actionTextButton).lowercase()
+                                        .replaceFirstChar {
+                                            if (it.isLowerCase()) it.titlecase(
+                                                Locale.ROOT
+                                            ) else it.toString()
+                                        },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(standardPadding),
+                                    color = actionTextButtonColor,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
             }

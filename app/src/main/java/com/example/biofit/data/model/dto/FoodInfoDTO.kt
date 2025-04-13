@@ -4,7 +4,7 @@ import com.example.biofit.R
 
 data class FoodInfoDTO(
     val foodId: Long,
-    val foodImage: Int,
+    val foodImage: String?,
     val foodName: String,
     val servingSize: Pair<Float, String>,
     val mass: Float,
@@ -19,7 +19,7 @@ data class FoodInfoDTO(
         fun default(): FoodInfoDTO {
             return FoodInfoDTO(
                 foodId = 0,
-                foodImage = R.drawable.img_food_default,  // Bạn có thể thay đổi ảnh mặc định ở đây
+                foodImage = null,  // Bạn có thể thay đổi ảnh mặc định ở đây
                 foodName = "N/A",
                 servingSize = Pair(0f, "g"),
                 mass = 0f,

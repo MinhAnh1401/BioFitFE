@@ -3,7 +3,10 @@ package com.example.biofit.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +29,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -37,6 +42,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,6 +62,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
@@ -64,6 +75,14 @@ import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.FoodViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import com.example.biofit.data.model.dto.FoodDoneDTO
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 class AddActivity : ComponentActivity() {
     private val foodViewModel: FoodViewModel by viewModels()
@@ -225,6 +244,17 @@ fun AddScreen(
     }
 }
 
+fun base64ToBitmap(base64: String?): Bitmap? {
+    return try {
+        base64?.let {
+            val decodedBytes = Base64.decode(it, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        }
+    } catch (e: Exception) {
+        null // Trả về null nếu lỗi
+    }
+}
+
 @Composable
 fun AddContent(
     selectedOption: Int,
@@ -235,37 +265,60 @@ fun AddContent(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val foodListDTO by foodViewModel.foodList.collectAsState()
+    val userId = UserSharedPrefsHelper.getUserData(context)?.userId ?: 0L
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                foodViewModel.fetchFood(userId)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    val foodListDTO by foodViewModel.foodList.collectAsStateWithLifecycle()
     // Chuyển đổi danh sách FoodDTO thành FoodInfoDTO
-    val foodListInfoDTO = foodListDTO.map { it.toFoodInfoDTO() }
+
+    val foodListInfoDTO = remember(foodListDTO) {
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
 
     var search by remember { mutableStateOf("") }
 
-    var selectedToggle by remember { mutableIntStateOf(R.string.create) }
-
     OutlinedTextField(
         value = search,
-        onValueChange = { search = it },
+        onValueChange = { newValue ->
+            search = newValue
+        },
         modifier = modifier.padding(vertical = standardPadding),
         placeholder = { Text(text = stringResource(id = R.string.search)) },
         trailingIcon = {
-            IconButton(
-                onClick = { TODO() }
-            ) {
+            if (search.isEmpty()) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = stringResource(R.string.search),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
+            } else {
+                IconButton(
+                    onClick = { search = "" }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = stringResource(R.string.delete),
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = { /*TODO*/ }
-        ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         singleLine = true,
         shape = MaterialTheme.shapes.large,
         colors = OutlinedTextFieldDefaults.colors(
@@ -274,20 +327,6 @@ fun AddContent(
             unfocusedBorderColor = Color.Transparent
         )
     )
-
-    Column(
-        modifier = modifier
-    ) {
-        ToggleButtonBar(
-            options = listOf(
-                R.string.create,
-                R.string.recently
-            ),
-            selectedOption = selectedToggle,
-            onOptionSelected = { selectedToggle = it },
-            standardPadding = standardPadding
-        )
-    }
 
     val foodListCreateMorning = foodListInfoDTO.filter {
         it.session.equals(
@@ -314,31 +353,6 @@ fun AddContent(
         )
     }
 
-    val foodListRecentMorning = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.morning),
-            ignoreCase = true
-        )
-    }
-    val foodListRecentAfternoon = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.afternoon),
-            ignoreCase = true
-        )
-    }
-    val foodListRecentEvening = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.evening),
-            ignoreCase = true
-        )
-    }
-    val foodListRecentSnack = foodListInfoDTO.filter {
-        it.session.equals(
-            stringResource(R.string.snack),
-            ignoreCase = true
-        )
-    }
-
 
     val foodListCreate = when (selectedOption) {
         R.string.morning -> foodListCreateMorning
@@ -347,271 +361,228 @@ fun AddContent(
         else -> foodListCreateSnack
     }
 
-    val foodListRecent = when (selectedOption) {
-        R.string.morning -> foodListRecentMorning
-        R.string.afternoon -> foodListRecentAfternoon
-        R.string.evening -> foodListRecentEvening
-        else -> foodListRecentSnack
+    val filteredList = if (search.isEmpty()) {
+        foodListCreate
+    } else {
+        foodListCreate.filter { it.foodName.contains(search, ignoreCase = true) }
     }
 
+    val groupedFoods = filteredList
+        .sortedBy { it.foodName }
+        .groupBy { it.foodName.first().uppercaseChar() }
+
     LazyColumn(
-        modifier = Modifier.padding(top = standardPadding * 2),
         verticalArrangement = Arrangement.spacedBy(standardPadding)
     ) {
         item {
             Log.d("FoodList", "foodListCreate: $foodListCreate")
-            when (selectedToggle) {
-                R.string.recently ->
-                    when (foodListRecent.isNotEmpty()) {
-                        true ->
-                            Column(
-                                modifier = modifier,
-                                verticalArrangement = Arrangement.spacedBy(standardPadding)
-                            ) {
-                                foodListRecent.forEachIndexed { index, _ ->
-                                    var expanded by remember { mutableStateOf(false) }
+            when (groupedFoods.isNotEmpty()) {
+                true ->
+                    Column(
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(standardPadding)
+                    ) {
+                        groupedFoods.forEach { (letter, foods) ->
+                            Text(
+                                text = letter.toString(),
+                                modifier = modifier.padding(top = standardPadding * 2),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.displaySmall,
+                            )
 
-                                    Box {
-                                        FoodItem(
-                                            foodImg = foodListRecent[index].foodImage,
-                                            foodName = foodListRecent[index].foodName,
-                                            servingSize = Pair(
-                                                foodListRecent[index].servingSize.first,
-                                                foodListRecent[index].servingSize.second
+                            foods.forEach { food ->
+                                var expanded by remember { mutableStateOf(false) }
+
+                                Box {
+                                    FoodItem(
+                                        foodImg = food.foodImage,
+                                        foodName = food.foodName,
+                                        servingSize = Pair(
+                                            food.servingSize.first,
+                                            stringResource(R.string.serving_size)
+                                        ),
+                                        mass = food.mass,
+                                        calories = food.calories,
+                                        macros = listOf(
+                                            Pair(
+                                                food.protein.first,
+                                                food.protein.third
                                             ),
-                                            mass = foodListRecent[index].mass,
-                                            calories = foodListRecent[index].calories,
-                                            macros = listOf(
-                                                Pair(
-                                                    foodListRecent[index].protein.first,
-                                                    foodListRecent[index].protein.third
-                                                ),
-                                                Pair(
-                                                    foodListRecent[index].carbohydrate.first,
-                                                    foodListRecent[index].carbohydrate.third
-                                                ),
-                                                Pair(
-                                                    foodListRecent[index].fat.first,
-                                                    foodListRecent[index].fat.third
+                                            Pair(
+                                                food.carbohydrate.first,
+                                                food.carbohydrate.third
+                                            ),
+                                            Pair(
+                                                food.fat.first,
+                                                food.fat.third
+                                            )
+                                        ),
+                                        onClick = {
+                                            activity?.let {
+                                                val intent =
+                                                    Intent(
+                                                        it,
+                                                        FoodDetailActivity::class.java
+                                                    )
+                                                val foodId = food.foodId
+                                                Log.d("FoodItem", "Clicked foodId: $foodId")
+                                                intent.putExtra("FOOD_ID", foodId)
+                                                it.startActivity(intent)
+                                            }
+                                        },
+                                        onEatClick = {
+                                            val currentDate = LocalDate.now()
+                                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                            // Lấy đúng currentFood từ danh sách chuẩn foodListRecent
+                                            val selectedFoodId =
+                                                food.foodId
+                                            val currentFood =
+                                                foodListCreate.find { it.foodId == selectedFoodId }
+
+                                            if (currentFood != null) {
+                                                // Kiểm tra xem món ăn đã được thêm vào ngày hôm nay chưa
+                                                val existingFood =
+                                                    foodViewModel.foodDoneList.value.any {
+                                                        it.foodId == currentFood.foodId &&
+                                                                it.date == currentDate &&
+                                                                it.session.equals(
+                                                                    currentFood.session,
+                                                                    ignoreCase = true
+                                                                )
+                                                    }
+
+                                                if (existingFood) {
+                                                    // Nếu món ăn đã được thêm, không cho phép thêm lại và thông báo
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Món này đã được thêm vào hôm nay rồi!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else {
+                                                    // Nếu món ăn chưa được thêm vào ngày hôm nay, tiến hành thêm món ăn mới vào danh sách
+                                                    val foodDoneDTO =
+                                                        FoodDoneDTO.default().copy(
+                                                            foodDoneId = 0,
+                                                            foodId = currentFood.foodId,
+                                                            date = currentDate,
+                                                            session = currentFood.session
+                                                        )
+
+                                                    // Ghi log thông tin về món ăn mới được thêm vào
+                                                    Log.d(
+                                                        "DEBUG",
+                                                        "Creating foodDone: $foodDoneDTO"
+                                                    )
+
+                                                    // Thêm món ăn vào danh sách
+                                                    foodViewModel.createFoodDone(foodDoneDTO)
+
+                                                    // Thông báo món ăn đã được thêm vào danh sách hôm nay
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Đã thêm món ăn vào danh sách hôm nay!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            } else {
+                                                // Thông báo nếu không tìm thấy món ăn trong danh sách
+                                                Toast.makeText(
+                                                    context,
+                                                    "Không tìm thấy món ăn!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        },
+                                        onLongClick = { expanded = true },
+                                        standardPadding = standardPadding
+                                    )
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = stringResource(R.string.edit_food),
+                                                    color = Color(0xFFFF6D00)
                                                 )
-                                            ),
+                                            },
                                             onClick = {
                                                 activity?.let {
                                                     val intent =
-                                                        Intent(it, FoodDetailActivity::class.java)
-                                                    val foodId = foodListRecent[index].foodId
-                                                    intent.putExtra("FOOD_ID", foodId)
+                                                        Intent(
+                                                            it,
+                                                            EditFoodActivity::class.java
+                                                        ).apply {
+                                                            putExtra("foodId", food.foodId)
+                                                        }
                                                     it.startActivity(intent)
                                                 }
+                                                expanded = false
                                             },
-                                            onLongClick = { expanded = true },
-                                            onEatClick = { TODO() },
-                                            standardPadding = standardPadding
-                                        )
-
-                                        DropdownMenu(
-                                            expanded = expanded,
-                                            onDismissRequest = { expanded = false }
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(R.string.edit_food),
-                                                        color = Color(0xFFFF6D00)
-                                                    )
-                                                },
-                                                onClick = {
-                                                    activity?.let {
-                                                        val intent =
-                                                            Intent(
-                                                                it,
-                                                                EditFoodActivity::class.java
-                                                            ).apply {
-                                                                /*putExtra("exerciseId", exercise.exerciseId)
-                                                                putExtra("exerciseDTO", exercise)*/
-                                                            }
-                                                        it.startActivity(intent)
-                                                    }
-                                                    expanded = false
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.ic_edit),
-                                                        contentDescription = stringResource(R.string.edit_food),
-                                                        modifier = Modifier.size(standardPadding * 1.5f),
-                                                        tint = Color(0xFFFF6D00)
-                                                    )
-                                                }
-                                            )
-
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(R.string.delete_food),
-                                                        color = Color(0xFFDD2C00)
-                                                    )
-                                                },
-                                                onClick = {
-                                                    /*Log.d(
-                                                        "ExerciseListScreen",
-                                                        "Deleting exercise: ${exercise.exerciseId}"
-                                                    )
-                                                    exerciseViewModel.deleteExercise(exercise.exerciseId)*/
-                                                    expanded = false
-                                                    Toast.makeText(
-                                                        context,
-                                                        context.getString(R.string.food_deleted_successfully),
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.trash),
-                                                        contentDescription = stringResource(R.string.delete_food),
-                                                        modifier = Modifier.size(standardPadding * 1.5f),
-                                                        tint = Color(0xFFDD2C00)
-                                                    )
-                                                }
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                        else -> EmptyAddScreen(
-                            standardPadding = standardPadding,
-                            modifier = modifier,
-                            selectedOption = selectedOption
-                        )
-                    }
-
-                else ->
-                    when (foodListCreate.isNotEmpty()) {
-                        true ->
-                            Column(
-                                modifier = modifier,
-                                verticalArrangement = Arrangement.spacedBy(standardPadding)
-                            ) {
-                                foodListCreate.forEachIndexed { index, _ ->
-                                    var expanded by remember { mutableStateOf(false) }
-
-                                    Box {
-                                        FoodItem(
-                                            foodImg = foodListCreate[index].foodImage,
-                                            foodName = foodListCreate[index].foodName,
-                                            servingSize = Pair(
-                                                foodListCreate[index].servingSize.first,
-                                                foodListCreate[index].servingSize.second
-                                            ),
-                                            mass = foodListCreate[index].mass,
-                                            calories = foodListCreate[index].calories,
-                                            macros = listOf(
-                                                Pair(
-                                                    foodListCreate[index].protein.first,
-                                                    foodListCreate[index].protein.third
-                                                ),
-                                                Pair(
-                                                    foodListCreate[index].carbohydrate.first,
-                                                    foodListCreate[index].carbohydrate.third
-                                                ),
-                                                Pair(
-                                                    foodListCreate[index].fat.first,
-                                                    foodListCreate[index].fat.third
+                                            leadingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_edit),
+                                                    contentDescription = stringResource(R.string.edit_food),
+                                                    modifier = Modifier.size(standardPadding * 1.5f),
+                                                    tint = Color(0xFFFF6D00)
                                                 )
-                                            ),
-                                            onClick = {
-                                                activity?.let {
-                                                    val intent =
-                                                        Intent(it, FoodDetailActivity::class.java)
-                                                    val foodId = foodListRecent[index].foodId
-                                                    Log.d("FoodItem", "Clicked foodId: $foodId")
-                                                    intent.putExtra("FOOD_ID", foodId)
-                                                    it.startActivity(intent)
-                                                }
-                                            },
-                                            onEatClick = { TODO() },
-                                            onLongClick = { expanded = true },
-                                            standardPadding = standardPadding
+                                            }
                                         )
 
-                                        DropdownMenu(
-                                            expanded = expanded,
-                                            onDismissRequest = { expanded = false }
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(R.string.edit_food),
-                                                        color = Color(0xFFFF6D00)
-                                                    )
-                                                },
-                                                onClick = {
-                                                    activity?.let {
-                                                        val intent =
-                                                            Intent(
-                                                                it,
-                                                                EditFoodActivity::class.java
-                                                            ).apply {
-                                                                /*putExtra("exerciseId", exercise.exerciseId)
-                                                                putExtra("exerciseDTO", exercise)*/
-                                                            }
-                                                        it.startActivity(intent)
-                                                    }
-                                                    expanded = false
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.ic_edit),
-                                                        contentDescription = stringResource(R.string.edit_food),
-                                                        modifier = Modifier.size(standardPadding * 1.5f),
-                                                        tint = Color(0xFFFF6D00)
-                                                    )
-                                                }
-                                            )
-
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(R.string.delete_food),
-                                                        color = Color(0xFFDD2C00)
-                                                    )
-                                                },
-                                                onClick = {
-                                                    /*Log.d(
-                                                        "ExerciseListScreen",
-                                                        "Deleting exercise: ${exercise.exerciseId}"
-                                                    )
-                                                    exerciseViewModel.deleteExercise(exercise.exerciseId)*/
-                                                    expanded = false
-                                                    Toast.makeText(
-                                                        context,
-                                                        context.getString(R.string.food_deleted_successfully),
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.trash),
-                                                        contentDescription = stringResource(R.string.delete_food),
-                                                        modifier = Modifier.size(standardPadding * 1.5f),
-                                                        tint = Color(0xFFDD2C00)
-                                                    )
-                                                }
-                                            )
-                                        }
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = stringResource(R.string.delete_food),
+                                                    color = Color(0xFFDD2C00)
+                                                )
+                                            },
+                                            onClick = {
+                                                Log.d(
+                                                    "FoodListScreen",
+                                                    "Deleting food: ${food.foodId}"
+                                                )
+                                                foodViewModel.deleteFood(food.foodId)
+                                                expanded = false
+                                                Toast.makeText(
+                                                    context,
+                                                    context.getString(R.string.food_deleted_successfully),
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            },
+                                            leadingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.trash),
+                                                    contentDescription = stringResource(R.string.delete_food),
+                                                    modifier = Modifier.size(standardPadding * 1.5f),
+                                                    tint = Color(0xFFDD2C00)
+                                                )
+                                            }
+                                        )
                                     }
                                 }
                             }
-
-                        else -> EmptyAddScreen(
-                            standardPadding = standardPadding,
-                            modifier = modifier,
-                            selectedOption = selectedOption
-                        )
-
+                        }
                     }
+
+                else -> EmptyAddScreen(
+                    standardPadding = standardPadding,
+                    modifier = modifier,
+                    selectedOption = selectedOption
+                )
 
             }
+        }
+
+        item {
+            Spacer(
+                modifier = Modifier.padding(
+                    bottom = WindowInsets.safeDrawing.asPaddingValues()
+                        .calculateBottomPadding() * 2
+                            + standardPadding
+                )
+            )
         }
     }
 }

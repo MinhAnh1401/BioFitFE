@@ -153,7 +153,7 @@ fun MealsListContent(
             ) {
                 Box {
                     FoodItem(
-                        foodImg = foodList[index].foodImage,
+                        foodImg = null,
                         foodName = foodList[index].foodName,
                         servingSize = foodList[index].servingSize,
                         mass = foodList[index].mass,

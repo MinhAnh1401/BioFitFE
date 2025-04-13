@@ -44,6 +44,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,6 +67,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
@@ -207,9 +211,23 @@ fun ExerciseContent(
             )
         )
 
-        val exerciseList by exerciseViewModel.exerciseList.collectAsState()
-
+        val lifecycleOwner = LocalLifecycleOwner.current
         val userId = UserSharedPrefsHelper.getUserData(context)?.userId ?: 0L
+        // Khi màn hình được hiển thị lại (resume), gọi lại API
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    exerciseViewModel.fetchExercises(userId)
+                }
+            }
+
+            lifecycleOwner.lifecycle.addObserver(observer)
+
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+        val exerciseList by exerciseViewModel.exerciseList.collectAsState()
         LaunchedEffect(exerciseViewModel.fetchExercises(userId)) {
             exerciseList
         }

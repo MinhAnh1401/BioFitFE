@@ -37,8 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -178,6 +180,7 @@ fun FoodNutritionalComposition(
     modifier: Modifier
 ) {
     val foodMacro = listOf(foodInfo.protein,foodInfo.carbohydrate,foodInfo.fat)
+    val bitmap = base64ToBitmap(foodInfo.foodImage)
 
     Row(
         modifier = modifier,
@@ -190,7 +193,11 @@ fun FoodNutritionalComposition(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(foodInfo.foodImage),
+                painter = if (bitmap != null) {
+                    BitmapPainter(bitmap.asImageBitmap())
+                } else {
+                    painterResource(R.drawable.img_food_default)
+                },
                 contentDescription = "Food image",
                 modifier = Modifier
                     .size(standardPadding * 8)

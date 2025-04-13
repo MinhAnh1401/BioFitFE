@@ -33,6 +33,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -173,6 +175,27 @@ fun OverviewExerciseContent(
     val endOfWeek = startOfWeek.plusDays(6)
     val endOfWeekFormatted = endOfWeek.format(formatter)
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Khi màn hình được hiển thị lại (resume), gọi lại API
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                exerciseViewModel.fetchOverviewExercises(
+                    context,
+                    userId,
+                    startOfWeekFormatted,
+                    endOfWeekFormatted
+                )
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     val overviewList by exerciseViewModel.overviewExerciseList.collectAsState()
 
     Log.d("userId", "$userId")
