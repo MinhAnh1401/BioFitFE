@@ -5,6 +5,7 @@ import com.example.biofit.data.model.dto.ExerciseDTO
 import com.example.biofit.data.model.dto.ExerciseDoneDTO
 import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.model.dto.FoodDoneDTO
+import com.example.biofit.data.model.dto.NotificationDTO
 import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.PasswordResetDTO
 import com.example.biofit.data.model.dto.UserDTO
@@ -195,5 +196,31 @@ interface ApiService {
     // xóa thức ăn đã ăn
     @DELETE("api/food-done/delete/{id}")
     fun deleteFoodDone(@Path("id") foodDoneId: Long): Call<Void>
+
+    /*
+    ------------------------------------------------------------------------------------------------
+    */
+    // API Notification
+
+    @GET("api/notification/{userId}")
+    suspend fun getUserNotifications(@Path("userId") userId: String): Response<List<NotificationDTO>>
+
+    @DELETE("api/notification/{id}")
+    suspend fun deleteNotification(@Path("id") id: Long): Response<Void>
+
+    @PUT("api/notification/{id}/read")
+    suspend fun markAsRead(@Path("id") id: Long): Response<Void>
+
+    @POST("api/notification/mark-all-read/{userId}")
+    suspend fun markAllAsRead(
+        @Path("userId") userId: String,
+        @Body notificationIds: List<Long>
+    ): Response<Void>
+
+    @POST("api/notification/welcome/{userId}")
+    suspend fun sendWelcomeNotification(@Path("userId") userId: String): Response<NotificationDTO>
+
+    @DELETE("notifications/delete-all/{userId}")
+    suspend fun deleteAllNotifications(@Path("userId") userId: String)
 
 }
