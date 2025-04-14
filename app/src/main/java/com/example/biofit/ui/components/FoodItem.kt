@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -97,7 +98,8 @@ fun FoodItem(
             contentDescription = "Food image",
             modifier = Modifier
                 .size(standardPadding * 5f)
-                .clip(MaterialTheme.shapes.large)
+                .clip(MaterialTheme.shapes.large),
+            contentScale = ContentScale.Crop
         )
 
         Column(

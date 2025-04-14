@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
+import android.util.Log
 import android.widget.NumberPicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -36,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,6 +62,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.UserDTO
@@ -88,10 +93,13 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import com.patrykandpatrick.vico.core.extension.sumByFloat
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 @Composable
 fun PlanningScreen() {
@@ -182,8 +190,8 @@ fun PlanningScreenContent(
     }
 
     val calorieChangeText = when {
-        calorieDifference > 0 -> "+ ${String.format("%.1f", calorieDifference)} kcal (${String.format("%.2f", percentageCalorieChange)}%)"
-        calorieDifference < 0 -> "- ${String.format("%.1f", -calorieDifference)} kcal (${String.format("%.2f", percentageCalorieChange)}%)"
+        calorieDifference > 0 -> "+ ${String.format("%.2f", percentageCalorieChange)}%"
+        calorieDifference < 0 -> "- ${String.format("%.2f", -percentageCalorieChange)}%"
         else -> stringResource(R.string.no_change)
     }
 
@@ -206,6 +214,76 @@ fun PlanningScreenContent(
         R.string.healthy_diet
     )
     val filteredOptionsDietPlan = optionsDietPlan.filter { it != selectedDietPlanOption.intValue }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val today =
+                    SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(Date())
+                foodViewModel.fetchFood(userData.userId)
+                foodViewModel.fetchFoodDoneList(userData.userId, today)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // Lấy danh sách món ăn đã ăn từ FoodViewModel
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    // Tính toán foodListDTO và foodListInfoDTO trong LaunchedEffect để đảm bảo cập nhật khi foodDoneList hoặc foodList thay đổi
+    val foodListInfoDTO = remember(foodDoneList, foodList) {
+        val foodListDTO = foodDoneList.mapNotNull { foodDone ->
+            foodList.find { it.foodId == foodDone.foodId }
+        }
+        foodListDTO.map { it.toFoodInfoDTO() }
+    }
+
+    LaunchedEffect(userData.userId) {
+        val today = SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(Date())
+        foodViewModel.fetchFoodDoneList(userData.userId, today)
+    }
+
+    Log.d("MenuForSession", "Food done list size: ${foodDoneList.size}")
+    Log.d("MenuForSession", "Food info list size: ${foodListInfoDTO.size}")
+
+    val foodListMorning = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.morning),
+            ignoreCase = true
+        )
+    }
+    val foodListAfternoon = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.afternoon),
+            ignoreCase = true
+        )
+    }
+    val foodListEvening = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.evening),
+            ignoreCase = true
+        )
+    }
+    val foodListSnack = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.snack),
+            ignoreCase = true
+        )
+    }
+
+    val loadedBreakfast = foodListMorning.sumByFloat { it.calories }
+    Log.d("MenuForSession", "Loaded breakfast: $loadedBreakfast")
+    val loadedLunch = foodListAfternoon.sumByFloat { it.calories }
+    val loadedDinner = foodListEvening.sumByFloat { it.calories }
+    val loadedSnack = foodListSnack.sumByFloat { it.calories }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
@@ -275,11 +353,11 @@ fun PlanningScreenContent(
 
             item {
                 val caloriesData = listOf(
-                    "12AM" to 250f,
-                    "6AM" to 500f,
-                    "12PM" to 300f,
-                    "6PM" to 450f,
-                    "12PM" to 200f,
+                    "12AM" to 0f,
+                    "6AM" to loadedBreakfast,
+                    "12PM" to loadedLunch,
+                    "6PM" to loadedDinner,
+                    "12PM" to 0f,
                 )
 
                 CaloriesLineChart(
@@ -662,7 +740,7 @@ fun CaloriesLineChart(
     val min = weightData.minOf { it.second }
     val max = weightData.maxOf { it.second }
 
-    val chartEntryModel = remember {
+    val chartEntryModel = remember(weightData) {
         ChartEntryModelProducer(
             weightData.mapIndexed { index, data ->
                 entryOf(index.toFloat(), data.second)
