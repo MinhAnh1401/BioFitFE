@@ -93,7 +93,6 @@ fun CreatePlanningScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PlanningHeaderBar(
-                rightButton = null,
                 standardPadding = standardPadding
             )
 

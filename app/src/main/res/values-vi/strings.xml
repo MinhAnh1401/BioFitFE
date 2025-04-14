@@ -433,4 +433,6 @@
     <string name="sample_question_24">Cách theo dõi tiến trình tăng hay giảm cân sao cho hiệu quả?</string>
     <string name="sample_question_25">BMI của tôi có bình thường không?</string>
     <string name="sample_question_26">Tôi nên làm gì nếu bị chững cân dù vẫn ăn kiêng và tập luyện?</string>
+    <string name="no_notifications">Không có thông báo</string>
+    <string name="you_ll_see_your_notifications_here_when_you_get_them">Bạn sẽ thấy thông báo của mình ở đây khi bạn nhận được chúng</string>
 </resources>

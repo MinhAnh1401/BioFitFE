@@ -183,7 +183,7 @@ fun TrackScreen(
                                                 R.string.morning -> painterResource(R.drawable.cloud_sun_fill)
                                                 R.string.afternoon -> painterResource(R.drawable.sun_max_fill)
                                                 R.string.evening -> painterResource(R.drawable.cloud_moon_fill)
-                                                else -> painterResource(R.drawable.circle_hexagongrid_fill)
+                                                else -> painterResource(R.drawable.popcorn_fill)
                                             },
                                             contentDescription = stringResource(R.string.morning),
                                             modifier = Modifier.size(standardPadding * 1.5f),

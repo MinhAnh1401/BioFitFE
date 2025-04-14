@@ -167,6 +167,8 @@ fun NotificationScreen(
                 .fillMaxWidth()
                 .padding(
                     top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                    start = standardPadding,
+                    end = standardPadding,
                 ),
             verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -227,13 +229,13 @@ fun EmptyNotificationView() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No Notifications",
+            text = stringResource(R.string.no_notifications),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "You'll see your notifications here when you get them",
+            text = stringResource(R.string.you_ll_see_your_notifications_here_when_you_get_them),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
@@ -255,9 +257,7 @@ fun NotificationListView(
     Column {
         // Header với nút điều khiển
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -357,7 +357,7 @@ fun NotificationItem(
                 Card(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .padding(vertical = 4.dp)
                         .clickable { if (!notification.isRead) onMarkAsRead() },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
@@ -431,24 +431,30 @@ fun NotificationItem(
 @Composable
 fun NotificationIcon(mealType: MealType) {
     val emoji = when (mealType) {
-        MealType.BREAKFAST -> "🍳"
-        MealType.LUNCH -> "🍲"
-        MealType.DINNER -> "🍽️"
-        MealType.SNACK -> "🍎"
-        MealType.SLEEP -> "😴"
-        MealType.OTHER -> "📢"
+        MealType.BREAKFAST -> painterResource(R.drawable.frying_pan_fill)
+        MealType.LUNCH -> painterResource(R.drawable.basket_fill)
+        MealType.DINNER -> painterResource(R.drawable.fork_knife)
+        MealType.SNACK -> painterResource(R.drawable.popcorn_fill)
+        MealType.SLEEP -> painterResource(R.drawable.bed_double_fill)
+        MealType.OTHER -> painterResource(R.drawable.horn_blast_fill)
     }
 
     Box(
-        modifier = Modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+        modifier = Modifier.size(40.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = emoji,
-            fontSize = 20.sp
+        Icon(
+            painter = emoji,
+            contentDescription = null,
+            modifier = Modifier.size(30.dp),
+            tint = when (mealType) {
+                MealType.BREAKFAST -> Color(0xFFFFAB00)
+                MealType.LUNCH -> Color(0xFFDD2C00)
+                MealType.DINNER -> Color(0xFF2962FF)
+                MealType.SNACK -> Color(0xFF00BFA5)
+                MealType.SLEEP -> Color(0xFF6200EA)
+                MealType.OTHER -> MaterialTheme.colorScheme.primary
+            },
         )
     }
 }

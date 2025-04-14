@@ -180,7 +180,6 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
     val context = LocalContext.current
     val activity = context as? Activity
     val keyboardController = LocalSoftwareKeyboardController.current
-    keyboardController?.show()
 
     val standardPadding = getStandardPadding().first
 

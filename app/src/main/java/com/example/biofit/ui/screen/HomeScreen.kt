@@ -245,7 +245,7 @@ fun HeaderBar(
             )
         }
 
-        var selectedDate by rememberSaveable { mutableStateOf("") }
+        /*var selectedDate by rememberSaveable { mutableStateOf("") }
         var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
         IconButton(
@@ -273,7 +273,7 @@ fun HeaderBar(
                     calendar.get(Calendar.DAY_OF_MONTH)
                 ).show()
             }
-        }
+        }*/
     }
 }
 
@@ -283,17 +283,15 @@ fun HomeContent(
     standardPadding: Dp,
     modifier: Modifier
 ) {
+    HeaderBar(
+        userData = userData,
+        modifier = modifier.padding(bottom = standardPadding),
+        standardPadding = standardPadding
+    )
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(space = standardPadding * 2f)
     ) {
-        item {
-            HeaderBar(
-                userData = userData,
-                modifier = modifier,
-                standardPadding = standardPadding
-            )
-        }
-
         item {
             OverviewAndSearchBar(
                 standardPadding = standardPadding,
@@ -590,7 +588,7 @@ fun OverviewAndSearchBar(
                 it.startActivity(intent)
             }
         },
-        alpha = 0.5f,
+        alpha = 0.75f,
         shape = MaterialTheme.shapes.extraLarge
     ) {
         Row(
@@ -939,7 +937,7 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.circle_hexagongrid_fill,
+                headIcon = R.drawable.popcorn_fill,
                 headIconColor = Color(0xFF00BFA5),
                 desIcon = R.string.snack,
                 title = R.string.snack,

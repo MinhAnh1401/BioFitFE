@@ -118,21 +118,10 @@ fun PlanningScreen() {
                     start = standardPadding,
                     end = standardPadding,
                 ),
+            verticalArrangement = Arrangement.spacedBy(standardPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PlanningHeaderBar(
-                rightButton = {
-                    IconButton(
-                        onClick = { TODO() }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.calendar),
-                            contentDescription = stringResource(R.string.calendar),
-                            modifier = Modifier.size(standardPadding * 2f),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
                 standardPadding = standardPadding
             )
 
@@ -701,7 +690,6 @@ fun PlanningScreenContent(
 
 @Composable
 fun PlanningHeaderBar(
-    rightButton: (@Composable () -> Unit)? = null,
     standardPadding: Dp
 ) {
     Row(
@@ -721,8 +709,6 @@ fun PlanningHeaderBar(
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.headlineSmall
         )
-
-        rightButton?.invoke()
     }
 }
 
