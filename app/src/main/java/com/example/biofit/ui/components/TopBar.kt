@@ -40,6 +40,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -51,6 +52,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,12 +78,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
+import com.example.biofit.data.model.dto.FoodDTO
+import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.FoodDoneSharedPrefsHelper
 import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.MainActivity
@@ -91,9 +97,12 @@ import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.FoodViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.find
+import kotlin.collections.mapNotNull
 
 @Composable
 fun TopBarScreen() {
@@ -132,7 +141,8 @@ fun TopBar(
     title: String? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
-    standardPadding: Dp
+    standardPadding: Dp,
+    foodViewModel: FoodViewModel = viewModel()
 ) {
     var showChatbot by remember { mutableStateOf(false) }
 
@@ -405,56 +415,46 @@ fun TopBar(
                         }
                     }
 
-                    ElevatedCard(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
+                            .weight(1f)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                LazyColumn(
-                                    state = listState
-                                ) {
-                                    items(chatHistory) { chat ->
-                                        if (chat.userMessage != " Hello " && chat.userMessage != " Xin chào ") {
-                                            ChatBubble(
-                                                text = chat.userMessage,
-                                                isUser = true,
-                                                standardPadding = standardPadding,
-                                            )
-                                        }
-
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            LazyColumn(
+                                state = listState
+                            ) {
+                                items(chatHistory) { chat ->
+                                    if (chat.userMessage != " Hello " && chat.userMessage != " Xin chào ") {
                                         ChatBubble(
-                                            text = chat.botResponse,
-                                            isUser = false,
+                                            text = chat.userMessage,
+                                            isUser = true,
                                             standardPadding = standardPadding,
                                         )
                                     }
 
-                                    item {
-                                        Spacer(
-                                            modifier = Modifier.padding(
-                                                bottom = WindowInsets.safeDrawing.asPaddingValues()
-                                                    .calculateBottomPadding()
-                                                        + standardPadding * 10
-                                            )
+                                    ChatBubble(
+                                        text = chat.botResponse,
+                                        isUser = false,
+                                        standardPadding = standardPadding,
+                                    )
+                                }
+
+                                item {
+                                    Spacer(
+                                        modifier = Modifier.padding(
+                                            bottom = WindowInsets.safeDrawing.asPaddingValues()
+                                                .calculateBottomPadding()
+                                                    + standardPadding * 10
                                         )
-                                    }
+                                    )
                                 }
                             }
+                        }
 
-                            LaunchedEffect(chatHistory.size) {
-                                if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
-                                    listState.animateScrollToItem(chatHistory.size)
-                                }
+                        LaunchedEffect(chatHistory.size) {
+                            if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
+                                listState.animateScrollToItem(chatHistory.size)
                             }
                         }
                     }
@@ -482,31 +482,33 @@ fun TopBar(
                         ) {
                             if (chatHistory.size <= 1) {
                                 sampleInputSelected.forEach { sampleInput ->
-                                    Box(
-                                        modifier = Modifier
-                                            .background(
-                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                                shape = MaterialTheme.shapes.extraLarge
-                                            )
-                                            .border(
-                                                width = 1.dp,
-                                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                                                shape = MaterialTheme.shapes.extraLarge
-                                            )
-                                            .clip(MaterialTheme.shapes.extraLarge)
-                                            .clickable {
-                                                viewModel.sendMessage(sampleInput, scope)
-                                                chatHistory = viewModel.chatHistory
-                                                userInput = ""
-                                                keyboardController?.hide()
-                                            }
-                                            .padding(standardPadding)
+                                    SubCard(
+                                        onClick = {
+                                            viewModel.sendMessage(sampleInput, scope)
+                                            chatHistory = viewModel.chatHistory
+                                            userInput = ""
+                                            keyboardController?.hide()
+                                        },
+                                        modifier = Modifier.align(Alignment.Start)
                                     ) {
-                                        Text(
-                                            text = sampleInput,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
+                                        Row(
+                                            modifier = Modifier.padding(standardPadding),
+                                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.lightbulb_max),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(standardPadding * 2f),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+
+                                            Text(
+                                                text = sampleInput,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
                                     }
                                 }
                             }
