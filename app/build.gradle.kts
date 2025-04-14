@@ -111,6 +111,9 @@ dependencies {
     testImplementation(kotlin("test"))
 
 //    androidTestImplementation ("org.robolectric:robolectric:4.9")
+    implementation("androidx.compose.material:material:1.5.4")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
 
 fun getLocalProperty(key: String): String {
