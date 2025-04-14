@@ -246,7 +246,7 @@ fun HeaderBar(
             )
         }
 
-        Box(modifier = Modifier.size(50.dp)){
+        Box(modifier = Modifier.size(52.dp)){
             IconButton(
                 onClick = {
                     activity?.let {
@@ -267,8 +267,8 @@ fun HeaderBar(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .offset(x = (-4).dp, y = 4.dp)
-                        .size(23.dp)
+                        /*.offset(x = (0).dp, y = 0.dp)*/
+                        .size(21.dp)
                         .background(
                             color = Color.Red,
                             shape = CircleShape
@@ -279,7 +279,9 @@ fun HeaderBar(
                         text = if (notificationCount > 9) "9+" else notificationCount.toString(),
                         color = Color.White,
                         fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
