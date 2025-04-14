@@ -78,7 +78,6 @@ import com.example.biofit.data.model.dto.OverviewExerciseDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.ChatPreferencesHelper
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
-import com.example.biofit.data.utils.FoodDoneSharedPrefsHelper
 import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.animated.AnimatedGradientText

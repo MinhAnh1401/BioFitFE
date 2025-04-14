@@ -80,7 +80,6 @@ import com.example.biofit.data.model.dto.DailyLogDTO
 import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
-import com.example.biofit.data.utils.FoodDoneSharedPrefsHelper
 import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
