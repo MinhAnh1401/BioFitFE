@@ -15,7 +15,7 @@ import java.lang.reflect.Type
 
 
 object RetrofitClient {
-    const val BASE_URL = "http://172.16.3.151:8080/"
+    const val BASE_URL = "http://172.16.3.102:8080/"
 
     // Create a custom deserializer for LocalDateTime
     private val localDateTimeDeserializer = object : JsonDeserializer<LocalDateTime> {

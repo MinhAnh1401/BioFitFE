@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.util.Base64
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +48,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -75,8 +77,10 @@ import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
+import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.FoodDoneSharedPrefsHelper
 import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
@@ -93,6 +97,7 @@ import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.FoodViewModel
 import com.example.biofit.view_model.LoginViewModel
 import com.example.biofit.view_model.SubscriptionViewModel
 import com.example.biofit.view_model.UpdateUserViewModel

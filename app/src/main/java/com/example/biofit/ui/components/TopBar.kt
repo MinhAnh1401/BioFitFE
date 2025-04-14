@@ -3,6 +3,7 @@ package com.example.biofit.ui.components
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
@@ -16,6 +17,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +40,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +52,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,9 +60,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -68,12 +78,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
+import com.example.biofit.data.model.dto.FoodDTO
+import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
+import com.example.biofit.data.utils.FoodDoneSharedPrefsHelper
 import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.MainActivity
@@ -83,9 +97,12 @@ import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.ExerciseViewModel
+import com.example.biofit.view_model.FoodViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.find
+import kotlin.collections.mapNotNull
 
 @Composable
 fun TopBarScreen() {
@@ -124,7 +141,8 @@ fun TopBar(
     title: String? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
-    standardPadding: Dp
+    standardPadding: Dp,
+    foodViewModel: FoodViewModel = viewModel()
 ) {
     var showChatbot by remember { mutableStateOf(false) }
 
@@ -208,12 +226,7 @@ fun TopBar(
                     stiffness = Spring.StiffnessLow
                 )
             ),
-            exit = fadeOut(animationSpec = tween(200)) + slideOutVertically(
-                targetOffsetY = { -it / 2 },
-                animationSpec = tween(200)
-            ) + shrinkVertically(
-                animationSpec = tween(200)
-            )
+            exit = fadeOut() + slideOutVertically { -it } + shrinkVertically()
         ) {
             val context = LocalContext.current
             val keyboardController = LocalSoftwareKeyboardController.current
@@ -290,10 +303,46 @@ fun TopBar(
                 delay(300)
                 focusRequester.requestFocus()
             }
+            /*
+            ****************************************************************************************
+            */
+            val sampleInput = listOf(
+                stringResource(R.string.sample_question_1),
+                stringResource(R.string.sample_question_2),
+                stringResource(R.string.sample_question_3),
+                stringResource(R.string.sample_question_4),
+                stringResource(R.string.sample_question_5),
+                stringResource(R.string.sample_question_6),
+                stringResource(R.string.sample_question_7),
+                stringResource(R.string.sample_question_8),
+                stringResource(R.string.sample_question_9),
+                stringResource(R.string.sample_question_10),
+                stringResource(R.string.sample_question_11),
+                stringResource(R.string.sample_question_12),
+                stringResource(R.string.sample_question_13),
+                stringResource(R.string.sample_question_14),
+                stringResource(R.string.sample_question_15),
+                stringResource(R.string.sample_question_16),
+                stringResource(R.string.sample_question_17),
+                stringResource(R.string.sample_question_18),
+                stringResource(R.string.sample_question_19),
+                stringResource(R.string.sample_question_20),
+                stringResource(R.string.sample_question_21),
+                stringResource(R.string.sample_question_22),
+                stringResource(R.string.sample_question_23),
+                stringResource(R.string.sample_question_24),
+                stringResource(R.string.sample_question_25),
+                stringResource(R.string.sample_question_26)
+            )
 
+            val sampleInputSelected = sampleInput.shuffled().take(3)
+            Log.d("sampleInputSelected", sampleInputSelected.toString())
+            /*
+            ****************************************************************************************
+            */
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = Color.Transparent
+                color = MaterialTheme.colorScheme.background
             ) {
                 Column(
                     modifier = Modifier
@@ -301,128 +350,111 @@ fun TopBar(
                     verticalArrangement = Arrangement.spacedBy(standardPadding),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    SubCard(
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chatbot_ai),
+                            contentDescription = stringResource(R.string.bionix),
+                            modifier = Modifier.size(standardPadding * 3f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                        Text(
+                            text = stringResource(R.string.bionix),
+                            modifier = Modifier.padding(start = standardPadding / 2),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.Black
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        var isRotating by remember { mutableStateOf(false) }
+                        val rotation by animateFloatAsState(
+                            targetValue = if (isRotating) 360f else 0f,
+                            animationSpec = tween(
+                                durationMillis = 500,
+                                easing = LinearEasing
+                            ),
+                            finishedListener = {
+                                isRotating = false
+                            } // Reset trạng thái sau khi xoay xong
+                        )
+
+                        IconButton(
+                            onClick = {
+                                isRotating = true
+                                viewModel.clearChatHistory()
+                                chatHistory = viewModel.chatHistory
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise_rotate_90_circle_fill),
+                                contentDescription = stringResource(R.string.refresh_chat),
+                                modifier = Modifier
+                                    .size(standardPadding * 2f)
+                                    .background(Color.Transparent)
+                                    .graphicsLayer(rotationZ = rotation),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { showChatbot = !showChatbot }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.minus_circle_fill),
+                                contentDescription = stringResource(R.string.close_chat_box),
+                                modifier = Modifier
+                                    .size(standardPadding * 2f)
+                                    .background(Color.Transparent),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                LazyColumn(
-                                    state = listState
-                                ) {
-                                    item {
-                                        Spacer(
-                                            modifier = Modifier.padding(
-                                                bottom = standardPadding * 3.5f
-                                            )
-                                        )
-                                    }
-
-                                    items(chatHistory) { chat ->
-                                        if (chat.userMessage != " Hello " && chat.userMessage != " Xin chào ") {
-                                            ChatBubble(
-                                                text = chat.userMessage,
-                                                isUser = true,
-                                                standardPadding = standardPadding,
-                                            )
-                                        }
-
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            LazyColumn(
+                                state = listState
+                            ) {
+                                items(chatHistory) { chat ->
+                                    if (chat.userMessage != " Hello " && chat.userMessage != " Xin chào ") {
                                         ChatBubble(
-                                            text = chat.botResponse,
-                                            isUser = false,
+                                            text = chat.userMessage,
+                                            isUser = true,
                                             standardPadding = standardPadding,
                                         )
                                     }
 
-                                    item {
-                                        Spacer(
-                                            modifier = Modifier.padding(
-                                                bottom = WindowInsets.safeDrawing.asPaddingValues()
-                                                    .calculateBottomPadding()
-                                                        + standardPadding * 10
-                                            )
-                                        )
-                                    }
+                                    ChatBubble(
+                                        text = chat.botResponse,
+                                        isUser = false,
+                                        standardPadding = standardPadding,
+                                    )
                                 }
 
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(standardPadding),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_chatbot_ai),
-                                        contentDescription = stringResource(R.string.bionix),
-                                        modifier = Modifier.size(standardPadding * 3f),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-
-                                    Text(
-                                        text = stringResource(R.string.bionix),
-                                        modifier = Modifier.padding(start = standardPadding / 2),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        style = MaterialTheme.typography.headlineSmall.copy(
-                                            fontWeight = FontWeight.Black
+                                item {
+                                    Spacer(
+                                        modifier = Modifier.padding(
+                                            bottom = WindowInsets.safeDrawing.asPaddingValues()
+                                                .calculateBottomPadding()
+                                                    + standardPadding * 10
                                         )
                                     )
-
-                                    Spacer(modifier = Modifier.weight(1f))
-
-                                    var isRotating by remember { mutableStateOf(false) }
-                                    val rotation by animateFloatAsState(
-                                        targetValue = if (isRotating) 360f else 0f,
-                                        animationSpec = tween(
-                                            durationMillis = 500,
-                                            easing = LinearEasing
-                                        ),
-                                        finishedListener = {
-                                            isRotating = false
-                                        } // Reset trạng thái sau khi xoay xong
-                                    )
-
-                                    IconButton(
-                                        onClick = {
-                                            isRotating = true
-                                            viewModel.clearChatHistory()
-                                            chatHistory = viewModel.chatHistory
-                                        },
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_trianglehead_2_clockwise_rotate_90_circle_fill),
-                                            contentDescription = stringResource(R.string.refresh_chat),
-                                            modifier = Modifier
-                                                .size(standardPadding * 2f)
-                                                .background(Color.Transparent)
-                                                .graphicsLayer(rotationZ = rotation),
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-
-                                    IconButton(
-                                        onClick = { showChatbot = !showChatbot }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.minus_circle_fill),
-                                            contentDescription = stringResource(R.string.close_chat_box),
-                                            modifier = Modifier
-                                                .size(standardPadding * 2f)
-                                                .background(Color.Transparent),
-                                            tint = MaterialTheme.colorScheme.secondary
-                                        )
-                                    }
                                 }
                             }
+                        }
 
-                            LaunchedEffect(chatHistory.size) {
-                                if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
-                                    listState.animateScrollToItem(chatHistory.size)
-                                }
+                        LaunchedEffect(chatHistory.size) {
+                            if (chatHistory.isNotEmpty()) { // Chỉ cuộn nếu có ít nhất 1 tin nhắn
+                                listState.animateScrollToItem(chatHistory.size)
                             }
                         }
                     }
@@ -445,8 +477,42 @@ fun TopBar(
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(standardPadding / 2f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            if (chatHistory.size <= 1) {
+                                sampleInputSelected.forEach { sampleInput ->
+                                    SubCard(
+                                        onClick = {
+                                            viewModel.sendMessage(sampleInput, scope)
+                                            chatHistory = viewModel.chatHistory
+                                            userInput = ""
+                                            keyboardController?.hide()
+                                        },
+                                        modifier = Modifier.align(Alignment.Start)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(standardPadding),
+                                            horizontalArrangement = Arrangement.spacedBy(standardPadding / 2),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.lightbulb_max),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(standardPadding * 2f),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+
+                                            Text(
+                                                text = sampleInput,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
                             BlinkingGradientBox(
                                 alpha = 0.75f,
                                 shape = MaterialTheme.shapes.extraLarge
