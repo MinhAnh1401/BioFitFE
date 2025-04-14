@@ -579,6 +579,7 @@ fun MenuForSession(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
+                                /*
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -608,6 +609,7 @@ fun MenuForSession(
                                         )
                                     }
                                 )
+                                 */
 
                                 DropdownMenuItem(
                                     text = {
@@ -687,6 +689,7 @@ fun MenuForSession(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
+                                /*
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -717,6 +720,7 @@ fun MenuForSession(
                                     }
                                 )
 
+                                 */
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -795,6 +799,7 @@ fun MenuForSession(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
+                                /*
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -824,6 +829,7 @@ fun MenuForSession(
                                         )
                                     }
                                 )
+                                 */
 
                                 DropdownMenuItem(
                                     text = {
@@ -898,7 +904,7 @@ fun MenuForSession(
                                 onLongClick = { expanded = true },
                                 standardPadding = standardPadding
                             )
-
+                            /*
                             DropdownMenu(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
@@ -932,6 +938,7 @@ fun MenuForSession(
                                         )
                                     }
                                 )
+                             */
 
                                 DropdownMenuItem(
                                     text = {
@@ -967,8 +974,6 @@ fun MenuForSession(
             }
         }
     }
-}
-
 @Preview(
     device = "id:pixel",
     showSystemUi = true,
