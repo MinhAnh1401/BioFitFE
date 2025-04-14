@@ -702,7 +702,7 @@ fun SettingContent(
                                 .weight(1f)
                                 .padding(end = standardPadding)
                                 .blur(
-                                    radius = if (isEmailVisible) 0.dp else 6.dp,
+                                    radius = if (isEmailVisible) 0.dp else 15.dp,
                                     edgeTreatment = BlurredEdgeTreatment.Unbounded
                                 ),
                             color = MaterialTheme.colorScheme.onSurface,

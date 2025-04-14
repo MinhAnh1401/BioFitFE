@@ -57,6 +57,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.biofit.R
+import com.example.biofit.data.model.dto.FoodInfoDTO
+import com.example.biofit.data.model.dto.FoodSummaryDTO
 import com.example.biofit.ui.components.ToggleButtonBar
 import com.example.biofit.ui.components.TopBar
 import com.example.biofit.ui.components.getStandardPadding
@@ -64,6 +66,7 @@ import com.example.biofit.ui.screen.OverviewDayContent
 import com.example.biofit.ui.screen.OverviewWeekContent
 import com.example.biofit.ui.theme.BioFitTheme
 import com.patrykandpatrick.vico.core.extension.sumOf
+import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -216,12 +219,19 @@ val dailyCaloriesData = listOf(
 
 // Chuyển đổi dữ liệu thành danh sách DailyCalories
 @Composable
-fun getDailyCalories(): List<DailyCalories> {
-    return dailyCaloriesData.map { (icon, session, calories) ->
+fun getDailyCalories(listCalories: List<List<FoodInfoDTO>>): List<DailyCalories> {
+    val sessions = listOf(
+        Triple(R.drawable.ic_morning_chart, R.string.morning, listCalories[0]),
+        Triple(R.drawable.ic_afternoon_chart, R.string.afternoon, listCalories[1]),
+        Triple(R.drawable.ic_evening_chart, R.string.evening, listCalories[2]),
+        Triple(R.drawable.ic_snack_chart, R.string.snack, listCalories[3])
+    )
+
+    return sessions.map { (icon, sessionId, foods) ->
         DailyCalories(
-            painterResource(icon),
-            stringResource(session),
-            calories
+            icon = painterResource(icon),
+            session = stringResource(sessionId),
+            calories = foods.sumOf { it.calories }
         )
     }
 }
@@ -240,45 +250,36 @@ data class DailyMacro(
 )
 
 // Dữ liệu về macro dinh dưỡng
-val dailyMacroData = listOf(
-    Triple(
-        R.drawable.ic_protein,
-        R.string.protein,
-        Pair(
-            Random.nextInt(150, 300).toFloat()/*Lượng nạp vào (g)*/,
-            300f/*Lượng mục tiêu (g)*/
-        )
-    ),
-    Triple(
-        R.drawable.ic_carbohydrate,
-        R.string.carbohydrate,
-        Pair(
-            Random.nextInt(300, 600).toFloat(),
-            600f
-        )
-    ),
-    Triple(
-        R.drawable.ic_fat,
-        R.string.fat,
-        Pair(
-            Random.nextInt(50, 100).toFloat(),
-            100f
+@Composable
+fun getDailyMacroTable(foodSummary: FoodSummaryDTO?, targetCalories: Float): List<DailyMacro> {
+    return listOf(
+        DailyMacro(
+            icon = painterResource(R.drawable.ic_protein),
+            title = stringResource(R.string.protein),
+            value = foodSummary?.totalProtein?.toFloat() ?: 0f,
+            targetValue = BigDecimal((targetCalories.times(0.05f)).toDouble())
+                .setScale(2, RoundingMode.HALF_UP)
+                .toFloat() // có thể tính từ giới tính/tuổi nếu muốn
+        ),
+        DailyMacro(
+            icon = painterResource(R.drawable.ic_carbohydrate),
+            title = stringResource(R.string.carbohydrate),
+            value = foodSummary?.totalCarb?.toFloat() ?: 0f,
+            targetValue = BigDecimal((targetCalories.times(0.125f)).toDouble())
+                .setScale(2, RoundingMode.HALF_UP)
+                .toFloat()
+        ),
+        DailyMacro(
+            icon = painterResource(R.drawable.ic_fat),
+            title = stringResource(R.string.fat),
+            value = foodSummary?.totalFat?.toFloat() ?: 0f,
+            targetValue = BigDecimal((targetCalories.times(0.3f).div(9f)).toDouble())
+                .setScale(2, RoundingMode.HALF_UP)
+                .toFloat()
         )
     )
-)
-
-// Chuyển đổi dữ liệu thành danh sách DailyMacro
-@Composable
-fun getDailyMacroTable(): List<DailyMacro> {
-    return dailyMacroData.map { (icon, title, values) ->
-        DailyMacro(
-            painterResource(icon),
-            stringResource(title),
-            values.first,
-            values.second
-        )
-    }
 }
+
 
 @Composable
 fun DailyCountChart(

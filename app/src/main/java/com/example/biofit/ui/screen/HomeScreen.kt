@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Paint
-import android.graphics.drawable.Icon
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -43,8 +42,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -94,7 +91,6 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -106,7 +102,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.util.TableInfo
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
@@ -119,21 +114,17 @@ import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.navigation.OverviewActivity
 import com.example.biofit.ui.activity.AIChatbotActivity
-import com.example.biofit.ui.activity.CaloriesTargetActivity
-import com.example.biofit.ui.activity.ChatBubble
 import com.example.biofit.ui.activity.ExerciseActivity
 import com.example.biofit.ui.activity.NotificationActivity
 import com.example.biofit.ui.activity.OverviewExerciseActivity
 import com.example.biofit.ui.activity.TrackActivity
 import com.example.biofit.ui.activity.UpdateWeightActivity
-import com.example.biofit.ui.animated.AnimatedGradientText
 import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.animated.OneTimeAnimatedGradientText
 import com.example.biofit.ui.components.MainCard
 import com.example.biofit.ui.components.SubCard
 import com.example.biofit.ui.components.getStandardPadding
 import com.example.biofit.ui.theme.BioFitTheme
-import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.DailyLogViewModel
 import com.example.biofit.view_model.ExerciseViewModel
@@ -165,6 +156,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+
 
 @Composable
 fun HomeScreen(userData: UserDTO) {
@@ -304,7 +297,8 @@ fun HomeContent(
         item {
             OverviewAndSearchBar(
                 standardPadding = standardPadding,
-                modifier = modifier
+                modifier = modifier,
+                userId = userData.userId
             )
         }
 
@@ -339,12 +333,58 @@ fun HomeContent(
 @Composable
 fun OverviewAndSearchBar(
     standardPadding: Dp,
-    modifier: Modifier
+    modifier: Modifier,
+    userId: Long,
+    foodViewModel: FoodViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val loadedCalories = 430 // Thay đổi thành lượng calo đã nạp
+    val foodSummary by foodViewModel.foodSummaryToday.collectAsState()
+    val foodDoneList by foodViewModel.foodDoneList.collectAsState()
+    val foodList by foodViewModel.foodList.collectAsState()
+
+    LaunchedEffect(userId) {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        foodViewModel.fetchFood(userId)
+        foodViewModel.fetchFoodDoneList(userId, today)
+        foodViewModel.getFoodSummary(userId, today) // ✅ THÊM dòng này nè
+        Log.d("OverviewDebug", "Fetching food, foodDoneList, and summary for userId: $userId on $today")
+    }
+
+    val foodListDTO = foodDoneList.mapNotNull { done ->
+        foodList.find { it.foodId == done.foodId }
+    }.map { it.toFoodInfoDTO() }
+
+    Log.d("OverviewDebug", "foodDoneList: $foodDoneList")
+    Log.d("OverviewDebug", "foodList: $foodList")
+    Log.d("OverviewDebug", "foodListDTO: $foodListDTO")
+
+    val loadedCalories = BigDecimal((foodSummary?.totalCalories ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val totalProtein = BigDecimal((foodSummary?.totalProtein ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val totalCarb = BigDecimal((foodSummary?.totalCarb ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val totalFat = BigDecimal((foodSummary?.totalFat ?: 0.0f).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+
+    Log.d("OverviewDebug", "📊 Summary từ API:")
+    Log.d("OverviewDebug", "🔥 Calories: $loadedCalories")
+    Log.d("OverviewDebug", "💪 Protein: $totalProtein")
+    Log.d("OverviewDebug", "🍞 Carbohydrate: $totalCarb")
+    Log.d("OverviewDebug", "🥑 Fat: $totalFat")
+
+    Log.d("OverviewDebug", "Calories: $loadedCalories, Protein: $totalProtein, Carb: $totalCarb, Fat: $totalFat")
+
+    foodListDTO.forEach { dto ->
+        Log.d("OverviewDebug", "Food: Calories: ${dto.calories}, Protein: ${dto.protein.third}, Carb: ${dto.carbohydrate.third}, Fat: ${dto.fat.third}")
+    }
+
     val userData = UserSharedPrefsHelper.getUserData(context) ?: UserDTO.default()
     val targetCalories = when (userData.gender) {
         0 -> when (userData.getAgeInt(userData.dateOfBirth)) {
@@ -359,14 +399,22 @@ fun OverviewAndSearchBar(
 
         else -> 0f
     }
+
+    val targetProtein = BigDecimal((targetCalories.times(0.05f)).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val targetCarb = BigDecimal((targetCalories.times(0.125f)).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+    val targetFat = BigDecimal((targetCalories.times(0.3f).div(9f)).toDouble())
+        .setScale(2, RoundingMode.HALF_UP)
+        .toFloat()
+
     val nutrients = listOf(
-        Triple(R.string.protein, 400, 1000), // Thay đổi thành protein
-        Triple(R.string.powdered_sugar, 1700, 1000), // Thay đổi thành đường
-        Triple(R.string.fat, 700, 1000), // Thay đổi thành chất béo
-        Triple(R.string.salt, 600, 1000), // Thay đổi thành muối
-        Triple(R.string.fiber, 500, 1000) // Thay đổi thành chất xơ
+        Triple(R.string.protein, totalProtein, targetProtein),
+        Triple(R.string.powdered_sugar, totalCarb, targetCarb),
+        Triple(R.string.fat, totalFat, targetFat),
     )
-    /*var search by rememberSaveable { mutableStateOf("") }*/
 
     MainCard(
         onClick = {
@@ -507,7 +555,7 @@ fun OverviewAndSearchBar(
                         Column {
                             Text(
                                 text = stringResource(id = nameRes),
-                                color = if (loaded > target) {
+                                color = if (loaded.toFloat() > target.toFloat()) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
@@ -516,8 +564,8 @@ fun OverviewAndSearchBar(
                             )
 
                             Text(
-                                text = "$loaded / $target" + stringResource(id = R.string.gam),
-                                color = if (loaded > target) {
+                                text = "$loaded / $target " + stringResource(id = R.string.gam),
+                                color = if (loaded.toFloat() > target.toFloat()) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.onPrimary
@@ -987,7 +1035,7 @@ fun DailyGoals(
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     val formatterToday = LocalDate.now().format(
         DateTimeFormatter.ofPattern(
-            if (Locale.current.language == "vi") "dd-MM-yyyy" else "yyyy-MM-dd"
+            if (Locale.getDefault().language == "vi") "dd-MM-yyyy" else "yyyy-MM-dd"
         )
     )
     val weightDataState by dailyLogViewModel.weightDataState

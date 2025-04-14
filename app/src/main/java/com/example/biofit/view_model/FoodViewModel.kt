@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.FoodDTO
 import com.example.biofit.data.model.dto.FoodDoneDTO
+import com.example.biofit.data.model.dto.FoodSummaryDTO
 import com.example.biofit.data.remote.RetrofitClient
 import com.example.biofit.ui.screen.base64ToBitmap
 import com.google.gson.Gson
@@ -301,4 +302,31 @@ class FoodViewModel : ViewModel() {
         })
     }
 
+    private val _foodSummaryToday = MutableStateFlow<FoodSummaryDTO?>(null)
+    val foodSummaryToday: StateFlow<FoodSummaryDTO?> = _foodSummaryToday.asStateFlow()
+
+    private val _foodSummaryYesterday = MutableStateFlow<FoodSummaryDTO?>(null)
+    val foodSummaryYesterday: StateFlow<FoodSummaryDTO?> = _foodSummaryYesterday.asStateFlow()
+
+    fun getFoodSummary(userId: Long, date: String, isYesterday: Boolean = false) {
+        val apiService = RetrofitClient.instance
+        apiService.getFoodSummary(userId, date).enqueue(object : Callback<FoodSummaryDTO> {
+            override fun onResponse(call: Call<FoodSummaryDTO>, response: Response<FoodSummaryDTO>) {
+                if (response.isSuccessful) {
+                    if (isYesterday) {
+                        _foodSummaryYesterday.value = response.body()
+                    } else {
+                        _foodSummaryToday.value = response.body()
+                    }
+                    Log.d("FoodViewModel", "✅ Summary ${if (isYesterday) "hôm qua" else "hôm nay"}: ${response.body()}")
+                } else {
+                    Log.e("FoodViewModel", "❌ Lỗi lấy summary: ${response.code()} - ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<FoodSummaryDTO>, t: Throwable) {
+                Log.e("FoodViewModel", "🚨 Lỗi mạng khi lấy summary", t)
+            }
+        })
+    }
 }
