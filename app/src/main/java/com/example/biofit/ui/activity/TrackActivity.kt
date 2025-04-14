@@ -507,10 +507,30 @@ fun MenuForSession(
     Log.d("MenuForSession", "Food done list size: ${foodDoneList.size}")
     Log.d("MenuForSession", "Food info list size: ${foodListInfoDTO.size}")
 
-    val foodListMorning = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.morning), ignoreCase = true) }
-    val foodListAfternoon = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.afternoon), ignoreCase = true) }
-    val foodListEvening = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.evening), ignoreCase = true) }
-    val foodListSnack = foodListInfoDTO.filter { it.session.equals(stringResource(R.string.snack), ignoreCase = true) }
+    val foodListMorning = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.morning),
+            ignoreCase = true
+        )
+    }
+    val foodListAfternoon = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.afternoon),
+            ignoreCase = true
+        )
+    }
+    val foodListEvening = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.evening),
+            ignoreCase = true
+        )
+    }
+    val foodListSnack = foodListInfoDTO.filter {
+        it.session.equals(
+            stringResource(R.string.snack),
+            ignoreCase = true
+        )
+    }
 
     val meal = when (selectedOption) {
         R.string.morning -> R.string.breakfast
@@ -563,10 +583,17 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
-                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
-                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
-                                        }
+                                        Log.d(
+                                            "MenuForSession",
+                                            "Navigating to FoodDetailActivity with foodId: ${food.foodId}"
+                                        )
+                                        val intent =
+                                            Intent(it, FoodDetailActivity::class.java).apply {
+                                                putExtra(
+                                                    "FOOD_ID",
+                                                    food.foodId
+                                                ) // <- Đúng key FOOD_ID
+                                            }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -619,7 +646,8 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        val matchingFoodDone =
+                                            foodDoneList.find { it.foodId == food.foodId }
                                         matchingFoodDone?.let {
                                             foodViewModel.deleteFoodDone(it.foodDoneId)
                                             Toast.makeText(
@@ -630,7 +658,7 @@ fun MenuForSession(
                                         }
                                         expanded = false
                                     },
-                                            leadingIcon = {
+                                    leadingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.trash),
                                             contentDescription = stringResource(R.string.delete_food),
@@ -673,10 +701,17 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
-                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
-                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
-                                        }
+                                        Log.d(
+                                            "MenuForSession",
+                                            "Navigating to FoodDetailActivity with foodId: ${food.foodId}"
+                                        )
+                                        val intent =
+                                            Intent(it, FoodDetailActivity::class.java).apply {
+                                                putExtra(
+                                                    "FOOD_ID",
+                                                    food.foodId
+                                                ) // <- Đúng key FOOD_ID
+                                            }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -729,7 +764,8 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        val matchingFoodDone =
+                                            foodDoneList.find { it.foodId == food.foodId }
                                         matchingFoodDone?.let {
                                             foodViewModel.deleteFoodDone(it.foodDoneId)
                                             Toast.makeText(
@@ -783,10 +819,17 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
-                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
-                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
-                                        }
+                                        Log.d(
+                                            "MenuForSession",
+                                            "Navigating to FoodDetailActivity with foodId: ${food.foodId}"
+                                        )
+                                        val intent =
+                                            Intent(it, FoodDetailActivity::class.java).apply {
+                                                putExtra(
+                                                    "FOOD_ID",
+                                                    food.foodId
+                                                ) // <- Đúng key FOOD_ID
+                                            }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -839,7 +882,8 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        val matchingFoodDone =
+                                            foodDoneList.find { it.foodId == food.foodId }
                                         matchingFoodDone?.let {
                                             foodViewModel.deleteFoodDone(it.foodDoneId)
                                             Toast.makeText(
@@ -893,10 +937,17 @@ fun MenuForSession(
                                 ),
                                 onClick = {
                                     activity?.let {
-                                        Log.d("MenuForSession", "Navigating to FoodDetailActivity with foodId: ${food.foodId}")
-                                        val intent = Intent(it, FoodDetailActivity::class.java).apply {
-                                            putExtra("FOOD_ID", food.foodId) // <- Đúng key FOOD_ID
-                                        }
+                                        Log.d(
+                                            "MenuForSession",
+                                            "Navigating to FoodDetailActivity with foodId: ${food.foodId}"
+                                        )
+                                        val intent =
+                                            Intent(it, FoodDetailActivity::class.java).apply {
+                                                putExtra(
+                                                    "FOOD_ID",
+                                                    food.foodId
+                                                ) // <- Đúng key FOOD_ID
+                                            }
                                         it.startActivity(intent)
                                     }
                                 },
@@ -904,12 +955,12 @@ fun MenuForSession(
                                 onLongClick = { expanded = true },
                                 standardPadding = standardPadding
                             )
-                            /*
+
                             DropdownMenu(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
-                                DropdownMenuItem(
+                                /*DropdownMenuItem(
                                     text = {
                                         Text(
                                             text = stringResource(R.string.edit_food),
@@ -948,7 +999,8 @@ fun MenuForSession(
                                         )
                                     },
                                     onClick = {
-                                        val matchingFoodDone = foodDoneList.find { it.foodId == food.foodId }
+                                        val matchingFoodDone =
+                                            foodDoneList.find { it.foodId == food.foodId }
                                         matchingFoodDone?.let {
                                             foodViewModel.deleteFoodDone(it.foodDoneId)
                                             Toast.makeText(
@@ -974,6 +1026,7 @@ fun MenuForSession(
             }
         }
     }
+}
 @Preview(
     device = "id:pixel",
     showSystemUi = true,
