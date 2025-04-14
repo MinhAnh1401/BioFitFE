@@ -246,7 +246,7 @@ fun HeaderBar(
             )
         }
 
-        Box(modifier = Modifier.size(52.dp)){
+        Box(modifier = Modifier.size(45.dp)){
             IconButton(
                 onClick = {
                     activity?.let {
