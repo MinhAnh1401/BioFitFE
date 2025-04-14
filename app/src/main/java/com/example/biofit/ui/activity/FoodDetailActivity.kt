@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -202,7 +203,8 @@ fun FoodNutritionalComposition(
                 contentDescription = "Food image",
                 modifier = Modifier
                     .size(standardPadding * 8)
-                    .clip(MaterialTheme.shapes.large)
+                    .clip(MaterialTheme.shapes.large),
+                contentScale = ContentScale.Crop
             )
 
             Text(

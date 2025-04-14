@@ -27,27 +27,18 @@ class ChatBotModel(
     private var isFirstConversation = true
 
     suspend fun getBotResponse(userInput: String): String {
-        val recentHistory = chatHistory.takeLast(10)
-        val conversationContext = recentHistory.joinToString("\n") {
-            "User: ${it.userMessage}\nBot: ${it.botResponse}"
+        if (isFirstConversation) {
+            isFirstConversation = false
+            chat.sendMessage(context.getString(R.string.bionix_tranning))
         }
-
-        val userData = userData
-        val dailyLogData = dailyLogData
 
         val enrichedInput = enrichInputWithUserData(userInput, userData, dailyLogData, exerciseDone)
 
-        val fullConversation = if (conversationContext.isNotBlank()) {
-            "$conversationContext\nUser: $enrichedInput"
-        } else {
-            enrichedInput
-        }
-
         return try {
-            val response = chat.sendMessage(fullConversation)
-            val botReply = response.text
-                ?.replace("*", "")
+            val response = chat.sendMessage(enrichedInput)
+            val botReply = response.text?.replace("*", "")
                 ?: context.getString(R.string.sorry_i_don_t_understand)
+
             chatHistory.add(ChatMessage(userInput, botReply))
             botReply
         } catch (e: Exception) {

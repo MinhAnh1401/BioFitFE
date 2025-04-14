@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun BlinkingGradientBox(
+    modifier: Modifier? = Modifier,
     alpha: Float,
     shape: Shape,
     content: @Composable () -> Unit
