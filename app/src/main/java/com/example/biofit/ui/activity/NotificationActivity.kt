@@ -276,7 +276,7 @@ fun NotificationListView(
                         painter = painterResource(id = R.drawable.trash),
                         modifier = Modifier.size(20.dp),
                         contentDescription = "Delete All Notifications",
-                        tint = MaterialTheme.colorScheme.error
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -416,7 +416,7 @@ fun NotificationItem(
                                 .clip(CircleShape)
                                 .background(
                                     if (!notification.isRead)
-                                        MaterialTheme.colorScheme.error
+                                        MaterialTheme.colorScheme.onError
                                     else
                                         MaterialTheme.colorScheme.primary
                                 )

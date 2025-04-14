@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -42,6 +43,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -129,6 +131,9 @@ import com.example.biofit.view_model.AIDescriptiveViewModel
 import com.example.biofit.view_model.DailyLogViewModel
 import com.example.biofit.view_model.ExerciseViewModel
 import com.example.biofit.view_model.FoodViewModel
+import com.example.biofit.view_model.HomeViewModelFactory
+import com.example.biofit.view_model.NotificationViewModel
+import com.example.biofit.view_model.NotificationViewModelFactory
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -191,8 +196,16 @@ fun HomeScreen(userData: UserDTO) {
 fun HeaderBar(
     userData: UserDTO,
     modifier: Modifier,
-    standardPadding: Dp
+    standardPadding: Dp,
+    userId: Int
 ) {
+
+    val viewModel: NotificationViewModel = viewModel(
+        factory = HomeViewModelFactory(userId)
+    )
+
+    val notificationCount by viewModel.unreadCount.collectAsState()
+
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -209,6 +222,10 @@ fun HeaderBar(
         else
             "EEEE, MMMM d, yyyy"
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.loadNotifications()
+    }
 
     Row(
         modifier = modifier
@@ -229,20 +246,43 @@ fun HeaderBar(
             )
         }
 
-        IconButton(
-            onClick = {
-                activity?.let {
-                    val intent = Intent(it, NotificationActivity::class.java)
-                    it.startActivity(intent)
+        Box(modifier = Modifier.size(50.dp)){
+            IconButton(
+                onClick = {
+                    activity?.let {
+                        val intent = Intent(it, NotificationActivity::class.java)
+                        it.startActivity(intent)
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.bell_fill),
+                    contentDescription = stringResource(id = R.string.notification),
+                    modifier = Modifier.size(size = standardPadding * 2f),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            if (notificationCount > 0) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-4).dp, y = 4.dp)
+                        .size(23.dp)
+                        .background(
+                            color = Color.Red,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (notificationCount > 9) "9+" else notificationCount.toString(),
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.bell_fill),
-                contentDescription = stringResource(id = R.string.notification),
-                modifier = Modifier.size(size = standardPadding * 2f),
-                tint = MaterialTheme.colorScheme.primary
-            )
         }
 
         /*var selectedDate by rememberSaveable { mutableStateOf("") }
@@ -286,7 +326,8 @@ fun HomeContent(
     HeaderBar(
         userData = userData,
         modifier = modifier.padding(bottom = standardPadding),
-        standardPadding = standardPadding
+        standardPadding = standardPadding,
+        userId = userData.userId.toInt()
     )
 
     LazyColumn(
