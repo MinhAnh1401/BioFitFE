@@ -223,7 +223,7 @@ interface ApiService {
     @POST("api/notification/welcome/{userId}")
     suspend fun sendWelcomeNotification(@Path("userId") userId: String): Response<NotificationDTO>
 
-    @DELETE("notifications/delete-all/{userId}")
+    @DELETE("api/notification/delete-all/{userId}")
     suspend fun deleteAllNotifications(@Path("userId") userId: String):Response<Void>
 
 }

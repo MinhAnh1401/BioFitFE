@@ -285,6 +285,18 @@ fun HeaderBar(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
+            } else if (notificationCount == 0) {
+                // Hiện chấm xanh nhỏ, không có số
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-5).dp, y = 3.dp)
+                        .size(12.dp)
+                        .background(
+                            color = Color.Green,
+                            shape = CircleShape
+                        )
+                )
             }
         }
 
