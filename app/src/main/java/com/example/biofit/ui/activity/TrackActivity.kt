@@ -436,11 +436,23 @@ fun NutritionalComposition(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
-        Text(
-            text = stringResource(R.string.nutritional_composition),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium
-        )
+        /*Row(
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.list_bullet_clipboard_fill),
+                contentDescription = null,
+                modifier = Modifier.size(standardPadding * 2f),
+                tint = MaterialTheme.colorScheme.onBackground
+            )*/
+
+            Text(
+                text = stringResource(R.string.nutritional_composition),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge
+            )
+        /*}*/
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(standardPadding),
@@ -561,11 +573,28 @@ fun MenuForSession(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(standardPadding * 2)
     ) {
-        Text(
-            text = "${stringResource(R.string.menu_for)} ${stringResource(meal).lowercase()}",
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(standardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = when(selectedOption) {
+                    R.string.morning -> painterResource(R.drawable.breakfast)
+                    R.string.afternoon -> painterResource(R.drawable.lunch)
+                    R.string.evening -> painterResource(R.drawable.dinner)
+                    else -> painterResource(R.drawable.popcorn_fill)
+                },
+                contentDescription = null,
+                modifier = Modifier.size(standardPadding * 2f),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+
+            Text(
+                text = "${stringResource(R.string.menu_for)} ${stringResource(meal).lowercase()}",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(standardPadding)

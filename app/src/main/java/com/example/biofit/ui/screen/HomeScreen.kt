@@ -657,7 +657,9 @@ fun OverviewAndSearchBar(
             Icon(
                 painter = painterResource(id = R.drawable.ic_chatbot_ai),
                 contentDescription = stringResource(id = R.string.ai_assistant_bionix),
-                modifier = Modifier.size(size = standardPadding * 2.5f),
+                modifier = Modifier
+                    .padding(standardPadding)
+                    .size(size = standardPadding * 2f),
                 tint = MaterialTheme.colorScheme.inversePrimary
             )
 
@@ -934,10 +936,10 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.cloud_sun_fill,
+                headIcon = R.drawable.breakfast,
                 headIconColor = Color(0xFFFFAB00),
-                desIcon = R.string.morning,
-                title = R.string.morning,
+                desIcon = R.string.breakfast,
+                title = R.string.breakfast,
                 loaded = loadedBreakfast,
                 target = targetBreakfast,
                 foodName = foodBreakfast,
@@ -953,10 +955,10 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.sun_max_fill,
+                headIcon = R.drawable.lunch,
                 headIconColor = Color(0xFFDD2C00),
-                desIcon = R.string.afternoon,
-                title = R.string.afternoon,
+                desIcon = R.string.lunch,
+                title = R.string.lunch,
                 loaded = loadedLunch,
                 target = targetLunch,
                 foodName = foodLunch,
@@ -976,10 +978,10 @@ fun DailyMenu(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                headIcon = R.drawable.cloud_moon_fill,
+                headIcon = R.drawable.dinner,
                 headIconColor = Color(0xFF2962FF),
-                desIcon = R.string.evening,
-                title = R.string.evening,
+                desIcon = R.string.dinner,
+                title = R.string.dinner,
                 loaded = loadedDinner,
                 target = targetDinner,
                 foodName = foodDinner,
@@ -1587,7 +1589,9 @@ fun DailyGoals(
                 Icon(
                     painter = painterResource(R.drawable.ic_chatbot_ai),
                     contentDescription = stringResource(R.string.ai_assistant_bionix),
-                    modifier = Modifier.size(standardPadding * 3.5f),
+                    modifier = Modifier
+                        .padding(start = standardPadding)
+                        .size(standardPadding * 2f),
                     tint = MaterialTheme.colorScheme.primary
                 )
 

@@ -341,7 +341,7 @@ fun TopBar(
                         Icon(
                             painter = painterResource(R.drawable.ic_chatbot_ai),
                             contentDescription = stringResource(R.string.bionix),
-                            modifier = Modifier.size(standardPadding * 2.5f),
+                            modifier = Modifier.size(standardPadding * 2f),
                             tint = MaterialTheme.colorScheme.primary
                         )
 

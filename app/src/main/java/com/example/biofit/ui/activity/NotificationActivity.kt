@@ -9,34 +9,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import com.example.biofit.R
-import com.example.biofit.data.utils.UserSharedPrefsHelper
-import com.example.biofit.ui.components.TopBar
-import com.example.biofit.ui.components.getStandardPadding
-import com.example.biofit.ui.theme.BioFitTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -48,10 +20,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,7 +41,6 @@ import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
@@ -68,23 +49,42 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.biofit.R
 import com.example.biofit.data.model.dto.MealType
 import com.example.biofit.data.model.dto.NotificationDTO
+import com.example.biofit.data.utils.UserSharedPrefsHelper
+import com.example.biofit.ui.components.TopBar
+import com.example.biofit.ui.components.getStandardPadding
+import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.ui.theme.Typography
 import com.example.biofit.view_model.NotificationViewModel
 import com.example.biofit.view_model.NotificationViewModelFactory
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class NotificationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -276,9 +276,9 @@ fun NotificationListView(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.trash_circle),
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(25.dp),
                         contentDescription = "Delete All Notifications",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = Color(0xFFDD2C00)
                     )
                 }
             }
@@ -401,9 +401,19 @@ fun NotificationItem(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = notification.scheduledTime?.format(
-                                    DateTimeFormatter.ofPattern("MMM dd,yyyy HH:mm:ss")
-                                ) ?: "Unknown time",
+                                text = notification.scheduledTime?.let { timeString ->
+                                    try {
+                                        LocalDateTime.parse(timeString).format(
+                                            DateTimeFormatter.ofPattern(
+                                                if (Locale.getDefault().language == "en") "MMM dd, yyyy HH:mm:ss"
+                                                else "dd/MM/yyyy HH:mm:ss",
+                                                Locale.getDefault()
+                                            )
+                                        )
+                                    } catch (e: Exception) {
+                                        "Invalid time format"
+                                    }
+                                } ?: "Unknown time",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -433,9 +443,9 @@ fun NotificationItem(
 @Composable
 fun NotificationIcon(mealType: MealType) {
     val emoji = when (mealType) {
-        MealType.BREAKFAST -> painterResource(R.drawable.frying_pan_fill)
-        MealType.LUNCH -> painterResource(R.drawable.basket_fill)
-        MealType.DINNER -> painterResource(R.drawable.fork_knife)
+        MealType.BREAKFAST -> painterResource(R.drawable.breakfast)
+        MealType.LUNCH -> painterResource(R.drawable.lunch)
+        MealType.DINNER -> painterResource(R.drawable.dinner)
         MealType.SNACK -> painterResource(R.drawable.popcorn_fill)
         MealType.SLEEP -> painterResource(R.drawable.bed_double_fill)
         MealType.OTHER -> painterResource(R.drawable.horn_blast_fill)
