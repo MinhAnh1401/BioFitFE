@@ -437,4 +437,6 @@
     <string name="sample_question_26">What should I do if I hit a weight plateau despite dieting and working out?</string>
     <string name="no_notifications">No Notifications</string>
     <string name="you_ll_see_your_notifications_here_when_you_get_them">You\'ll see your notifications here when you get them</string>
+    <string name="notifications">Notifications</string>
+    <string name="deleted_food_from_menu">Deleted food from menu</string>
 </resources>

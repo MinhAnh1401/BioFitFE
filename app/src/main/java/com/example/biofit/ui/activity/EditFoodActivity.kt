@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -324,7 +325,8 @@ fun EditFoodContent(
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
                             shape = MaterialTheme.shapes.extraLarge
                         )
-                        .clickable { showFoodImageDialog = true }
+                        .clickable { showFoodImageDialog = true },
+                    contentScale = ContentScale.Crop
                 )
 
                 if (showFoodImageDialog) {

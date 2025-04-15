@@ -17,8 +17,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,9 +38,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +47,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,12 +54,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -78,13 +69,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.BuildConfig
 import com.example.biofit.R
 import com.example.biofit.data.model.ChatBotModel
 import com.example.biofit.data.model.dto.DailyLogDTO
-import com.example.biofit.data.model.dto.FoodDTO
-import com.example.biofit.data.model.dto.FoodInfoDTO
 import com.example.biofit.data.model.dto.UserDTO
 import com.example.biofit.data.utils.DailyLogSharedPrefsHelper
 import com.example.biofit.data.utils.OverviewExerciseSharedPrefsHelper
@@ -96,12 +84,9 @@ import com.example.biofit.ui.animated.BlinkingGradientBox
 import com.example.biofit.ui.theme.BioFitTheme
 import com.example.biofit.view_model.AIChatbotViewModel
 import com.example.biofit.view_model.ExerciseViewModel
-import com.example.biofit.view_model.FoodViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.collections.find
-import kotlin.collections.mapNotNull
 
 @Composable
 fun TopBarScreen() {
@@ -140,8 +125,7 @@ fun TopBar(
     title: String? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
-    standardPadding: Dp,
-    foodViewModel: FoodViewModel = viewModel()
+    standardPadding: Dp
 ) {
     var showChatbot by remember { mutableStateOf(false) }
 
@@ -179,7 +163,9 @@ fun TopBar(
                             Text(
                                 text = title,
                                 color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.headlineSmall
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
                         }
 
@@ -200,7 +186,7 @@ fun TopBar(
                             Icon(
                                 painter = painterResource(R.drawable.ic_chatbot_ai),
                                 contentDescription = stringResource(R.string.ai_assistant_bionix),
-                                modifier = Modifier.size(standardPadding * 4f),
+                                modifier = Modifier.size(standardPadding * 2f),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -355,7 +341,7 @@ fun TopBar(
                         Icon(
                             painter = painterResource(R.drawable.ic_chatbot_ai),
                             contentDescription = stringResource(R.string.bionix),
-                            modifier = Modifier.size(standardPadding * 3f),
+                            modifier = Modifier.size(standardPadding * 2.5f),
                             tint = MaterialTheme.colorScheme.primary
                         )
 
@@ -582,6 +568,7 @@ fun TopBar(
 fun TopBar2(
     onBackClick: (() -> Unit)? = null,
     title: String? = null,
+    middleIcon: (@Composable () -> Unit)? = null,
     middleButton: (@Composable () -> Unit)? = null,
     rightButton: (@Composable () -> Unit)? = null,
     standardPadding: Dp
@@ -610,13 +597,18 @@ fun TopBar2(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
+                horizontalArrangement = Arrangement.spacedBy(standardPadding / 2f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                middleIcon?.invoke()
+
                 title?.let {
                     Text(
                         text = title,
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Bold
+                        )
                     )
                 }
 
