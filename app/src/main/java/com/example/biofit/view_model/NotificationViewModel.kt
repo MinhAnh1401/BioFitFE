@@ -1,6 +1,5 @@
 package com.example.biofit.view_model
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,9 +20,14 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _unreadCount = MutableStateFlow(0)
+    val unreadCount: StateFlow<Int> = _unreadCount.asStateFlow()
+
+
     private val apiService = RetrofitClient.instance
 
     private var needsRefresh = true
+
 
     fun refreshIfNeeded() {
         needsRefresh = true
@@ -54,6 +58,7 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                                 createdAt = dto.createdAt
                             )
                         }
+                        _unreadCount.value = _notifications.value.count { !it.isRead }
                     } ?: Log.d("Notification", "Response body is null")
                 } else {
                     Log.e("Notification", "Error: ${response.errorBody()?.string()}")
@@ -154,13 +159,16 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
     fun deleteAllNotifications() {
         viewModelScope.launch {
             try {
-                _isLoading.value = true
-                apiService.deleteAllNotifications(userId)
-                loadNotifications() // Tải lại danh sách sau khi xóa
+                val response = apiService.deleteAllNotifications(userId)
+                if (response.isSuccessful) {
+                    // Cập nhật local state
+                    _notifications.value = _notifications.value.filter {
+                        it.id != userId.toLong()
+                    }
+                }
             } catch (e: Exception) {
-                Log.e("NotificationViewModel", "Failed to delete all notifications", e)
-            } finally {
-                _isLoading.value = false
+                // Xử lý lỗi
+                Log.e("Notification", "Error deleting all notifications", e)
             }
         }
     }

@@ -224,6 +224,6 @@ interface ApiService {
     suspend fun sendWelcomeNotification(@Path("userId") userId: String): Response<NotificationDTO>
 
     @DELETE("notifications/delete-all/{userId}")
-    suspend fun deleteAllNotifications(@Path("userId") userId: String)
+    suspend fun deleteAllNotifications(@Path("userId") userId: String):Response<Void>
 
 }
