@@ -252,7 +252,15 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
         ) {
             TopBar2(
                 onBackClick = { activity?.finish() },
-                title = stringResource(R.string.ai_assistant_bionix),
+                middleIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chatbot_ai),
+                        contentDescription = stringResource(R.string.ai_assistant_bionix),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(standardPadding * 2f)
+                    )
+                },
+                title = stringResource(R.string.bionix),
                 middleButton = null,
                 rightButton = {
                     var isRotating by remember { mutableStateOf(false) }

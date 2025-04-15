@@ -262,7 +262,7 @@ fun NotificationListView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Notifications",
+                text = stringResource(R.string.notifications),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -273,7 +273,7 @@ fun NotificationListView(
                     onClick = { onDeleteAll() }
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.trash),
+                        painter = painterResource(id = R.drawable.trash_circle),
                         modifier = Modifier.size(20.dp),
                         contentDescription = "Delete All Notifications",
                         tint = MaterialTheme.colorScheme.primary

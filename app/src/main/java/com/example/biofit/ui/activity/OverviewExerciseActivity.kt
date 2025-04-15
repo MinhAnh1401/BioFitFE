@@ -200,21 +200,29 @@ fun OverviewExerciseContent(
 
     Log.d("userId", "$userId")
     LaunchedEffect(userId, startOfWeekFormatted, endOfWeekFormatted) {
-        exerciseViewModel.fetchOverviewExercises(context, userId, startOfWeekFormatted, endOfWeekFormatted)
+        exerciseViewModel.fetchOverviewExercises(
+            context,
+            userId,
+            startOfWeekFormatted,
+            endOfWeekFormatted
+        )
     }
     Log.d("listOverviewExercise", "$overviewList")
+
+    // Quản lý trạng thái thẻ đang mở bằng cặp (date, index)
+    val expandedState = remember { mutableStateOf<Pair<String?, Int?>>(null to null) }
 
     Column(
         modifier = modifier,
     ) {
         WeekNavigationBar(
             selectedDate = selectedDate,
-            onDateChange = { newDate -> selectedDate = newDate },
+            onDateChange = { newDate ->
+                selectedDate = newDate
+                expandedState.value = null to null
+            },
             standardPadding
         )
-
-        // Quản lý trạng thái thẻ đang mở bằng cặp (date, index)
-        val expandedState = remember { mutableStateOf<Pair<String?, Int?>>(null to null) }
 
         LazyColumn {
             if (overviewList == emptyList<OverviewExerciseDTO>()) {
@@ -303,7 +311,8 @@ fun OverviewExerciseContent(
                             standardPadding = standardPadding,
                             isExpanded = expandedState.value == (date to index), // So sánh cặp (date, index)
                             onExpandChange = { isExpanded ->
-                                expandedState.value = if (isExpanded) (date to index) else (null to null)
+                                expandedState.value =
+                                    if (isExpanded) (date to index) else (null to null)
                             }
                         )
                     }
