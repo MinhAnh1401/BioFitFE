@@ -69,7 +69,7 @@ fun ActionPopup(
         Triple(R.drawable.cloud_sun_fill, R.string.morning, Color(0xFFFFAB00)),
         Triple(R.drawable.sun_max_fill, R.string.afternoon, Color(0xFFDD2C00)),
         Triple(R.drawable.cloud_moon_fill, R.string.evening, Color(0xFF2962FF)),
-        Triple(R.drawable.circle_hexagongrid_fill, R.string.snack, Color(0xFF00BFA5))
+        Triple(R.drawable.popcorn_fill, R.string.snack, Color(0xFF00BFA5))
     )
 
     Row(
@@ -170,7 +170,7 @@ fun ActionPopup(
                         modifier = Modifier.padding(standardPadding / 2)
                     ) {
                         BlinkingGradientBox(
-                            alpha = 0.5f,
+                            alpha = 0.75f,
                             shape = MaterialTheme.shapes.extraLarge
                         ) {
                             Column(
@@ -182,12 +182,9 @@ fun ActionPopup(
                                     painter = painterResource(R.drawable.ic_chatbot_ai),
                                     contentDescription = stringResource(R.string.activity),
                                     modifier = Modifier
-                                        .size(standardPadding * 4),
-                                    tint = if (isSystemInDarkTheme()) {
-                                        Color(0xFFB388FF)
-                                    } else {
-                                        Color(0xFF6200EA)
-                                    }
+                                        .padding(standardPadding)
+                                        .size(standardPadding * 2f),
+                                    tint = MaterialTheme.colorScheme.inversePrimary
                                 )
                             }
                         }
