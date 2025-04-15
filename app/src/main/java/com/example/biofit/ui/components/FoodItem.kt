@@ -72,8 +72,9 @@ fun FoodItem(
     calories: Float,
     macros: List<Pair<Int, Float>>,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     onEatClick: (() -> Unit)? = null,
+    onDeleteClick: (() -> Unit)? = null,
     standardPadding: Dp
 ) {
     val context = LocalContext.current
@@ -84,7 +85,7 @@ fun FoodItem(
             .clip(MaterialTheme.shapes.large)
             .combinedClickable(
                 onClick = { onClick() },
-                onLongClick = { onLongClick() }
+                onLongClick = { onLongClick?.invoke() }
             ),
         horizontalArrangement = Arrangement.spacedBy(standardPadding),
         verticalAlignment = Alignment.CenterVertically
@@ -172,6 +173,26 @@ fun FoodItem(
                     contentDescription = stringResource(R.string.eat),
                     modifier = Modifier.size(standardPadding * 1.5f),
                     tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        if (onDeleteClick != null) {
+            IconButton(
+                onClick = {
+                    onDeleteClick()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.deleted_food_from_menu),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.remove_food_from_menu),
+                    contentDescription = stringResource(R.string.deleted_food_from_menu),
+                    modifier = Modifier.size(standardPadding * 1.5f),
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }

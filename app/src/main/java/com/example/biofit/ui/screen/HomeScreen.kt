@@ -80,6 +80,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -497,7 +498,9 @@ fun OverviewAndSearchBar(
                     text = stringResource(id = R.string.overview),
                     modifier = Modifier.weight(weight = 1f),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
 
                 /*ElevatedButton(
@@ -648,18 +651,14 @@ fun OverviewAndSearchBar(
     ) {
         Row(
             modifier = modifier.padding(all = standardPadding),
-            horizontalArrangement = Arrangement.spacedBy(space = standardPadding / 2f),
+            horizontalArrangement = Arrangement.spacedBy(space = standardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_chatbot_ai),
                 contentDescription = stringResource(id = R.string.ai_assistant_bionix),
-                modifier = Modifier.size(size = standardPadding * 3.5f),
-                tint = if (isSystemInDarkTheme()) {
-                    Color(0xFFB388FF)
-                } else {
-                    Color(0xFF6200EA)
-                }
+                modifier = Modifier.size(size = standardPadding * 2.5f),
+                tint = MaterialTheme.colorScheme.inversePrimary
             )
 
             Row(
@@ -669,8 +668,10 @@ fun OverviewAndSearchBar(
             ) {
                 Text(
                     text = stringResource(R.string.ai_assistant_bionix),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge
+                    color = MaterialTheme.colorScheme.inversePrimary,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
             }
 
@@ -680,7 +681,7 @@ fun OverviewAndSearchBar(
                 modifier = Modifier
                     .size(standardPadding)
                     .rotate(180f),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.inversePrimary
             )
         }
     }
@@ -915,7 +916,9 @@ fun DailyMenu(
             Text(
                 text = stringResource(R.string.track_your_daily_menu),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
 
@@ -1270,7 +1273,9 @@ fun DailyGoals(
             Text(
                 text = stringResource(R.string.daily_goals),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
 
@@ -1509,7 +1514,9 @@ fun DailyGoals(
                             Text(
                                 text = stringResource(R.string.latest_weight),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
                         }
 
@@ -1612,7 +1619,9 @@ fun DailyGoals(
                     Text(
                         text = stringResource(R.string.bmi_index),
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
                     )
 
                     IconButton(

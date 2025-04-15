@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -66,6 +67,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.util.TableInfo
 import com.example.biofit.R
 import com.example.biofit.data.utils.UserSharedPrefsHelper
 import com.example.biofit.ui.components.FoodItem
@@ -77,6 +79,7 @@ import com.example.biofit.view_model.FoodViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.example.biofit.data.model.dto.FoodDoneDTO
+import com.example.biofit.ui.components.animatedRotation
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -135,6 +138,9 @@ fun AddScreen(
     )
     val filteredOptions = options.filter { it != selectedOption }
 
+    val rotation = animatedRotation(
+        targetRotation = if (expanded) 90f else 270f
+    )
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -152,20 +158,32 @@ fun AddScreen(
         ) {
             TopBar(
                 onBackClick = { activity?.finish() },
-                title = stringResource(selectedOption),
                 middleButton = {
                     Box {
-                        IconButton(
+                        TextButton(
                             onClick = { expanded = !expanded }
                         ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_back),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(standardPadding)
-                                    .rotate(270f),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(standardPadding),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(selectedOption),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.headlineSmall.copy(
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+
+                                Icon(
+                                    painter = painterResource(R.drawable.chevron_left_circle),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(standardPadding * 1.5f)
+                                        .rotate(rotation),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
 
                         DropdownMenu(
@@ -502,7 +520,8 @@ fun AddContent(
 
                                     DropdownMenu(
                                         expanded = expanded,
-                                        onDismissRequest = { expanded = false }
+                                        onDismissRequest = { expanded = false },
+                                        modifier = Modifier.align(Alignment.BottomEnd)
                                     ) {
                                         DropdownMenuItem(
                                             text = {
