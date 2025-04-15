@@ -205,7 +205,7 @@ fun NotificationScreen(
                     onMarkAsRead = { notificationId -> viewModel.markAsRead(notificationId = notificationId.toLong()) },
                     onDelete = { notificationId -> viewModel.deleteNotification(notificationId = notificationId.toLong()) },
                     onMarkAllAsRead = { viewModel.markAllAsRead()},
-                    onDeleteAll = { viewModel.deleteAllNotifications()}
+                    onDeleteAll = { viewModel.deleteAllNotifications(userId)}
                 )
             }
         }
@@ -270,7 +270,9 @@ fun NotificationListView(
             if (notifications.isNotEmpty()) {
                 // Nút "Delete All" khi có thông báo nhiều
                 IconButton(
-                    onClick = { onDeleteAll() }
+                    onClick = {
+                        onDeleteAll()
+                    }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.trash),

@@ -124,6 +124,9 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                     _notifications.value = _notifications.value.map { it.copy(isRead = true) }
                     Log.d("Notification", "All notifications marked as read")
                 }
+                else{
+                    Log.e("Notification", "Failed to mark all as read: ${response.code()}")
+                }
             } catch (e: Exception) {
                 // Xử lý lỗi
                 Log.e("Notification", "Error marking all as read", e)
@@ -156,7 +159,8 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
         }
     }
 
-    fun deleteAllNotifications() {
+    // xóa tất cả
+    fun deleteAllNotifications(userId: String) {
         viewModelScope.launch {
             try {
                 val response = apiService.deleteAllNotifications(userId)
@@ -165,6 +169,11 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                     _notifications.value = _notifications.value.filter {
                         it.id != userId.toLong()
                     }
+
+                    Log.d("Notification", "Đã xóa tất cả thông báo")
+                }
+                else{
+                    Log.e("Notification", "Lỗi khi xóa thông báo: ${response.code()}")
                 }
             } catch (e: Exception) {
                 // Xử lý lỗi
