@@ -150,9 +150,7 @@ fun CreateFoodScreen(
             )
 
             CreateFoodContent(
-                foodImage = foodImage,
                 session = sessionString,
-                FoodViewModel = FoodViewModel,
                 userData = userData,
                 standardPadding = standardPadding,
                 modifier = modifier,
@@ -185,9 +183,7 @@ fun CreateFoodScreen(
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun CreateFoodContent(
-    foodImage: String?,
     session: String,
-    FoodViewModel: FoodViewModel,
     userData: UserDTO,
     standardPadding: Dp,
     modifier: Modifier,
@@ -549,44 +545,38 @@ fun CreateFoodContent(
                             return@ElevatedButton
                         }
 
-                        // Kiểm tra kích thước phục vụ
-                        if (servingSize.isBlank() || servingSize.toFloatOrNull() == null || servingSize.toFloatOrNull()!! <= 0f) {
+                        // Kiểm tra kích thước
+                        if (servingSize.isBlank() || servingSize.toFloatOrNull() == null || servingSize.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Kích thước khẩu phần không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
-
                         // Kiểm tra khối lượng
-                        if (mass.isBlank() || mass.toFloatOrNull() == null || mass.toFloatOrNull()!! <= 0f) {
+                        if (mass.isBlank() || mass.toFloatOrNull() == null || mass.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Khối lượng không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
-
                         // Kiểm tra calo
-                        if (calories.isBlank() || calories.toFloatOrNull() == null || calories.toFloatOrNull()!! <= 0f) {
+                        if (calories.isBlank() || calories.toFloatOrNull() == null || calories.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Giá trị calo không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
-
                         // Kiểm tra protein
-                        if (protein.isBlank() || protein.toFloatOrNull() == null || protein.toFloatOrNull()!! <= 0f) {
+                        if (protein.isBlank() || protein.toFloatOrNull() == null || protein.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Giá trị protein không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
-
                         // Kiểm tra carbohydrate
-                        if (carbohydrate.isBlank() || carbohydrate.toFloatOrNull() == null || carbohydrate.toFloatOrNull()!! <= 0f) {
+                        if (carbohydrate.isBlank() || carbohydrate.toFloatOrNull() == null || carbohydrate.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Giá trị carbohydrate không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
-
                         // Kiểm tra fat
-                        if (fat.isBlank() || fat.toFloatOrNull() == null || fat.toFloatOrNull()!! <= 0f) {
+                        if (fat.isBlank() || fat.toFloatOrNull() == null || fat.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Giá trị chất béo không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
-
                         // Kiểm tra sodium
-                        if (sodium.isBlank() || sodium.toFloatOrNull() == null || sodium.toFloatOrNull()!! <= 0f) {
+                        if (sodium.isBlank() || sodium.toFloatOrNull() == null || sodium.toFloatOrNull()!! < 0f) {
                             Toast.makeText(context, "Giá trị sodium không hợp lệ", Toast.LENGTH_SHORT).show()
                             return@ElevatedButton
                         }
