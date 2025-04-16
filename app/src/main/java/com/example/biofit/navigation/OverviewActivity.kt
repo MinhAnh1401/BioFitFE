@@ -7,6 +7,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -459,7 +466,11 @@ fun WeekNavigationBar(
                 style = MaterialTheme.typography.titleSmall
             )
 
-            if (selectedDate != LocalDate.now()) {
+            AnimatedVisibility(
+                visible = selectedDate != LocalDate.now(),
+                enter = slideInVertically { it } + fadeIn() + expandVertically(),
+                exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+            ) {
                 TextButton(
                     onClick = { onDateChange(LocalDate.now()) }
                 ) {
@@ -471,17 +482,34 @@ fun WeekNavigationBar(
             }
         }
 
-        IconButton(
-            onClick = { onDateChange(selectedDate.plusWeeks(1)) }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.arrow_left),
-                contentDescription = "Next Week",
-                modifier = Modifier
-                    .size(standardPadding)
-                    .rotate(180f),
-                tint = MaterialTheme.colorScheme.onBackground
-            )
+        if (selectedDate.isBefore(LocalDate.now())) {
+            IconButton(
+                onClick = {
+                    onDateChange(selectedDate.plusWeeks(1))
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_left),
+                    contentDescription = "Next Week",
+                    modifier = Modifier
+                        .size(standardPadding)
+                        .rotate(180f),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        } else {
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_left),
+                    contentDescription = "Next Week",
+                    modifier = Modifier
+                        .size(standardPadding)
+                        .rotate(180f),
+                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f)
+                )
+            }
         }
     }
 }
