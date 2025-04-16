@@ -209,6 +209,21 @@ fun HeaderBar(
 
     val context = LocalContext.current
     val activity = context as? Activity
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Làm mới thông báo khi quay lại màn hình
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshIfNeeded()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
 
     val userName = if (userData.fullName.isNullOrEmpty()) {
         ""

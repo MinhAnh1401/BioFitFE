@@ -56,6 +56,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +72,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.biofit.R
 import com.example.biofit.data.model.dto.MealType
@@ -112,6 +116,22 @@ class NotificationActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     viewModel.loadNotifications()
                 }
+
+                val lifecycleOwner = LocalLifecycleOwner.current
+
+                // Làm mới dữ liệu khi activity được resume
+                DisposableEffect(lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            viewModel.refreshIfNeeded()
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
+
                 NotificationScreen(
                     userId = userId,
                     viewModel = viewModel,
@@ -120,7 +140,6 @@ class NotificationActivity : ComponentActivity() {
             }
         }
     }
-
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -278,7 +297,7 @@ fun NotificationListView(
                         painter = painterResource(id = R.drawable.trash_circle),
                         modifier = Modifier.size(25.dp),
                         contentDescription = "Delete All Notifications",
-                        tint = Color(0xFFDD2C00)
+                        tint = Color(0xFFC05A20)
                     )
                 }
             }
