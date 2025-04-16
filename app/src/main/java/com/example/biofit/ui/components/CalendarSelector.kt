@@ -1,6 +1,15 @@
 package com.example.biofit.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,19 +22,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.biofit.R
 import com.example.biofit.ui.theme.BioFitTheme
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -42,6 +57,7 @@ fun CalendarSelector(
 
     var selectedDate by rememberSaveable { mutableStateOf(today) }
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         listState.scrollToItem(monthDays.indexOf(today))
@@ -58,6 +74,8 @@ fun CalendarSelector(
         ) {
             items(monthDays) { date ->
                 val isSelected = date == selectedDate
+                val isFutureDate = date.isAfter(today)
+
                 Column(
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.medium)
@@ -83,10 +101,17 @@ fun CalendarSelector(
                                 )
                             }
                         )
-                        .clickable {
-                            selectedDate = date
-                            onDaySelected(date)
-                        }
+                        .alpha(if (isFutureDate) 0.5f else 1f)
+                        .then(
+                            if (isFutureDate) {
+                                Modifier
+                            } else {
+                                Modifier.clickable {
+                                    selectedDate = date
+                                    onDaySelected(date)
+                                }
+                            }
+                        )
                         .padding(standardPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -113,6 +138,27 @@ fun CalendarSelector(
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = selectedDate != today,
+            enter = slideInVertically { it } + fadeIn() + expandVertically(),
+            exit = slideOutVertically { it } + fadeOut() + shrinkVertically()
+        ) {
+            TextButton(
+                onClick = {
+                    selectedDate = today
+                    onDaySelected(today)
+                    coroutineScope.launch {
+                        listState.scrollToItem(monthDays.indexOf(today))
+                    }
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.back_to_today),
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }

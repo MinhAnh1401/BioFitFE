@@ -437,4 +437,5 @@
     <string name="you_ll_see_your_notifications_here_when_you_get_them">Bạn sẽ thấy thông báo của mình ở đây khi bạn nhận được chúng</string>
     <string name="notifications">Thông báo</string>
     <string name="deleted_food_from_menu">Đã xoá thức ăn khỏi thực đơn</string>
+    <string name="back_to_today">Trở về hôm nay</string>
 </resources>
