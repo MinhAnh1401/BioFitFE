@@ -192,11 +192,7 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
         )
         chatHistory = viewModel.chatHistory
     }
-    val focusRequester = remember { FocusRequester() }
     var userInput by remember { mutableStateOf("") }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
     val listState = rememberLazyListState()
     /*
     ************************************************************************************************
@@ -397,7 +393,6 @@ fun AIChatbotScreen(viewModel: AIChatbotViewModel) {
                         OutlinedTextField(
                             value = userInput,
                             onValueChange = { userInput = it },
-                            modifier = Modifier.focusRequester(focusRequester),
                             placeholder = {
                                 Text(
                                     text = stringResource(R.string.enter_message),

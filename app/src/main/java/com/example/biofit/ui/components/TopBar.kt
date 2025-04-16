@@ -282,12 +282,7 @@ fun TopBar(
                 chatHistory = viewModel.chatHistory
             }
             val listState = rememberLazyListState()
-            val focusRequester = remember { FocusRequester() }
             var userInput by remember { mutableStateOf("") }
-            LaunchedEffect(Unit) {
-                delay(300)
-                focusRequester.requestFocus()
-            }
             /*
             ****************************************************************************************
             */
@@ -505,8 +500,6 @@ fun TopBar(
                                 OutlinedTextField(
                                     value = userInput,
                                     onValueChange = { userInput = it },
-                                    modifier = Modifier
-                                        .focusRequester(focusRequester),
                                     placeholder = {
                                         Text(
                                             text = stringResource(R.string.enter_message),
