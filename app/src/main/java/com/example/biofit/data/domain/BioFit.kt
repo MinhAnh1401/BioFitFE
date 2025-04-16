@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -12,6 +13,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.biofit.view_model.NotificationViewModel
 import com.example.biofit.view_model.NotificationWorker
+import com.example.biofit.view_model.WebSocketService
 import java.util.concurrent.TimeUnit
 
 class BioFit : Application() {
@@ -26,6 +28,14 @@ class BioFit : Application() {
             sharedPref.edit().putBoolean("is_first_time", false).apply()}
         setupNotificationWork()
         createNotificationChannel()
+
+        // Khởi động WebSocketService
+        val serviceIntent = Intent(this, WebSocketService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
 
     private fun setupNotificationWork() {

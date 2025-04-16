@@ -228,16 +228,14 @@ fun PaymentResultScreen(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
-                if (orderId != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.order_id) + " " + orderId,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-
+//                if (orderId != null) {
+//                    Spacer(modifier = Modifier.height(16.dp))
+//                    Text(
+//                        text = stringResource(R.string.order_id) + " " + orderId,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        color = MaterialTheme.colorScheme.onSurfaceVariant
+//                    )
+//                }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
