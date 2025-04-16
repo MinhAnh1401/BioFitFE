@@ -67,6 +67,7 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                 Log.e("Notification", "Exception: ${e.message}", e)
             } finally {
                 _isLoading.value = false
+                needsRefresh = false
             }
         }
     }
@@ -80,6 +81,7 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                     _notifications.value = _notifications.value.filter {
                         it.id != notificationId
                     }
+                    _unreadCount.value = _notifications.value.count { !it.isRead }
                 }
             } catch (e: Exception) {
                 // Xử lý lỗi
@@ -102,6 +104,8 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                             }
                         }
                     }
+                    _unreadCount.value = _notifications.value.count { !it.isRead }
+                    Log.d("Notification", "Notification marked as read: $notificationId")
                 } else {
                     // Xử lý lỗi
                     Log.e("Notification", "Failed to mark as read: ${response.code()}")
@@ -122,6 +126,7 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                 val response = apiService.markAllAsRead(userId, unreadIds)
                 if (response.isSuccessful) {
                     _notifications.value = _notifications.value.map { it.copy(isRead = true) }
+                    _unreadCount.value = 0
                     Log.d("Notification", "All notifications marked as read")
                 }
                 else{
@@ -166,9 +171,8 @@ class NotificationViewModel(private val userId: String) : ViewModel() {
                 val response = apiService.deleteAllNotifications(userId)
                 if (response.isSuccessful) {
                     // Cập nhật local state
-                    _notifications.value = _notifications.value.filter {
-                        it.id != userId.toLong()
-                    }
+                    _notifications.value = emptyList()
+                    _unreadCount.value = 0 // Cập nhật unreadCount
 
                     Log.d("Notification", "Đã xóa tất cả thông báo")
                 }
