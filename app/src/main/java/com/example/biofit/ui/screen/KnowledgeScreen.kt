@@ -84,7 +84,9 @@ fun KnowledgeScreen() {
                     text = stringResource(R.string.nutritional_knowledge),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
 
                 Icon(

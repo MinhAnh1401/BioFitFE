@@ -466,7 +466,7 @@ fun NotificationIcon(mealType: MealType) {
         MealType.LUNCH -> painterResource(R.drawable.lunch)
         MealType.DINNER -> painterResource(R.drawable.dinner)
         MealType.SNACK -> painterResource(R.drawable.popcorn_fill)
-        MealType.SLEEP -> painterResource(R.drawable.bed_double_fill)
+        MealType.SLEEP -> painterResource(R.drawable.sleep)
         MealType.OTHER -> painterResource(R.drawable.horn_blast_fill)
     }
 

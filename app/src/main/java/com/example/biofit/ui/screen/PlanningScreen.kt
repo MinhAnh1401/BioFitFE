@@ -707,7 +707,9 @@ fun PlanningHeaderBar(
             text = stringResource(R.string.nutrition_planning),
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold
+            )
         )
     }
 }
